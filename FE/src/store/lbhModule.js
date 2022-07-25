@@ -1,39 +1,72 @@
-import axios from "axios";
+// import axios from "axios";
 import { createStore } from "vuex";
 
 export const Test = createStore({
   state: {
-    coverLetterList: {}, // 유저의 자소서
-    userTrendInfo: {}, // 유저 추이 보여주기 위한 것
-    interviewTipList: {}, // 면접 팁?
-    feedbackList: {}, // 피드백 리스트
+    //SettingRoom
     cameraList: {}, // 카메라 리스트?
     micList: {}, // 마이크 리스트?
-    subscriberList: {}, // 방장 권한 위임 시 목록 나타내 주기 위해서
+    userCLList: {}, // 유저의 자소서 리스트
+
+    //WaitingRoom
+    //AuthorityPassModal
+    participantList: {}, // 방장 권한 위임 시 목록 나타내 주기 위해서
+
+    //ErView
+    interviewTipList: {}, // 면접 팁
+    studyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
+
+    //ErView, FeedbackRoom, ReplayView
+    fbList: [], // 피드백 리스트
   },
   getters: {
-    getCoverLetterList(state) {
-      return state.coverLetterList
-    },
-    getUserTrendInfo(state){
-      return state.userTrendInfo
-    },
-    getInterviewTipList(state){
-      return state.interviewTipList
-    },
-    getFeedbackList(state){
-      return state.feedbackList
-    },
-    getCameraList(state){
-      return state.cameraList
-    },
-    getMicList(state){
-      return state.micList
-    },
-    getSubscriberList(state){
-      return state.subscriberList
-    },
+    //SettingRoom
+    getUserCLList(state) {return state.userCLList},
+    getCameraList(state){return state.cameraList},
+    getMicList(state){return state.micList},
+    
+    //WaitingRoom
+    //AuthorityPassModal
+    getParticipantList(state){return state.participantList},
+
+    //ErView
+    getInterviewTipList(state){return state.interviewTipList},
+    getStudyRoomCL(state){return state.studyRoomCL},
+
+    //ErView, FeedbackRoom, ReplayView
+    getFBList(state){return state.fbList},
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    //SettingRoom
+
+    //WaitingRoom
+    GET_PARTICIPANT_LIST(state, participants){
+      state.participantList = participants
+    }
+    //EEView
+
+    //ERView
+
+    //FeedbackRoom
+  },
+  actions: {
+    //SettingRoom
+
+    //WaitingRoom
+    getParticipantList({commit}){
+      axios
+        .get('url')
+        .then((res)=> {
+          commit('GET_PARTICIPANT_LIST', res.data.participants)
+        })
+        .catch((e)=>{
+          console.error(e.data)
+        })
+    }
+    //EEView
+
+    //ERView
+
+    //FeedbackRoom
+  },
 });
