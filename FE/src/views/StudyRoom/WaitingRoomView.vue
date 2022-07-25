@@ -1,6 +1,6 @@
 // 이병헌
 <template>
-  <div class="SettingRoomView"></div>  
+  <div class="WaitingRoomView"></div>  
 </template>
 
 <script>

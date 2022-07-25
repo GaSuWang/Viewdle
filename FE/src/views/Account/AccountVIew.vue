@@ -1,6 +1,6 @@
-// 이병헌
+// 임현탁
 <template>
-  <div class="FeedbackView"></div>
+  <div id="AccountView"></div>
 </template>
 
 <script>
