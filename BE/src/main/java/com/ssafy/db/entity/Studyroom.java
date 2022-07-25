@@ -63,12 +63,11 @@ public class Studyroom {
     @Column(name = "room_full_YN")
     String roomFullYN;
 
-    @Column(name = "user_seq")
-    int UserSeq;
+    @OneToMany(mappedBy = "studyroom")
+    List<Participant> participants = new ArrayList<>();
 
-    @Column(name = "common_seq")
-    int commonSeq;
+    @ManyToOne
+    @JoinColumn(name = "user_seq")
+    User user;
 
-//    @OneToMany(mappedBy = "Studyroom")
-//    private List<Participant> Participants = new ArrayList<>();
 }

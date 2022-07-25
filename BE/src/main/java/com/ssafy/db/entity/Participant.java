@@ -25,16 +25,16 @@ public class Participant {
 
     @Column(name = "participant_enter_YN")
     String participantEnterYN;
+
     @Column(name = "room_owner_YN")
     String roomOwnerYN;
 
-//    @JoinColumn(name = "user_seq")
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    User user;
-//
-//    @JoinColumn(name = "room_seq")
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    Studyroom studyroom;
+    @ManyToOne
+    @JoinColumn(name = "user_seq")
+    User user;
 
+    @ManyToOne
+    @JoinColumn(name = "room_seq")
+    Studyroom studyroom;
 
 }
