@@ -49,12 +49,12 @@ repositories {
 group 'com.ssafy'
 version '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'
-
+//버전 바꾸고, 경로 바꾸고,
 node {
     download = true
-    version = '14.17.0'
+    version = '16.16.0'
     // Set the work directory where node_modules should be located
-    nodeModulesDir = file("${project.projectDir}/../frontend")
+    nodeModulesDir = file("${project.projectDir}/../FE")
 }
 
 configurations {
