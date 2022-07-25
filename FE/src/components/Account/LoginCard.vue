@@ -4,45 +4,45 @@
   <div class="container-fluid h-custom">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-md-9 col-lg-6 col-xl-5">
-        <img src="@/assets/images/anyimgs.png"
+        <img id="logoimg" src="@/assets/images/anyimgs.png"
           class="img-fluid" alt="Sample image">
       </div>
       <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
         <form>
           <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-            <p class="lead fw-normal mb-0 me-3">Sign in with</p>
+            <p class="lead fw-normal mb-0 me-3">구글 로그인 해</p>
 
-            <button type="button" class="btn btn-white btn-floating mx-1">
-              <img id="googlelogo" src="@/assets/images/Google__G__Logo.svg.png">
-            </button>
+            <section class="googlelogin">
+              <div v-on:click="GoogleLoginBtn"><img id="googlelogo" src="@/assets/images/Google__G__Logo.svg.png"></div>
+              <div id="my-signin2" style="display: none"></div>
+            </section>
           </div>
 
           <div class="divider d-flex align-items-center my-4">
-            <p class="text-center fw-bold mx-3 mb-0">Or</p>
+            <p class="text-center fw-bold mx-3 mb-0">or</p>
           </div>
 
-          <!-- Email input -->
+          <!-- 이메일 인풋 -->
           <div class="form-outline mb-4">
             <input type="email" id="form3Example3" class="form-control form-control-lg"
-              placeholder="Enter a valid email address" />
+              placeholder="Email address" />
           </div>
 
           <!-- Password input -->
           <div class="form-outline mb-3">
             <input type="password" id="form3Example4" class="form-control form-control-lg"
-              placeholder="Enter password" />
+              placeholder="Password" />
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
             <!-- Checkbox -->
-            <a href="pw" class="text-body">Forgot password?</a>
+            <a href="pw" class="text-body">비번 찾기</a>
           </div>
 
           <div class="text-center text-lg-start mt-4 pt-2">
             <button type="button" class="btn btn-primary btn-lg"
-              style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
-            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="signup"
-                class="link-danger">SignUp</a></p>
+              style="padding-left: 2.5rem; padding-right: 2.5rem;">로그인</button>
+            <a href="signup" class="link-danger">회원가입</a>
           </div>
 
         </form>
@@ -53,9 +53,50 @@
 </template>
 
 <script>
+export default {
+  name: "GoogleLoginView",
+  methods: {
+    GoogleLoginBtn:function(){
+      var self = this;
+
+      window.gapi.signin2.render('my-signin2', {
+        scope: 'profile email',
+        width: 240,
+        height: 50,
+        longtitle: true,
+        theme: 'dark',
+        onsuccess: this.GoogleLoginSuccess,
+        onfailure: this.GoogleLoginFailure,
+      });
+
+      setTimeout(function () {
+        if (!self.googleLoginCheck) {
+          const auth = window.gapi.auth2.getAuthInstance();
+          auth.isSignedIn.get();
+          document.querySelector('.abcRioButton').click();
+        }
+      }, 1500)
+
+    },
+    async GoogleLoginSuccess(googleUser) {
+      const googleEmail = googleUser.getBasicProfile().getEmail();
+      if (googleEmail !== 'undefined') {
+        console.log(googleEmail);
+      }
+    },
+    //구글 로그인 콜백함수 (실패)
+    GoogleLoginFailure(error) {
+      console.log(error);
+    },
+  }
+}
 </script>
 
 <style>
+#logoimg{
+  width: 500px;
+  height: 500px;
+}
 #googlelogo{
   color: white;
   width: 15px;
