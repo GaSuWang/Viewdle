@@ -38,11 +38,11 @@ const routes = [
     name: 'cl',
     component: () => import(/* webpackPrefetch:true */ '@/views/Lobby/CLManageView.vue')
   },
-  // {
-  //   path: '/setting-room',
-  //   name: 'setting-room',
-  //   component: () => import(/* webpackPrefetch:true */ '@/views/')
-  // },
+  {
+    path: '/setting-room',
+    name: 'setting-room',
+    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/SettingRoomView.vue')
+  },
   // {
   //   path: '/wating-room',
   //   name: 'wating-room',
