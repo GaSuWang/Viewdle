@@ -23,28 +23,27 @@
           </div>
 
           <!-- 이메일 인풋 -->
-          <div class="form-outline mb-4">
-            <input type="email" id="form3Example3" class="form-control form-control-lg"
-              placeholder="Email address" />
-          </div>
+          <form @submit.prevent="login(credentials)">
+            <div class="form-outline mb-4">
+              <input type="email" v-model="credentials.email" class="form-control form-control-lg"
+                placeholder="Email address" />
+            </div>
 
-          <!-- Password input -->
-          <div class="form-outline mb-3">
-            <input type="password" id="form3Example4" class="form-control form-control-lg"
-              placeholder="Password" />
-          </div>
+            <!-- Password input -->
+            <div class="form-outline mb-3">
+              <input type="password" v-model="credentials.password" class="form-control form-control-lg"
+                placeholder="Password" />
+            </div>
 
+            <div class="text-center text-lg-start mt-4 pt-2">
+              <button type="button" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">로그인</button>
+            </div>
+          </form>
           <div class="d-flex justify-content-between align-items-center">
             <!-- Checkbox -->
             <a href="pw" class="text-body">비번 찾기</a>
-          </div>
-
-          <div class="text-center text-lg-start mt-4 pt-2">
-            <button type="button" class="btn btn-primary btn-lg"
-              style="padding-left: 2.5rem; padding-right: 2.5rem;">로그인</button>
             <a href="signup" class="link-danger">회원가입</a>
           </div>
-
         </form>
       </div>
     </div>
@@ -53,43 +52,63 @@
 </template>
 
 <script>
+import { reactive, computed } from 'vue'
+import { useStore } from 'vuex'
+
 export default {
-  name: "GoogleLoginView",
-  methods: {
-    GoogleLoginBtn:function(){
-      var self = this;
+  setup () {
+    const credentials = reactive({
+      email: '',
+      password: '',
+    })
 
-      window.gapi.signin2.render('my-signin2', {
-        scope: 'profile email',
-        width: 240,
-        height: 50,
-        longtitle: true,
-        theme: 'dark',
-        onsuccess: this.GoogleLoginSuccess,
-        onfailure: this.GoogleLoginFailure,
-      });
+    const store = useStore()
 
-      setTimeout(function () {
-        if (!self.googleLoginCheck) {
-          const auth = window.gapi.auth2.getAuthInstance();
-          auth.isSignedIn.get();
-          document.querySelector('.abcRioButton').click();
-        }
-      }, 1500)
+    const login = computed(() => store.actions.login)
 
-    },
-    async GoogleLoginSuccess(googleUser) {
-      const googleEmail = googleUser.getBasicProfile().getEmail();
-      if (googleEmail !== 'undefined') {
-        console.log(googleEmail);
-      }
-    },
-    //구글 로그인 콜백함수 (실패)
-    GoogleLoginFailure(error) {
-      console.log(error);
-    },
+        
+    return {
+      login, credentials
+    }
   }
 }
+
+// name: "GoogleLoginView",
+//   methods: {
+//     GoogleLoginBtn:function(){
+//       var self = this;
+
+//       window.gapi.signin2.render('my-signin2', {
+//         scope: 'profile email',
+//         width: 240,
+//         height: 50,
+//         longtitle: true,
+//         theme: 'dark',
+//         onsuccess: this.GoogleLoginSuccess,
+//         onfailure: this.GoogleLoginFailure,
+//       });
+
+//       setTimeout(function () {
+//         if (!self.googleLoginCheck) {
+//           const auth = window.gapi.auth2.getAuthInstance();
+//           auth.isSignedIn.get();
+//           document.querySelector('.abcRioButton').click();
+//         }
+//       }, 1500)
+
+//     },
+//     async GoogleLoginSuccess(googleUser) {
+//       const googleEmail = googleUser.getBasicProfile().getEmail();
+//       if (googleEmail !== 'undefined') {
+//         console.log(googleEmail);
+//       }
+//     },
+//     //구글 로그인 콜백함수 (실패)
+//     GoogleLoginFailure(error) {
+//       console.log(error);
+//     },
+//   }
+
 </script>
 
 <style>
