@@ -43,11 +43,11 @@ const routes = [
     name: 'setting-room',
     component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/SettingRoomView.vue')
   },
-  // {
-  //   path: '/wating-room',
-  //   name: 'wating-room',
-  //   component: () => import(/* webpackPrefetch:true */ '@/views/')
-  // },
+  {
+    path: '/waiting-room',
+    name: 'watiing-room',
+    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/WaitingRoomView.vue')
+  },
   // {
   //   path: '/ee-room',
   //   name: 'ee-room',
