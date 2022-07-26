@@ -93,7 +93,7 @@ setup() {
 .ERButtonFooter {
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .ERButtonArea > button{
