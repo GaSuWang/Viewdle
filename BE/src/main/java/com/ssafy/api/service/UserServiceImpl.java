@@ -1,8 +1,6 @@
 package com.ssafy.api.service;
 
-import com.ssafy.common.exception.AlreadyExistEmailException;
-import com.ssafy.common.exception.NotExistEmailException;
-import com.ssafy.common.exception.NotMatchPasswordException;
+import com.ssafy.common.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,9 +42,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUserByUserId(String userId) {
+	public User getUserByUserEmail(String userEmail) {
 		// 디비에 유저 정보 조회 (userId 를 통한 조회).
-		User user = userRepositorySupport.findUserByUserId(userId).get();
+		User user = userRepository.findByUserEmail(userEmail);
 		return user;
 	}
 
@@ -62,5 +60,35 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	@Override
+	public User getUserByUserSeq(int userSeq) {
+		User user = userRepository.findByUserSeq(userSeq);
+
+		if (user == null) {
+			throw new NotExistUserException();
+		}
+		return user;
+	}
+
+	@Override
+	public void changePwdUser(String email, String originPassword, String password, String password2) {
+		if(!password.equals(password2)){
+			throw new NotMatchPasswordException();
+		}
+		else if (password.equals(originPassword)) {
+			System.out.println(passwordEncoder.encode(password));
+			System.out.println(originPassword);
+			throw new SamePasswordException();
+		}
+
+		User user = userRepository.findByUserEmail(email);
+		user.setUserPassword(password);
+		userRepository.save(user);
+	}
+
+	@Override
+	public void deleteUser(User user) {
+		userRepository.delete(user);
+	}
 
 }
