@@ -149,7 +149,28 @@ export const Test = createStore({
         data: credentials.userEmial
       })
         .then(res => {
-          alert('가입 가능 한 이메일입니다.')
+          alert(res + '! 가입 가능 한 이메일입니다.')
+        })
+        .catch(err => {
+          console.error(err.response)
+          alert('이미 가입된 이메일입니다.')
+        })
+    },
+
+    findPW(credentials) {
+
+      axios({
+        url: '',  // 비밀번호찾기 api
+        method: 'post',
+        data: credentials.userEmial
+      })
+        .then(res => {
+          alert('가입한 이메일로 비밀번호가 전송 되었습니다.')
+          //기능구현 더해야됨
+          //
+          //
+          //
+          //
         })
         .catch(err => {
           console.error(err.response)

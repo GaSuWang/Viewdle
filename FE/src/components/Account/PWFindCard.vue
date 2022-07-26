@@ -9,15 +9,17 @@
       </div>
       <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
         <div id="PWFindCard">
-    <!-- 이메일 입력란 -->
-    <!-- 버튼클릭시 이메일로 임의의 비밀번호 발송 or 원래비밀번호 발송 -->
-    <!-- 취소버튼 -->
-    <!-- 확인되지 않은 이메일 일 시 알람 -->
+        <!-- 이메일 입력란 -->
+        <!-- 버튼클릭시 이메일로 임의의 비밀번호 발송 or 원래비밀번호 발송 -->
+        <!-- 취소버튼 -->
+        <!-- 확인되지 않은 이메일 일 시 알람 -->
         <!-- 이메일 인풋 -->
-          <div class="form-outline mb-4">
-            <input type="email" id="form3Example3" class="form-control form-control-lg" placeholder="Email address" />
-            <button type="button" class="btn btn-primary btn-lg">찾기</button>
-          </div>
+          <form @submit.prevent="findPW(credentials)">
+            <div class="form-outline mb-4">
+              <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
+              <button type="button" class="btn btn-primary btn-lg">찾기</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -27,6 +29,26 @@
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { reactive } from 'vue'
+export default {
+  name: 'PWFindCard',
+  setup () {
+    const credentials = reactive({
+      userEmail: '',
+    })
+
+    const store = useStore()
+    function findPW(){
+          store.dispacth('rhtModule/findPW', credentials)
+    }
+
+      
+    return {
+      findPW, credentials
+    }
+  }
+} 
 </script>
 
 <style>
