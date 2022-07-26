@@ -16,12 +16,12 @@
           </div>
           <!-- 이메일 인풋 -->
 
-          <!-- <form @submit.prevent="checkEmail(credentials)"> -->
+          <form @submit.prevent="checkEmail(credentials)">
             <div class="form-outline mb-4">
               <input type="email" v-model="credentials.userEmail" id="userEmail" class="form-control form-control-lg" placeholder="Email address" />
               <button class="btn btn-primary btn-lg"> 중복 확인 </button>
             </div>
-          <!-- </form> -->
+          </form>
 
           <!-- 비번 인풋 -->
           <div class="form-outline mb-3">
@@ -62,9 +62,9 @@ export default {
           store.dispacth('rhtModule/signup', credentials)
     }
 
-    // function checkEmail(){
-    //   store.dispatch('rhtModule/checkEmail', credentials)
-    // }
+    function checkEmail(){
+      store.dispatch('rhtModule/checkEmail', credentials)
+    }
       
     return {
       signup, checkEmail, credentials
