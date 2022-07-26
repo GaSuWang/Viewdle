@@ -1,9 +1,6 @@
 import axios from "axios";
-import { createStore } from "vuex";
-import router from '../router'
 
-export const Test = createStore({
-  state: {
+const state= {
     // 회원가입
     token: localStorage.getItem('token') || '',
     UserList:{},
@@ -21,10 +18,10 @@ export const Test = createStore({
     // 녹화된 영상과 피드백 보기위함
     FeedbackList:{},
     Replayvideo:{},
-  },
+  }
 
 
-  getters: {
+const getters = {
     isLoggedIn(state){return !!state.isLoggedIn},
     UserList(state){return state.UserList},
     ParticipantList(state){return state.ParticipantList},
@@ -35,20 +32,20 @@ export const Test = createStore({
     FeedbackList(state){return state.FeedbackList},
     ReplayList(state){return state.ReplayList},
     authHeader(state){return ({"accessToken": `"${state.token}"`})}
-  },
+  }
 
 
-  mutations: {
+const mutations= {
     SET_TOKEN(state, token){
       state.token = token
     },
     SET_USER_LIST(state, user){
       state.UserList = user
     }
-  },
+  }
 
 
-  actions: {
+const actions= {
     saveToken({ commit }, token){
       commit('SET_TOKEN', token)
     },
@@ -201,5 +198,13 @@ export const Test = createStore({
           alert('이미 가입된 이메일입니다.')
         })
     },
-}});
+};
 
+
+export default {
+  namespaced: true,
+  state,
+  getters,
+  actions,
+  mutations
+}
