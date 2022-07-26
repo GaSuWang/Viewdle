@@ -1,8 +1,6 @@
 import axios from "axios";
-import { createStore } from "vuex";
 
-export const Test = createStore({
-  state: {
+const state = {
     //SettingRoom
     cameraList: {}, // 카메라 리스트?
     micList: {}, // 마이크 리스트?
@@ -10,7 +8,7 @@ export const Test = createStore({
 
     //WaitingRoom
     //AuthorityPassModal
-    participantList: {}, // 방장 권한 위임 시 목록 나타내 주기 위해서
+    participantList: ['철수','영희','알파카'], // 방장 권한 위임 시 목록 나타내 주기 위해서
 
     //ErView
     interviewTipList: {}, // 면접 팁
@@ -18,8 +16,8 @@ export const Test = createStore({
 
     //ErView, FeedbackRoom, ReplayView
     fbList: [], // 피드백 리스트
-  },
-  getters: {
+}
+const getters = {
     //SettingRoom
     getUserCLList(state) {return state.userCLList},
     getCameraList(state){return state.cameraList},
@@ -35,8 +33,8 @@ export const Test = createStore({
 
     //ErView, FeedbackRoom, ReplayView
     getFBList(state){return state.fbList},
-  },
-  mutations: {
+  }
+const mutations = {
     //SettingRoom
 
     //WaitingRoom
@@ -48,8 +46,8 @@ export const Test = createStore({
     //ERView
 
     //FeedbackRoom
-  },
-  actions: {
+  }
+const actions = {
     //SettingRoom
 
     //WaitingRoom
@@ -68,5 +66,12 @@ export const Test = createStore({
     //ERView
 
     //FeedbackRoom
-  },
-});
+  }
+
+  export default {
+    namespaced: true,
+    state,
+    getters,
+    actions,
+    mutations
+  }
