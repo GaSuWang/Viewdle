@@ -239,7 +239,7 @@ const actions= {
         data: confirmPW
       })
       .then(() => {
-        alert('회원탈퇴 버튼이 생성되었습니다.')
+        alert('비밀번호를 확인되었습니다.')
         commit('SET_PW_CODE', true)
       })
       .catch(err => {
