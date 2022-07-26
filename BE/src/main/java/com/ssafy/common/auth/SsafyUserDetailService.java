@@ -20,7 +20,7 @@ public class SsafyUserDetailService implements UserDetailsService{
 	
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    		User user = userService.getUserByUserId(username);
+    		User user = userService.getUserByUserEmail(username);
     		if(user != null) {
     			VudleUserDetails userDetails = new VudleUserDetails(user);
     			return userDetails;
