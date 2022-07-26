@@ -14,10 +14,16 @@
         <!-- 취소버튼 -->
         <!-- 확인되지 않은 이메일 일 시 알람 -->
         <!-- 이메일 인풋 -->
-          <form @submit.prevent="findPW(credentials)">
+          <form @submit.prevent="getEmailCode(credentials)">
             <div class="form-outline mb-4">
               <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
-              <button class="btn btn-primary btn-lg">찾기</button>
+              <button onclick=myFunction() class="btn btn-primary btn-lg">인증코드받기</button>
+            </div>
+          </form>
+          <form @submit.prevent="getNewPW(emailcode)" id="myDIV">
+            <div class="form-outline mb-4">
+              <input type="text" v-model="emailcode.emailcode" class="form-control form-control-lg" placeholder="Email Code" />
+              <button class="btn btn-primary btn-lg">새 PW 받기</button>
             </div>
           </form>
         </div>
@@ -37,14 +43,23 @@ export default {
     const credentials = reactive({
       userEmail: '',
     })
+    const emailcode = reactive({
+      emailcode: ''
+    })
 
     const store = useStore()
-    function findPW(){
-      store.dispatch('rhtModule/findPW', credentials)
+    function getEmailCode(){
+      store.dispatch('rhtModule/getEmailCode', credentials)
     }
-      
+
+        
+    function getNewPW(){
+      store.dispatch('rhtModule/getNewPW', emailcode)
+    }
+     
+
     return {
-      findPW, credentials
+      getEmailCode, getNewPW, credentials, emailcode
     }
   }
 } 

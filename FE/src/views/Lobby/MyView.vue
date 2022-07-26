@@ -18,11 +18,38 @@
           <img src="@/assets/images/anyimgs.png">
           <p class="card-text">이름 : {{ tests.name }}</p>
           <p class="card-text">email : {{ tests.email }}</p>
-          <button class="btn btn-primary">정보수정</button>
-          <button class="btn btn-danger">회원탈퇴</button>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
+          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
         </div>
       </div>
     </div>
+    <!-- 회원탈퇴전 비밀번호 모달 -->
+          <div class="modal fade" id="deleteconfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form @submit.prevent="confirmPW(credentials)" id="myDIV">
+                  <div class="modal-body">
+                    <div class="form-outline mb-4">
+                      <input type="password" v-model="credentials.confirmPW" class="form-control form-control-lg" placeholder="Password Confirm" />
+                    </div>
+                  </div>
+                  <button class="btn btn-primary">비번확인하기</button>
+                </form>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <form @submit.prevent="deleteID()">
+                    <div v-if="pwcode != false">
+                      <button class="btn btn-primary">회원탈퇴하기</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>           
     <NavBar/>
 
     <!-- <div id="my-page">
@@ -34,13 +61,16 @@
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
 import { useStore } from 'vuex'
-import { computed } from "vue";
+import { computed, reactive } from "vue";
 export default {
   components:{
     NavBar
   },
   name: "PWUpdateModal",
   setup() {
+    const credentials = reactive({
+      password: '',
+    })
     const store = useStore();
     const tests = computed(
       () => store.state.rhtModule.test
@@ -48,8 +78,17 @@ export default {
     const userLists = computed(
       () => store.state.rhtModule.userList
     );
+    const pwcode = computed(
+      () => store.state.rhtModule.pwcode
+    )
+    function confirmPW(){
+      store.dispatch('rhtModule/confirmPW', credentials)
+    }
+    function deleteID(){
+      store.dispatch('rhtModule/deleteID', credentials)
+    }
     return {
-      tests, userLists
+      tests, userLists, confirmPW, credentials, pwcode, deleteID
     };
   },
 };
@@ -60,6 +99,10 @@ export default {
   position: fixed;
   left: 400px;
   top: 50px;
+}
+.deleteconfirm{
+  position: absolute;
+  z-index: 9998;
 }
 </style>
 

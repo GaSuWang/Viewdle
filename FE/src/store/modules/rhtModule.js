@@ -6,6 +6,8 @@ const state= {
     token: localStorage.getItem('token') || '',
     UserList:{},
     isLoggedIn: false,
+    emailcode:{},
+    pwcode: false,
     // 풀방여부, 참여시간
     ParticipantList:{},
     // 썸네일 따오기
@@ -31,6 +33,8 @@ const state= {
 const getters = {
     isLoggedIn(state){return !!state.isLoggedIn},
     UserList(state){return state.UserList},
+    Emailcode(state){return state.emailcode},
+    pwCode(state){return state.pwcode},
     ParticipantList(state){return state.ParticipantList},
     ThumnailList(state){return state.ThumnailList},
     BadgeList(state){return state.BadgeList},
@@ -48,6 +52,12 @@ const mutations= {
     },
     SET_USER_LIST(state, user){
       state.UserList = user
+    },
+    SET_EMAIL_CODE(state, emailcode){
+      state.emailcode = emailcode
+    },
+    SET_PW_CODE(state, pwcode){
+      state.pwcode = pwcode
     }
   }
 
@@ -67,7 +77,6 @@ const actions= {
     },
     
     login({ dispatch }, credentials) {
-      console.log("제발 나와라")
       /* 
       POST: 사용자 입력정보를 login URL로 보내기
         성공하면
@@ -77,6 +86,7 @@ const actions= {
         실패하면
           에러 메시지 표시
       */
+      console.log("로그인아 안녕?")
       axios({
         url: '',  // 로그인 api
         method: 'post',
@@ -103,9 +113,7 @@ const actions= {
         실패하면
           에러 메시지 표시
       */
-      console.log("제발 나와라")
-      console.log("제발 나와라")
-      console.log("제발 나와라")
+      console.log("회원가입아 안녕?")
       axios({
         url: '', //회원가입 api로
         method: 'post',
@@ -132,8 +140,7 @@ const actions= {
         실패하면
           에러 메시지 표시
       */
-        console.log("제발 나와라")
-        console.log("제발 나와라")
+      console.log("로그아웃아 안녕?")
       axios({
         url: '', //logout api로 
         method: 'post',
@@ -176,17 +183,14 @@ const actions= {
     },
 
     checkEmail(credentials) {
-      console.log("제발 나와라")
-      console.log("제발 나와라") 
-      console.log("제발 나와라")
-      console.log("제발 나와라") 
+    console.log("중복확인아 안녕?")
       axios({
         url: '',  // 이메일확인 api
         method: 'get',
         data: credentials.userEmial
       })
-        .then(res => {
-          alert(res + '! 가입 가능 한 이메일입니다.')
+        .then(() => {
+          alert('! 가입 가능 한 이메일입니다.')
         })
         .catch(err => {
           console.error(err.response)
@@ -194,54 +198,72 @@ const actions= {
         })
     },
 
-    findPW(credentials) {
-      console.log("제발 나와라")
-      console.log("제발 나와라")
-      console.log("제발 나와라")
-      console.log("제발 나와라")
-      console.log("제발 나와라")
+    getEmailCode({commit}, credentials) {
+        console.log("코드보내기야 안녕?")
+        axios({
+          url: '',  // 비밀번호찾기 api
+          method: 'post',
+          data: credentials.userEmail
+        })
+          .then(res => {
+            alert('가입한 이메일로 인증코드가 전송 되었습니다.')
+            commit('SET_EMAIL_CODE', res.data)
+          })
+          .catch(err => {
+            console.error(err.response)
+            alert('가입된 이메일이 아닙니다.')
+          })
+        
+    },
+    getNewPW(emailcode) {
+      console.log("새로운비번받기야 안녕?")
       axios({
-        url: '',  // 비밀번호찾기 api
+        url: '',  // 인증번호 api
         method: 'post',
-        data: credentials.userEmial
+        data: emailcode.emailcode
       })
-        .then(res => {
-          alert(res + '가입한 이메일로 비밀번호가 전송 되었습니다.')
-          //기능구현 더해야됨
-          //
-          //
-          //
-          //
+        .then(() => {
+          alert('새 비밀번호를 전송하였습니다. 이메일을 확인하세요.')
+          router.push({ name: 'Account' })
         })
         .catch(err => {
           console.error(err.response)
-          alert('가입된 이메일이 아닙니다.')
+          alert('인증번호를 확인하세요.')
         })
     },
-    // findPW(credentials) {
-    //   console.log("제발 나와라")
-    //   console.log("제발 나와라")
-    //   console.log("제발 나와라")
-    //   console.log("제발 나와라")
-    //   console.log("제발 나와라")
-    //   axios({
-    //     url: '',  // 비밀번호찾기 api
-    //     method: 'post',
-    //     data: credentials.userEmial
-    //   })
-    //     .then(res => {
-    //       alert(res + '가입한 이메일로 비밀번호가 전송 되었습니다.')
-    //       //기능구현 더해야됨
-    //       //
-    //       //
-    //       //
-    //       //
-    //     })
-    //     .catch(err => {
-    //       console.error(err.response)
-    //       alert('가입된 이메일이 아닙니다.')
-    //     })
-    // },
+    confirmPW({commit}, confirmPW) {
+      console.log("비밀번호 확인아 안녕?")
+      axios({
+        url:'', // 비밀번호 컨펌 api 
+        method:'post',
+        data: confirmPW
+      })
+      .then(() => {
+        alert('회원탈퇴 버튼이 생성되었습니다.')
+        commit('SET_PW_CODE', true)
+      })
+      .catch(err => {
+        console.error(err.response)
+        commit('SET_PW_CODE', true)
+        alert('비밀번호를 확인하세요.')
+        
+      })
+    },
+    deleteID() {
+      console.log("회원탈퇴야 안녕?")
+      axios({
+        url:'', // 회원탈퇴 api 
+        method:'delete',
+      })
+      .then(() => {
+        alert('정상적으로 회원탈퇴 되었습니다.')
+        router.push({ name: 'Account' })
+      })
+      .catch(err => {
+        console.error(err.response)
+        alert('비밀번호를 확인하세요.')
+      })
+    }
 };
 
 
