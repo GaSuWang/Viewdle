@@ -114,6 +114,30 @@ export const Test = createStore({
           console.error(err.response.data)
         })
     },
+    logout({ getters, dispatch }) {
+      /* 
+      POST: token을 logout URL로 보내기
+        성공하면
+          토큰 삭제
+          사용자 알람
+          LoginView로 이동
+        실패하면
+          에러 메시지 표시
+      */
+      axios({
+        url: '', //logout api로 
+        method: 'post',
+        headers: getters.authHeader,
+      })
+        .then(() => {
+          dispatch('removeToken')
+          alert('성공적으로 logout!')
+          router.push({ name: 'Account' })
+        })
+        .catch(err => {
+          console.error(err.response)
+        })
+    },
 
     fetchCurrentUser({ commit, getters, dispatch }) {
       /*

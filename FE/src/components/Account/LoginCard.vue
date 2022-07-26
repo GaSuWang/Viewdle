@@ -7,7 +7,7 @@
         <img id="logoimg" src="@/assets/images/anyimgs.png"
           class="img-fluid" alt="Sample image">
       </div>
-      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+      <div class="card" style="width: 25%;">
         <form>
           <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
             <p class="lead fw-normal mb-0 me-3">구글 로그인 해</p>
@@ -30,16 +30,16 @@
             </div>
 
             <!-- Password input -->
-            <div class="form-outline mb-3">
+            <div class="form-outline mb-4">
               <input type="password" v-model="credentials.password" class="form-control form-control-lg"
                 placeholder="Password" />
             </div>
 
-            <div class="text-center text-lg-start mt-4 pt-2">
+            <div class="">
               <button type="button" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">로그인</button>
             </div>
           </form>
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="">
             <!-- Checkbox -->
             <a href="pw" class="text-body">비번 찾기</a>
             <a href="signup" class="link-danger">회원가입</a>
