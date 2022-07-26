@@ -128,6 +128,7 @@ const actions= {
           const token = res.data.key
           dispatch('saveToken', token)
           dispatch('fetchCurrentUser')
+          alert('성공적으로 회원가입!')
           router.push({ name: 'main' })
 
         })
@@ -244,12 +245,12 @@ const actions= {
         data: confirmPW
       })
       .then(() => {
-        alert('비밀번호를 확인되었습니다.')
+        alert('진심 탈퇴 할거여?.')
         commit('SET_PW_CODE', true)
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE', false)
+        commit('SET_PW_CODE', true)
         alert('비밀번호를 확인하세요.')
         
       })
