@@ -39,7 +39,7 @@
 <script>
 // import { ref } from "vue";
 // import { useStore } from "vuex";
-import { OpenVidu } from 'openvidu-browser';
+// import { OpenVidu } from 'openvidu-browser';
 export default {
   name: "WaitingRoomView",
   setup() {
@@ -57,7 +57,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .WaitingRoomView {
   position: absolute;
   width: 80vw;

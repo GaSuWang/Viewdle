@@ -78,16 +78,16 @@ const actions = {
   //SettingRoom
 
   //WaitingRoom
-  getParticipantList({ commit }) {
-    axios
-      .get("url")
-      .then((res) => {
-        commit("GET_PARTICIPANT_LIST", res.data.participants);
-      })
-      .catch((e) => {
-        console.error(e.data);
-      });
-  },
+  // getParticipantList({ commit }) {
+  //   axios
+  //     .get("url")
+  //     .then((res) => {
+  //       commit("GET_PARTICIPANT_LIST", res.data.participants);
+  //     })
+  //     .catch((e) => {
+  //       console.error(e.data);
+  //     });
+  // },
   //EEView
 
   //ERView
