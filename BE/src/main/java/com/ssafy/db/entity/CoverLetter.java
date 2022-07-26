@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 @Setter
 //@builder 사용을 위한 기본생성자 접근 제한
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "coverletter")
 public class CoverLetter {
     /*
     *   `coverletter_seq` INT NOT NULL AUTO_INCREMENT,
@@ -39,7 +40,7 @@ public class CoverLetter {
     @Column(name="coverletter_title")
     private String coverLetterTitle;
 
-    @Column(name="coverletter_content")
+    @Column(name="coverletter_content",columnDefinition = "TEXT")
     private String coverLetterContent;
 
     @Column(name="coverletter_reg_time")
