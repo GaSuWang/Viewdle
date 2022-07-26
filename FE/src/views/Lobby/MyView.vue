@@ -23,6 +23,12 @@
         </div>
       </div>
     </div>
+
+
+
+
+
+
     <!-- 회원탈퇴전 비밀번호 모달 -->
           <div class="modal fade" id="deleteconfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -34,7 +40,7 @@
                 <form @submit.prevent="confirmPW(credentials)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="credentials.confirmPW" class="form-control form-control-lg" placeholder="Password Confirm" />
+                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="Password Confirm" />
                     </div>
                   </div>
                   <button class="btn btn-primary">비번확인하기</button>
@@ -49,7 +55,65 @@
                 </div>
               </div>
             </div>
-          </div>           
+          </div>    
+
+
+
+
+
+
+      <!-- 수정 전 확인 모달  -->
+      <div class="modal fade" id="editconfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form @submit.prevent="confirmPWforEdit(credentials)" id="myDIV">
+                  <div class="modal-body">
+                    <div class="form-outline mb-4">
+                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="Password Confirm" />
+                    </div>
+                  </div>
+                  <button class="btn btn-primary">비번확인하기</button>
+                </form>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div v-if="pwcodeforedit != false">
+                      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editmodal">비번수정모달</button>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>  
+
+
+
+
+
+
+
+      <!-- 수정 모달 -->
+         <div class="modal fade" id="editmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                  <div class="modal-body">
+                    <div class="form-outline mb-4">
+                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="New Password Confirm" />
+                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="New Password Confirm" />
+                    </div>
+                  </div>
+                  <button class="btn btn-primary">비번바꾸기</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>  
+
     <NavBar/>
 
     <!-- <div id="my-page">
@@ -81,14 +145,20 @@ export default {
     const pwcode = computed(
       () => store.state.rhtModule.pwcode
     )
+    const pwcodeforedit = computed(
+      () => store.state.rhtModule.pwcodeforedit
+    )
     function confirmPW(){
       store.dispatch('rhtModule/confirmPW', credentials)
+    }
+    function confirmPWforEdit(){
+      store.dispatch('rhtModule/confirmPWforEdit', credentials)
     }
     function deleteID(){
       store.dispatch('rhtModule/deleteID', credentials)
     }
     return {
-      tests, userLists, confirmPW, credentials, pwcode, deleteID
+      tests, userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit
     };
   },
 };

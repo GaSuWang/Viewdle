@@ -8,6 +8,7 @@ const state= {
     isLoggedIn: false,
     emailcode:{},
     pwcode: false,
+    pwcodeforedit: false,
     // 풀방여부, 참여시간
     ParticipantList:{},
     // 썸네일 따오기
@@ -35,6 +36,7 @@ const getters = {
     UserList(state){return state.UserList},
     Emailcode(state){return state.emailcode},
     pwCode(state){return state.pwcode},
+    pwCodeForEdit(state){return state.pwcodeforedit},
     ParticipantList(state){return state.ParticipantList},
     ThumnailList(state){return state.ThumnailList},
     BadgeList(state){return state.BadgeList},
@@ -58,6 +60,9 @@ const mutations= {
     },
     SET_PW_CODE(state, pwcode){
       state.pwcode = pwcode
+    },
+    SET_PW_CODE_FOR_EDIT(state, pwcodeforedit){
+      state.pwcodeforedit = pwcodeforedit
     }
   }
 
@@ -244,7 +249,25 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE', true)
+        commit('SET_PW_CODE', false)
+        alert('비밀번호를 확인하세요.')
+        
+      })
+    },
+    confirmPWforEdit({commit}, confirmPW) {
+      console.log("비밀번호 확인아 안녕?")
+      axios({
+        url:'', // 비밀번호 컨펌 api 
+        method:'post',
+        data: confirmPW
+      })
+      .then(() => {
+        alert('비밀번호를 확인되었습니다.')
+        commit('SET_PW_CODE_FOR_EDIT', true)
+      })
+      .catch(err => {
+        console.error(err.response)
+        commit('SET_PW_CODE_FOR_EDIT', true)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -261,7 +284,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        alert('비밀번호를 확인하세요.')
+        alert('임시의 도피처.')
       })
     }
 };
