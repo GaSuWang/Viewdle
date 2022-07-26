@@ -39,6 +39,7 @@
 <script>
 // import { ref } from "vue";
 // import { useStore } from "vuex";
+import { OpenVidu } from 'openvidu-browser';
 export default {
   name: "WaitingRoomView",
   setup() {

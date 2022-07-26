@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const state = {
   //SettingRoom
   cameraList: {}, // 카메라 리스트?
@@ -16,6 +14,21 @@ const state = {
 
   //ErView, FeedbackRoom, ReplayView
   fbList: [], // 피드백 리스트
+
+  // openvidu
+  // OpenVidu objects
+  OV: undefined,
+  session: undefined,
+  publisher: undefined, // Local
+  subscribers: [], // Remotes
+
+  // Join form
+  mySessionId: "SessionA",
+  myUserName: "Participant" + Math.floor(Math.random() * 100),
+
+  // Main video of the page, will be 'publisher' or one of the 'subscribers',
+  // updated by click event in UserVideoComponent children
+  mainStreamManager: undefined,
 };
 const getters = {
   //SettingRoom

@@ -1,66 +1,84 @@
 import axios from "axios";
+import router from "@/router";
 
-const state= {
-    // 회원가입
-    token: localStorage.getItem('token') || '',
-    UserList:{},
-    isLoggedIn: false,
-    // 풀방여부, 참여시간
-    ParticipantList:{},
-    // 썸네일 따오기
-    ThumnailList:{},
-    // 뱃지 관리
-    BadgeList:{},
-    // 자소서관리
-    CoverLetterList:{},
-    // 방 만들기, 
-    StudyroomList:{},
-    // 녹화된 영상과 피드백 보기위함
-    FeedbackList:{},
-    Replayvideo:{},
-  }
-
+const state = {
+  // 회원가입
+  token: localStorage.getItem("token") || "",
+  UserList: {},
+  isLoggedIn: false,
+  // 풀방여부, 참여시간
+  ParticipantList: {},
+  // 썸네일 따오기
+  ThumnailList: {},
+  // 뱃지 관리
+  BadgeList: {},
+  // 자소서관리
+  CoverLetterList: {},
+  // 방 만들기,
+  StudyroomList: {},
+  // 녹화된 영상과 피드백 보기위함
+  FeedbackList: {},
+  Replayvideo: {},
+};
 
 const getters = {
-    isLoggedIn(state){return !!state.isLoggedIn},
-    UserList(state){return state.UserList},
-    ParticipantList(state){return state.ParticipantList},
-    ThumnailList(state){return state.ThumnailList},
-    BadgeList(state){return state.BadgeList},
-    CoverLetterList(state){return state.CoverLetterList},
-    StudyroomList(state){return state.StudyroomList},
-    FeedbackList(state){return state.FeedbackList},
-    ReplayList(state){return state.ReplayList},
-    authHeader(state){return ({"accessToken": `"${state.token}"`})}
-  }
+  isLoggedIn(state) {
+    return !!state.isLoggedIn;
+  },
+  UserList(state) {
+    return state.UserList;
+  },
+  ParticipantList(state) {
+    return state.ParticipantList;
+  },
+  ThumnailList(state) {
+    return state.ThumnailList;
+  },
+  BadgeList(state) {
+    return state.BadgeList;
+  },
+  CoverLetterList(state) {
+    return state.CoverLetterList;
+  },
+  StudyroomList(state) {
+    return state.StudyroomList;
+  },
+  FeedbackList(state) {
+    return state.FeedbackList;
+  },
+  ReplayList(state) {
+    return state.ReplayList;
+  },
+  authHeader(state) {
+    return { accessToken: `"${state.token}"` };
+  },
+};
 
+const mutations = {
+  SET_TOKEN(state, token) {
+    state.token = token;
+  },
+  SET_USER_LIST(state, user) {
+    state.UserList = user;
+  },
+};
 
-const mutations= {
-    SET_TOKEN(state, token){
-      state.token = token
-    },
-    SET_USER_LIST(state, user){
-      state.UserList = user
-    }
-  }
+const actions = {
+  saveToken({ commit }, token) {
+    commit("SET_TOKEN", token);
+  },
 
-
-const actions= {
-    saveToken({ commit }, token){
-      commit('SET_TOKEN', token)
-    },
-
-    removeToken({ commit }) {
-      /* 
+  removeToken({ commit }) {
+    /* 
       state.token 삭제
       localStorage에 token 추가
       */
-      commit('SET_TOKEN', '')
-      localStorage.setItem('token', '')  // token 값 빈값 넣고 보내면, token delete 된 것
-    },
-    
-    login({ dispatch }, credentials) {
-      /* 
+    commit("SET_TOKEN", "");
+    localStorage.setItem("token", ""); // token 값 빈값 넣고 보내면, token delete 된 것
+  },
+
+  login({ dispatch }, credentials) {
+    /* 
       POST: 사용자 입력정보를 login URL로 보내기
         성공하면
           응답 토큰 저장
@@ -69,24 +87,24 @@ const actions= {
         실패하면
           에러 메시지 표시
       */
-      axios({
-        url: '',  // 로그인 api
-        method: 'post',
-        data: credentials
+    axios({
+      url: "", // 로그인 api
+      method: "post",
+      data: credentials,
+    })
+      .then((res) => {
+        const token = res.data.key;
+        dispatch("saveToken", token);
+        dispatch("fetchCurrentUser");
+        router.push({ name: "main" });
       })
-        .then(res => {
-          const token = res.data.key
-          dispatch('saveToken', token)
-          dispatch('fetchCurrentUser')
-          router.push({ name: 'main' })
-        })
-        .catch(err => {
-          console.error(err.response.data)
-        })
-    },
+      .catch((err) => {
+        console.error(err.response.data);
+      });
+  },
 
-    signup({ dispatch }, credentials) {
-      /* 
+  signup({ dispatch }, credentials) {
+    /* 
       POST: 사용자 입력정보를 signup URL로 보내기
         성공하면
           응답 토큰 저장
@@ -95,24 +113,23 @@ const actions= {
         실패하면
           에러 메시지 표시
       */
-      axios({
-        url: '', //회원가입 api로
-        method: 'post',
-        data: credentials
+    axios({
+      url: "", //회원가입 api로
+      method: "post",
+      data: credentials,
+    })
+      .then((res) => {
+        const token = res.data.key;
+        dispatch("saveToken", token);
+        dispatch("fetchCurrentUser");
+        router.push({ name: "main" });
       })
-        .then(res => {
-          const token = res.data.key
-          dispatch('saveToken', token)
-          dispatch('fetchCurrentUser')
-          router.push({ name: 'main' })
-
-        })
-        .catch(err => {
-          console.error(err.response.data)
-        })
-    },
-    logout({ getters, dispatch }) {
-      /* 
+      .catch((err) => {
+        console.error(err.response.data);
+      });
+  },
+  logout({ getters, dispatch }) {
+    /* 
       POST: token을 logout URL로 보내기
         성공하면
           토큰 삭제
@@ -121,23 +138,23 @@ const actions= {
         실패하면
           에러 메시지 표시
       */
-      axios({
-        url: '', //logout api로 
-        method: 'post',
-        headers: getters.authHeader,
+    axios({
+      url: "", //logout api로
+      method: "post",
+      headers: getters.authHeader,
+    })
+      .then(() => {
+        dispatch("removeToken");
+        alert("성공적으로 logout!");
+        router.push({ name: "Account" });
       })
-        .then(() => {
-          dispatch('removeToken')
-          alert('성공적으로 logout!')
-          router.push({ name: 'Account' })
-        })
-        .catch(err => {
-          console.error(err.response)
-        })
-    },
+      .catch((err) => {
+        console.error(err.response);
+      });
+  },
 
-    fetchCurrentUser({ commit, getters, dispatch }) {
-      /*
+  fetchCurrentUser({ commit, getters, dispatch }) {
+    /*
       GET: 사용자가 로그인 했다면(토큰이 있다면)
         currentUserInfo URL로 요청보내기
           성공하면
@@ -146,65 +163,62 @@ const actions= {
             기존 토큰 삭제
             LoginView로 이동
       */
-      if (getters.isLoggedIn) {
-        axios({
-          url: '', //정보 가져오는 api
-          method: 'get',
-          headers: getters.authHeader,
-        })
-          .then(res => commit('SET_CURRENT_USER', res.data))
-          .catch(err => {
-            if (err.response.status === 401) {
-              dispatch('removeToken')
-              router.push({ name: 'login' })
-            }
-          })
-      }
-    },
-
-    checkEmail(credentials) {
-
+    if (getters.isLoggedIn) {
       axios({
-        url: '',  // 이메일확인 api
-        method: 'post',
-        data: credentials.userEmial
+        url: "", //정보 가져오는 api
+        method: "get",
+        headers: getters.authHeader,
       })
-        .then(res => {
-          alert(res + '! 가입 가능 한 이메일입니다.')
-        })
-        .catch(err => {
-          console.error(err.response)
-          alert('이미 가입된 이메일입니다.')
-        })
-    },
+        .then((res) => commit("SET_CURRENT_USER", res.data))
+        .catch((err) => {
+          if (err.response.status === 401) {
+            dispatch("removeToken");
+            router.push({ name: "login" });
+          }
+        });
+    }
+  },
 
-    findPW(credentials) {
-
-      axios({
-        url: '',  // 비밀번호찾기 api
-        method: 'post',
-        data: credentials.userEmial
+  checkEmail(credentials) {
+    axios({
+      url: "", // 이메일확인 api
+      method: "post",
+      data: credentials.userEmial,
+    })
+      .then((res) => {
+        alert(res + "! 가입 가능 한 이메일입니다.");
       })
-        .then(res => {
-          alert('가입한 이메일로 비밀번호가 전송 되었습니다.')
-          //기능구현 더해야됨
-          //
-          //
-          //
-          //
-        })
-        .catch(err => {
-          console.error(err.response)
-          alert('이미 가입된 이메일입니다.')
-        })
-    },
+      .catch((err) => {
+        console.error(err.response);
+        alert("이미 가입된 이메일입니다.");
+      });
+  },
+
+  findPW(credentials) {
+    axios({
+      url: "", // 비밀번호찾기 api
+      method: "post",
+      data: credentials.userEmial,
+    })
+      .then(() => {
+        alert("가입한 이메일로 비밀번호가 전송 되었습니다.");
+        //기능구현 더해야됨
+        //
+        //
+        //
+        //
+      })
+      .catch((err) => {
+        console.error(err.response);
+        alert("이미 가입된 이메일입니다.");
+      });
+  },
 };
-
 
 export default {
   namespaced: true,
   state,
   getters,
   actions,
-  mutations
-}
+  mutations,
+};
