@@ -4,46 +4,55 @@
     <!-- 상단   -->
     <div class="SettingRoomHeader">
       <!-- 마이크 선택 모달 버튼 -->
-      <button
-        @click="(micSelect = true), (cameraSelect = false), (clSelect = false)"
-        class="micSelectBtn"
-      >
-        마이크 선택
-      </button>
-      <teleport to="#destination">
-        <div v-if="micSelect" class="micSelect Modal">
-          마이크 목록
-          <button @click="micSelect = false">모달 닫기</button>
-        </div>
-      </teleport>
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          마이크 선택
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">마이크1</a></li>
+          <li><a class="dropdown-item" href="#">마이크2</a></li>
+          <li><a class="dropdown-item" href="#">마이크3</a></li>
+        </ul>
+      </div>
 
       <!-- 카메라 선택 모달 버튼 -->
-      <button
-        @click="(cameraSelect = true), (micSelect = false), (clSelect = false)"
-        class="camerSelectBtn"
-      >
-        카메라 선택
-      </button>
-      <teleport to="#destination">
-        <div v-if="cameraSelect" class="cameraSelect Modal">
-          카메라 목록
-          <button @click="cameraSelect = false">모달 닫기</button>
-        </div>
-      </teleport>
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          카메라 선택
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">카메라1</a></li>
+          <li><a class="dropdown-item" href="#">카메라2</a></li>
+          <li><a class="dropdown-item" href="#">카메라3</a></li>
+        </ul>
+      </div>
 
       <!-- 자소서 선택 모달 버튼 -->
-      <button
-        @click="(clSelect = true), (micSelect = false), (cameraSelect = false)"
-        class="clSelectBtn"
-      >
-        자소서 선택
-      </button>
-      <teleport to="#destination">
-        <div v-if="clSelect" class="clSelect Modal">
-          자소서 목록
-          <button @click="clSelect = false">모달 닫기</button>
-        </div>
-      </teleport>
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          자소서 선택
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">자소서1</a></li>
+          <li><a class="dropdown-item" href="#">자소서2</a></li>
+          <li><a class="dropdown-item" href="#">자소서3</a></li>
+        </ul>
+      </div>
     </div>
 
     <!-- 중단 -->
@@ -151,6 +160,10 @@ export default {
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
+}
+
+.btn {
+  border-radius: 30px;
 }
 
 .SettingRoomHeader > button,
