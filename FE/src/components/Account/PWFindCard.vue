@@ -17,7 +17,7 @@
           <form @submit.prevent="findPW(credentials)">
             <div class="form-outline mb-4">
               <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
-              <button type="button" class="btn btn-primary btn-lg">찾기</button>
+              <button class="btn btn-primary btn-lg">찾기</button>
             </div>
           </form>
         </div>
@@ -40,9 +40,8 @@ export default {
 
     const store = useStore()
     function findPW(){
-          store.dispacth('rhtModule/findPW', credentials)
+      store.dispatch('rhtModule/findPW', credentials)
     }
-
       
     return {
       findPW, credentials

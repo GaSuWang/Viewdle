@@ -1,25 +1,31 @@
 import axios from "axios";
-import router from "@/router";
+import router from '@/router'
 
-const state = {
-  // 회원가입
-  token: localStorage.getItem("token") || "",
-  UserList: {},
-  isLoggedIn: false,
-  // 풀방여부, 참여시간
-  ParticipantList: {},
-  // 썸네일 따오기
-  ThumnailList: {},
-  // 뱃지 관리
-  BadgeList: {},
-  // 자소서관리
-  CoverLetterList: {},
-  // 방 만들기,
-  StudyroomList: {},
-  // 녹화된 영상과 피드백 보기위함
-  FeedbackList: {},
-  Replayvideo: {},
-};
+const state= {
+    // 회원가입
+    token: localStorage.getItem('token') || '',
+    UserList:{},
+    isLoggedIn: false,
+    // 풀방여부, 참여시간
+    ParticipantList:{},
+    // 썸네일 따오기
+    ThumnailList:{},
+    // 뱃지 관리
+    BadgeList:{},
+    // 자소서관리
+    CoverLetterList:{},
+    // 방 만들기, 
+    StudyroomList:{},
+    // 녹화된 영상과 피드백 보기위함
+    FeedbackList:{},
+    Replayvideo:{},
+    test: {
+      "email": "seoktak123@gmail.com",
+      "password": "1234",
+      "name": "김싸피",
+      "profile": "@/assets/images/anyimgs.png",
+    }
+  }
 
 const getters = {
   isLoggedIn(state) {
@@ -73,12 +79,22 @@ const actions = {
       state.token 삭제
       localStorage에 token 추가
       */
+<<<<<<< HEAD
     commit("SET_TOKEN", "");
     localStorage.setItem("token", ""); // token 값 빈값 넣고 보내면, token delete 된 것
   },
 
   login({ dispatch }, credentials) {
     /* 
+=======
+      commit('SET_TOKEN', '')
+      localStorage.setItem('token', '')  // token 값 빈값 넣고 보내면, token delete 된 것
+    },
+    
+    login({ dispatch }, credentials) {
+      console.log("제발 나와라")
+      /* 
+>>>>>>> a2b9b9494b1bf81bc7ad60ba1bf25542a066697e
       POST: 사용자 입력정보를 login URL로 보내기
         성공하면
           응답 토큰 저장
@@ -113,6 +129,7 @@ const actions = {
         실패하면
           에러 메시지 표시
       */
+<<<<<<< HEAD
     axios({
       url: "", //회원가입 api로
       method: "post",
@@ -123,6 +140,15 @@ const actions = {
         dispatch("saveToken", token);
         dispatch("fetchCurrentUser");
         router.push({ name: "main" });
+=======
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      axios({
+        url: '', //회원가입 api로
+        method: 'post',
+        data: credentials
+>>>>>>> a2b9b9494b1bf81bc7ad60ba1bf25542a066697e
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -138,6 +164,7 @@ const actions = {
         실패하면
           에러 메시지 표시
       */
+<<<<<<< HEAD
     axios({
       url: "", //logout api로
       method: "post",
@@ -147,6 +174,14 @@ const actions = {
         dispatch("removeToken");
         alert("성공적으로 logout!");
         router.push({ name: "Account" });
+=======
+        console.log("제발 나와라")
+        console.log("제발 나와라")
+      axios({
+        url: '', //logout api로 
+        method: 'post',
+        headers: getters.authHeader,
+>>>>>>> a2b9b9494b1bf81bc7ad60ba1bf25542a066697e
       })
       .catch((err) => {
         console.error(err.response);
@@ -163,11 +198,39 @@ const actions = {
             기존 토큰 삭제
             LoginView로 이동
       */
+<<<<<<< HEAD
     if (getters.isLoggedIn) {
       axios({
         url: "", //정보 가져오는 api
         method: "get",
         headers: getters.authHeader,
+=======
+      if (getters.isLoggedIn) {
+        axios({
+          url: '', //정보 가져오는 api
+          method: 'get',
+          headers: getters.authHeader,
+        })
+          .then(res => commit('SET_USER_LIST', res.data))
+          .catch(err => {
+            if (err.response.status === 401) {
+              dispatch('removeToken')
+              router.push({ name: 'Account' })
+            }
+          })
+      }
+    },
+
+    checkEmail(credentials) {
+      console.log("제발 나와라")
+      console.log("제발 나와라") 
+      console.log("제발 나와라")
+      console.log("제발 나와라") 
+      axios({
+        url: '',  // 이메일확인 api
+        method: 'get',
+        data: credentials.userEmial
+>>>>>>> a2b9b9494b1bf81bc7ad60ba1bf25542a066697e
       })
         .then((res) => commit("SET_CURRENT_USER", res.data))
         .catch((err) => {
@@ -179,6 +242,7 @@ const actions = {
     }
   },
 
+<<<<<<< HEAD
   checkEmail(credentials) {
     axios({
       url: "", // 이메일확인 api
@@ -213,6 +277,56 @@ const actions = {
         alert("이미 가입된 이메일입니다.");
       });
   },
+=======
+    findPW(credentials) {
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      axios({
+        url: '',  // 비밀번호찾기 api
+        method: 'post',
+        data: credentials.userEmial
+      })
+        .then(res => {
+          alert(res + '가입한 이메일로 비밀번호가 전송 되었습니다.')
+          //기능구현 더해야됨
+          //
+          //
+          //
+          //
+        })
+        .catch(err => {
+          console.error(err.response)
+          alert('가입된 이메일이 아닙니다.')
+        })
+    },
+    // findPW(credentials) {
+    //   console.log("제발 나와라")
+    //   console.log("제발 나와라")
+    //   console.log("제발 나와라")
+    //   console.log("제발 나와라")
+    //   console.log("제발 나와라")
+    //   axios({
+    //     url: '',  // 비밀번호찾기 api
+    //     method: 'post',
+    //     data: credentials.userEmial
+    //   })
+    //     .then(res => {
+    //       alert(res + '가입한 이메일로 비밀번호가 전송 되었습니다.')
+    //       //기능구현 더해야됨
+    //       //
+    //       //
+    //       //
+    //       //
+    //     })
+    //     .catch(err => {
+    //       console.error(err.response)
+    //       alert('가입된 이메일이 아닙니다.')
+    //     })
+    // },
+>>>>>>> a2b9b9494b1bf81bc7ad60ba1bf25542a066697e
 };
 
 export default {

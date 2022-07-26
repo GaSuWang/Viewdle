@@ -8,7 +8,6 @@
           class="img-fluid" alt="Sample image">
       </div>
       <div class="card" style="width: 25%;">
-        <form>
           <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
             <p class="lead fw-normal mb-0 me-3">구글 로그인 해</p>
 
@@ -36,7 +35,7 @@
             </div>
 
             <div class="">
-              <button type="button" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">로그인</button>
+              <button class="btn btn-primary btn-lg">로그인</button>
             </div>
           </form>
           <div class="">
@@ -44,7 +43,6 @@
             <a href="pw" class="text-body">비번 찾기</a>
             <a href="signup" class="link-danger">회원가입</a>
           </div>
-        </form>
       </div>
     </div>
   </div>
@@ -56,6 +54,7 @@ import { useStore } from 'vuex'
 import { reactive } from 'vue'
 
 export default {
+  name: 'LoginCard',
   setup () {
     const credentials = reactive({
       email: '',
