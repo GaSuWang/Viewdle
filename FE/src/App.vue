@@ -12,11 +12,13 @@ export default {
 </script>
 
 <style>
+@importurl (https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);
 
-@importurl(https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);
+html * {
+  font-family: "NanumSquare", sans-serif;
+}
 
-html *
-{
-font-family:'NanumSquare',sans-serif;
+*::before {
+  box-sizing: border-box;
 }
 </style>
