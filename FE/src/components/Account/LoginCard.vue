@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
+import { reactive } from 'vue'
 
 export default {
   setup () {
@@ -64,7 +64,9 @@ export default {
 
     const store = useStore()
 
-    const login = computed(() => store.actions.login)
+    function login(){
+      store.dispatch('rhtModule/login', credentials)
+    }
 
         
     return {
