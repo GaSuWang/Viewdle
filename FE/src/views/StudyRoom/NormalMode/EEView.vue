@@ -19,7 +19,7 @@
         <button @click.prevent="EEtoLBConfirm(userType)">나가기</button>
       </div>
       <!-- 면접에서 나가기 버튼(방장 유저) -->
-      <div v-show="serType === 'superUser'" class="EEtoLBbtn superUser">
+      <div v-show="userType === 'superUser'" class="EEtoLBbtn superUser">
         <button @click.prevent="EEtoLBConfirm(userType)">나가기</button>
       </div>
     </div>
@@ -34,14 +34,16 @@ export default {
     const userType = ref("user"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
     function EEtoLBConfirm(userType) {
       if (userType === 'user') {
-        if(confirm('정말 면접에서 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다.')) {
+        if(confirm('정말 면접 도중에 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다.')) {
           this.$router.push('main')
-        } else if (userType === 'superUser'){
-          if(confirm('정말 면접에서 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다.')) {
-            // 권한위임 모달 실행
-          }
+        }
+      } 
+      else if (userType === 'superUser'){
+        if(confirm('정말 면접 도중에 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다.')) {
+          // 권한위임 모달 실행
         }
       }
+      
     }
     return { 
       userType,
@@ -85,7 +87,7 @@ export default {
   justify-content: end;
 }
 
-.EEtoLBbtn.user > button{
+.EEButtonArea > button{
   border: none;
 }
 

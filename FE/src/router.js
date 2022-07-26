@@ -73,11 +73,11 @@ const routes = [
   //   name: 'ee-room-ez',
   //   component: () => import(/* webpackPrefetch:true */ '@/views/')
   // },
-  // {
-  //   path: '/er-room',
-  //   name: 'er-room',
-  //   component: () => import(/* webpackPrefetch:true */ '@/views/')
-  // },
+  {
+    path: '/er-room',
+    name: 'er-room',
+    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/NormalMode/ERView.vue'),
+  },
   // {
   //   path: '/er-room/ez',
   //   name: 'er-room-ez',

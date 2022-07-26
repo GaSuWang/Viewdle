@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import FeedbackBox from '@/components/StudyRoom/NomalMode/FeedbackBox.vue'
+import FeedbackBox from '@/components/StudyRoom/NormalMode/FeedbackBox.vue'
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 export default {
@@ -34,11 +34,11 @@ export default {
   props:{
     videoInfo: Object
   },
-  setup(){
+  setup(props){
     const store = useStore()
     // 영상에 피드백이 존재하는 지 알아야 함
     // 영상 정보를 넘겨줘 해당 영상에 피드백이 달려있는지 확인
-    store.dispatch('lbhModule/isFBList', videoInfo)
+    store.dispatch('lbhModule/isFBList', props.videoInfo)
     const fbList= computed(()=> store.getters["lbhModule/getFBList"])
 
     const BtnClicked = ref('') //피드백 버튼이 클릭되지 않은 상태가 '', 굿 버튼 클릭되면 good, 뱃 버튼 클릭되면 bad
@@ -59,7 +59,7 @@ export default {
     // 피드백 저장
     const saveFB = () => {
       // store.dispatch("saveFB",  FBContent.value) // 원래 로직은 이거
-      fbList.unshift({ // 임시로 만든 로직, fbList가 어떤 자료를 리턴할 지 모르겄네
+      fbList.value.unshift({ // 임시로 만든 로직, fbList가 어떤 자료를 리턴할 지 모르겄네
         gb:BtnClicked.value, 
         content: FBContent.value
       }) 
