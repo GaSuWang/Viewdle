@@ -3,6 +3,7 @@ package com.ssafy.api.controller;
 import com.ssafy.api.request.UserChangePwdReq;
 import com.ssafy.api.request.UserLoginPostReq;
 import com.ssafy.api.response.UserLoginPostRes;
+import com.ssafy.api.service.EmailService;
 import com.ssafy.common.exception.*;
 import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.db.repository.UserRepository;
@@ -35,6 +36,9 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	EmailService emailService;
 	
 	@PostMapping()
 	@ApiOperation(value = "회원 가입", notes = "<strong>이메일, 이름, 패스워드</strong>를 통해 회원가입 한다.")
@@ -59,7 +63,7 @@ public class UserController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
 	}
 
-	@GetMapping("/users/check/{email}")
+	@GetMapping("/check/{email}")
 	@ApiOperation(value = "중복 이메일 확인합니당", notes = "가입할때 필요할걸용?")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
@@ -69,7 +73,6 @@ public class UserController {
 	})
 	public ResponseEntity<? extends BaseResponseBody> emailDeplicateCheck(
 			@RequestParam String email) {
-
 		//임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
 		try {
 			if (userService.getUserByUserEmail(email) != null){
@@ -190,5 +193,70 @@ public class UserController {
 		userService.deleteUser(user);
 
 		return ResponseEntity.status(200).body(UserLoginPostRes.of(200, "회원 탈퇴를 완료하였습니다."));
+	}
+
+	@PostMapping("/check/password")
+	@ApiOperation(value = "비밀번호 확인", notes = "내정보 수정할때 비번 확인하는 API 입니당")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 400, message = "비밀번호가 일치하지 않습니다"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<? extends BaseResponseBody> checkPassword(@ApiIgnore Authentication authentication, @RequestBody String password) throws Exception {
+
+		VudleUserDetails userDetails = (VudleUserDetails)authentication.getDetails();
+		User user = userDetails.getUser();
+
+		System.out.println(user.getUserPassword()+" "+password);
+		System.out.println();
+
+		try {
+			userService.checkPassword(user.getUserPassword(), password);
+		} catch (NotMatchPasswordException e) {
+			return ResponseEntity.status(e.getStatus()).body(BaseResponseBody.of(e.getStatus(), e.getMessage()));
+		}
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "비밀번호 인증이 완료되었습니다."));
+	}
+
+	@PostMapping("/check/email")
+	@ApiOperation(value = "회원 가입시 이메일로 인증번호 보내기", notes = "사용가능한 이메일이면 인증 보내기 버튼 만들어주면 될거같아용")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<? extends BaseResponseBody> emailConfirm(@RequestBody String email) throws Exception {
+		System.out.println(email);
+		String confirm = emailService.sendSimpleMessage(email);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, confirm));
+	}
+
+	@PostMapping("/password")
+	@ApiOperation(value = "비밀번호 재발급", notes = "이메일 입력받고 이메일 있으면 새로운 비번 줄거예용")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "비밀번호 재발급이 완료되었습니다."),
+			@ApiResponse(code = 400, message = "이메일이 존재하지 않습니다."),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<? extends BaseResponseBody> newPassword(@RequestBody String email) throws Exception {
+
+		try {
+			userService.getUserByUserEmail(email);
+		} catch (NotExistEmailException e) {
+			return ResponseEntity.status(e.getStatus()).body(BaseResponseBody.of(e.getStatus(), e.getMessage()));
+		}
+
+		String newPassword = emailService.sendNewPassword(email);
+		User user = userService.getUserByUserEmail(email);
+		userService.changePwdUser(email, user.getUserPassword(), newPassword, newPassword);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "비밀번호 재발급이 완료되었습니다."));
 	}
 }
