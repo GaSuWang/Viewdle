@@ -79,6 +79,9 @@ public class User{
     @OneToMany(mappedBy = "user")
     List<Studyroom> studyrooms = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    List<CoverLetter> coverLetters = new ArrayList<>();
+
     @PrePersist
     public void prePersist(){
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:hh:mm:ss"));
