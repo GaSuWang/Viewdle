@@ -57,9 +57,10 @@ export default {
       userPassword2: ''
     })
 
-    const store = useStore()
+    const store = useStore();
+    
     function signup(){
-          store.dispacth('rhtModule/signup', credentials)
+      store.dispatch('rhtModule/signup', credentials)
     }
 
     function checkEmail(){

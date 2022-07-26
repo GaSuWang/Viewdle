@@ -30,7 +30,7 @@ export default {
 
     const store = useStore()
     function logout(){
-          store.dispacth('rhtModule/logout')
+      store.dispatch('rhtModule/logout')
     }
     return {
       logout

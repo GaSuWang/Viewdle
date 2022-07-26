@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from '@/router'
 
 const state= {
     // 회원가입
@@ -18,6 +19,12 @@ const state= {
     // 녹화된 영상과 피드백 보기위함
     FeedbackList:{},
     Replayvideo:{},
+    test: {
+      "email": "seoktak123@gmail.com",
+      "password": "1234",
+      "name": "김싸피",
+      "profile": "@/assets/images/anyimgs.png",
+    }
   }
 
 
@@ -60,6 +67,7 @@ const actions= {
     },
     
     login({ dispatch }, credentials) {
+      console.log("제발 나와라")
       /* 
       POST: 사용자 입력정보를 login URL로 보내기
         성공하면
@@ -95,6 +103,9 @@ const actions= {
         실패하면
           에러 메시지 표시
       */
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      console.log("제발 나와라")
       axios({
         url: '', //회원가입 api로
         method: 'post',
@@ -121,6 +132,8 @@ const actions= {
         실패하면
           에러 메시지 표시
       */
+        console.log("제발 나와라")
+        console.log("제발 나와라")
       axios({
         url: '', //logout api로 
         method: 'post',
@@ -152,21 +165,24 @@ const actions= {
           method: 'get',
           headers: getters.authHeader,
         })
-          .then(res => commit('SET_CURRENT_USER', res.data))
+          .then(res => commit('SET_USER_LIST', res.data))
           .catch(err => {
             if (err.response.status === 401) {
               dispatch('removeToken')
-              router.push({ name: 'login' })
+              router.push({ name: 'Account' })
             }
           })
       }
     },
 
     checkEmail(credentials) {
-
+      console.log("제발 나와라")
+      console.log("제발 나와라") 
+      console.log("제발 나와라")
+      console.log("제발 나와라") 
       axios({
         url: '',  // 이메일확인 api
-        method: 'post',
+        method: 'get',
         data: credentials.userEmial
       })
         .then(res => {
@@ -179,14 +195,18 @@ const actions= {
     },
 
     findPW(credentials) {
-
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      console.log("제발 나와라")
+      console.log("제발 나와라")
       axios({
         url: '',  // 비밀번호찾기 api
         method: 'post',
         data: credentials.userEmial
       })
         .then(res => {
-          alert('가입한 이메일로 비밀번호가 전송 되었습니다.')
+          alert(res + '가입한 이메일로 비밀번호가 전송 되었습니다.')
           //기능구현 더해야됨
           //
           //
@@ -195,9 +215,33 @@ const actions= {
         })
         .catch(err => {
           console.error(err.response)
-          alert('이미 가입된 이메일입니다.')
+          alert('가입된 이메일이 아닙니다.')
         })
     },
+    // findPW(credentials) {
+    //   console.log("제발 나와라")
+    //   console.log("제발 나와라")
+    //   console.log("제발 나와라")
+    //   console.log("제발 나와라")
+    //   console.log("제발 나와라")
+    //   axios({
+    //     url: '',  // 비밀번호찾기 api
+    //     method: 'post',
+    //     data: credentials.userEmial
+    //   })
+    //     .then(res => {
+    //       alert(res + '가입한 이메일로 비밀번호가 전송 되었습니다.')
+    //       //기능구현 더해야됨
+    //       //
+    //       //
+    //       //
+    //       //
+    //     })
+    //     .catch(err => {
+    //       console.error(err.response)
+    //       alert('가입된 이메일이 아닙니다.')
+    //     })
+    // },
 };
 
 
