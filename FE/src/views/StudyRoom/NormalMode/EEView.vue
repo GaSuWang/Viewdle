@@ -34,10 +34,10 @@ export default {
     const userType = ref("user"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
     function EEtoLBConfirm(userType) {
       if (userType === 'user') {
-        if(confirm('정말 면접에서 나가시겠습니까?\n지금까지의 면접영상과 피드백이 저장되지 않고 대기실로 이동합니다.')) {
+        if(confirm('정말 면접에서 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다.')) {
           this.$router.push('main')
         } else if (userType === 'superUser'){
-          if(confirm('정말 면접에서 나가시겠습니까?\n지금까지의 면접영상과 피드백이 저장되지 않고 대기실로 이동합니다.')) {
+          if(confirm('정말 면접에서 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다.')) {
             // 권한위임 모달 실행
           }
         }
