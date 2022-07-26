@@ -13,4 +13,5 @@ public interface UserService {
 	User getUserByUserSeq(int userSeq);
 	void changePwdUser(String email, String originPassword, String password, String password2);
 	void deleteUser(User user);
+	void checkPassword(String userPassword, String password);
 }

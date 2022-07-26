@@ -75,20 +75,27 @@ public class UserServiceImpl implements UserService {
 		if(!password.equals(password2)){
 			throw new NotMatchPasswordException();
 		}
-		else if (password.equals(originPassword)) {
+		else if (passwordEncoder.matches(password, originPassword)) {
 			System.out.println(passwordEncoder.encode(password));
 			System.out.println(originPassword);
 			throw new SamePasswordException();
 		}
 
 		User user = userRepository.findByUserEmail(email);
-		user.setUserPassword(password);
+		user.setUserPassword(passwordEncoder.encode(password));
 		userRepository.save(user);
 	}
 
 	@Override
 	public void deleteUser(User user) {
 		userRepository.delete(user);
+	}
+
+	@Override
+	public void checkPassword(String userPassword, String password) {
+		if (!passwordEncoder.matches(password, userPassword)){
+			throw new NotMatchPasswordException();
+		}
 	}
 
 }
