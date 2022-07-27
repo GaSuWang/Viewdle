@@ -1,70 +1,45 @@
-// 이병헌
 <template>
-  <div class="WaitingRoomView">
-    <!-- 참가자 영상 나오는 부분 -->
-    <div class="WRContainer">
-      <!-- <div class="participantVideo">1</div>
-      <div class="participantVideo">2</div>
-      <div class="participantVideo">3</div>
-      <div class="participantVideo">4</div>
-      <div class="participantVideo">5</div> -->
-      <!-- openvidu 간단히 -->
-      <div id="session" v-if="session">
-        <div id="session-header">
-          <h1 id="session-title">{{ mySessionId }}</h1>
-          <input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession" value="Leave session">
-        </div>
-        <div id="main-video" class="col-md-6">
-          <user-video :stream-manager="mainStreamManager"/>
-        </div>
-        <div id="video-container" class="col-md-6">
-          <!-- vue 3.x에서는 click.native 없어짐 -->
-          <user-video :stream-manager="publisher" @click="updateMainVideoStreamManager(publisher)"/>
-          <user-video v-for="sub in subscribers" :key="sub.stream.connection.connectionId" :stream-manager="sub" @click="updateMainVideoStreamManager(sub)"/>
-        </div>
-      </div>
-    </div>
+	<div id="main-container" class="container">
+		<div id="join" v-if="!session">
+			<div id="img-div"><img src="resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
+			<div id="join-dialog" class="jumbotron vertical-center">
+				<h1>Join a video session</h1>
+				<div class="form-group">
+					<p>
+						<label>Participant</label>
+						<input v-model="myUserName" class="form-control" type="text" required>
+					</p>
+					<p>
+						<label>Session</label>
+						<input v-model="mySessionId" class="form-control" type="text" required>
+					</p>
+					<p class="text-center">
+						<button class="btn btn-lg btn-success" @click="joinSession()">Join!</button>
+					</p>
+				</div>
+			</div>
+		</div>
 
-    <!-- 방장 기능 -->
-    <div class="superUser" v-show="userType === 'superUser'">
-      <!-- 면접자 선택 -->
-      <div class="dropdown" >
-        <button
-          class="btn btn-secondary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          면접자 선택
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">면접자1</a></li>
-          <li><a class="dropdown-item" href="#">면접자2</a></li>
-          <li><a class="dropdown-item" href="#">면접자3</a></li>
-        </ul>
-      </div>
-        <!-- 스터디 종료 -->
-        <button class="btn btn-secondary" @click="EndStudyConfirm">
-          스터디 종료
-        </button>
-        <!-- openvidu 간단히 -->
-        <!-- join 버튼 대기실에서는 없음 -->
-        <!-- 면접자 선택하고 @/compoenents/StudyRoom/CLSelectModal.vue에서 면접 시작하고 joinSession -->
-        <!-- <button v-show="!session" class="btn btn-lg btn-success" @click="joinSession()">Join!</button> -->
-    </div>
-  </div>
+		<div id="session" v-if="session">
+			<div id="session-header">
+				<h1 id="session-title">{{ mySessionId }}</h1>
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession" value="Leave session">
+			</div>
+			<div id="main-video" class="col-md-6">
+				<user-video :stream-manager="mainStreamManager"/>
+			</div>
+			<div id="video-container" class="col-md-6">
+				<user-video :stream-manager="publisher" @click.native="updateMainVideoStreamManager(publisher)"/>
+				<user-video v-for="sub in subscribers" :key="sub.stream.connection.connectionId" :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-// 여기서 영상 띄우는 법
-// npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
-// 단 도커 설치되어 있어야 함
-
-import { ref } from "vue";
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
-import UserVideo from '@/components/UserVideo.vue';
+import UserVideo from './components/UserVideo';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -72,8 +47,12 @@ const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
-  name: "WaitingRoomView",
-  components:{UserVideo},
+	name: 'App',
+
+	components: {
+		UserVideo,
+	},
+
 	data () {
 		return {
 			OV: undefined,
@@ -229,59 +208,6 @@ export default {
 					.catch(error => reject(error.response));
 			});
 		},
-	},
-  setup() {
-    // const store = useStore();
-    // const userList = ref(state.lbhModuel.participantList)
-    function EndStudyConfirm() {
-      if (confirm("정말 스터디를 종료하시겠습니까?")) {
-        this.$router.push("/main");
-      }
-    }
-    const userType = ref('superUser')
-    return {
-      userType,
-      EndStudyConfirm
-    };
-  },
-  beforeMount(){
-    this.joinSession()
-  }
-};
+	}
+}
 </script>
-
-<style scoped>
-.WaitingRoomView {
-  position: absolute;
-  width: 80vw;
-  aspect-ratio: 16/9;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: lightgrey;
-  border-radius: 60px;
-  padding: 5%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.WRContainer {
-  width: 65%;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.participantVideo {
-  width: 30%;
-  background: darkgrey;
-}
-
-.superUser {
-  width: 20%;
-  margin: 0;
-  flex-direction: row;
-  justify-content: space-between;
-}
-</style>
