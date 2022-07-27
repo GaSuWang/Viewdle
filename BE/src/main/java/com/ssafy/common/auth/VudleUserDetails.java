@@ -38,6 +38,7 @@ public class VudleUserDetails implements UserDetails {
 	public String getUsername() {
 		return this.user.getUserName();
 	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return this.accountNonExpired;

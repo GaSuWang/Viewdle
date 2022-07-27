@@ -25,7 +25,7 @@
 
           <!-- 비번 인풋 -->
           <div class="form-outline mb-3">
-            <input type="password" v-model="credentials.userPassword1" id="userPassword1" class="form-control form-control-lg"
+            <input type="password" v-model="credentials.userPassword" id="userPassword1" class="form-control form-control-lg"
               placeholder="Password" />
           </div>
 
@@ -53,7 +53,7 @@ export default {
     const credentials = reactive({
       userName: '',
       userEmail: '',
-      userPassword1: '',
+      userPassword: '',
       userPassword2: ''
     })
 

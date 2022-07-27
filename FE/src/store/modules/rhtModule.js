@@ -1,5 +1,6 @@
 import axios from "axios";
 import router from '@/router'
+// import drf from '@/api/index'
 
 const state= {
     // 회원가입
@@ -93,7 +94,7 @@ const actions= {
       */
       console.log("로그인아 안녕?")
       axios({
-        url: '',  // 로그인 api
+        url: 'http://localhost:8081/api/v1/users/login',  // 로그인 api
         method: 'post',
         data: credentials
       })
@@ -120,7 +121,7 @@ const actions= {
       */
       console.log("회원가입아 안녕?")
       axios({
-        url: '', //회원가입 api로
+        url: 'http://localhost:8081/api/v1/users', //회원가입 api로
         method: 'post',
         data: credentials
       })
@@ -148,7 +149,7 @@ const actions= {
       */
       console.log("로그아웃아 안녕?")
       axios({
-        url: '', //logout api로 
+        url: 'http://localhost:8081/api/v1/users/logout', //logout api로 
         method: 'post',
         headers: getters.authHeader,
       })
@@ -174,7 +175,7 @@ const actions= {
       */
       if (getters.isLoggedIn) {
         axios({
-          url: '', //정보 가져오는 api
+          url: 'http://localhost:8081/api/v1/users/detail', //정보 가져오는 api
           method: 'get',
           headers: getters.authHeader,
         })
@@ -250,7 +251,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE', true)
+        commit('SET_PW_CODE', false)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -268,7 +269,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE_FOR_EDIT', true)
+        commit('SET_PW_CODE_FOR_EDIT', false)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -289,14 +290,15 @@ const actions= {
       })
     },
 
-    changePW() {
+    changePW(changepassword) {
       console.log("비번수정아 안녕?")
       axios({
         url:'', // 비번수정 api 
-        method:'delete',
+        method:'put',
+        data: changepassword,
       })
       .then(() => {
-        alert('정상적으로 회원탈퇴 되었습니다.')
+        alert('수정 완료 다시 로그인 하십시오.')
         router.push({ name: 'Account' })
       })
       .catch(err => {

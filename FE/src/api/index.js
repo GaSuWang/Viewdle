@@ -7,7 +7,7 @@ export default {
     login: () => HOST + ACCOUNTS + 'login/',
     logout: () => HOST + ACCOUNTS + 'logout/',
     signup: () => HOST + ACCOUNTS + 'signup/',
-    currentUserInfo: () => HOST + ACCOUNTS + 'user/',
+    fetchCurrentUser: () => HOST + ACCOUNTS + 'user/',
     profile: username => HOST + ACCOUNTS + 'profile/' + username,
   },
 }

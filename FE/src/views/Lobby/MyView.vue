@@ -15,9 +15,9 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">My Page</h5>
-          <img src="@/assets/images/anyimgs.png">
-          <p class="card-text">이름 : {{ tests.name }}</p>
-          <p class="card-text">email : {{ tests.email }}</p>
+          <img :src="userLists.userProfileImage">
+          <p class="card-text">이름 : {{userLists.userName}}</p>
+          <p class="card-text">email :{{userLists.userEmail}}</p>
           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
           <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
         </div>
@@ -34,7 +34,7 @@
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">비밀번호 확인</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form @submit.prevent="confirmPW(credentials)" id="myDIV">
@@ -67,7 +67,7 @@
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">비밀번호 확인</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form @submit.prevent="confirmPWforEdit(credentials)" id="myDIV">
@@ -99,17 +99,19 @@
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">비번 수정</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <form @submit.prevent="changePW(changepassword)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="New Password Confirm" />
-                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="New Password Confirm" />
+                      <input type="password" v-model="changepassword.password1" class="form-control form-control-lg" placeholder="Password Confirm" />
+                      <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="New Password Confirm" />
                     </div>
                   </div>
                   <button class="btn btn-primary">비번바꾸기</button>
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </form>
               </div>
             </div>
           </div>  
@@ -135,6 +137,10 @@ export default {
     const credentials = reactive({
       password: '',
     })
+    const changepassword = reactive({
+      password1: '',
+      password2: ''
+    })
     const store = useStore();
     const tests = computed(
       () => store.state.rhtModule.test
@@ -157,8 +163,11 @@ export default {
     function deleteID(){
       store.dispatch('rhtModule/deleteID', credentials)
     }
+    function changePW(){
+      store.dispatch('rhtModule/changePW', credentials)
+    }
     return {
-      tests, userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit
+      tests, userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
     };
   },
 };
