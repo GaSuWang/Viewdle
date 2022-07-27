@@ -45,4 +45,11 @@ public class StudyroomServiceImpl implements StudyroomService{
         studyroom.setRoomCloseTime(now);
         studyroomRepository.save(studyroom);
     }
+
+    @Override
+    public void startInterview(int roomSeq) {
+        Studyroom studyroom = studyroomRepository.findByroomSeq(roomSeq);
+        studyroom.setRoomActiveYN("Y");
+        studyroomRepository.save(studyroom);
+    }
 }

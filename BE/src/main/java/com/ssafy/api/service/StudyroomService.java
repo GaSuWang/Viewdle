@@ -10,5 +10,6 @@ public interface StudyroomService {
     public int registRoom(RoomRegisterPostReq roomRegisterPostReq, User user, Common common) ;
     public Studyroom getRoomBySeq(int roomSeq);
     public void closeRoom(int roomSeq);
+    public void startInterview(int roomSeq);
 
 }
