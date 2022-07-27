@@ -45,26 +45,58 @@
 
 <script>
 // import { mapActions } from 'vuex'
-import { useStore } from 'vuex'
 import { reactive } from 'vue'
+import axios from 'axios'
 export default {
   name: 'SignupCard',
   setup () {
     const credentials = reactive({
-      userName: '',
       userEmail: '',
+      userName: '',
       userPassword: '',
       userPassword2: ''
     })
 
-    const store = useStore();
     
-    function signup(){
-      store.dispatch('rhtModule/signup', credentials)
+    function signup(credentials) {
+      /* 
+      POST: 사용자 입력정보를 signup URL로 보내기
+        성공하면
+          응답 토큰 저장
+          현재 사용자 정보 받기
+          메인 페이지(ArticleListView)로 이동
+        실패하면
+          에러 메시지 표시
+      */
+      console.log("회원가입아 안녕?")
+      axios({
+        url: 'http://localhost:8081/api/v1/users', //회원가입 api로
+        method: 'post',
+        data: credentials
+      })
+        .then(() => {
+          alert('성공적으로 회원가입!')
+          // router.push({ name: 'main' })
+        })
+        .catch(err => {
+          console.error(err.response.data)
+        })
     }
 
-    function checkEmail(){
-      store.dispatch('rhtModule/checkEmail', credentials)
+    function checkEmail(credentials) {
+    console.log("중복확인아 안녕?")
+      axios({
+        url: 'http://localhost:8081/api/v1/users/check/duplicate',  // 이메일확인 api
+        method: 'get',
+        data: credentials.userEmial
+      })
+        .then(() => {
+          alert('! 가입 가능 한 이메일입니다.')
+        })
+        .catch(err => {
+          console.error(err.response)
+          alert('이미 가입된 이메일입니다.')
+        })
     }
       
     return {

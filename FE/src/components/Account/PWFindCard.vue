@@ -17,13 +17,7 @@
           <form @submit.prevent="getEmailCode(credentials)">
             <div class="form-outline mb-4">
               <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
-              <button onclick=myFunction() class="btn btn-primary btn-lg">인증코드받기</button>
-            </div>
-          </form>
-          <form @submit.prevent="getNewPW(emailcode)" id="myDIV">
-            <div class="form-outline mb-4">
-              <input type="text" v-model="emailcode.emailcode" class="form-control form-control-lg" placeholder="Email Code" />
-              <button class="btn btn-primary btn-lg">새 PW 받기</button>
+              <button class="btn btn-primary btn-lg">인증코드받기</button>
             </div>
           </form>
         </div>
@@ -35,8 +29,9 @@
 </template>
 
 <script>
-import { useStore } from 'vuex'
+
 import { reactive } from 'vue'
+import axios from 'axios'
 export default {
   name: 'PWFindCard',
   setup () {
@@ -47,19 +42,29 @@ export default {
       emailcode: ''
     })
 
-    const store = useStore()
-    function getEmailCode(){
-      store.dispatch('rhtModule/getEmailCode', credentials)
+
+
+    function getEmailCode({commit}, credentials) {
+        console.log("코드보내기야 안녕?")
+        axios({
+          url: 'http://localhost:8081/api/v1/users/check/users/password',  // 비밀번호찾기 api
+          method: 'post',
+          data: credentials.userEmail
+        })
+          .then(res => {
+            alert('가입한 이메일로 인증코드가 전송 되었습니다.')
+            commit('SET_EMAIL_CODE', res.data)
+          })
+          .catch(err => {
+            console.error(err.response)
+            alert('가입된 이메일이 아닙니다.')
+          })
+        
     }
 
-        
-    function getNewPW(){
-      store.dispatch('rhtModule/getNewPW', emailcode)
-    }
-     
 
     return {
-      getEmailCode, getNewPW, credentials, emailcode
+      getEmailCode, credentials, emailcode
     }
   }
 } 
