@@ -7,6 +7,7 @@
                  <!-- 미니프로필 -->
                 <li class="sidebar-brand">V:DLE V:DLE</li>
                 <li><img src="@/assets/images/anyimgs.png"></li>
+                <li><form @submit.prevent="logout()"><button class="btn btn-primary btn-lg">로그아웃</button></form></li>
                 <!-- 메인페이지 -->
                 <li><a href="http://localhost:8080/main">메인</a></li>
                 <!-- 마이페이지 -->
@@ -21,6 +22,21 @@
 </template>
 
 <script>
+import { useStore } from 'vuex'
+
+export default {
+  name: 'NavBar',
+  setup () {
+
+    const store = useStore()
+    function logout(){
+      store.dispatch('rhtModule/logout')
+    }
+    return {
+      logout
+    }
+  }
+}
 </script>
 
 <style>

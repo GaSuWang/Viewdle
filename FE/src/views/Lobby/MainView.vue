@@ -1,9 +1,10 @@
 // 임현탁
 <template>
   <div class="MainView">
-    <p id='main'>
+    <div id='main'>
       Main  
-    </p>
+
+      </div>
     <NavBar/>
     <!-- 검색 -->
     <!-- 최신순,오래된순 정렬 -->
