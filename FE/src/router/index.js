@@ -53,7 +53,7 @@ const routes = [
   },
   {
     path: "/waiting-room",
-    name: "watiing-room",
+    name: "waiting-room",
     component: () =>
       import(
         /* webpackPrefetch:true */ "@/views/StudyRoom/WaitingRoomView.vue"
@@ -73,9 +73,12 @@ const routes = [
   //   component: () => import(/* webpackPrefetch:true */ '@/views/')
   // },
   {
-    path: '/er-room',
-    name: 'er-room',
-    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/NormalMode/ERView.vue'),
+    path: "/er-room",
+    name: "er-room",
+    component: () =>
+      import(
+        /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/ERView.vue"
+      ),
   },
   // {
   //   path: '/er-room/ez',
@@ -88,9 +91,10 @@ const routes = [
   //   component: () => import(/* webpackPrefetch:true */ '@/views/')
   // },
   {
-    path: '/eecl',
-    name: 'eecl',
-    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/CLView.vue'),
+    path: "/eecl",
+    name: "eecl",
+    component: () =>
+      import(/* webpackPrefetch:true */ "@/views/StudyRoom/CLView.vue"),
   },
 ];
 

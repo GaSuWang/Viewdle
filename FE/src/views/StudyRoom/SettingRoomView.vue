@@ -66,7 +66,7 @@
       <!-- 로비 되돌아가기 버튼 -->
       <button class="toLBBtn">
         <div class="toLBBtnDiv">
-          <router-link :to="{ name: MainView }">되돌아가기</router-link>
+          <router-link :to="{ name: 'main' }">되돌아가기</router-link>
         </div>
       </button>
       <!-- 유저 마이크 온오프 버튼 -->
@@ -77,7 +77,7 @@
       <!-- 대기실 입장 버튼 -->
       <button class="toWRBtn">
         <div class="toWRBtnDiv">
-          <router-link :to="{ name: WaitingRoomView }">대기실 이동</router-link>
+          <router-link :to="{ name: 'waiting-room' }">대기실 이동</router-link>
         </div>
       </button>
     </div>
