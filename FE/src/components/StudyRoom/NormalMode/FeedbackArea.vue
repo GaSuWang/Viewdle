@@ -90,7 +90,8 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
+  max-height: 80%;
+
 }
 
 .FBList{
