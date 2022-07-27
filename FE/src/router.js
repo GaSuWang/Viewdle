@@ -88,6 +88,11 @@ const routes = [
   //   name: 'feedback-room',
   //   component: () => import(/* webpackPrefetch:true */ '@/views/')
   // },
+  {
+    path: '/eecl',
+    name: 'eecl',
+    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/CLView.vue'),
+  },
 ];
 
 export const router = createRouter({

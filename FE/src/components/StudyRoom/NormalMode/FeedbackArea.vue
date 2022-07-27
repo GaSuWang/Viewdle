@@ -8,15 +8,14 @@
         <input type="text" v-model="FBContent" @keypress.enter="saveFB" :style="[BtnClicked==='good' ? 'background: #47A0FF' : 'background:#FFE6B5']">
         <button @click="closeFB">X</button>
       </div>
-      
       <!-- 피드백 목록 -->
       <feedback-box v-for="fb in fbList" :key="fb.id"></feedback-box>
-
     </ul>
+    <!-- 피드백 없을 때 보여줄 문구 -->
     <span v-else>아직 피드백이 존재하지 않습니다.</span>
 
     <!-- 피드백 굿/뱃 버튼 -->
-    <div class="container">
+    <div class="FBBtncontainer">
       <button @click="createFB('good')">굿</button>
       <button @click="createFB('bad')">벳</button>
     </div>

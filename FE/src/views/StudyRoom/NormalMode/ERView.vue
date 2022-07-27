@@ -17,7 +17,7 @@
         <div class="ERButtonHeader">
           <!-- 면접자 자소서 페이지 열기 버튼 -->
           <div class="CLOpen">
-            <button>자소서</button>
+            <button @click.prevent="openEECL()">자소서</button>
           </div>
           <!-- 질문 팁 모달 열기 버튼 -->
           <div class="QTip">
@@ -27,7 +27,7 @@
 
         <!-- 중단 -->
         <!-- 피드백 구역 -->
-        <feedback-view></feedback-view>
+        <feedback-area></feedback-area>
 
         <!-- 하단 -->
         <div class="ERButtonFooter">
@@ -50,10 +50,16 @@
 
 <script>
 import { ref } from "vue";
-import FeedbackView from '@/views/StudyRoom/NormalMode/FeedbackView.vue'
+import FeedbackArea from '@/components/StudyRoom/NormalMode/FeedbackArea.vue'
 export default {
 name:"ERView",
-components: {FeedbackView},
+components: {FeedbackArea},
+methods:{
+  openEECL(){
+    let route = this.$router.resolve({path:"/eecl"})
+    window.open(route.href)  
+  }
+},
 setup() {
   const userType = ref("superUser"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
   function ERtoLBConfirm(userType) {
@@ -70,7 +76,7 @@ setup() {
   }
   return { 
     userType,
-    ERtoLBConfirm 
+    ERtoLBConfirm,
   };
 },
 }
