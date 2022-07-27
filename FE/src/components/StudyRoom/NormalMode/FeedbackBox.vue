@@ -7,25 +7,40 @@
 </template>
 
 <script>
-import {useStore} from 'vuex'
 export default {
     name: "FeedbackBox",
     props: {
         fb:Object
     },
-    setup(){
-      const store = useStore()
-      function deleteFB(){
-          store.dispacth('lbhModule/deleteFB', this.fb.id) //store action에 추가
+    data(){
+      return{ 
+        id: this.fb.reg_dt
       }
+    },
+    methods:{
+      deleteFB(id){
+          this.$store.dispatch('lbhModule/deleteFB', id) //store action에 추가
+      }
+    },
+    setup(){
       return {
-        deleteFB
       }
     }
 }
 
 </script>
 
-<style>
-
+<style scoped>
+.FeedbackBox{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2%;
+  margin-bottom: 2%;
+  width: 100%;
+  height: 20%;
+  border-radius: 30px;
+}
 </style>
