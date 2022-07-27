@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ed21cca0-b486-48c1-9f62-cf69169cadce" name="Changes" comment="" />
+    <list default="true" id="9a6ccb84-cbd9-43c2-96eb-8795a8ef7def" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/css/app.80f35f85.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/css/chunk-vendors.b8a9ac7a.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/fonts/SpoqaHanSansNeo-Bold.48d433af.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/fonts/SpoqaHanSansNeo-Medium.d92f35b6.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/fonts/SpoqaHanSansNeo-Regular.998877fd.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/fonts/element-icons.abe71f7d.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/fonts/element-icons.d9491be2.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/img/ssafy-logo.74eec4f3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/js/app.ae4fa2d6.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/js/app.ae4fa2d6.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/js/chunk-vendors.ed9bf872.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/dist/js/chunk-vendors.ed9bf872.js.map" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,7 +28,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2CVJ0id1HoXrrItXfkIE4V0VL2K" />
+  <component name="ProjectId" id="2CQVWqFiQS7tTiQA1Xndtcxau31" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -21,18 +36,25 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="ed21cca0-b486-48c1-9f62-cf69169cadce" name="Changes" comment="" />
-      <created>1658881603177</created>
+      <changelist id="9a6ccb84-cbd9-43c2-96eb-8795a8ef7def" name="Changes" comment="" />
+      <created>1658734829400</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1658881603177</updated>
+      <updated>1658734829400</updated>
+      <workItem from="1658734831013" duration="28000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>

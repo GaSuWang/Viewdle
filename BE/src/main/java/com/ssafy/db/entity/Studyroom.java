@@ -4,29 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-
 @Table(name="Studyroom")
-/*
-* `room_seq` INT NOT NULL AUTO_INCREMENT,
-  `room_type` TINYINT NOT NULL,
-  `room_title` VARCHAR(20) NOT NULL,
-  `room_private_YN` VARCHAR(1) NOT NULL DEFAULT 'N',
-  `room_password` VARCHAR(15) NULL,
-  `room_limit` INT NOT NULL,
-  `room_reg_time` VARCHAR(20) NOT NULL,
-  `room_close_time` VARCHAR(20) NULL,
-  `room_close_YN` VARCHAR(1) NOT NULL DEFAULT 'N',
-  `room_active_YN` VARCHAR(1) NOT NULL DEFAULT 'N',
-  `room_full_YN` VARCHAR(1) NOT NULL DEFAULT 'N',
-  `user_seq` INT NOT NULL,
-  `common_seq` INT NOT NULL,
-* */
 public class Studyroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,12 +49,25 @@ public class Studyroom {
     @Column(name = "room_full_YN")
     String roomFullYN;
 
-    @Column(name = "user_seq")
-    int UserSeq;
+    @OneToMany(mappedBy = "studyroom")
+    List<Participant> participants = new ArrayList<>();
 
-    @Column(name = "common_seq")
-    int commonSeq;
+    @ManyToOne
+    @JoinColumn(name = "user_seq")
+    User user;
 
-//    @OneToMany(mappedBy = "Studyroom")
-//    private List<Participant> Participants = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "common_seq")
+    Common common;
+
+    public Studyroom(){} // 기본 생성자
+
+    @PrePersist
+    public void prePersist(){
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:hh:mm:ss"));
+        roomRegTime = now;
+        roomCloseYN = "N";
+        roomActiveYN = "N";
+        roomFullYN = "N";
+    }
 }
