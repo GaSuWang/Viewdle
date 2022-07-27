@@ -2,6 +2,7 @@ package com.ssafy.api.controller;
 
 import com.ssafy.api.request.UserChangePwdReq;
 import com.ssafy.api.request.UserLoginPostReq;
+import com.ssafy.api.response.UserHistoryRes;
 import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.service.EmailService;
 import com.ssafy.common.exception.*;
@@ -259,5 +260,13 @@ public class UserController {
 		userService.changePwdUser(email, user.getUserPassword(), newPassword, newPassword);
 
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "비밀번호 재발급이 완료되었습니다."));
+	}
+	@GetMapping("/histories")
+	public ResponseEntity<? extends UserHistoryRes> getUserHistory(
+			@ApiIgnore Authentication authentication){
+		VudleUserDetails userDetails = (VudleUserDetails)authentication.getDetails();
+		User user = userDetails.getUser();
+		UserHistoryRes res = userService.getUserHistory(user);
+		return ResponseEntity.status(200).body(res);
 	}
 }
