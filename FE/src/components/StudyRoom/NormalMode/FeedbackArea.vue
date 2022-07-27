@@ -2,24 +2,25 @@
 <template>
   <div class="FeedbackArea">
     <!-- 피드백 리스트 -->
-    <ul v-if="fbList" class="FBList">
+    <div class="FBInputBox" v-show="BtnClicked">
+      <input type="text" v-model="FBContent" @keypress.enter="saveFB" :style="[BtnClicked==='good' ? 'background: #47A0FF' : 'background:#FFE6B5']">
+      <button @click="closeFB">X</button>
+    </div>
+    <ul class="FBList">
       <!-- 피드백 입력란 -->
-      <div class="FBInputBox" v-if="BtnClicked">
-        <input type="text" v-model="FBContent" @keypress.enter="saveFB" :style="[BtnClicked==='good' ? 'background: #47A0FF' : 'background:#FFE6B5']">
-        <button @click="closeFB">X</button>
-      </div>
       <!-- 피드백 목록 -->
-      <feedback-box v-for="fb in fbList" :key="fb.id"></feedback-box>
+      <li v-for="fb in FBList" :key="fb.reg_dt">
+        <feedback-box :fb="fb"></feedback-box>
+      </li>
     </ul>
     <!-- 피드백 없을 때 보여줄 문구 -->
-    <span v-else>아직 피드백이 존재하지 않습니다.</span>
+    <span v-show="FBList === []">아직 피드백이 존재하지 않습니다.</span>
 
     <!-- 피드백 굿/뱃 버튼 -->
     <div class="FBBtncontainer">
       <button @click="createFB('good')">굿</button>
       <button @click="createFB('bad')">벳</button>
     </div>
-
   </div>
 </template>
 
@@ -33,13 +34,11 @@ export default {
   props:{
     videoInfo: Object
   },
-  setup(props){
-    const store = useStore()
+  setup(){
     // 영상에 피드백이 존재하는 지 알아야 함
     // 영상 정보를 넘겨줘 해당 영상에 피드백이 달려있는지 확인
-    store.dispatch('lbhModule/isFBList', props.videoInfo)
-    const fbList= computed(()=> store.getters["lbhModule/getFBList"])
-
+    const store = useStore()
+    const FBList = computed(()=> store.getters["lbhModule/FBList"])
     const BtnClicked = ref('') //피드백 버튼이 클릭되지 않은 상태가 '', 굿 버튼 클릭되면 good, 뱃 버튼 클릭되면 bad
     const FBContent = ref('') //새롭게 만들어진 피드백 박스와 연동됨
 
@@ -58,22 +57,26 @@ export default {
     // 피드백 저장
     const saveFB = () => {
       // store.dispatch("saveFB",  FBContent.value) // 원래 로직은 이거
-      fbList.value.unshift({ // 임시로 만든 로직, fbList가 어떤 자료를 리턴할 지 모르겄네
+      console.log(typeof(FBList.value))
+      FBList.value.unshift({ // 임시로 만든 로직, fbList가 어떤 자료를 리턴할 지 모르겄네
         gb:BtnClicked.value, 
-        content: FBContent.value
+        content: FBContent.value,
+        reg_dt: Date.now()
       }) 
+      console.log(BtnClicked.value, FBContent.value, Date.now())
       FBContent.value = ''
     }
     
     // 피드백 입력란 닫기
     const closeFB = () => {
+      FBContent.value = ''
       BtnClicked.value=''
     }
 
   return {
     BtnClicked,
     FBContent,
-    fbList,
+    FBList,
     createFB,
     saveFB,
     closeFB,
@@ -82,6 +85,32 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.FeedbackArea{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
+}
+
+.FBList{
+  width: 100%;
+  max-height: 80%;
+  overflow-y:scroll;
+}
+
+button{
+  border: none
+}
+
+.FBList > ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.FBBtncontainer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
 </style>

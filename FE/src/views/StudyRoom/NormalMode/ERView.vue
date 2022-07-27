@@ -32,7 +32,7 @@
         <!-- 하단 -->
         <div class="ERButtonFooter">
           <!-- 면접 종료 버튼(방장 유저) -->
-          <div v-show="userType === 'superUser'">
+          <div class="StudyDestroyBtn" v-show="userType === 'superUser'">
             <button>면접 완료</button>
           </div>
           <!-- 면접에서 나가기 버튼(일반 유저) -->
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import {useRouter} from 'vue-router'
 import { ref } from "vue";
 import FeedbackArea from '@/components/StudyRoom/NormalMode/FeedbackArea.vue'
 export default {
@@ -58,15 +59,18 @@ methods:{
   openEECL(){
     let route = this.$router.resolve({path:"/eecl"})
     window.open(route.href)  
-  }
+  },
 },
 setup() {
-  const userType = ref("superUser"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
+  const router=useRouter();
+
+  const userType = ref("user"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
   function ERtoLBConfirm(userType) {
     if (userType === 'user') {
       if(confirm('정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 대기실로 이동합니다.')) {
-        this.$router.push('main')
+        router.push({name: 'main'})
       }
+
     }
     else if (userType === 'superUser'){
       if(confirm('정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 대기실로 이동합니다.')) {
@@ -102,10 +106,13 @@ setup() {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 20%
   
 }
 
-
+.button{
+  border: none
+}
 
 .ERButtonHeader {
   display: flex;
@@ -114,11 +121,15 @@ setup() {
 }
 .ERButtonFooter {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-.ERButtonArea > button{
+.CLOpen > button,
+.QTip > button,
+.StudyDestroyBtn > button,
+.ERtoLBbtn > button{
   border: none;
 }
+
 </style>
