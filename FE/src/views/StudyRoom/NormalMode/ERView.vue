@@ -2,23 +2,26 @@
 <template>
   <div class="ERView">
       <!-- 영상 구역  -->
-      <!-- 상단 -->
-      <!-- 면접자 영상 구역 -->
+      <div class="ERContainer">
+        <!-- 면접자 영상 구역 -->
+        <div class="EEVidContainer"></div>
+        <!-- 면접관 영상 구역 -->
+        <div class="ERVidContainer"></div>
 
-      <!-- 하단 -->
-      <!-- 면접관 영상 구역 -->
+      </div>
+
 
       <!-- 유저 기능 구역 -->
       <div class="ERFeatureARea">
         <!-- 상단 -->
-        <div class="ERButtonFooter">
+        <div class="ERButtonHeader">
           <!-- 면접자 자소서 페이지 열기 버튼 -->
           <div class="CLOpen">
             <button>자소서</button>
           </div>
           <!-- 질문 팁 모달 열기 버튼 -->
           <div class="QTip">
-            <button>자소서</button>
+            <button>면접팁</button>
           </div>
         </div>
 
@@ -96,6 +99,13 @@ setup() {
   
 }
 
+
+
+.ERButtonHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 .ERButtonFooter {
   display: flex;
   flex-direction: column;
