@@ -1,12 +1,11 @@
 import axios from "axios";
 import router from '@/router'
-// import drf from '@/api/index'
 
 const state= {
     // 회원가입
     token: localStorage.getItem('token') || '',
     UserList:{},
-    isLoggedIn: false,
+    isLoggedIn: true,
     emailcode:{},
     pwcode: false,
     pwcodeforedit: false,
@@ -45,7 +44,7 @@ const getters = {
     StudyroomList(state){return state.StudyroomList},
     FeedbackList(state){return state.FeedbackList},
     ReplayList(state){return state.ReplayList},
-    authHeader(state){return ({"accessToken": `"${state.token}"`})}
+    authHeader: state => (`Bearer ${state.token}`)
   }
 
 
@@ -82,7 +81,7 @@ const actions= {
       localStorage.setItem('token', '')  // token 값 빈값 넣고 보내면, token delete 된 것
     },
     
-    login({ dispatch }, credentials) {
+    login({ dispatch, getters }, credentials) {
       /* 
       POST: 사용자 입력정보를 login URL로 보내기
         성공하면
@@ -99,44 +98,19 @@ const actions= {
         data: credentials
       })
         .then(res => {
-          const token = res.data.key
+          console.log(res)
+          const token = res.data.accessToken
           dispatch('saveToken', token)
+          console.log(getters.authHeader)
           dispatch('fetchCurrentUser')
-          router.push({ name: 'main' })
+          console.log(getters.UserList)
+          // router.push({ name: 'main' })
         })
         .catch(err => {
           console.error(err.response.data)
         })
     },
 
-    signup({ dispatch }, credentials) {
-      /* 
-      POST: 사용자 입력정보를 signup URL로 보내기
-        성공하면
-          응답 토큰 저장
-          현재 사용자 정보 받기
-          메인 페이지(ArticleListView)로 이동
-        실패하면
-          에러 메시지 표시
-      */
-      console.log("회원가입아 안녕?")
-      axios({
-        url: 'http://localhost:8081/api/v1/users', //회원가입 api로
-        method: 'post',
-        data: credentials
-      })
-        .then(res => {
-          const token = res.data.key
-          dispatch('saveToken', token)
-          dispatch('fetchCurrentUser')
-          alert('성공적으로 회원가입!')
-          router.push({ name: 'main' })
-
-        })
-        .catch(err => {
-          console.error(err.response.data)
-        })
-    },
     logout({ getters, dispatch }) {
       /* 
       POST: token을 logout URL로 보내기
@@ -149,7 +123,7 @@ const actions= {
       */
       console.log("로그아웃아 안녕?")
       axios({
-        url: 'http://localhost:8081/api/v1/users/logout', //logout api로 
+        url: '', //logout api로 
         method: 'post',
         headers: getters.authHeader,
       })
@@ -177,7 +151,7 @@ const actions= {
         axios({
           url: 'http://localhost:8081/api/v1/users/detail', //정보 가져오는 api
           method: 'get',
-          headers: getters.authHeader,
+          headers: {Authorization: getters.authHeader },
         })
           .then(res => commit('SET_USER_LIST', res.data))
           .catch(err => {
@@ -189,43 +163,26 @@ const actions= {
       }
     },
 
-    checkEmail(credentials) {
-    console.log("중복확인아 안녕?")
-      axios({
-        url: '',  // 이메일확인 api
-        method: 'get',
-        data: credentials.userEmial
-      })
-        .then(() => {
-          alert('! 가입 가능 한 이메일입니다.')
-        })
-        .catch(err => {
-          console.error(err.response)
-          alert('이미 가입된 이메일입니다.')
-        })
-    },
+    // checkEmail(credentials) {
+    // console.log("중복확인아 안녕?")
+    //   axios({
+    //     url: '',  // 이메일확인 api
+    //     method: 'get',
+    //     data: credentials.userEmial
+    //   })
+    //     .then(() => {
+    //       alert('! 가입 가능 한 이메일입니다.')
+    //     })
+    //     .catch(err => {
+    //       console.error(err.response)
+    //       alert('이미 가입된 이메일입니다.')
+    //     })
+    // },
 
-    getEmailCode({commit}, credentials) {
-        console.log("코드보내기야 안녕?")
-        axios({
-          url: '',  // 비밀번호찾기 api
-          method: 'post',
-          data: credentials.userEmail
-        })
-          .then(res => {
-            alert('가입한 이메일로 인증코드가 전송 되었습니다.')
-            commit('SET_EMAIL_CODE', res.data)
-          })
-          .catch(err => {
-            console.error(err.response)
-            alert('가입된 이메일이 아닙니다.')
-          })
-        
-    },
     getNewPW(emailcode) {
       console.log("새로운비번받기야 안녕?")
       axios({
-        url: '',  // 인증번호 api
+        url: 'http://localhost:8081/api/v1/users/password',  // 인증번호 api
         method: 'post',
         data: emailcode.emailcode
       })
@@ -251,7 +208,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE', false)
+        commit('SET_PW_CODE', true)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -269,7 +226,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE_FOR_EDIT', false)
+        commit('SET_PW_CODE_FOR_EDIT', true)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -290,15 +247,14 @@ const actions= {
       })
     },
 
-    changePW(changepassword) {
+    changePW() {
       console.log("비번수정아 안녕?")
       axios({
         url:'', // 비번수정 api 
-        method:'put',
-        data: changepassword,
+        method:'delete',
       })
       .then(() => {
-        alert('수정 완료 다시 로그인 하십시오.')
+        alert('정상적으로 회원탈퇴 되었습니다.')
         router.push({ name: 'Account' })
       })
       .catch(err => {

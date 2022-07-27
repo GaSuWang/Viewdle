@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,7 +18,11 @@ public class QParticipant extends EntityPathBase<Participant> {
 
     private static final long serialVersionUID = 1767663153L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QParticipant participant = new QParticipant("participant");
+
+    public final StringPath participantDate = createString("participantDate");
 
     public final StringPath participantEnterYN = createString("participantEnterYN");
 
@@ -25,16 +30,30 @@ public class QParticipant extends EntityPathBase<Participant> {
 
     public final StringPath roomOwnerYN = createString("roomOwnerYN");
 
+    public final QStudyroom studyroom;
+
+    public final QUser user;
+
     public QParticipant(String variable) {
-        super(Participant.class, forVariable(variable));
+        this(Participant.class, forVariable(variable), INITS);
     }
 
     public QParticipant(Path<? extends Participant> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QParticipant(PathMetadata metadata) {
-        super(Participant.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QParticipant(PathMetadata metadata, PathInits inits) {
+        this(Participant.class, metadata, inits);
+    }
+
+    public QParticipant(Class<? extends Participant> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.studyroom = inits.isInitialized("studyroom") ? new QStudyroom(forProperty("studyroom"), inits.get("studyroom")) : null;
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 
 }

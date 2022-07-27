@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,9 +18,13 @@ public class QStudyroom extends EntityPathBase<Studyroom> {
 
     private static final long serialVersionUID = -1582391134L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QStudyroom studyroom = new QStudyroom("studyroom");
 
-    public final NumberPath<Integer> commonSeq = createNumber("commonSeq", Integer.class);
+    public final QCommon common;
+
+    public final ListPath<Participant, QParticipant> participants = this.<Participant, QParticipant>createList("participants", Participant.class, QParticipant.class, PathInits.DIRECT2);
 
     public final StringPath roomActiveYN = createString("roomActiveYN");
 
@@ -43,18 +48,28 @@ public class QStudyroom extends EntityPathBase<Studyroom> {
 
     public final NumberPath<Integer> roomType = createNumber("roomType", Integer.class);
 
-    public final NumberPath<Integer> UserSeq = createNumber("UserSeq", Integer.class);
+    public final QUser user;
 
     public QStudyroom(String variable) {
-        super(Studyroom.class, forVariable(variable));
+        this(Studyroom.class, forVariable(variable), INITS);
     }
 
     public QStudyroom(Path<? extends Studyroom> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QStudyroom(PathMetadata metadata) {
-        super(Studyroom.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QStudyroom(PathMetadata metadata, PathInits inits) {
+        this(Studyroom.class, metadata, inits);
+    }
+
+    public QStudyroom(Class<? extends Studyroom> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.common = inits.isInitialized("common") ? new QCommon(forProperty("common")) : null;
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 
 }

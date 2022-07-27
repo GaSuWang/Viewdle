@@ -1,5 +1,4 @@
 import { createWebHistory, createRouter } from "vue-router";
-
 // /* webpackPrefetch:true */ 입력해서 vue.config.js에서 prefetch 끈 것을 활성화 시킬 수 있음
 
 const routes = [
@@ -88,6 +87,11 @@ const routes = [
   //   name: 'feedback-room',
   //   component: () => import(/* webpackPrefetch:true */ '@/views/')
   // },
+  {
+    path: '/eecl',
+    name: 'eecl',
+    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/CLView.vue'),
+  },
 ];
 
 export const router = createRouter({

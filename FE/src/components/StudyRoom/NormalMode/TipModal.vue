@@ -5,11 +5,20 @@
 </template>
 
 <script>
-export default {
+import swal from 'sweetalert2'
 
+export default {
+name: TipModal,
+methods:{
+    swal.fire({
+        text: "Hello world!",
+
+    })
+
+}
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>
