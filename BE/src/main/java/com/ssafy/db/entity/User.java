@@ -3,9 +3,11 @@ package com.ssafy.db.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Resource;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -81,6 +83,7 @@ public class User{
 
     @OneToMany(mappedBy = "user")
     List<CoverLetter> coverLetters = new ArrayList<>();
+
 
     @PrePersist
     public void prePersist(){

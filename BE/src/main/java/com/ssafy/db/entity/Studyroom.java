@@ -1,7 +1,9 @@
 package com.ssafy.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
+@ToString
 @Table(name="Studyroom")
 public class Studyroom {
     @Id
@@ -69,5 +71,16 @@ public class Studyroom {
         roomCloseYN = "N";
         roomActiveYN = "N";
         roomFullYN = "N";
+    }
+
+    @Builder
+    public Studyroom(int roomType, String roomTitle, String roomPrivateYN, String roomPassword, int roomLimit, User user, Common common) {
+        this.roomType = roomType;
+        this.roomTitle = roomTitle;
+        this.roomPrivateYN = roomPrivateYN;
+        this.roomPassword = roomPassword;
+        this.roomLimit = roomLimit;
+        this.user = user;
+        this.common = common;
     }
 }

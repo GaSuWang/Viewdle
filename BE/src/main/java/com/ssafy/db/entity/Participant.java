@@ -1,5 +1,6 @@
 package com.ssafy.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "Participant")
 public class Participant {
     @Id
@@ -40,6 +40,13 @@ public class Participant {
     public void prePersist(){
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd"));
         participantDate = now;
+        participantEnterYN = "Y";
     }
 
+    @Builder
+    public Participant(String roomOwnerYN, User user, Studyroom studyroom) {
+        this.roomOwnerYN = roomOwnerYN;
+        this.user = user;
+        this.studyroom = studyroom;
+    }
 }
