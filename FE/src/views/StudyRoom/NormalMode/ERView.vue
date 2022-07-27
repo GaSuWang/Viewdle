@@ -89,6 +89,12 @@ setup() {
   justify-content: space-between;
 }
 
+.ERFeatureARea{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+}
 
 .ERButtonFooter {
   display: flex;
