@@ -287,6 +287,22 @@ const actions= {
         console.error(err.response)
         alert('임시의 도피처.')
       })
+    },
+
+    changePW() {
+      console.log("비번수정아 안녕?")
+      axios({
+        url:'', // 비번수정 api 
+        method:'delete',
+      })
+      .then(() => {
+        alert('정상적으로 회원탈퇴 되었습니다.')
+        router.push({ name: 'Account' })
+      })
+      .catch(err => {
+        console.error(err.response)
+        alert('임시의 도피처.')
+      })
     }
 };
 

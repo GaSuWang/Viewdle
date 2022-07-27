@@ -1,8 +1,13 @@
-import axios from "axios";
+const HOST = 'http://localhost:8081/api/v1/'
 
-export default axios.create({
-  baseURL: "",
-  headers: {
-    "Content-type": "application/json",
+const ACCOUNTS = 'accounts/'
+
+export default {
+  accounts: {
+    login: () => HOST + ACCOUNTS + 'login/',
+    logout: () => HOST + ACCOUNTS + 'logout/',
+    signup: () => HOST + ACCOUNTS + 'signup/',
+    currentUserInfo: () => HOST + ACCOUNTS + 'user/',
+    profile: username => HOST + ACCOUNTS + 'profile/' + username,
   },
-});
+}
