@@ -18,16 +18,17 @@
           <user-video :stream-manager="mainStreamManager"/>
         </div>
         <div id="video-container" class="col-md-6">
-          <user-video :stream-manager="publisher" @click.native="updateMainVideoStreamManager(publisher)"/>
-          <user-video v-for="sub in subscribers" :key="sub.stream.connection.connectionId" :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
+          <!-- vue 3.x에서는 click.native 없어짐 -->
+          <user-video :stream-manager="publisher" @click="updateMainVideoStreamManager(publisher)"/>
+          <user-video v-for="sub in subscribers" :key="sub.stream.connection.connectionId" :stream-manager="sub" @click="updateMainVideoStreamManager(sub)"/>
         </div>
       </div>
     </div>
 
     <!-- 방장 기능 -->
-    <div class="superUser">
+    <div class="superUser" v-show="userType === 'superUser'">
       <!-- 면접자 선택 -->
-      <div class="dropdown">
+      <div class="dropdown" >
         <button
           class="btn btn-secondary dropdown-toggle"
           type="button"
@@ -37,29 +38,33 @@
           면접자 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">자소서1</a></li>
-          <li><a class="dropdown-item" href="#">자소서2</a></li>
-          <li><a class="dropdown-item" href="#">자소서3</a></li>
+          <li><a class="dropdown-item" href="#">면접자1</a></li>
+          <li><a class="dropdown-item" href="#">면접자2</a></li>
+          <li><a class="dropdown-item" href="#">면접자3</a></li>
         </ul>
+      </div>
         <!-- 스터디 종료 -->
         <button class="btn btn-secondary" @click="EndStudyConfirm">
           스터디 종료
         </button>
         <!-- openvidu 간단히 -->
-        <button class="btn btn-lg btn-success" @click="joinSession()">Join!</button>
-
-      </div>
+        <button v-show="!session" class="btn btn-lg btn-success" @click="joinSession()">Join!</button>
     </div>
   </div>
 </template>
 
 <script>
-// import { ref } from "vue";
+import { ref } from "vue";
 // import { useStore } from "vuex";
-// import { OpenVidu } from 'openvidu-browser';
+
+// 여기서 영상 띄우는 법
+// npm run serve
+// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
+// 단 도커 설치되어 있어야 함
+
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
-import UserVideo from './components/UserVideo';
+import UserVideo from '@/components/UserVideo.vue';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -69,24 +74,22 @@ const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "WaitingRoomView",
   components:{UserVideo},
-  setup() {
-    // const store = useStore();
-    // const userList = ref(state.lbhModuel.participantList)
-    function EndStudyConfirm() {
-      if (confirm("정말 스터디를 종료하시겠습니까?")) {
-        this.$router.push("/main");
-      }
-    }
-    // openvidu 간단히
-    var OV = undefined;
-    var session = undefined;
-    var mainStreamManager = undefined;
-    var publisher = undefined;
-    var subscribers = [];
-    var mySessionId = 'SessionA';
-    var myUserName = 'Participant' + Math.floor(Math.random() * 100);
+  // data와 methods는 openvidu-insecure-vue 코드 그대로 따온 것
 
-    function joinSession () {
+	data () {
+		return {
+			OV: undefined,
+			session: undefined,
+			mainStreamManager: undefined,
+			publisher: undefined,
+			subscribers: [],
+
+			mySessionId: 'SessionA',
+			myUserName: 'Participant' + Math.floor(Math.random() * 100),
+		}
+	},
+	methods: {
+		joinSession () {
 			// --- Get an OpenVidu object ---
 			this.OV = new OpenVidu();
 
@@ -148,9 +151,9 @@ export default {
 			});
 
 			window.addEventListener('beforeunload', this.leaveSession)
-		}
+		},
 
-		function leaveSession () {
+		leaveSession () {
 			// --- Leave the session by calling 'disconnect' method over the Session object ---
 			if (this.session) this.session.disconnect();
 
@@ -161,12 +164,12 @@ export default {
 			this.OV = undefined;
 
 			window.removeEventListener('beforeunload', this.leaveSession);
-		};
+		},
 
-		function updateMainVideoStreamManager (stream) {
+		updateMainVideoStreamManager (stream) {
 			if (this.mainStreamManager === stream) return;
 			this.mainStreamManager = stream;
-		};
+		},
 
 		/**
 		 * --------------------------
@@ -180,12 +183,12 @@ export default {
 		 *   3) The Connection.token must be consumed in Session.connect() method
 		 */
 
-		function getToken (mySessionId) {
+		getToken (mySessionId) {
 			return this.createSession(mySessionId).then(sessionId => this.createToken(sessionId));
-		};
+		},
 
 		// See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
-		function createSession (sessionId) {
+		createSession (sessionId) {
 			return new Promise((resolve, reject) => {
 				axios
 					.post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions`, JSON.stringify({
@@ -210,10 +213,10 @@ export default {
 						}
 					});
 			});
-		};
+		},
 
 		// See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
-		function createToken (sessionId) {
+		createToken (sessionId) {
 			return new Promise((resolve, reject) => {
 				axios
 					.post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`, {}, {
@@ -226,18 +229,23 @@ export default {
 					.then(data => resolve(data.token))
 					.catch(error => reject(error.response));
 			});
-		};
+		},
+	},
+  // data와 methods는 openvidu-insecure-vue 코드 그대로 따온 것
 
+  setup() {
+    // const store = useStore();
+    // const userList = ref(state.lbhModuel.participantList)
+    function EndStudyConfirm() {
+      if (confirm("정말 스터디를 종료하시겠습니까?")) {
+        this.$router.push("/main");
+      }
+    }
+
+    const userType = ref('superUser')
     return {
       EndStudyConfirm,
-      OV,
-      session,
-      mainStreamManager,
-      publisher,
-      subscribers,
-      mySessionId,
-      myUserName
-
+      userType,
     };
   },
 };
