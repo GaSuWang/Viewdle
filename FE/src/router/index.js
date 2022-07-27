@@ -85,11 +85,14 @@ const routes = [
   //   name: 'er-room-ez',
   //   component: () => import(/* webpackPrefetch:true */ '@/views/')
   // },
-  // {
-  //   path: '/feedback-room',
-  //   name: 'feedback-room',
-  //   component: () => import(/* webpackPrefetch:true */ '@/views/')
-  // },
+  {
+    path: "/fb-room",
+    name: "fb-room",
+    component: () =>
+      import(
+        /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/FeedbackView.vue"
+      ),
+  },
   {
     path: "/eecl",
     name: "eecl",
