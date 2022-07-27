@@ -48,20 +48,20 @@
           스터디 종료
         </button>
         <!-- openvidu 간단히 -->
-        <button v-show="!session" class="btn btn-lg btn-success" @click="joinSession()">Join!</button>
+        <!-- join 버튼 대기실에서는 없음 -->
+        <!-- 면접자 선택하고 @/compoenents/StudyRoom/CLSelectModal.vue에서 면접 시작하고 joinSession -->
+        <!-- <button v-show="!session" class="btn btn-lg btn-success" @click="joinSession()">Join!</button> -->
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
-// import { useStore } from "vuex";
-
 // 여기서 영상 띄우는 법
 // npm run serve
 // cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
 // 단 도커 설치되어 있어야 함
 
+import { ref } from "vue";
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '@/components/UserVideo.vue';
@@ -74,8 +74,6 @@ const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "WaitingRoomView",
   components:{UserVideo},
-  // data와 methods는 openvidu-insecure-vue 코드 그대로 따온 것
-
 	data () {
 		return {
 			OV: undefined,
@@ -88,6 +86,7 @@ export default {
 			myUserName: 'Participant' + Math.floor(Math.random() * 100),
 		}
 	},
+
 	methods: {
 		joinSession () {
 			// --- Get an OpenVidu object ---
@@ -231,8 +230,6 @@ export default {
 			});
 		},
 	},
-  // data와 methods는 openvidu-insecure-vue 코드 그대로 따온 것
-
   setup() {
     // const store = useStore();
     // const userList = ref(state.lbhModuel.participantList)
@@ -241,13 +238,15 @@ export default {
         this.$router.push("/main");
       }
     }
-
     const userType = ref('superUser')
     return {
-      EndStudyConfirm,
       userType,
+      EndStudyConfirm
     };
   },
+  beforeMount(){
+    this.joinSession()
+  }
 };
 </script>
 
