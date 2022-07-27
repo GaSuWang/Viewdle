@@ -1,6 +1,7 @@
 package com.ssafy.api.service;
 
 import com.ssafy.api.request.UserRegisterPostReq;
+import com.ssafy.api.response.UserHistoryRes;
 import com.ssafy.db.entity.User;
 
 /**
@@ -14,4 +15,5 @@ public interface UserService {
 	void changePwdUser(String email, String originPassword, String password, String password2);
 	void deleteUser(User user);
 	void checkPassword(String userPassword, String password);
+	UserHistoryRes getUserHistory(User user);
 }

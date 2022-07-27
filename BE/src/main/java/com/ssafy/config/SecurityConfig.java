@@ -77,7 +77,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/users/login").permitAll()
                 //체크 - 이메일 중복확인
                 .antMatchers("/api/v1/users/check/*").permitAll()
-
                 .anyRequest().permitAll()
 
                 .and()
