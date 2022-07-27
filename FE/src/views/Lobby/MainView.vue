@@ -1,10 +1,9 @@
 // 임현탁
 <template>
   <div class="MainView">
-    <div id='main'>
-      Main  
-
-      </div>
+    <p id="Main">
+      Main
+    </p>
     <NavBar/>
     <!-- 검색 -->
     <!-- 최신순,오래된순 정렬 -->
@@ -24,7 +23,7 @@ export default {
 </script>
 
 <style>
-#main{
+#Main{
   position: fixed;
   left: 400px;
   top: 50px;

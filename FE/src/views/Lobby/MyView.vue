@@ -12,12 +12,14 @@
     <!-- 수정완료버튼 누르면 확인 컨펌 -->
   <div class="MyView">
     <div id="my-page">
+      <p>MyPage</p>
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">My Page</h5>
-          <img :src="userLists.userProfileImage">
-          <p class="card-text">이름 : {{userLists.userName}}</p>
-          <p class="card-text">email :{{userLists.userEmail}}</p>
+          <!-- <img :src="userLists.userProfileImage"> -->
+          <!-- <p class="card-text">이름 : {{userLists.userName}}</p> -->
+          <!-- <p class="card-text">email :{{userLists.userEmail}}</p> -->
+          <!-- {{userLists.userName}} -->
           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
           <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
         </div>
@@ -105,7 +107,7 @@
                 <form @submit.prevent="changePW(changepassword)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="changepassword.password1" class="form-control form-control-lg" placeholder="Password Confirm" />
+                      <input type="password" v-model="changepassword.password" class="form-control form-control-lg" placeholder="Password Confirm" />
                       <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="New Password Confirm" />
                     </div>
                   </div>
@@ -138,7 +140,7 @@ export default {
       password: '',
     })
     const changepassword = reactive({
-      password1: '',
+      password: '',
       password2: ''
     })
     const store = useStore();
@@ -164,8 +166,9 @@ export default {
       store.dispatch('rhtModule/deleteID', credentials)
     }
     function changePW(){
-      store.dispatch('rhtModule/changePW', credentials)
+      store.dispatch('rhtModule/changePW', changepassword)
     }
+    
     return {
       tests, userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
     };

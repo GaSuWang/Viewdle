@@ -76,10 +76,10 @@ export default {
       })
         .then(() => {
           alert('성공적으로 회원가입!')
-          // router.push({ name: 'main' })
+          // this.$router.push("/main")
         })
         .catch(err => {
-          console.error(err.response.data)
+          console.error(err)
         })
     }
 

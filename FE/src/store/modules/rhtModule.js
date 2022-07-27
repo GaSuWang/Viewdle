@@ -104,10 +104,11 @@ const actions= {
           console.log(getters.authHeader)
           dispatch('fetchCurrentUser')
           console.log(getters.UserList)
-          // router.push({ name: 'main' })
+          this.$router.push("/main");
         })
         .catch(err => {
           console.error(err.response.data)
+          alert("이메일 및 비밀번호를 확인하세요")
         })
     },
 
@@ -198,7 +199,7 @@ const actions= {
     confirmPW({commit}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
-        url:'', // 비밀번호 컨펌 api 
+        url:'http://localhost:8081/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
         data: confirmPW
       })
@@ -216,7 +217,7 @@ const actions= {
     confirmPWforEdit({commit}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
-        url:'', // 비밀번호 컨펌 api 
+        url:'http://localhost:8081/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
         data: confirmPW
       })
@@ -234,7 +235,7 @@ const actions= {
     deleteID() {
       console.log("회원탈퇴야 안녕?")
       axios({
-        url:'', // 회원탈퇴 api 
+        url:'http://localhost:8081/api/v1/users', // 회원탈퇴 api 
         method:'delete',
       })
       .then(() => {
@@ -243,23 +244,23 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        alert('임시의 도피처.')
+        alert('실패.')
       })
     },
 
     changePW() {
       console.log("비번수정아 안녕?")
       axios({
-        url:'', // 비번수정 api 
-        method:'delete',
+        url:'http://localhost:8081/api/v1/users/password', // 비번수정 api 
+        method:'put',
       })
       .then(() => {
-        alert('정상적으로 회원탈퇴 되었습니다.')
+        alert('정상적으로 비밀번호가 바뀌었습니다.')
         router.push({ name: 'Account' })
       })
       .catch(err => {
         console.error(err.response)
-        alert('임시의 도피처.')
+        alert('실패.')
       })
     }
 };
