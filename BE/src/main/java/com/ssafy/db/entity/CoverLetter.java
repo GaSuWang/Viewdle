@@ -2,6 +2,7 @@ package com.ssafy.db.entity;
 
 import lombok.*;
 import org.checkerframework.checker.units.qual.C;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,8 +11,10 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Getter
 @Setter
+@ToString
 //@builder 사용을 위한 기본생성자 접근 제한
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 @Table(name = "coverletter")
 public class CoverLetter {
     /*
@@ -52,7 +55,8 @@ public class CoverLetter {
 
     //builder 사용을 위한 생성자
     @Builder
-    public CoverLetter(String coverLetterTitle, String coverLetterContent, User user){
+    public CoverLetter(String coverLetterTitle, String coverLetterContent, User user, int coverLetterSeq){
+        this.coverLetterSeq = coverLetterSeq;
         this.coverLetterTitle = coverLetterTitle;
         this.coverLetterContent = coverLetterContent;
         this.user = user;
