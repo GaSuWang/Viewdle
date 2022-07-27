@@ -15,37 +15,37 @@ const state = {
   studyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
 
   //ErView, FeedbackRoom, ReplayView
-  fbList: [], // 피드백 리스트
+  FBList: [], // 피드백 리스트
 };
 const getters = {
   //SettingRoom
-  getUserCLList(state) {
+  UserCLList(state) {
     return state.userCLList;
   },
-  getCameraList(state) {
+  CameraList(state) {
     return state.cameraList;
   },
-  getMicList(state) {
+  MicList(state) {
     return state.micList;
   },
 
   //WaitingRoom
   //AuthorityPassModal
-  getParticipantList(state) {
+  ParticipantList(state) {
     return state.participantList;
   },
 
   //ErView
-  getInterviewTipList(state) {
+  InterviewTipList(state) {
     return state.interviewTipList;
   },
-  getStudyRoomCL(state) {
+  StudyRoomCL(state) {
     return state.studyRoomCL;
   },
 
   //ErView, FeedbackRoom, ReplayView
-  getFBList(state) {
-    return state.fbList;
+  FBList(state) {
+    return state.FBList;
   },
 };
 const mutations = {

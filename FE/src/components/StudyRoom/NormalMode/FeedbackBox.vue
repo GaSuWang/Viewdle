@@ -15,12 +15,13 @@ export default {
     },
     setup(){
       // const store = useStore()
-      // function deleteFB(){
-      //     store.dispacth('lbhModule/deleteFB', this.fb.id) //store action에 추가
-      // }
-      // return {
-      //   deleteFB
-      // }
+      function deleteFB(){
+          // store.dispacth('lbhModule/deleteFB', this.fb.id) //store action에 추가
+          
+      }
+      return {
+        deleteFB
+      }
     }
 }
 
