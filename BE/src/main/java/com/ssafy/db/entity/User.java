@@ -9,6 +9,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 유저 모델 정의.
@@ -70,6 +72,15 @@ public class User{
 
     @Column(name="user_total_video")
     int userTotalVideo;
+
+    @OneToMany(mappedBy = "user")
+    List<Participant> participants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    List<Studyroom> studyrooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    List<CoverLetter> coverLetters = new ArrayList<>();
 
     @PrePersist
     public void prePersist(){
