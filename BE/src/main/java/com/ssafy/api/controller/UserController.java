@@ -1,18 +1,15 @@
 package com.ssafy.api.controller;
 
-import com.ssafy.api.request.UserChangePwdReq;
-import com.ssafy.api.request.UserLoginPostReq;
+import com.ssafy.api.request.*;
 import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.service.EmailService;
 import com.ssafy.common.exception.*;
 import com.ssafy.common.util.JwtTokenUtil;
-import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.api.response.UserRes;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.VudleUserDetails;
@@ -63,7 +60,7 @@ public class UserController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "회원가입이 완료되었습니다."));
 	}
 
-	@GetMapping("/check/{email}")
+	@PostMapping("/check/duplicate")
 	@ApiOperation(value = "중복 이메일 확인합니당", notes = "가입할때 필요할걸용?")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
@@ -72,11 +69,11 @@ public class UserController {
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
 	public ResponseEntity<? extends BaseResponseBody> emailDeplicateCheck(
-			@RequestParam String email) {
+			@RequestBody UserEmailReq emailInfo) {
 		//임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
 		try {
 
-			if (userService.getUserByUserEmail(email) != null){
+			if (userService.getUserByUserEmail(emailInfo.getEmail()) != null){
 				throw new AlreadyExistEmailException();
 			}
 		}
@@ -205,16 +202,16 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<? extends BaseResponseBody> checkPassword(@ApiIgnore Authentication authentication, @RequestBody String password) throws Exception {
+	public ResponseEntity<? extends BaseResponseBody> checkPassword(@ApiIgnore Authentication authentication, @RequestBody UserPwdReq pwdInfo) throws Exception {
 
 		VudleUserDetails userDetails = (VudleUserDetails)authentication.getDetails();
 		User user = userDetails.getUser();
 
-		System.out.println(user.getUserPassword()+" "+password);
+		System.out.println(user.getUserPassword()+" "+pwdInfo.getPassword());
 		System.out.println();
 
 		try {
-			userService.checkPassword(user.getUserPassword(), password);
+			userService.checkPassword(user.getUserPassword(), pwdInfo.getPassword());
 		} catch (NotMatchPasswordException e) {
 			return ResponseEntity.status(e.getStatus()).body(BaseResponseBody.of(e.getStatus(), e.getMessage()));
 		}
@@ -230,9 +227,9 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<? extends BaseResponseBody> emailConfirm(@RequestBody String email) throws Exception {
-		System.out.println(email);
-		String confirm = emailService.sendSimpleMessage(email);
+	public ResponseEntity<? extends BaseResponseBody> emailConfirm(@RequestBody UserEmailReq emailInfo) throws Exception {
+		System.out.println(emailInfo.getEmail());
+		String confirm = emailService.sendSimpleMessage(emailInfo.getEmail());
 
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, confirm));
 	}
@@ -246,17 +243,17 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<? extends BaseResponseBody> newPassword(@RequestBody String email) throws Exception {
+	public ResponseEntity<? extends BaseResponseBody> newPassword(@RequestBody UserEmailReq emailInfo) throws Exception {
 
 		try {
-			userService.getUserByUserEmail(email);
+			userService.getUserByUserEmail(emailInfo.getEmail());
 		} catch (NotExistEmailException e) {
 			return ResponseEntity.status(e.getStatus()).body(BaseResponseBody.of(e.getStatus(), e.getMessage()));
 		}
 
-		String newPassword = emailService.sendNewPassword(email);
-		User user = userService.getUserByUserEmail(email);
-		userService.changePwdUser(email, user.getUserPassword(), newPassword, newPassword);
+		String newPassword = emailService.sendNewPassword(emailInfo.getEmail());
+		User user = userService.getUserByUserEmail(emailInfo.getEmail());
+		userService.changePwdUser(emailInfo.getEmail(), user.getUserPassword(), newPassword, newPassword);
 
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "비밀번호 재발급이 완료되었습니다."));
 	}
