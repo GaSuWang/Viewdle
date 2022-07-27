@@ -8,6 +8,9 @@ import com.ssafy.db.repository.StudyroomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class StudyroomServiceImpl implements StudyroomService{
 
@@ -32,5 +35,14 @@ public class StudyroomServiceImpl implements StudyroomService{
     public Studyroom getRoomBySeq(int roomSeq) {
         Studyroom studyroom = studyroomRepository.findByroomSeq(roomSeq);
         return studyroom;
+    }
+
+    @Override
+    public void closeRoom(int roomSeq) {
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:hh:mm:ss"));
+        Studyroom studyroom = studyroomRepository.findByroomSeq(roomSeq);
+        studyroom.setRoomCloseYN("Y");
+        studyroom.setRoomCloseTime(now);
+        studyroomRepository.save(studyroom);
     }
 }

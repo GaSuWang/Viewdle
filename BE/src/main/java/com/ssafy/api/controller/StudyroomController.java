@@ -14,10 +14,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @Api(value = "스터디 룸 API", tags = {"Studyroom"})
@@ -59,6 +56,23 @@ public class StudyroomController {
 
         participantService.registParticipant("Y", user, studyroomService.getRoomBySeq(roomSeq)); // 방장을 Participant 테이블에 등록
         return ResponseEntity.status(200).body(RoomRegisterPostRes.of(200, "방을 정상적으로 생성했습니다", roomSeq));
+    }
+
+    @PutMapping("/{roomSeq}")
+    @ApiOperation(value = "스터디 룸 삭제", notes = "<strong>방 번호</strong>를 가지고 방을 삭제한다(닫는다)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패")
+    })
+    public ResponseEntity<? extends BaseResponseBody> closeRoom(@ApiIgnore Authentication authentication, @PathVariable int roomSeq){
+
+        if(authentication == null){
+            System.out.println("로그인이 필요합니다.");
+            return ResponseEntity.status(401).body(BaseResponseBody.of(401, "로그인이 필요합니다"));
+        }
+
+        studyroomService.closeRoom(roomSeq);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "방을 삭제했습니다."));
     }
 
 }
