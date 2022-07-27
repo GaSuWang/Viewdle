@@ -60,6 +60,16 @@ const mutations = {
   //ERView
 
   //FeedbackRoom
+  DELETE_FB(state, id){
+    console.log(typeof(state.FBList), state.FBList)
+    state.FBList.foreach((e) => {
+      if(e.reg_dt === id){
+        const index = state.FBList.indexOf('e')
+        if (index > -1) state.FBList.splice(index, 1)
+      }
+    })
+    
+  }
 };
 const actions = {
   //SettingRoom
@@ -80,6 +90,9 @@ const actions = {
   //ERView
 
   //FeedbackRoom
+  deleteFB({commit}, FBid){
+    commit('DELETE_FB', FBid)
+  }
 };
 
 export default {

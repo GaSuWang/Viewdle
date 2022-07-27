@@ -21,7 +21,7 @@
           </div>
           <!-- 질문 팁 모달 열기 버튼 -->
           <div class="QTip">
-            <button>면접팁</button>
+            <button @click="openQTip">면접팁</button>
           </div>
         </div>
 
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import swal from 'sweetalert2'
 import {useRouter} from 'vue-router'
 import { ref } from "vue";
 import FeedbackArea from '@/components/StudyRoom/NormalMode/FeedbackArea.vue'
@@ -60,6 +61,17 @@ methods:{
     let route = this.$router.resolve({path:"/eecl"})
     window.open(route.href)  
   },
+  openQTip(){
+    swal.fire({
+      title: "면접관 질문 팁!",
+      text: "와! 정말 유용한 팁들이에요~",
+      icon: "info",
+      cancelButtonText: "질문 팁 닫기",
+      position: 'top-end',
+  
+    })
+  }
+  
 },
 setup() {
   const router=useRouter();
@@ -132,4 +144,7 @@ setup() {
   border: none;
 }
 
+.swal-overlay {
+  background-color: black;
+}
 </style>
