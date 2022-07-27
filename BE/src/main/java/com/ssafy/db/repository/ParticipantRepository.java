@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
-    @Query(value = "select participant_date from  participant group by using_date where user_seq > : userSeq", nativeQuery = true)
+    @Query(value = "select participant_date from  participant where user_seq = :userSeq  group by participant_date ;", nativeQuery = true)
     List<String> findUsingDate(@Param(value = "userSeq")int userSeq);
 }
 
