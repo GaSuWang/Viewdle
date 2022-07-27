@@ -75,7 +75,7 @@ public class StudyroomController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "방을 삭제했습니다."));
     }
 
-    @PutMapping("/interview/{roomSeq}")
+    @PutMapping("/interview/start/{roomSeq}")
     @ApiOperation(value = "스터디 룸 면접 시작", notes = "<strong>방 번호</strong>를 가지고 면접 상태를 변경한다. (면접 진행 중)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
@@ -96,6 +96,30 @@ public class StudyroomController {
 
         studyroomService.startInterview(roomSeq);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "면접을 시작했습니다."));
+    }
+
+
+    @PutMapping("/interview/end/{roomSeq}")
+    @ApiOperation(value = "스터디 룸 면접 종료", notes = "<strong>방 번호</strong>를 가지고 면접 상태를 변경한다. (면접 종료 중)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 901, message = "면접 진행 불가")
+    })
+    public ResponseEntity<? extends BaseResponseBody> endInterview(@ApiIgnore Authentication authentication, @PathVariable int roomSeq){
+
+        if(authentication == null){
+            System.out.println("로그인이 필요합니다.");
+            return ResponseEntity.status(401).body(BaseResponseBody.of(401, "로그인이 필요합니다"));
+        }
+
+        if(studyroomService.getRoomBySeq(roomSeq).getRoomCloseYN().equals("Y")){
+            System.out.println("면접을 종료 할 수 없습니다.");
+            return ResponseEntity.status(901).body(BaseResponseBody.of(901, "닫힌 방은 면접을 종료 할 수 없습니다."));
+        }
+
+        studyroomService.endInterview(roomSeq);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "면접을 종료합니다."));
     }
 
 }

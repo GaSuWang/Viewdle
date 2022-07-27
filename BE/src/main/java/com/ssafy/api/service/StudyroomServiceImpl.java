@@ -52,4 +52,11 @@ public class StudyroomServiceImpl implements StudyroomService{
         studyroom.setRoomActiveYN("Y");
         studyroomRepository.save(studyroom);
     }
+
+    @Override
+    public void endInterview(int roomSeq) {
+        Studyroom studyroom = studyroomRepository.findByroomSeq(roomSeq);
+        studyroom.setRoomActiveYN("N");
+        studyroomRepository.save(studyroom);
+    }
 }
