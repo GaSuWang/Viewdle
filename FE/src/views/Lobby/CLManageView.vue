@@ -1,10 +1,27 @@
 // 임현탁
 <template>
-  <div class="CLManageView">
-    <p id='clmanage'>
-      Cover Letter Manage
-    </p>
+  <div class="CLManageView" data-bs-spy="scroll">
+    <div id='clmanage'>
+      <p>
+        Cover Letter Manage
+      </p>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          정렬
+        </button>
+        <ul class="dropdown-menu">
+          <li>오래된순</li>
+          <li>최신순</li>
+        </ul>
+      </div>
+      <div class="CLManageBody">
+        <div class="container">
+          <CLMCard/>
+        </div>
+      </div>
+    </div>
     <NavBar/>
+    
     <!-- 내 자기소개서 관리 페이지 -->
     <!-- 최신순/오래된순 정렬 -->
     <!-- 전체삭제 버튼-->
@@ -24,12 +41,12 @@
 </template>
 
 <script>
-// import CLMCard from '@/components/Lobby/CLMCard.vue'
+import CLMCard from '@/components/Lobby/CLMCard.vue'
 import NavBar from '@/components/Lobby/NavBar.vue'
 import { reactive } from 'vue'
 export default {
   components: {
-    // CLMCard,
+    CLMCard,
     NavBar
   },
   setup(){
@@ -48,5 +65,10 @@ export default {
   position: fixed;
   left: 400px;
   top: 50px;
+}
+#CLManageBody{
+  position: fixed;
+  left: 400px;
+  top: 250px;
 }
 </style>

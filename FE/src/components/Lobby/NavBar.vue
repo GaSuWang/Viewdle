@@ -8,7 +8,7 @@
         <li><router-link to="/mypage"><i class="fas fa-user"></i>MyPage</router-link></li>
         <li><router-link to="/cl"><i class="fas fa-envelope-open-text"></i>CoverLetter</router-link></li>
         <li><router-link to="/replay"><i class="fas fa-video"></i>Replay</router-link></li>
-        <li><i class="fas fa-sign-out-alt"></i>Logout</li>
+        <li><form><button clsaa="btn"><i class="fas fa-sign-out-alt"></i>Logout</button></form></li>
     </ul>
     </div>
 </div>
@@ -74,10 +74,15 @@ export default {
     border-top: 1px solid rgba(255,255,255,.1);
     border-bottom: 1px solid black;
 }
-ul li:hover {
+.sidebar ul li:hover {
     padding-left: 50px
 }
 .sidebar ul li i{
     margin-right:16px;
+}
+button{
+    background: #042331;
+    color: white;
+    border: #042331;
 }
 </style>
