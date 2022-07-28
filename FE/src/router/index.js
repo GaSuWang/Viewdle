@@ -90,7 +90,7 @@ const routes = [
     name: "fb-room",
     component: () =>
       import(
-        /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/FeedbackView.vue"
+        /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/FBView.vue"
       ),
   },
   {

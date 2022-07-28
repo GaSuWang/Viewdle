@@ -1,4 +1,6 @@
 // 이병헌
+//면접실(일반 모드)에서 면접관이 보는 페이지 (Interviewee Room VIew => EEView)
+
 <template>
   <div class="ERView">
     <!-- 영상 구역  -->
@@ -130,7 +132,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-
 }
 
 .ERRightArea {

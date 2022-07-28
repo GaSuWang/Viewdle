@@ -1,4 +1,5 @@
 // 이병헌
+//면접실(일반 모드)에서 면접자가 보는 페이지 (Interviewee Room VIew => EEView)
 <template>
   <div class="EEView">
     <!-- 영상 구역  -->
