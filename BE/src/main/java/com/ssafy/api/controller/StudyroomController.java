@@ -1,6 +1,7 @@
 package com.ssafy.api.controller;
 
 import com.ssafy.api.request.RoomEnterPostReq;
+import com.ssafy.api.request.RoomExitPatchReq;
 import com.ssafy.api.request.RoomRegisterPostReq;
 import com.ssafy.api.response.RoomRegisterPostRes;
 import com.ssafy.api.service.CommonService;
@@ -10,7 +11,6 @@ import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.VudleUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.Common;
-import com.ssafy.db.entity.Participant;
 import com.ssafy.db.entity.Studyroom;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.mapping.ParticipantResMapping;
@@ -100,7 +100,7 @@ public class StudyroomController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "스터디 룸을 삭제했습니다."));
     }
 
-    @PostMapping("/{roomSeq}")
+    @PostMapping("/enter")
     @ApiOperation(value = "스터디 룸 입장", notes = "<strong>스터디 룸 번호, 비밀번호</strong>을 가지고 스터디 룸에 입장한다")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
@@ -165,6 +165,41 @@ public class StudyroomController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "스터디 룸에 입장했습니다."));
     }
 
+    @PatchMapping("/exit")
+    @ApiOperation(value = "스터디 룸 나가기", notes = "<strong>스터디 룸 번호, 방장 여부, 다음 방장</strong>정보를 넘기고 스터디 룸을 나간다.")
+    public ResponseEntity<? extends BaseResponseBody> exitRoom(@ApiIgnore Authentication authentication, @RequestBody @ApiParam(value="스터디 룸 퇴장 정보", required = true) RoomExitPatchReq roomExitPatchReq){
+
+        if(authentication == null){
+            System.out.println("로그인이 필요합니다.");
+            return ResponseEntity.status(401).body(BaseResponseBody.of(401, "로그인이 필요합니다"));
+        }
+
+        // 스터디 룸 퇴장 유저 정보 얻기
+        VudleUserDetails userDetails = (VudleUserDetails) authentication.getDetails();
+        User user = userDetails.getUser();
+        System.out.println("스터디 룸 퇴장 유저 : " + user.getUserEmail());
+
+        ParticipantResMapping participant = participantService.findRecentByUserSeq(user);
+        // 방장 일 때 권한 넘기기
+        if("Y".equals(roomExitPatchReq.getOwnerYN())) {
+            User nextUser = userService.getUserByUserEmail(roomExitPatchReq.getNextOwnerEmail());
+            ParticipantResMapping nextOwner = participantService.findRecentByUserSeq(nextUser);
+            participantService.exitOwner(participant.getParticipantSeq());
+            participantService.changeOwner(nextOwner.getParticipantSeq());
+        }
+        // 방장이 아닐 때
+        else{
+            participantService.outUser(participant.getParticipantSeq());
+        }
+
+        // 스터디 룸이 full 상태였다면 not full로 상태 변경
+        Studyroom studyroom = studyroomService.getRoomBySeq(roomExitPatchReq.getRoomSeq());
+        if("Y".equals(studyroom.getRoomFullYN())){
+            studyroomService.notFullRoom(studyroom.getRoomSeq());
+        }
+
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "스터디 룸에서 나왔습니다."));
+    }
 
     @PatchMapping("/interview/start/{roomSeq}")
     @ApiOperation(value = "스터디 룸 면접 시작", notes = "<strong>스터디 룸 번호</strong>를 가지고 면접 상태를 변경한다. (면접 진행 중)")

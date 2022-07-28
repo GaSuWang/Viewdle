@@ -47,4 +47,19 @@ public class ParticipantServiceImpl implements ParticipantService {
     public long countInStudyroomUser(Studyroom studyroom, String enteryn) {
         return participantRepository.countByStudyroomAndParticipantEnterYN(studyroom, enteryn);
     }
+
+    @Override
+    public void exitOwner(int participantSeq) {
+        Participant participant = participantRepository.findByParticipantSeq(participantSeq);
+        participant.setParticipantEnterYN("N");
+        participant.setRoomOwnerYN("N");
+        participantRepository.save(participant);
+    }
+
+    @Override
+    public void changeOwner(int participantSeq) {
+        Participant participant = participantRepository.findByParticipantSeq(participantSeq);
+        participant.setRoomOwnerYN("Y");
+        participantRepository.save(participant);
+    }
 }

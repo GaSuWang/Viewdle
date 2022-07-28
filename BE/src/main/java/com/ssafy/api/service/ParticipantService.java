@@ -14,5 +14,6 @@ public interface ParticipantService {
     public List<ParticipantResMapping> findInStudyroomUser(Studyroom studyroom, String enteryn);
     public void outUser(int participantSeq);
     public long countInStudyroomUser(Studyroom studyroom, String enteryn);
-
+    public void exitOwner(int participantSeq);
+    public void changeOwner(int participantSeq);
 }
