@@ -92,7 +92,8 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: lightgrey;
+  background-color: #fff;
+  box-shadow: 10px 40px 20px 6px #bfc2cb;  
   border-radius: 60px;
   padding: 3%;
   display: flex;
@@ -114,7 +115,7 @@ export default {
 
 .participantVideo {
   width: 40%;
-  background: darkgrey;
+  background: #cbcfd9;
 }
 
 .EERight {

@@ -128,7 +128,8 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: lightgrey;
+  background-color: #fff;
+  box-shadow: 10px 10px 20px 6px #b5b8c0;  
   border-radius: 60px;
   padding: 3%;
   display: flex;
@@ -141,6 +142,8 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   width: 30%;
+  border-radius: 20px;
+  background-color: #edf0f6;
 }
 
 .ERButtonHeader {

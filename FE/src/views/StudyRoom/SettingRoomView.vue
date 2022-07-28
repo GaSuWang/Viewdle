@@ -14,9 +14,11 @@
           마이크 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">마이크1</a></li>
-          <li><a class="dropdown-item" href="#">마이크2</a></li>
-          <li><a class="dropdown-item" href="#">마이크3</a></li>
+          <li v-for="mic in MicList" :key="mic.deviceId">
+            {{mic.label}}
+            <!-- <mic-device :mic="mic"></mic-device> -->
+          </li>
+          
         </ul>
       </div>
 
@@ -31,9 +33,10 @@
           카메라 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">카메라1</a></li>
-          <li><a class="dropdown-item" href="#">카메라2</a></li>
-          <li><a class="dropdown-item" href="#">카메라3</a></li>
+          <li v-for="camera in CameraList" :key="camera.deviceId">
+            {{camera.label}}
+          <!-- <camera-device :camera="camera"></camera-device> -->
+          </li>
         </ul>
       </div>
 
@@ -91,11 +94,33 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import {useStore} from 'vuex';
 import { useRouter } from "vue-router";
+import { OpenVidu } from 'openvidu-browser';
+// import CameraDevice from '@/components/StudyRoom/CameraDevice.vue'
+// import MicDevice from '@/components/StudyRoom/MicDevice.vue'
 export default {
   name: "SettingRoomView",
+  // components:{CameraDevice, MicDevice},
   setup() {
+    const store = useStore();
+
+    // 디바이스 목록 가져오기
+    var OV = new OpenVidu();
+    function findDevices(){
+      OV.getDevices().then(devices => {
+      var videoDevices = devices.filter(device => device.kind === 'videoinput');
+      store.dispatch('lbhModule/getCameraList', videoDevices)
+      var audioDevices = devices.filter(device => device.kind === 'audioinput');
+      store.dispatch('lbhModule/getMicList', audioDevices)
+    });
+    } 
+    findDevices()
+
+    const CameraList = computed(()=>store.getters['lbhModule/CameraList'])
+    const MicList = computed(()=>store.getters['lbhModule/MicList'])
+
     const router = useRouter();
     const micSelect = ref(false);
     const cameraSelect = ref(false);
@@ -119,6 +144,8 @@ export default {
       cameraOn.value = !cameraOn.value;
     }
     return {
+      CameraList,
+      MicList,
       micSelect,
       cameraSelect,
       clSelect,
@@ -160,12 +187,24 @@ export default {
   width: 100%;
   height: 10%;
   border-radius: 60px 60px 0 0;
-  background-color: lightgrey;
+  background-color: #858a98;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
 }
+
+.SettingRoomHeader > li {
+  padding: 0;
+  border-bottom: 5px rgb(210, 210, 210) solid;
+}
+
+/* .SettingRoomHeader > div:nth-child(1) > ul>li,
+.SettingRoomHeader > div:nth-child(2) > ul>li,
+.SettingRoomHeader > div:nth-child(3) > ul>li{
+  padding: 0;
+  border-bottom: 5px rgb(210, 210, 210) solid;
+} */
 
 .SettingRoomContent {
   position: absolute;
@@ -173,8 +212,8 @@ export default {
   left: 0;
   width: 100%;
   height: 80%;
-  background-color: black;
-  opacity: 30%;
+  background-color: #B5BAC9;
+  /* opacity: 30%; */
 }
 
 .SettingRoomFooter {
@@ -184,7 +223,7 @@ export default {
   width: 100%;
   height: 10%;
   border-radius: 0 0 60px 60px;
-  background-color: lightgrey;
+  background-color: #858a98;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
