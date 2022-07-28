@@ -1,4 +1,6 @@
 // 이병헌
+//면접실(일반 모드)에서 면접관이 보는 페이지 (Interviewee Room VIew => EEView)
+
 <template>
   <div class="ERView">
     <!-- 영상 구역  -->
@@ -47,7 +49,9 @@
       <div class="ERButtonFooter">
         <!-- 면접 완료 버튼(방장 유저) -->
         <div class="StudyDestroyBtn" @click="StudyDestroy" v-show="userType === 'superUser'">
-          <button><i class="bi bi-check-circle"></i></button>
+          <button>
+            <i class="bi bi-check-lg"></i>
+          </button>
         </div>
 
       </div>
@@ -130,7 +134,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-
 }
 
 .ERRightArea {

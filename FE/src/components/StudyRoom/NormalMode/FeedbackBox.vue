@@ -46,11 +46,14 @@ export default {
 }
 
 .good {
-  background-color: #47a0ff;
+  /* background-color: #47a0ff; */
+  background: linear-gradient(#47a0ff, #7ebdff)
 }
 
 .bad {
-  background-color: #ffe6b5;
+  /* background-color: #ffe6b5; */
+  background: linear-gradient(#ffe6b5, #ffefd0)
+
 }
 
 .FBBoxBtn {

@@ -9,13 +9,7 @@
         <feedback-box :fb="fb"></feedback-box>
       </li>
     </ul>
-    <div
-      class="FBInputBox"
-      v-if="BtnClicked"
-      :style="[
-        BtnClicked === 'good' ? 'background: #47A0FF' : 'background:#FFE6B5',
-      ]"
-    >
+    <div :class="[BtnClicked === 'good' ? ' FBInputBox good' : 'FBInputBox bad']" v-if="BtnClicked">
       <input
         type="text"
         class="form-control"
@@ -133,9 +127,9 @@ export default {
 
 .FBList {
   width: 100%;
+  height: 80%;
   max-height: 80%;
   overflow-y: scroll;
-  padding-bottom: 20px;
   scrollbar-color: #d4aa70 #e4e4e4;
   scrollbar-width: thin;
 }
@@ -169,6 +163,18 @@ export default {
   word-wrap: break-all;
   hyphens: auto;
 }
+
+.good{
+  /* background: #47A0FF */
+  background: linear-gradient(#47a0ff, #7ebdff)
+
+}
+
+.bad{
+  /* background:#FFE6B5 */
+  background: linear-gradient(#ffe6b5, #ffefd0)
+}
+
 .form-control {
   background: none;
   width: 85%;
