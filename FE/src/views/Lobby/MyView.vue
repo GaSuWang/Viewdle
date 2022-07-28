@@ -178,9 +178,6 @@ export default {
   left: 400px;
   top: 50px;
 }
-.deleteconfirm{
-  position: absolute;
-  z-index: 9998;
-}
+
 </style>
 

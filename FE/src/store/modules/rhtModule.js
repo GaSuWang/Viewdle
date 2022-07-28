@@ -17,7 +17,8 @@ const state= {
     // 뱃지 관리
     BadgeList:{},
     // 자소서관리
-    CoverLetterList:{},
+    CoverLetterList:[],
+    CoverLetterDetail:{},
     // 방 만들기, 
     StudyroomList:{},
     // 녹화된 영상과 피드백 보기위함
@@ -36,6 +37,7 @@ const getters = {
     ThumnailList(state){return state.ThumnailList},
     BadgeList(state){return state.BadgeList},
     CoverLetterList(state){return state.CoverLetterList},
+    CoverLetterDetail(state){return state.CoverLetterDetail},
     StudyroomList(state){return state.StudyroomList},
     FeedbackList(state){return state.FeedbackList},
     ReplayList(state){return state.ReplayList},
@@ -58,37 +60,33 @@ const mutations= {
     },
     SET_PW_CODE_FOR_EDIT(state, pwcodeforedit){
       state.pwcodeforedit = pwcodeforedit
-    }
+    },
+    SET_COVERLETTER_LIST(state, CoverLetterList){
+      state.CoverLetterList = CoverLetterList
+    },
+    SET_COVERLETTER_DETAIL(state, CoverLetterDetail){
+      state.CoverLetterDetail = CoverLetterDetail
+    },
   }
 
 
 const actions= {
+  // 토큰저장
     saveToken({ commit }, token){
       commit('SET_TOKEN', token)
     },
-
+  //  토큰 삭제 
     removeToken({ commit }) {
-      /* 
-      state.token 삭제
-      localStorage에 token 추가
-      */
       commit('SET_TOKEN', '')
-      localStorage.setItem('token', '')  // token 값 빈값 넣고 보내면, token delete 된 것
+      localStorage.setItem('token', '') 
     },
     
+  // 로그인 
     login({ dispatch, getters }, credentials) {
-      /* 
-      POST: 사용자 입력정보를 login URL로 보내기
-        성공하면
-          응답 토큰 저장
-          현재 사용자 정보 받기
-          메인 페이지(ArticleListView)로 이동
-        실패하면
-          에러 메시지 표시
-      */
+
       console.log("로그인아 안녕?")
       axios({
-        url: 'http://localhost:8081/api/v1/users/login',  // 로그인 api
+        url: 'http://localhost:8081/api/v1/users/login',  
         method: 'post',
         data: credentials
       })
@@ -99,7 +97,6 @@ const actions= {
           console.log(getters.authHeader)
           dispatch('fetchCurrentUser')
           console.log(getters.UserList)
-          // router.push("/main");
         })
         .catch(err => {
           console.error(err)
@@ -107,16 +104,8 @@ const actions= {
         })
     },
 
+    // 로그아웃
     logout({ getters, dispatch }) {
-      /* 
-      POST: token을 logout URL로 보내기
-        성공하면
-          토큰 삭제
-          사용자 알람
-          LoginView로 이동
-        실패하면
-          에러 메시지 표시
-      */
       console.log("로그아웃아 안녕?")
       axios({
         url: '', //logout api로 
@@ -133,16 +122,8 @@ const actions= {
         })
     },
 
+    // 사용자 정보 가져오기
     fetchCurrentUser({ commit, getters, dispatch }) {
-      /*
-      GET: 사용자가 로그인 했다면(토큰이 있다면)
-        currentUserInfo URL로 요청보내기
-          성공하면
-            state.cuurentUser에 저장
-          실패하면(토큰이 잘못되었다면)
-            기존 토큰 삭제
-            LoginView로 이동
-      */
       if (getters.isLoggedIn) {
         axios({
           url: 'http://localhost:8081/api/v1/users/detail', //정보 가져오는 api
@@ -160,37 +141,7 @@ const actions= {
       }
     },
 
-    // checkEmail(credentials) {
-    // console.log("중복확인아 안녕?")
-    //   axios({
-    //     url: '',  // 이메일확인 api
-    //     method: 'get',
-    //     data: credentials.userEmial
-    //   })
-    //     .then(() => {
-    //       alert('! 가입 가능 한 이메일입니다.')
-    //     })
-    //     .catch(err => {
-    //       console.error(err.response)
-    //       alert('이미 가입된 이메일입니다.')
-    //     })
-    // },
-    getNewPW(emailcode) {
-      console.log("새로운비번받기야 안녕?")
-      axios({
-        url: 'http://localhost:8081/api/v1/users/password',  // 인증번호 api
-        method: 'post',
-        data: emailcode.emailcode
-      })
-        .then(() => {
-          alert('새 비밀번호를 전송하였습니다. 이메일을 확인하세요.')
-          useRouter.push({ name: 'Account' })
-        })
-        .catch(err => {
-          console.error(err.response)
-          alert('인증번호를 확인하세요.')
-        })
-    },
+    // 회원삭제를 위한 비번 확인
     confirmPW({commit}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
@@ -209,6 +160,8 @@ const actions= {
         
       })
     },
+
+    //비번수정을 위한 비번확인 
     confirmPWforEdit({commit}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
@@ -227,6 +180,8 @@ const actions= {
         
       })
     },
+
+    // 회원탈퇴
     deleteID() {
       console.log("회원탈퇴야 안녕?")
       axios({
@@ -243,11 +198,13 @@ const actions= {
       })
     },
 
-    changePW() {
+    // 비밀번호 수정
+    changePW(changepassword) {
       console.log("비번수정아 안녕?")
       axios({
         url:'http://localhost:8081/api/v1/users/password', // 비번수정 api 
         method:'put',
+        data: changepassword
       })
       .then(() => {
         alert('정상적으로 비밀번호가 바뀌었습니다.')
@@ -257,7 +214,93 @@ const actions= {
         console.error(err.response)
         alert('실패.')
       })
-    }
+    },
+
+    // 자소서 만들기
+    createCoverLetter(credentials) {
+      console.log("자소서만들기야 안녕?")
+      axios({
+        url:'http://localhost:8081/api/v1/coverletters', // 비번수정 api 
+        method:'post',
+        data: credentials,
+      })
+      .then(() => {
+        alert('자소서가 생성되었습니다.')
+      })
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+
+    //자소서 정보 가져오기
+    getCoverLetter({commit}) {
+      console.log("자소서가져오기야 안녕?")
+      axios({
+        url:'http://localhost:8081/api/v1/users/coverletters', // 비번수정 api 
+        method:'get',
+      })
+      .then(res => {
+        commit('SET_COVERLETTER_LIST', res.data)
+        alert('자소서 정보를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+
+    //자소서 상세보기
+    detialCoverLetter({commit}, coverLetterSeq) {
+      console.log("자소서상세보기야 안녕?")
+      axios({
+        url:`http://localhost:8081/api/v1/users/coverletters/${coverLetterSeq}}`, // 비번수정 api 
+        method:'get',
+        data: {coverLetterSeq: `${coverLetterSeq}` }
+      })
+      .then(res => {
+        commit('SET_COVERLETTER_DETAIL', res.data)
+        alert('자소서 상세 정보를 가져왔습니다.')
+      })
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+
+    //자소서 삭제하기
+    deleteCoverLetter(credentialsTodelete) {
+      console.log("자소서가져오기야 안녕?")
+      axios({
+        url:'http://localhost:8081/api/v1/users/coverletters/', // 비번수정 api 
+        method:'delete',
+        data: credentialsTodelete
+      })
+      .then(() => {
+        alert('자소서가 삭제 되었습니다.')
+      })
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //자소서 수정하기
+    updateCoverLetter(credentials) {
+      console.log("자소서가져오기야 안녕?")
+      axios({
+        url:'http://localhost:8081/api/v1/users/coverletters', // 비번수정 api 
+        method:'put',
+        data: credentials
+      })
+      .then(() => {
+        alert('자소서가 수정되었습니다.')
+      })
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
 };
 
 

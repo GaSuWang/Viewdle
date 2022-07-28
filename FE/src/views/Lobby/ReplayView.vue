@@ -5,6 +5,7 @@
       <p>
         Replay
       </p>
+      <div class="d-flex">
       <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           정렬
@@ -13,6 +14,7 @@
           <li>오래된순</li>
           <li>최신순</li>
         </ul>
+      </div>
       </div>
       <div class="ReplayBody">
       <div class="container">

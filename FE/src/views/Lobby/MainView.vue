@@ -1,10 +1,11 @@
 // 임현탁
 <template>
-  <div class="MainView" data-bs-spy="scroll">
+  <div class="MainView">
     <div id="MainTop">
       <p>
         Main
       </p>
+      <div>
       <div class="Searchbar">
         <div class="input-group">
           <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
@@ -25,16 +26,19 @@
           정렬
         </button>
         <ul class="dropdown-menu">
-          <li>최신순</li>
+          <li>최신순</li> 
           <li>오래된순</li>
         </ul>
       </div>
-      <button class="btn btn-secondary">
+      <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle">
         방생성
       </button>
+      </div>
+      </div>
     </div>
-    <div id="MainBody">
-      <div class="container">
+    <div  id="MainBody">
+      <div class="">
         <MainCard/>
       </div>
     </div>
@@ -59,6 +63,9 @@ export default {
 </script>
 
 <style>
+#MainView{
+
+}
 #MainTop{
   position: fixed;
   left: 400px;
