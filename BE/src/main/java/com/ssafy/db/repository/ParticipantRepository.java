@@ -11,7 +11,9 @@ import java.util.List;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
+
         Participant findByParticipantSeq(int participantSeq);
         ParticipantResMapping findTopByUserOrderByParticipantSeqDesc(User user);
         List<ParticipantResMapping> findByStudyroomAndParticipantEnterYN(Studyroom studyroom, String ParticipantEnterYN);
+        Long countByStudyroomAndParticipantEnterYN(Studyroom studyroom, String ParticipantEnterYN);
 }

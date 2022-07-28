@@ -42,4 +42,9 @@ public class ParticipantServiceImpl implements ParticipantService {
         participant.setParticipantEnterYN("N");
         participantRepository.save(participant);
     }
+
+    @Override
+    public long countInStudyroomUser(Studyroom studyroom, String enteryn) {
+        return participantRepository.countByStudyroomAndParticipantEnterYN(studyroom, enteryn);
+    }
 }

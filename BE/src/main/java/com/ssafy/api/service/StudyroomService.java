@@ -12,5 +12,6 @@ public interface StudyroomService {
     public void closeRoom(int roomSeq);
     public void startInterview(int roomSeq);
     public void endInterview(int roonSeq);
+    public void fullRoom(int roomSeq);
 
 }

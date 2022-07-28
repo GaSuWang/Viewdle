@@ -13,4 +13,6 @@ public interface ParticipantService {
     public ParticipantResMapping findRecentByUserSeq(User user);
     public List<ParticipantResMapping> findInStudyroomUser(Studyroom studyroom, String enteryn);
     public void outUser(int participantSeq);
+    public long countInStudyroomUser(Studyroom studyroom, String enteryn);
+
 }

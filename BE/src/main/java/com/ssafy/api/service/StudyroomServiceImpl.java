@@ -59,4 +59,11 @@ public class StudyroomServiceImpl implements StudyroomService{
         studyroom.setRoomActiveYN("N");
         studyroomRepository.save(studyroom);
     }
+
+    @Override
+    public void fullRoom(int roomSeq) {
+        Studyroom studyroom = studyroomRepository.findByroomSeq(roomSeq);
+        studyroom.setRoomFullYN("Y");
+        studyroomRepository.save(studyroom);
+    }
 }
