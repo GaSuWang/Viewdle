@@ -1,5 +1,6 @@
 package com.ssafy.config;
 
+import com.ssafy.api.service.CustomOAuth2UserService;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.JwtAuthenticationFilter;
 import com.ssafy.common.auth.SsafyUserDetailService;
@@ -26,10 +27,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SsafyUserDetailService ssafyUserDetailService;
-    
+
     @Autowired
     private UserService userService;
-    
+
+    private final CustomOAuth2UserService customOAuth2UserService;
+
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+        this.customOAuth2UserService = customOAuth2UserService;
+    }
+
+
     // Password 인코딩 방식에 BCrypt 암호화 방식 사용
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -54,6 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+
         http
                 .httpBasic().disable()
                 .csrf().disable()
@@ -61,17 +71,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), userService)) //HTTP 요청에 JWT 토큰 인증 필터를 거치도록 필터를 추가
                 .authorizeRequests()
-                //인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
-//                .antMatchers("/api/v1/*").authenticated()
+                //회원가입
+                .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
+                //로그인
+                .antMatchers("/api/v1/users/login").permitAll()
+                //체크 - 이메일 중복확인
+                .antMatchers("/api/v1/users/check/*").permitAll()
 
-//                //회원가입
-//                .antMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
-//                //로그인
-//                .antMatchers("/api/v1/users/login").permitAll()
-//                //체크 - 이메일 중복확인
-//                .antMatchers("/api/v1/users/check/*").permitAll()
                 .anyRequest().permitAll()
 
-                .and().cors();
+                .and()
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService);
+
+        ;
     }
 }
