@@ -49,7 +49,9 @@
       <div class="ERButtonFooter">
         <!-- 면접 완료 버튼(방장 유저) -->
         <div class="StudyDestroyBtn" @click="StudyDestroy" v-show="userType === 'superUser'">
-          <button><i class="bi bi-check-lg"></i></button>
+          <button>
+            <i class="bi bi-check-lg"></i>
+          </button>
         </div>
 
       </div>
