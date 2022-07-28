@@ -15,11 +15,11 @@
       <div class="ERButtonHeader">
         <!-- 면접자 자소서 페이지 열기 버튼 -->
         <div class="CLOpen">
-          <button @click.prevent="openEECL()">자소서</button>
+          <button @click.prevent="openEECL()">자</button>
         </div>
         <!-- 질문 팁 모달 열기 버튼 -->
         <div class="QTip">
-          <button @click="openQTip">면접팁</button>
+          <button @click="openQTip">면</button>
         </div>
       </div>
 
@@ -35,11 +35,11 @@
         </div>
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div v-show="userType === 'user'" class="ERtoLBbtn user">
-          <button @click.prevent="ERtoLBConfirm(userType)">나가기</button>
+          <button @click.prevent="ERtoLBConfirm(userType)">X</button>
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
-          <button @click.prevent="ERtoLBConfirm(userType)">나가기</button>
+          <button @click.prevent="ERtoLBConfirm(userType)">X</button>
         </div>
       </div>
     </div>
@@ -134,31 +134,23 @@ export default {
   justify-content: space-between;
 }
 
-/* 면접자 페이지 버튼들 */
+/* 면접자 페이지 버튼들 시작*/
 /* 굿/뱃 버튼은 FeedbackArea에 있음 */
 .CLOpen > button,
 .QTip > button,
 .StudyDestroyBtn > button,
 .ERtoLBbtn > button {
   border: none;
-  /* border: none;
-  padding: 3px 10px;
-  border-radius: 5px; */
   display: block;
-  background-color: #f7f7f7;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#e7e7e7));
-  background-image: -webkit-linear-gradient(top, #f7f7f7, #e7e7e7); 
-  background-image: -moz-linear-gradient(top, #f7f7f7, #e7e7e7); 
-  background-image: -ms-linear-gradient(top, #f7f7f7, #e7e7e7); 
-  background-image: -o-linear-gradient(top, #f7f7f7, #e7e7e7); 
+  background: linear-gradient(#f7f7f7, #e7e7e7);
   color: #a7a7a7;
   margin: 18px;
-  width: 72px;
+  width: 36px;
   height: 36px;
   position: relative;
   text-align: center;
-  line-height: 72px;
-  border-radius: 25%;
+  line-height: 36px;
+  border-radius: 50%;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
 
@@ -200,13 +192,12 @@ export default {
 .QTip > button:hover,
 .StudyDestroyBtn > button:hover,
 .ERtoLBbtn > button:hover {
-  /* border: none;
-  background-color: black;
-  color: white; */
   text-decoration: none;
   color: #555;
   background: #f5f5f5;
 }
+/* 면접자 페이지 버튼들 끝*/
+
 
 .swal-overlay {
   background-color: black;
