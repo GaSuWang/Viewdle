@@ -4,12 +4,14 @@ import com.ssafy.api.request.RoomRegisterPostReq;
 import com.ssafy.db.entity.Common;
 import com.ssafy.db.entity.Studyroom;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.mapping.StudyroomResMapping;
 import com.ssafy.db.repository.StudyroomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 public class StudyroomServiceImpl implements StudyroomService{
@@ -72,5 +74,10 @@ public class StudyroomServiceImpl implements StudyroomService{
         Studyroom studyroom = studyroomRepository.findByroomSeq(roomSeq);
         studyroom.setRoomFullYN("N");
         studyroomRepository.save(studyroom);
+    }
+
+    @Override
+    public List<StudyroomResMapping> getRooms(String enteryn) {
+        return studyroomRepository.findByRoomCloseYN(enteryn);
     }
 }

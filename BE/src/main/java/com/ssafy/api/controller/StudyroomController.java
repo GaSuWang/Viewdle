@@ -14,6 +14,7 @@ import com.ssafy.db.entity.Common;
 import com.ssafy.db.entity.Studyroom;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.mapping.ParticipantResMapping;
+import com.ssafy.db.mapping.StudyroomResMapping;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -247,5 +248,12 @@ public class StudyroomController {
         studyroomService.endInterview(roomSeq);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "면접을 종료합니다."));
     }
+
+    @GetMapping
+    @ApiOperation(value = "스터디 룸 목록", notes = "<strong>현재 존재하는</strong>스터디 룸 목록을 반환한다.")
+    public ResponseEntity<? extends List<StudyroomResMapping>> getRooms(){
+        return ResponseEntity.status(200).body(studyroomService.getRooms("N"));
+    }
+
 
 }

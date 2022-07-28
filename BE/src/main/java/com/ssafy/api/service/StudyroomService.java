@@ -4,6 +4,9 @@ import com.ssafy.api.request.RoomRegisterPostReq;
 import com.ssafy.db.entity.Common;
 import com.ssafy.db.entity.Studyroom;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.mapping.StudyroomResMapping;
+
+import java.util.List;
 
 public interface StudyroomService {
 
@@ -14,5 +17,6 @@ public interface StudyroomService {
     public void endInterview(int roonSeq);
     public void fullRoom(int roomSeq);
     public void notFullRoom(int roomSeq);
+    public List<StudyroomResMapping> getRooms(String enteryn);
 
 }
