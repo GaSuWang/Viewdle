@@ -53,7 +53,7 @@ const routes = [
   },
   {
     path: "/waiting-room",
-    name: "watiing-room",
+    name: "waiting-room",
     component: () =>
       import(
         /* webpackPrefetch:true */ "@/views/StudyRoom/WaitingRoomView.vue"
@@ -73,24 +73,31 @@ const routes = [
   //   component: () => import(/* webpackPrefetch:true */ '@/views/')
   // },
   {
-    path: '/er-room',
-    name: 'er-room',
-    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/NormalMode/ERView.vue'),
+    path: "/er-room",
+    name: "er-room",
+    component: () =>
+      import(
+        /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/ERView.vue"
+      ),
   },
   // {
   //   path: '/er-room/ez',
   //   name: 'er-room-ez',
   //   component: () => import(/* webpackPrefetch:true */ '@/views/')
   // },
-  // {
-  //   path: '/feedback-room',
-  //   name: 'feedback-room',
-  //   component: () => import(/* webpackPrefetch:true */ '@/views/')
-  // },
   {
-    path: '/eecl',
-    name: 'eecl',
-    component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/CLView.vue'),
+    path: "/fb-room",
+    name: "fb-room",
+    component: () =>
+      import(
+        /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/FeedbackView.vue"
+      ),
+  },
+  {
+    path: "/eecl",
+    name: "eecl",
+    component: () =>
+      import(/* webpackPrefetch:true */ "@/views/StudyRoom/CLView.vue"),
   },
 ];
 

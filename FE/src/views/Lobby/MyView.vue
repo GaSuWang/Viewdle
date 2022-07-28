@@ -12,6 +12,7 @@
     <!-- 수정완료버튼 누르면 확인 컨펌 -->
   <div class="MyView">
     <div id="my-page">
+      <p>MyPage</p>
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">My Page</h5>
@@ -105,7 +106,7 @@
                 <form @submit.prevent="changePW(changepassword)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="changepassword.password1" class="form-control form-control-lg" placeholder="Password Confirm" />
+                      <input type="password" v-model="changepassword.password" class="form-control form-control-lg" placeholder="Password Confirm" />
                       <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="New Password Confirm" />
                     </div>
                   </div>
@@ -138,15 +139,12 @@ export default {
       password: '',
     })
     const changepassword = reactive({
-      password1: '',
+      password: '',
       password2: ''
     })
     const store = useStore();
-    const tests = computed(
-      () => store.state.rhtModule.test
-    );
     const userLists = computed(
-      () => store.state.rhtModule.userList
+      () => store.state.rhtModule.UserList
     );
     const pwcode = computed(
       () => store.state.rhtModule.pwcode
@@ -164,10 +162,11 @@ export default {
       store.dispatch('rhtModule/deleteID', credentials)
     }
     function changePW(){
-      store.dispatch('rhtModule/changePW', credentials)
+      store.dispatch('rhtModule/changePW', changepassword)
     }
+    
     return {
-      tests, userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
+      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
     };
   },
 };

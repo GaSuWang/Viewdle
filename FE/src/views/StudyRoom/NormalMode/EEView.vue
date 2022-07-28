@@ -14,6 +14,10 @@
 
     <!-- 하단 -->
     <div class="EEButtonArea">
+      <!-- 면접 완료 버튼(방장 유저) -->
+      <div v-show="userType === 'superUser'" class="EndStudyBtn superUser">
+        <button @click.prevent="EndStudyConfirm()">면접 완료</button>
+      </div>
       <!-- 면접에서 나가기 버튼(일반 유저) -->
       <div v-show="userType === 'user'" class="EEtoLBbtn user">
         <button @click.prevent="EEtoLBConfirm(userType)">나가기</button>
@@ -28,14 +32,16 @@
 
 <script>
 import { ref } from "vue";
+import {useRouter} from 'vue-router'
 export default {
   name: "EEView",
   setup() {
-    const userType = ref("user"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
+    const router = useRouter()
+    const userType = ref("superUser"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
     function EEtoLBConfirm(userType) {
       if (userType === 'user') {
         if(confirm('정말 면접 도중에 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다.')) {
-          this.$router.push('main')
+          router.push('main')
         }
       } 
       else if (userType === 'superUser'){
@@ -43,11 +49,16 @@ export default {
           // 권한위임 모달 실행
         }
       }
-      
+    }
+    function EndStudyConfirm(){
+      if(confirm('면접 과정을 종료하시겠습니까? 면접자는 대기실로, 면접관은 피드백 수정실로 이동합니다. ')){
+        router.push('waiting-room')
+      }
     }
     return { 
       userType,
-      EEtoLBConfirm 
+      EEtoLBConfirm,
+      EndStudyConfirm
     };
   },
 };
@@ -82,9 +93,11 @@ export default {
 }
 
 .EEButtonArea {
+  width: 20%;
   display: flex;
-  flex-direction: column;
-  justify-content: end;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .EEButtonArea > button{
