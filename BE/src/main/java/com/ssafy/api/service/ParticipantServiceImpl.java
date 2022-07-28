@@ -3,6 +3,7 @@ package com.ssafy.api.service;
 import com.ssafy.db.entity.Participant;
 import com.ssafy.db.entity.Studyroom;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.mapping.ParticipantResMapping;
 import com.ssafy.db.repository.ParticipantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,10 @@ public class ParticipantServiceImpl implements ParticipantService {
                 .studyroom(studyroom)
                 .build();
         return participantRepository.save(participant).getParticipantSeq();
+    }
+
+    @Override
+    public ParticipantResMapping findRecentByUserSeq(User user) {
+        return participantRepository.findTopByUserOrderByParticipantSeqDesc(user);
     }
 }

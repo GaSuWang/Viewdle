@@ -9,7 +9,9 @@ import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.VudleUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.Common;
+import com.ssafy.db.entity.Participant;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.mapping.ParticipantResMapping;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +40,8 @@ public class StudyroomController {
     @ApiOperation(value = "스터디 룸 등록", notes = "<strong>방의 타입, 이름, 공개 여부, 비밀번호, 최대 인원, 썸네일 번호</strong>를 가지고 방을 등록한다")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
-            @ApiResponse(code = 401, message = "인증 실패")
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 921, message = "참여 중인 방 존재")
     })
     public ResponseEntity<? extends BaseResponseBody> registRoom(@ApiIgnore Authentication authentication, @RequestBody @ApiParam(value="스터디 룸 등록 정보", required = true) RoomRegisterPostReq roomRegisterPostReq){
 
@@ -47,14 +50,24 @@ public class StudyroomController {
             return ResponseEntity.status(401).body(BaseResponseBody.of(401, "로그인이 필요합니다"));
         }
 
+        // 방 생성한 유저 정보 얻기
         VudleUserDetails userDetails = (VudleUserDetails) authentication.getDetails();
-        User user = userDetails.getUser(); // 방 생성한 유저 정보 얻기
-        System.out.println("스터디 룸 등록 유저 : " + user.getUserName());
+        User user = userDetails.getUser();
+        System.out.println("스터디 룸 등록 유저 : " + user.getUserEmail());
 
-        Common common = commonService.getCommonBySeq(roomRegisterPostReq.getCommonSeq()); // 썸네일 정보 얻기
+        // 해당 유저가 참여 중인 방이 있는지 체크
+        ParticipantResMapping participant = participantService.findRecentByUserSeq(user);
+        if(participant != null && participant.getParticipantEnterYN().equals("Y")){
+            System.out.println(user.getUserEmail() + " 현재 참여중인 방이 있습니다.");
+            return ResponseEntity.status(911).body(BaseResponseBody.of(921, "현재 참여 중인 방이 있습니다."));
+        }
+
+        // 썸네일 정보 얻기
+        Common common = commonService.getCommonBySeq(roomRegisterPostReq.getCommonSeq());
         int roomSeq = studyroomService.registRoom(roomRegisterPostReq, user, common);
 
-        participantService.registParticipant("Y", user, studyroomService.getRoomBySeq(roomSeq)); // 방장을 Participant 테이블에 등록
+        // 방장을 Participant 테이블에 등록
+        participantService.registParticipant("Y", user, studyroomService.getRoomBySeq(roomSeq));
         return ResponseEntity.status(200).body(RoomRegisterPostRes.of(200, "방을 정상적으로 생성했습니다", roomSeq));
     }
 
@@ -71,6 +84,7 @@ public class StudyroomController {
             return ResponseEntity.status(401).body(BaseResponseBody.of(401, "로그인이 필요합니다"));
         }
 
+//        participantService
         studyroomService.closeRoom(roomSeq);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "방을 삭제했습니다."));
     }
