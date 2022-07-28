@@ -42,6 +42,7 @@
             <!-- Checkbox -->
             <a href="pw" class="text-body">비번 찾기</a>
             <a href="signup" class="link-danger">회원가입</a>
+
           </div>
       </div>
     </div>
@@ -52,6 +53,7 @@
 <script>
 import { useStore } from 'vuex'
 import { reactive } from 'vue'
+import { useRouter } from "vue-router";
 
 export default {
   name: 'LoginCard',
@@ -62,12 +64,12 @@ export default {
     })
 
     const store = useStore()
-
+    const router = useRouter() 
     function login(){
       store.dispatch('rhtModule/login', credentials)
+      router.push('/main')
     }
 
-        
     return {
       login, credentials
     }

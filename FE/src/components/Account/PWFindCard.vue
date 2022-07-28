@@ -44,16 +44,15 @@ export default {
 
 
 
-    function getEmailCode({commit}, credentials) {
+    function getEmailCode(credentials) {
         console.log("코드보내기야 안녕?")
         axios({
           url: 'http://localhost:8081/api/v1/users/check/users/password',  // 비밀번호찾기 api
           method: 'post',
           data: credentials.userEmail
         })
-          .then(res => {
-            alert('가입한 이메일로 인증코드가 전송 되었습니다.')
-            commit('SET_EMAIL_CODE', res.data)
+          .then(() => {
+            alert('가입한 이메일로 새 비밀번호가 전송 되었습니다.')
           })
           .catch(err => {
             console.error(err.response)
