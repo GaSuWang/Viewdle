@@ -16,10 +16,9 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">My Page</h5>
-          <!-- <img :src="userLists.userProfileImage"> -->
-          <!-- <p class="card-text">이름 : {{userLists.userName}}</p> -->
-          <!-- <p class="card-text">email :{{userLists.userEmail}}</p> -->
-          <!-- {{userLists.userName}} -->
+          <img :src="userLists.userProfileImage">
+          <p class="card-text">이름 : {{userLists.userName}}</p>
+          <p class="card-text">email :{{userLists.userEmail}}</p>
           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
           <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
         </div>
@@ -144,11 +143,8 @@ export default {
       password2: ''
     })
     const store = useStore();
-    const tests = computed(
-      () => store.state.rhtModule.test
-    );
     const userLists = computed(
-      () => store.state.rhtModule.userList
+      () => store.state.rhtModule.UserList
     );
     const pwcode = computed(
       () => store.state.rhtModule.pwcode
@@ -170,7 +166,7 @@ export default {
     }
     
     return {
-      tests, userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
+      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
     };
   },
 };

@@ -1,5 +1,6 @@
 import axios from "axios";
-import router from '@/router'
+import { useRouter } from "vue-router";
+
 
 const state= {
     // 회원가입
@@ -22,12 +23,6 @@ const state= {
     // 녹화된 영상과 피드백 보기위함
     FeedbackList:{},
     Replayvideo:{},
-    test: {
-      "email": "seoktak123@gmail.com",
-      "password": "1234",
-      "name": "김싸피",
-      "profile": "@/assets/images/anyimgs.png",
-    }
   }
 
 
@@ -104,10 +99,10 @@ const actions= {
           console.log(getters.authHeader)
           dispatch('fetchCurrentUser')
           console.log(getters.UserList)
-          this.$router.push("/main");
+          // router.push("/main");
         })
         .catch(err => {
-          console.error(err.response.data)
+          console.error(err)
           alert("이메일 및 비밀번호를 확인하세요")
         })
     },
@@ -131,7 +126,7 @@ const actions= {
         .then(() => {
           dispatch('removeToken')
           alert('성공적으로 logout!')
-          router.push({ name: 'Account' })
+          useRouter.push({ name: 'Account' })
         })
         .catch(err => {
           console.error(err.response)
@@ -158,7 +153,8 @@ const actions= {
           .catch(err => {
             if (err.response.status === 401) {
               dispatch('removeToken')
-              router.push({ name: 'Account' })
+              console.log('여기가 잘못된거야 병신아')
+              useRouter.push({ name: 'Account' })
             }
           })
       }
@@ -179,7 +175,6 @@ const actions= {
     //       alert('이미 가입된 이메일입니다.')
     //     })
     // },
-
     getNewPW(emailcode) {
       console.log("새로운비번받기야 안녕?")
       axios({
@@ -189,7 +184,7 @@ const actions= {
       })
         .then(() => {
           alert('새 비밀번호를 전송하였습니다. 이메일을 확인하세요.')
-          router.push({ name: 'Account' })
+          useRouter.push({ name: 'Account' })
         })
         .catch(err => {
           console.error(err.response)
@@ -240,7 +235,7 @@ const actions= {
       })
       .then(() => {
         alert('정상적으로 회원탈퇴 되었습니다.')
-        router.push({ name: 'Account' })
+        useRouter.push({ name: 'Account' })
       })
       .catch(err => {
         console.error(err.response)
@@ -256,7 +251,7 @@ const actions= {
       })
       .then(() => {
         alert('정상적으로 비밀번호가 바뀌었습니다.')
-        router.push({ name: 'Account' })
+        useRouter.push({ name: 'Account' })
       })
       .catch(err => {
         console.error(err.response)

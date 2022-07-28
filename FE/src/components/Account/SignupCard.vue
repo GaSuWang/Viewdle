@@ -46,6 +46,7 @@
 <script>
 // import { mapActions } from 'vuex'
 import { reactive } from 'vue'
+import { useRouter } from "vue-router";
 import axios from 'axios'
 export default {
   name: 'SignupCard',
@@ -57,7 +58,7 @@ export default {
       userPassword2: ''
     })
 
-    
+    const router = useRouter();
     function signup(credentials) {
       /* 
       POST: 사용자 입력정보를 signup URL로 보내기
@@ -76,7 +77,7 @@ export default {
       })
         .then(() => {
           alert('성공적으로 회원가입!')
-          // this.$router.push("/main")
+          router.push({ name: 'Account' })
         })
         .catch(err => {
           console.error(err)
