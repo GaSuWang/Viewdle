@@ -15,11 +15,27 @@
       <div class="ERButtonHeader">
         <!-- 면접자 자소서 페이지 열기 버튼 -->
         <div class="CLOpen">
-          <button @click.prevent="openEECL()">자</button>
+          <button @click.prevent="openEECL()">
+            <i class="bi bi-file-earmark-text"></i>
+          </button>
         </div>
         <!-- 질문 팁 모달 열기 버튼 -->
         <div class="QTip">
-          <button @click="openQTip">면</button>
+          <button @click="openQTip">
+            <i class="bi bi-lightbulb-fill"></i>
+          </button>
+        </div>
+        <!-- 면접에서 나가기 버튼(일반 유저) -->
+        <div v-show="userType === 'user'" class="ERtoLBbtn user">
+          <button @click.prevent="ERtoLBConfirm(userType)">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <!-- 면접에서 나가기 버튼(방장 유저) -->
+        <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
+          <button @click.prevent="ERtoLBConfirm(userType)">
+            <i class="bi bi-x-lg"></i>
+          </button>
         </div>
       </div>
 
@@ -29,18 +45,11 @@
 
       <!-- 하단 -->
       <div class="ERButtonFooter">
-        <!-- 면접 종료 버튼(방장 유저) -->
-        <div class="StudyDestroyBtn" v-show="userType === 'superUser'">
-          <button>면접 완료</button>
+        <!-- 면접 완료 버튼(방장 유저) -->
+        <div class="StudyDestroyBtn" @click="StudyDestroy" v-show="userType === 'superUser'">
+          <button><i class="bi bi-check-circle"></i></button>
         </div>
-        <!-- 면접에서 나가기 버튼(일반 유저) -->
-        <div v-show="userType === 'user'" class="ERtoLBbtn user">
-          <button @click.prevent="ERtoLBConfirm(userType)">X</button>
-        </div>
-        <!-- 면접에서 나가기 버튼(방장 유저) -->
-        <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
-          <button @click.prevent="ERtoLBConfirm(userType)">X</button>
-        </div>
+
       </div>
     </div>
   </div>
@@ -72,7 +81,7 @@ export default {
   setup() {
     const router = useRouter();
 
-    const userType = ref("user"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
+    const userType = ref("superUser"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
     function ERtoLBConfirm(userType) {
       if (userType === "user") {
         if (
@@ -92,9 +101,16 @@ export default {
         }
       }
     }
+
+    function StudyDestroy(){
+      if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
+        router.push({name:'fb-room'})
+      }
+    }
     return {
       userType,
       ERtoLBConfirm,
+      StudyDestroy,
     };
   },
 };
@@ -103,38 +119,40 @@ export default {
 <style scoped>
 .ERView {
   position: absolute;
-  width: 80vw;
+  width: 90vw;
   aspect-ratio: 16/9;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: lightgrey;
   border-radius: 60px;
-  padding: 5%;
+  padding: 3%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
 }
 
 .ERRightArea {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 20%;
+  width: 30%;
 }
 
 .ERButtonHeader {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 .ERButtonFooter {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 /* 면접자 페이지 버튼들 시작*/
+/* https://css-tricks.com/examples/RoundButtons/ */
 /* 굿/뱃 버튼은 FeedbackArea에 있음 */
 .CLOpen > button,
 .QTip > button,
