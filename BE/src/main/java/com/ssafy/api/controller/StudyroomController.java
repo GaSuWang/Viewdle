@@ -10,6 +10,7 @@ import com.ssafy.common.auth.VudleUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.Common;
 import com.ssafy.db.entity.Participant;
+import com.ssafy.db.entity.Studyroom;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.mapping.ParticipantResMapping;
 import io.swagger.annotations.*;
@@ -18,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.List;
 
 @Api(value = "스터디 룸 API", tags = {"Studyroom"})
 @RestController
@@ -84,7 +87,14 @@ public class StudyroomController {
             return ResponseEntity.status(401).body(BaseResponseBody.of(401, "로그인이 필요합니다"));
         }
 
-//        participantService
+        // 방장이 스터디 룸을 삭제하면 방에 있던 모든 유저들 방에서 내보내기
+        Studyroom studyroom = studyroomService.getRoomBySeq(roomSeq);
+        List<ParticipantResMapping> participants = participantService.findInStudyroomUser(studyroom, "Y");
+
+        for(int i = 0; i < participants.size(); i++) {
+            participantService.outUser(participants.get(i).getParticipantSeq());
+        }
+
         studyroomService.closeRoom(roomSeq);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "방을 삭제했습니다."));
     }
