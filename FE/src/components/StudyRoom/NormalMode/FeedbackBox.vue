@@ -47,12 +47,12 @@ export default {
 
 .good {
   /* background-color: #47a0ff; */
-  background: linear-gradient(#47a0ff, #7ebdff)
+  background: linear-gradient(#e1f3f2, #f0f9f9)
 }
 
 .bad {
   /* background-color: #ffe6b5; */
-  background: linear-gradient(#ffe6b5, #ffefd0)
+  background: linear-gradient(#fee7e7, #fff3f3)
 
 }
 

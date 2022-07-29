@@ -18,6 +18,10 @@ html * {
   font-family: "NanumSquare", sans-serif;
 }
 
+html{
+  background-color:   #cbcfd9;
+}
+
 *::before {
   box-sizing: border-box;
 }

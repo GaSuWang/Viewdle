@@ -25,12 +25,12 @@
     <div class="FBBtncontainer">
       <div class="FBGoodBtn">
         <button @click="createFB('good')">
-          <i class="bi bi-hand-thumbs-up"></i>
+          <i class="bi bi-hand-thumbs-up-fill"></i>
         </button>
       </div>
       <div class="FBBadBtn">
         <button @click="createFB('bad')">
-          <i class="bi bi-hand-thumbs-down"></i>
+          <i class="bi bi-hand-thumbs-down-fill"></i>
         </button>
       </div>
     </div>
@@ -117,7 +117,7 @@ export default {
   padding: 0;
   margin: 0;
   border-radius: 20px;
-  background: rgb(183, 183, 183);
+  /* background-color: #edf0f6; */
 
 }
 
@@ -140,11 +140,11 @@ export default {
 
 .FBList::-webkit-scrollbar-thumb {
   border-radius: 100px;
-  background-image: linear-gradient(180deg, #f7f7f7 0%, #e7e7e7 99%);
+  background-image: #cdd2dc;
   box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
 }
 .FBList::-webkit-scrollbar-track {
-  background-color: #e4e4e4;
+  background-color: none;
   border-radius: 100px;
 }
 
@@ -166,13 +166,13 @@ export default {
 
 .good{
   /* background: #47A0FF */
-  background: linear-gradient(#47a0ff, #7ebdff)
+  background: linear-gradient(#e1f3f2, #f0f9f9)
 
 }
 
 .bad{
   /* background:#FFE6B5 */
-  background: linear-gradient(#ffe6b5, #ffefd0)
+  background: linear-gradient(#fee7e7, #fff3f3)
 }
 
 .form-control {
@@ -191,12 +191,25 @@ export default {
 }
 
 /* 버튼 양식 */
-.FBGoodBtn > button,
-.FBBadBtn > button {
+.FBGoodBtn > button{
   border: none;
   display: block;
-  background: linear-gradient(#f7f7f7, #e7e7e7);
-  color: #a7a7a7;
+  background-color: #e1f3f2;
+  color: #00a38a;
+  margin: 18px;
+  width: 36px;
+  height: 36px;
+  position: relative;
+  text-align: center;
+  line-height: 36px;
+  border-radius: 50%;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.FBBadBtn > button{
+  border: none;
+  display: block;
+  background-color: #fee7e7;
+  color: #fa5d5c;
   margin: 18px;
   width: 36px;
   height: 36px;
@@ -254,6 +267,10 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  background: none;
+  align-self: center;
+  width: 80%;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px 3px #d8dae3; 
 }
 </style>
