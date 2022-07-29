@@ -294,7 +294,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: lightgrey;
+  background-color: #fff;
   border-radius: 60px;
   padding: 3%;
   display: flex;

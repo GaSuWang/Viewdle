@@ -2,17 +2,19 @@
 
 const state = {
   //SettingRoom
-  cameraList: {}, // 카메라 리스트?
-  micList: {}, // 마이크 리스트?
-  userCLList: {}, // 유저의 자소서 리스트
+  CameraList: {}, // 영상 디바이스 리스트
+  CameraSelected: {}, // 선택된 영상 디바이스
+  MicList: {}, // 오디오 디바이스 리스트
+  MicSelected:{}, // 선택된 오디오 디바이스
+  UserCLList: {}, // 유저의 자소서 리스트
 
   //WaitingRoom
   //AuthorityPassModal
-  participantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서
+  ParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서
 
   //ErView
-  interviewTipList: {}, // 면접 팁
-  studyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
+  InterviewTipList: {}, // 면접 팁
+  StudyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
 
   //ErView, FeedbackRoom, ReplayView
   FBList: [], // 피드백 리스트
@@ -23,10 +25,10 @@ const getters = {
     return state.userCLList;
   },
   CameraList(state) {
-    return state.cameraList;
+    return state.CameraList;
   },
   MicList(state) {
-    return state.micList;
+    return state.MicList;
   },
 
   //WaitingRoom
@@ -50,7 +52,20 @@ const getters = {
 };
 const mutations = {
   //SettingRoom
-
+  GET_CAMERA_LIST(state, cameraList){
+    state.CameraList = JSON.parse(JSON.stringify(cameraList))
+    console.log(state.CameraList)
+  },
+  SET_CAMERA(state, camera){
+    state.CameraSelected = camera
+  },
+  GET_MIC_LIST(state, micList){
+    state.MicList = JSON.parse(JSON.stringify(micList))
+    console.log(state.MicList)
+  },
+  SET_MIC(state, mic){
+    state.MicSelected = mic
+  },
   //WaitingRoom
   GET_PARTICIPANT_LIST(state, participants) {
     state.participantList = participants;
@@ -73,7 +88,18 @@ const mutations = {
 };
 const actions = {
   //SettingRoom
-
+  getCameraList({commit}, cameraList){
+    commit('GET_CAMERA_LIST', cameraList)
+  },
+  setCamera({commit}, camera){
+    commit('SET_CAMERA', camera)
+  },
+  getMicList({commit}, micList){
+    commit('GET_MIC_LIST', micList)
+  },
+  setMic({commit}, mic){
+    commit('SET_MIC', mic)
+  },
   //WaitingRoom
   // getParticipantList({ commit }) {
   //   axios
