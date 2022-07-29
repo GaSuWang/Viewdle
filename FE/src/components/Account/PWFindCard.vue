@@ -1,30 +1,27 @@
 // 임현탁
 <template>
-<section class="vh-100">
-  <div class="container-fluid h-custom">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-md-9 col-lg-6 col-xl-5">
-        <img id="logoimg" src="@/assets/images/anyimgs.png"
-          class="img-fluid" alt="Sample image">
-      </div>
-      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-        <div id="PWFindCard">
+<div class="pwFind">
+  <div class="pwFindbody">
+    <div class="pwFindcard">
+      <h1>Find Password</h1>
+    <img id="logoimg" src="@/assets/images/anyimgs.png" alt="Sample image">
         <!-- 이메일 입력란 -->
         <!-- 버튼클릭시 이메일로 임의의 비밀번호 발송 or 원래비밀번호 발송 -->
         <!-- 취소버튼 -->
         <!-- 확인되지 않은 이메일 일 시 알람 -->
         <!-- 이메일 인풋 -->
-          <form @submit.prevent="getEmailCode(credentials)">
-            <div class="form-outline mb-4">
-              <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
-              <button class="btn btn-primary btn-lg">인증코드받기</button>
-            </div>
-          </form>
+      <form @submit.prevent="getEmailCode(credentials)">
+        <div class="pwFindinput">
+          <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
         </div>
-      </div>
+        <button class="pwFindsubmit btn btn-primary btn-lg">인증코드받기</button>
+
+      </form>
     </div>
-  </div>
-</section>
+    </div>
+</div>
+
+
 
 </template>
 
@@ -67,4 +64,58 @@ export default {
 </script>
 
 <style>
+.pwFind{
+  width:50%
+}
+.pwFindbody{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+.pwFindcard{
+  width: 100%;
+  height: 600px;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.pwFindform{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pwFindinput{
+  margin-top: 20px;
+  width: 100%;
+}
+.pwFindinput input{
+  margin-top: 50px;
+  width: 80%;
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 1px solid lightgray;
+  outline: none;
+}
+.pwFindsubmit{
+    margin-top: 50px;
+    width: 80%;
+    width: 100%;
+    height: 50px;
+    border: 0;
+    outline: none;
+    border-radius: 40px;
+    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    color: white;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+}
 </style>
