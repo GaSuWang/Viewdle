@@ -121,6 +121,32 @@ export default {
     const CameraList = computed(()=>store.getters['lbhModule/CameraList'])
     const MicList = computed(()=>store.getters['lbhModule/MicList'])
 
+  //   let publisher = OV.initPublisher(undefined, {
+  //     audioSource: undefined, // The source of audio. If undefined default microphone
+  //     videoSource: undefined, // The source of video. If undefined default webcam
+  //     publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+  //     publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+  //     resolution: '640x480',  // The resolution of your video
+  //     frameRate: 30,			// The frame rate of your video
+  //     insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+  //     mirror: false       	// Whether to mirror your local video or not
+  //   });
+
+  // // 'myPublisher' a Publisher object obtained through 'OpenVidu.initPublisher()' method
+  // // 'myTrack' a MediaStreamTrack object
+  // // 'properties' a PublisherProperties object https://docs.openvidu.io/en/stable/api/openvidu-browser/interfaces/PublisherProperties.html
+
+  // var mediaStream = await OV.getUserMedia(properties);
+
+  // // Getting the video track from mediaStream
+  // var myTrack = mediaStream.getVideoTracks()[0];
+
+  // // Replacing video track
+  // myPublisher.replaceTrack(myTrack)
+  //     .then(() => console.log('New track has been published'))
+  //     .catch(error => console.error('Error replacing track', error));
+
+
     const router = useRouter();
     const micSelect = ref(false);
     const cameraSelect = ref(false);
