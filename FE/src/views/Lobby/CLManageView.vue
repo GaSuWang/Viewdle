@@ -1,10 +1,78 @@
 // 임현탁
 <template>
   <div class="CLManageView">
-    <p id='clmanage'>
-      Cover Letter Manage
-    </p>
+    <div id='clmanageTop'>
+      <p>
+        Cover Letter Manage
+      </p>
+      <div>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          정렬
+        </button>
+        <ul class="dropdown-menu">
+          <li>오래된순</li>
+          <li>최신순</li>
+        </ul>
+      </div>
+      <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#clmaker">자소서생성</button>
+      </div>
+
+
+        <div class="clmanageBody">
+          <CLMCard/>
+        </div>
+        </div>
+
+      <!-- 자소서 생성 모달 -->
+      <div class="modal fade" id="clmaker" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form @submit.prevent="">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">자소서 제목</h5>
+              <input type="Text" v-model="credentials.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
+            </div>
+            <div class="modal-body">
+              <input type="Text" v-model="credentials.coverLetterContent" class="form-control form-control-lg" placeholder="body" /> 
+            </div> 
+            <div class="modal-footer">
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button class="btn btn-secondary">작성</button>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>  
+          <div class="modal fade" id="deleteconfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">비밀번호 확인</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form @submit.prevent="confirmPW(credentials)" id="myDIV">
+                  <div class="modal-body">
+                    <div class="form-outline mb-4">
+                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="Password Confirm" />
+                    </div>
+                  </div>
+                  <button class="btn btn-primary">비번확인하기</button>
+                </form>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <form @submit.prevent="deleteID()">
+                    <div v-if="pwcode != false">
+                      <button class="btn btn-primary">회원탈퇴하기</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>   
+
     <NavBar/>
+    
     <!-- 내 자기소개서 관리 페이지 -->
     <!-- 최신순/오래된순 정렬 -->
     <!-- 전체삭제 버튼-->
@@ -24,29 +92,81 @@
 </template>
 
 <script>
-// import CLMCard from '@/components/Lobby/CLMCard.vue'
+import CLMCard from '@/components/Lobby/CLMCard.vue'
 import NavBar from '@/components/Lobby/NavBar.vue'
-import { reactive } from 'vue'
+import {useRouter} from 'vue-router'
+import { useStore } from 'vuex'
+import { reactive, computed } from 'vue'
 export default {
   components: {
-    // CLMCard,
+    CLMCard,
     NavBar
   },
   setup(){
-    const state = reactive({
-      open: false
+    const credentials =reactive({
+      "coverLetterContent":'',
+      "coverLetterTitle":''
+    }) 
+    const credentialsToedit =reactive({
+      "coverLetterContent":'',
+      "coverLetterSeq":'',
+      "coverLetterTitle":''
+    }) 
+    const credentialsTodelete =reactive({
+      "coverLetterSeq":''
     })
+    const router = useRouter();
+    const store = useStore();
+    const CoverLetterList = computed(
+      () => store.state.rhtModule.CoverLetterList
+    );
+    const CoverLetterDetail = computed(
+      () => store.state.rhtModule.CoverLetterDetail
+    );
+    function createCoverLetter(){
+      store.dispatch('rhtModule/createCoverLetter', credentials)
+      router.push({name:'cl'})
+    }
+
+    function getCoverLetter(){
+      store.dispatch('rhtModule/getCoverLetter')
+      router.push({name:'cl'})
+    }
+
+    function deleteCoverLetter(){
+      store.dispatch('rhtModule/deleteCoverLetter', credentialsTodelete)
+      router.push({name:'cl'})
+    }
+
+    function detailCoverLetter(){
+      store.dispatch('rhtModule/detailCoverLetter', CoverLetterList.value.coverLetterSeq)
+    }
+
+    function updateCoverLetter(){
+      store.dispatch('rhtModule/updateCoverLetter', credentialsToedit)
+    }
+
     return {
-      state
+      credentials, createCoverLetter, getCoverLetter, deleteCoverLetter, detailCoverLetter, updateCoverLetter, 
+      CoverLetterList, CoverLetterDetail, credentialsToedit, credentialsTodelete
     }
   }
 }
 </script>
 
 <style>
-#clmanage{
+#clmanageTop{
   position: fixed;
   left: 400px;
   top: 50px;
+}
+#clmanageBody{
+  position: fixed;
+  left: 400px;
+  top: 250px;
+}
+.clmaker{
+  position: absolute;
+  z-index: -1;
 }
 </style>

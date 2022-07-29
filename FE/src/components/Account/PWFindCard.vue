@@ -38,9 +38,6 @@ export default {
     const credentials = reactive({
       userEmail: '',
     })
-    const emailcode = reactive({
-      emailcode: ''
-    })
 
 
 
@@ -63,7 +60,7 @@ export default {
 
 
     return {
-      getEmailCode, credentials, emailcode
+      getEmailCode, credentials
     }
   }
 } 
