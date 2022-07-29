@@ -5,7 +5,9 @@ import com.ssafy.api.request.*;
 import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.service.EmailService;
 import com.ssafy.common.exception.*;
+import com.ssafy.common.firebase.FireBaseService;
 import com.ssafy.common.util.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,11 +24,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * 유저 관련 API 요청 처리를 위한 컨트롤러 정의.
  */
+
+@Slf4j
 @Api(value = "유저 API", tags = {"User"})
 @RestController
 @RequestMapping("/api/v1/users")
@@ -37,6 +42,9 @@ public class UserController {
 
 	@Autowired
 	EmailService emailService;
+
+	@Autowired
+	FireBaseService firebaseService;
 	
 	@PostMapping()
 	@ApiOperation(value = "회원 가입", notes = "<strong>이메일, 이름, 패스워드</strong>를 통해 회원가입 한다.")
@@ -258,6 +266,69 @@ public class UserController {
 
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "비밀번호 재발급이 완료되었습니다."));
 	}
+
+
+	@PostMapping("/profile")
+	@ApiOperation(value = "프로필 이미지 업로드", notes = "이미지는 추가만 됩니당")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "프로필 이미지 저장이 완료되었습니다."),
+			@ApiResponse(code = 400, message = "프로필 이미지 저장에 실패했습니다."),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<? extends BaseResponseBody> createProfile(@ApiIgnore Authentication authentication, @RequestParam("profile") MultipartFile profile) throws Exception {
+
+		String profilePath = "";
+		String storagePath = "";
+		String filename = "";
+
+		String prefix = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/";
+		String postfix = "?alt=media";
+
+		VudleUserDetails userDetails = (VudleUserDetails)authentication.getDetails();
+		User user = userDetails.getUser();
+		filename = user.getUserEmail() + "_profile";
+
+		try {
+			storagePath = firebaseService.uploadFiles(profile, filename);
+			} catch(Exception e) {
+
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "프로필 이미지 저장에 실패했습니다."));
+		}
+
+			String[] temp = storagePath.split("/o/");
+			String[] temp2 = temp[1].split("\\?");
+
+			String encodingName = temp2[0].toString();
+			profilePath = prefix + encodingName + postfix;
+
+			userService.changeProfile(user, profilePath);
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "프로필 이미지 저장이 완료되었습니다."));
+	}
+
+	@PutMapping("/badge")
+	@ApiOperation(value = "메인 뱃지 설정", notes = "메인 뱃지를 설정할 수 있어용")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<?> changeMainBadge(
+			@ApiIgnore Authentication authentication,
+			@RequestBody @ApiParam(value="뱃지 url 주세용", required = true) UserBadgePutReq badgeInfo) {
+
+		VudleUserDetails userDetails = (VudleUserDetails)authentication.getDetails();
+		User user = userDetails.getUser();
+
+		userService.changeBadge(user, badgeInfo.getBadge());
+
+		return ResponseEntity.status(200).body(UserLoginPostRes.of(200, "뱃지 변경을 완료하였습니다."));
+	}
+
+
 	@GetMapping("/histories")
 	public ResponseEntity<? extends UserHistoryRes> getUserHistory(
 			@ApiIgnore Authentication authentication){

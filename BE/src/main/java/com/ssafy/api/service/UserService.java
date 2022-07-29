@@ -15,5 +15,7 @@ public interface UserService {
 	void changePwdUser(String email, String originPassword, String password, String password2);
 	void deleteUser(User user);
 	void checkPassword(String userPassword, String password);
+	void changeProfile(User user, String proflePath);
+	void changeBadge(User user, String badge);
 	UserHistoryRes getUserHistory(User user);
 }
