@@ -2,6 +2,7 @@ package com.ssafy.api.controller;
 
 import com.ssafy.api.request.CoverLetterPostReq;
 import com.ssafy.api.request.CoverLetterPutReq;
+import com.ssafy.api.request.CoverLetterSeqReq;
 import com.ssafy.api.response.CoverLetterRes;
 import com.ssafy.api.response.UserRes;
 import com.ssafy.api.service.CoverLetterService;
@@ -58,9 +59,9 @@ public class CoverLetterController {
 
     //get detail
     //자소서 상세보기: 자소서 pk
-    @GetMapping("/{coverLetterSeq}")
-    public ResponseEntity<? extends CoverLetterRes> getCoverLetter(@PathVariable int coverLetterSeq){
-        CoverLetter res = coverLetterService.getCoverLetter(coverLetterSeq);
+    @GetMapping("/detail")
+    public ResponseEntity<? extends CoverLetterRes> getCoverLetter(@RequestBody CoverLetterSeqReq seq){
+        CoverLetter res = coverLetterService.getCoverLetter(seq.getCoverLetterSeq());
         return ResponseEntity.status(200).body(CoverLetterRes.of(res));
     }
 
@@ -81,9 +82,9 @@ public class CoverLetterController {
     }
     //delete
     //자소서 삭제: 자소서 pk
-    @DeleteMapping("/{coverLetterSeq}")
-    public ResponseEntity<? extends BaseResponseBody> deleteCoverLetter(@PathVariable int coverLetterSeq){
-        coverLetterService.deleteCoverLetter(coverLetterSeq);
+    @DeleteMapping()
+    public ResponseEntity<? extends BaseResponseBody> deleteCoverLetter(@RequestBody CoverLetterSeqReq seq){
+        coverLetterService.deleteCoverLetter(seq.getCoverLetterSeq());
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "자기소개서 삭제가 완료되었습니다."));
     }
 

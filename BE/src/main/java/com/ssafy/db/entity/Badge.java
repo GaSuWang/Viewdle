@@ -13,11 +13,15 @@ public class Badge {
     
     @Id
     @Column(name = "badge_seq")        
-    int badgeSeq;
+    private int badgeSeq;
+
+    @ManyToOne
+    @JoinColumn(name="user_seq")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "common_seq")
-    Common common;
-    
+    private Common common;
+
     public Badge() {} // 기본 생성자
 }

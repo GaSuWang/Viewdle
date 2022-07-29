@@ -1,6 +1,8 @@
 package com.ssafy.api.service;
 
+import com.ssafy.api.response.UserHistoryRes;
 import com.ssafy.common.exception.*;
+import com.ssafy.db.repository.ParticipantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	UserRepositorySupport userRepositorySupport;
+
+	@Autowired
+	ParticipantRepository participantRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -96,6 +101,27 @@ public class UserServiceImpl implements UserService {
 		if (!passwordEncoder.matches(password, userPassword)){
 			throw new NotMatchPasswordException();
 		}
+	}
+
+	@Override
+	public void changeProfile(User user, String proflePath) {
+		user.setUserProfileImage(proflePath);
+		userRepository.save(user);
+	}
+
+	@Override
+	public void changeBadge(User user, String badge) {
+		user.setUserMainBadge(badge);
+		userRepository.save(user);
+	}
+
+	public UserHistoryRes getUserHistory(User user) {
+		UserHistoryRes res = UserHistoryRes.builder().
+				userTotalTime(user.getUserTotalTime()).
+				userTotalVideo(user.getUserTotalVideo()).
+				usingDates(participantRepository.findUsingDate(user.getUserSeq())).
+				build();
+		return res;
 	}
 
 }

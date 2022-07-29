@@ -3,9 +3,11 @@ package com.ssafy.db.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Resource;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -82,6 +84,7 @@ public class User{
     @OneToMany(mappedBy = "user")
     List<CoverLetter> coverLetters = new ArrayList<>();
 
+
     @PrePersist
     public void prePersist(){
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:hh:mm:ss"));
@@ -90,8 +93,8 @@ public class User{
         userDelYN = "N";
         userTotalTime = "0";
         userTotalVideo = 0;
-        userProfileImage = "resources/static/image/profile.png";
-        userMainBadge = "resources/static/image/welcome.png";
+        userProfileImage = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/base_image%2Fbase_profile.PNG?alt=media";
+        userMainBadge = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/base_image%2Fbase_badge.PNG?alt=media";
     }
 
     @PreUpdate
