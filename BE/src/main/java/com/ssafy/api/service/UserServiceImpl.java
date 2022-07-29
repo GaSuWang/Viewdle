@@ -98,4 +98,16 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public void changeProfile(User user, String proflePath) {
+		user.setUserProfileImage(proflePath);
+		userRepository.save(user);
+	}
+
+	@Override
+	public void changeBadge(User user, String badge) {
+		user.setUserMainBadge(badge);
+		userRepository.save(user);
+	}
+
 }
