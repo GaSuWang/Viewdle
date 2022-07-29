@@ -113,6 +113,7 @@ public class UserServiceImpl implements UserService {
 	public void changeBadge(User user, String badge) {
 		user.setUserMainBadge(badge);
 		userRepository.save(user);
+	}
 
 	public UserHistoryRes getUserHistory(User user) {
 		UserHistoryRes res = UserHistoryRes.builder().
