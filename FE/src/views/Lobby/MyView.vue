@@ -205,9 +205,7 @@ export default {
   height: 85%;
   background: white;
   border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 20px;
 }
 </style>
 

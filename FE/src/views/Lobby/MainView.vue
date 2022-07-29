@@ -108,8 +108,9 @@ export default {
   background: white;
   border-radius: 20px;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-around;
+  align-items: space-around;
+  padding: 20px;
 }
 
 </style>
