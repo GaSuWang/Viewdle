@@ -13,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @ToString
 @Table(name="Studyroom")
 public class Studyroom {
