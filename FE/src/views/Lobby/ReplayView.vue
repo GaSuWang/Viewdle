@@ -1,13 +1,12 @@
 // 임현탁
 <template>
-  <div class="ReplayView" data-bs-spy="scroll">
-    <div id='replay'>
-      <p>
-        Replay
-      </p>
-      <div class="d-flex">
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+<div class="ReplayViewBoss">
+  <NavBar/>
+  <div class="ReplayView">
+    <p>Replay</p>
+    <div class='ReplayTop'>
+      <div class="dropdown ReplayTopitem">
+        <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           정렬
         </button>
         <ul class="dropdown-menu">
@@ -15,16 +14,14 @@
           <li>최신순</li>
         </ul>
       </div>
-      </div>
+    </div>
+      <hr>
       <div class="ReplayBody">
-      <div class="container">
         <ReplayCard/>
       </div>
-      </div>
-    </div>
-    <NavBar/>
     <!-- 오래된순, 최신순 정렬 -->
     <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
+  </div> 
   </div>  
 </template>
 
@@ -40,15 +37,33 @@ export default {
 </script>
 
 <style>
-#replay{
-  position: fixed;
-  left: 400px;
-  top: 50px;
+.ReplayViewBoss{
+  height: 100%;
 }
-#ReplayBody{
-  position: fixed;
-  left: 400px;
-  top: 250px;
+.ReplayView{
+  position:fixed;
+  top:50px;
+  left: 300px;
+  height: 100%;
+  width: 80%;
+  overflow:scroll;
 }
-
+.ReplayTop{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+}
+.ReplayTopitem{
+  margin:0 20px;
+}
+.ReplayBody{
+  width: 98%;
+  height: 85%;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>

@@ -1,28 +1,29 @@
 // 임현탁
 <template>
+<div class="CLMBoss">
+  <NavBar/>
   <div class="CLManageView">
-    <div id='clmanageTop'>
-      <p>
-        Cover Letter Manage
-      </p>
-      <div>
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          정렬
-        </button>
-        <ul class="dropdown-menu">
-          <li>오래된순</li>
-          <li>최신순</li>
-        </ul>
-      </div>
-      <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#clmaker">자소서생성</button>
-      </div>
+    <p>Cover Letter Manage</p>
+    <div class='clmanageTop'>
+        <div class="dropdown clmanageTopitem">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            정렬
+          </button>
+          <ul class="dropdown-menu">
+            <li>오래된순</li>
+            <li>최신순</li>
+          </ul>
+        </div>
+        <button class="btn btn-secondary clmanageTopitem" data-bs-toggle="modal" data-bs-target="#clmaker">자소서생성</button>
+        <button class="btn btn-secondary clmanageTopitem" data-bs-toggle="modal" data-bs-target="#cldelete">자소서삭제</button>
+    </div>
+      <hr>
+    <div class="clmanageBody">
+      <CLMCard/>
+      <CLMCard/>
+    </div>
 
 
-        <div class="clmanageBody">
-          <CLMCard/>
-        </div>
-        </div>
 
       <!-- 자소서 생성 모달 -->
       <div class="modal fade" id="clmaker" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -69,9 +70,9 @@
                 </div>
               </div>
             </div>
+          </div> 
           </div>   
 
-    <NavBar/>
     
     <!-- 내 자기소개서 관리 페이지 -->
     <!-- 최신순/오래된순 정렬 -->
@@ -155,18 +156,33 @@ export default {
 </script>
 
 <style>
-#clmanageTop{
-  position: fixed;
-  left: 400px;
-  top: 50px;
+.CLMBoss{
+  height:100%;
 }
-#clmanageBody{
-  position: fixed;
-  left: 400px;
-  top: 250px;
+.CLManageView{
+  position:fixed;
+  top:50px;
+  left: 300px;
+  height: 100%;
+  width: 80%;
+  overflow:scroll;
 }
-.clmaker{
-  position: absolute;
-  z-index: -1;
+.clmanageTop{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+}
+.clmanageTopitem{
+  margin: 0 20px
+}
+.clmanageBody{
+  width: 98%;
+  height: 85%;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

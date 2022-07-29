@@ -10,20 +10,26 @@
     <!-- 수정완료 버튼 -->
     <!-- 취소버튼 -->
     <!-- 수정완료버튼 누르면 확인 컨펌 -->
-  <div class="MyView">
-    <div id="my-page">
+  <div class="MyViewBoss">
+    <NavBar/>
+    <div class="MyView">
       <p>MyPage</p>
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">My Page</h5>
-          <img :src="userLists.userProfileImage">
-          <p class="card-text">이름 : {{userLists.userName}}</p>
-          <p class="card-text">email :{{userLists.userEmail}}</p>
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
-          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
+      <div class="MyTop">
+      </div>
+        <hr>
+        <div class="MyBody">
+          <h5>My Page</h5>
+            <img :src="userLists.userProfileImage">
+            <p class="card-text">이름 : {{userLists.userName}}</p>
+            <p class="card-text">email :{{userLists.userEmail}}</p>
+            <div class="bottomplz">
+              <div class="card-footer">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
+              </div>
+          </div>
         </div>
       </div>
-    </div>
 
 
 
@@ -117,7 +123,6 @@
             </div>
           </div>  
 
-    <NavBar/>
 
     <!-- <div id="my-page">
       {{ participants }}
@@ -173,11 +178,36 @@ export default {
 </script>
 
 <style>
-#my-page{
-  position: fixed;
-  left: 400px;
-  top: 50px;
+.MyViewBoss{
+  height: 100%;
 }
-
+.MyView{
+  position:fixed;
+  top:50px;
+  left: 300px;
+  height: 100%;
+  width: 80%;
+  overflow:scroll;
+}
+.card{
+  width: 98%;
+  height: 88%;
+}
+.card-footer{
+  display: flex;
+  justify-content: end;
+}
+.card-footer button{
+  margin: 0 20px;
+}
+.MyBody{
+  width: 98%;
+  height: 85%;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>
 
