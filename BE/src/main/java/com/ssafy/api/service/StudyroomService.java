@@ -17,6 +17,7 @@ public interface StudyroomService {
     public void endInterview(int roonSeq);
     public void fullRoom(int roomSeq);
     public void notFullRoom(int roomSeq);
-    public List<StudyroomResMapping> getRooms(String enteryn);
+//    public List<StudyroomResMapping> getRooms(int type, String privateYN, String fullYN, String order);
+//    public List<StudyroomResMapping>
 
 }

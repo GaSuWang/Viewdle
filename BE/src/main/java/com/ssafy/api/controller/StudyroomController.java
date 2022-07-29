@@ -2,6 +2,7 @@ package com.ssafy.api.controller;
 
 import com.ssafy.api.request.RoomEnterPostReq;
 import com.ssafy.api.request.RoomExitPatchReq;
+import com.ssafy.api.request.RoomListGetReq;
 import com.ssafy.api.request.RoomRegisterPostReq;
 import com.ssafy.api.response.RoomRegisterPostRes;
 import com.ssafy.api.service.CommonService;
@@ -168,6 +169,10 @@ public class StudyroomController {
 
     @PatchMapping("/exit")
     @ApiOperation(value = "스터디 룸 나가기", notes = "<strong>스터디 룸 번호, 방장 여부, 다음 방장</strong>정보를 넘기고 스터디 룸을 나간다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+    })
     public ResponseEntity<? extends BaseResponseBody> exitRoom(@ApiIgnore Authentication authentication, @RequestBody @ApiParam(value="스터디 룸 퇴장 정보", required = true) RoomExitPatchReq roomExitPatchReq){
 
         if(authentication == null){
@@ -249,11 +254,30 @@ public class StudyroomController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "면접을 종료합니다."));
     }
 
-    @GetMapping
-    @ApiOperation(value = "스터디 룸 목록", notes = "<strong>현재 존재하는</strong>스터디 룸 목록을 반환한다.")
-    public ResponseEntity<? extends List<StudyroomResMapping>> getRooms(){
-        return ResponseEntity.status(200).body(studyroomService.getRooms("N"));
-    }
+//    @GetMapping
+//    @ApiOperation(value = "스터디 룸 목록", notes = "<strong>필터와 정렬 순서</strong>를 가지고 스터디 룸 목록을 반환한다.")
+//    public ResponseEntity<? extends List<StudyroomResMapping>> getRooms(){
+//        return ResponseEntity.status(200).body(studyroomService.getRooms("N"));
+//    }
+
+//    @GetMapping
+//    @ApiOperation(value = "스터디 룸 목록", notes = "<strong>현재 존재하는</strong>스터디 룸 목록을 반환한다.")
+//    public ResponseEntity<? extends List<StudyroomResMapping>> getRooms(@RequestBody RoomListGetReq roomListGetReq){
+//        int type = roomListGetReq.getRoomType();
+//        String privateYN = roomListGetReq.getRoomPrivateYN();
+//        String FullYN = roomListGetReq.getRoomFullYN();
+//        String order = roomListGetReq.getOrder();
+//        return ResponseEntity.status(200).body(studyroomService.getRooms(type, privateYN, FullYN, order));
+//    }
+
+    // 추후 필요하면 다시 구현 => join 필요
+//    @GetMapping("/{roomSeq}")
+//    @ApiOperation(value = "참여자 목록", notes = "<strong>스터디 룸 번호</strong>로 현재 스터디 룸의 참여자 목록을 반환한다.")
+//    public ResponseEntity<? extends List<ParticipantResMapping>> getParticipants(@ApiIgnore Authentication authentication, @PathVariable int roomSeq){
+//        Studyroom studyroom = studyroomService.getRoomBySeq(roomSeq);
+//        return ResponseEntity.status(200).body(participantService.findInStudyroomUser(studyroom, "Y"));
+//    }
+
 
 
 }

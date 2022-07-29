@@ -76,8 +76,13 @@ public class StudyroomServiceImpl implements StudyroomService{
         studyroomRepository.save(studyroom);
     }
 
-    @Override
-    public List<StudyroomResMapping> getRooms(String enteryn) {
-        return studyroomRepository.findByRoomCloseYN(enteryn);
-    }
+//    @Override
+//    public List<StudyroomResMapping> getRooms(int type, String privateYN, String fullYN, String order) {
+//        return studyroomRepository.findRooms(type, privateYN, fullYN, order);
+//    }
+
+//    @Override
+//    public List<StudyroomResMapping> getRooms(String enteryn) {
+//        return studyroomRepository.findByRoomCloseYN(enteryn);
+//    }
 }
