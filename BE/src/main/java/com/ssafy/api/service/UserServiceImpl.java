@@ -2,6 +2,9 @@ package com.ssafy.api.service;
 
 import com.ssafy.api.response.UserHistoryRes;
 import com.ssafy.common.exception.*;
+import com.ssafy.db.entity.Badge;
+import com.ssafy.db.entity.Common;
+import com.ssafy.db.repository.BadgeRepository;
 import com.ssafy.db.repository.ParticipantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	ParticipantRepository participantRepository;
+
+	@Autowired
+	BadgeRepository badgeRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -122,6 +128,14 @@ public class UserServiceImpl implements UserService {
 				usingDates(participantRepository.findUsingDate(user.getUserSeq())).
 				build();
 		return res;
+	}
+
+	@Override
+	public void getNewBadge(User user, Common common) {
+		Badge badge = new Badge();
+		badge.setUser(user);
+		badge.setCommon(common);
+		badgeRepository.save(badge);
 	}
 
 }

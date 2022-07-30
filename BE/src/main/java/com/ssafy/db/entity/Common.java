@@ -41,4 +41,8 @@ public class Common {
         this.imgName = imgName;
         this.imgUrl = imgUrl;
     }
+
+    public Common(Common common) {
+
+    }
 }
