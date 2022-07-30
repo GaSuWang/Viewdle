@@ -2,6 +2,7 @@ package com.ssafy.api.service;
 
 import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.api.response.UserHistoryRes;
+import com.ssafy.db.entity.Common;
 import com.ssafy.db.entity.User;
 
 /**
@@ -18,4 +19,5 @@ public interface UserService {
 	void changeProfile(User user, String proflePath);
 	void changeBadge(User user, String badge);
 	UserHistoryRes getUserHistory(User user);
+	void getNewBadge(User user, Common common);
 }
