@@ -4,11 +4,18 @@
 <template>
   <div class="ERView">
     <!-- 영상 구역  -->
-    <div class="ERContainer">
+    <div class="ERLeftArea">
       <!-- 면접자 영상 구역 -->
-      <div class="EEVidContainer"></div>
+      <div class="EEVidContainer">
+        <div class="EEVid"></div>
+      </div>
       <!-- 면접관 영상 구역 -->
-      <div class="ERVidContainer"></div>
+      <div class="ERVidContainer">
+        <div class="ERVid"></div>
+        <div class="ERVid"></div>
+        <div class="ERVid"></div>
+        <div class="ERVid"></div>
+      </div>
     </div>
 
     <!-- 유저 기능 구역 -->
@@ -137,6 +144,44 @@ export default {
   justify-content: space-between;
 }
 
+/* 좌단 */
+.ERLeftArea{
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  height: 100%;
+}
+
+.EEVidContainer{
+  width: 100%;
+  height: 80%;
+}
+
+.EEVid{
+  width: 98%;
+  height: 98%;
+  background-color: #edf0f6;
+  /* border: 1px solid black; */
+  border-radius: 8px;
+}
+
+.ERVidContainer{
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 98%;
+  height: 20%; 
+}
+
+.ERVid{
+  width: 24%;
+  background-color: #edf0f6;
+  /* border: 1px solid black; */
+  border-radius: 8px;
+}
+
+
+/* 우단 */
 .ERRightArea {
   display: flex;
   flex-direction: column;
