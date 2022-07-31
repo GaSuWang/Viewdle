@@ -2,8 +2,8 @@ package com.ssafy.api.controller;
 
 import com.ssafy.api.request.RoomEnterPostReq;
 import com.ssafy.api.request.RoomExitPatchReq;
-import com.ssafy.api.request.RoomListGetReq;
 import com.ssafy.api.request.RoomRegisterPostReq;
+import com.ssafy.api.response.RoomListRes;
 import com.ssafy.api.response.RoomRegisterPostRes;
 import com.ssafy.api.service.CommonService;
 import com.ssafy.api.service.ParticipantService;
@@ -15,7 +15,6 @@ import com.ssafy.db.entity.Common;
 import com.ssafy.db.entity.Studyroom;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.mapping.ParticipantResMapping;
-import com.ssafy.db.mapping.StudyroomResMapping;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -254,21 +253,14 @@ public class StudyroomController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "면접을 종료합니다."));
     }
 
-//    @GetMapping
-//    @ApiOperation(value = "스터디 룸 목록", notes = "<strong>필터와 정렬 순서</strong>를 가지고 스터디 룸 목록을 반환한다.")
-//    public ResponseEntity<? extends List<StudyroomResMapping>> getRooms(){
-//        return ResponseEntity.status(200).body(studyroomService.getRooms("N"));
-//    }
-
-//    @GetMapping
-//    @ApiOperation(value = "스터디 룸 목록", notes = "<strong>현재 존재하는</strong>스터디 룸 목록을 반환한다.")
-//    public ResponseEntity<? extends List<StudyroomResMapping>> getRooms(@RequestBody RoomListGetReq roomListGetReq){
-//        int type = roomListGetReq.getRoomType();
-//        String privateYN = roomListGetReq.getRoomPrivateYN();
-//        String FullYN = roomListGetReq.getRoomFullYN();
-//        String order = roomListGetReq.getOrder();
-//        return ResponseEntity.status(200).body(studyroomService.getRooms(type, privateYN, FullYN, order));
-//    }
+    @GetMapping
+    @ApiOperation(value = "스터디 룸 목록", notes = "<strong>필터와 정렬 순서</strong>를 가지고 스터디 룸 목록을 반환한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+    })
+    public ResponseEntity<? extends List<RoomListRes>> getRooms(@RequestParam String order, Integer type, String privateYN, String FullYN){
+        return ResponseEntity.status(200).body(studyroomService.getRoomsList(order, type, privateYN, FullYN));
+    }
 
     // 추후 필요하면 다시 구현 => join 필요
 //    @GetMapping("/{roomSeq}")
