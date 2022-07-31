@@ -1,9 +1,13 @@
 package com.ssafy.config;
 
-import com.ssafy.api.service.CustomOAuth2UserService;
+import com.ssafy.common.oauth2.CustomOAuth2UserService;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.JwtAuthenticationFilter;
 import com.ssafy.common.auth.SsafyUserDetailService;
+import com.ssafy.common.oauth2.JwtAuthFilter;
+import com.ssafy.common.oauth2.OAuth2SuccessHandler;
+import com.ssafy.common.oauth2.TokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +21,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * 인증(authentication) 와 인가(authorization) 처리를 위한 스프링 시큐리티 설정 정의.
  */
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -28,14 +34,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SsafyUserDetailService ssafyUserDetailService;
 
+    private final CustomOAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler successHandler;
+    private final TokenService tokenService;
     @Autowired
     private UserService userService;
-
-    private final CustomOAuth2UserService customOAuth2UserService;
-
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
-        this.customOAuth2UserService = customOAuth2UserService;
-    }
 
 
     // Password 인코딩 방식에 BCrypt 암호화 방식 사용
@@ -81,8 +84,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .oauth2Login()
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService);
+                .successHandler(successHandler)
+                .userInfoEndpoint().userService(oAuth2UserService);
+
+
+        http.addFilterBefore(new JwtAuthFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
+
 
         ;
     }
