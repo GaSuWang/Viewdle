@@ -18,6 +18,7 @@
       <hr>
       <div class="ReplayBody">
         <ReplayCard/>
+        <ReplayCard/>
       </div>
     <!-- 오래된순, 최신순 정렬 -->
     <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
@@ -59,12 +60,13 @@ export default {
 }
 .ReplayBody{
   width: 98%;
-  height: 85%;
+  height: 83%;
   background: white;
   border-radius: 20px;
   display: flex;
   justify-content: space-around;
   align-items: space-around;
   padding: 20px;
+  overflow:scroll;
 }
 </style>

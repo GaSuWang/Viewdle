@@ -13,23 +13,25 @@
   <div class="MyViewBoss">
     <NavBar/>
     <div class="MyView">
-      <p>MyPage</p>
       <div class="MyTop">
+        <h5>My Page</h5>
       </div>
-        <hr>
-        <div class="MyBody">
-          <h5>My Page</h5>
-            <img :src="userLists.userProfileImage">
-            <p class="card-text">이름 : {{userLists.userName}}</p>
-            <p class="card-text">email :{{userLists.userEmail}}</p>
-            <div class="bottomplz">
-              <div class="card-footer">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
-              </div>
-          </div>
+      <hr>
+      <div class="MyBody">
+        <div class="card-top">
+          <img :src="userLists.userProfileImage">
+          <p class="card-text">이름 : {{userLists.userName}}</p>
+          <p class="card-text">email :{{userLists.userEmail}}</p>
+        </div>
+        <div class="card-body">
+          <UsageTrend/>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
+          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
         </div>
       </div>
+    </div>
 
 
 
@@ -132,11 +134,13 @@
 
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
+import UsageTrend from '@/components/Lobby/UsageTrend.vue'
 import { useStore } from 'vuex'
 import { computed, reactive } from "vue";
 export default {
   components:{
-    NavBar
+    NavBar,
+    UsageTrend
   },
   name: "PWUpdateModal",
   setup() {
@@ -196,16 +200,20 @@ export default {
 .card-footer{
   display: flex;
   justify-content: end;
+  position: absolute;  
+  bottom: 10%;
+  right: 4%;
 }
 .card-footer button{
   margin: 0 20px;
 }
 .MyBody{
   width: 98%;
-  height: 85%;
+  height: 87%;
   background: white;
   border-radius: 20px;
   padding: 20px;
+  overflow:scroll;
 }
 </style>
 

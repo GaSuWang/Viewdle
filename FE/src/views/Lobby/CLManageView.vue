@@ -15,14 +15,13 @@
           </ul>
         </div>
         <button class="btn btn-secondary clmanageTopitem" data-bs-toggle="modal" data-bs-target="#clmaker">자소서생성</button>
-        <button class="btn btn-secondary clmanageTopitem" data-bs-toggle="modal" data-bs-target="#cldelete">자소서삭제</button>
     </div>
       <hr>
     <div class="clmanageBody">
       <CLMCard/>
       <CLMCard/>
     </div>
-
+    </div> 
 
 
       <!-- 자소서 생성 모달 -->
@@ -45,33 +44,6 @@
           </div>
         </div>
       </div>  
-          <div class="modal fade" id="deleteconfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">비밀번호 확인</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form @submit.prevent="confirmPW(credentials)" id="myDIV">
-                  <div class="modal-body">
-                    <div class="form-outline mb-4">
-                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="Password Confirm" />
-                    </div>
-                  </div>
-                  <button class="btn btn-primary">비번확인하기</button>
-                </form>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <form @submit.prevent="deleteID()">
-                    <div v-if="pwcode != false">
-                      <button class="btn btn-primary">회원탈퇴하기</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div> 
-          </div>   
 
     
     <!-- 내 자기소개서 관리 페이지 -->
@@ -178,12 +150,13 @@ export default {
 }
 .clmanageBody{
   width: 98%;
-  height: 85%;
+  height: 83%;
   background: white;
   border-radius: 20px;
   display: flex;
   justify-content: space-around;
   align-items: space-around;
   padding: 20px;
+  overflow:scroll;
 }
 </style>

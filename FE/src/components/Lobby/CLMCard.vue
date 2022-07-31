@@ -1,7 +1,7 @@
 // 임현탁
 <template>
   <div class="CLMCard">
-    <div class="card mb-3" style="max-width: 540px; height:400px;">
+    <div class="card mb-3" style="width: 540px; height:400px; margin:20px;">
       <div class="row g-0">
         <div class="col-md-4">
           <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
