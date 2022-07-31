@@ -10,14 +10,17 @@ const state = {
 
   //WaitingRoom
   //AuthorityPassModal
-  ParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서
+  ParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
 
-  //ErView
+  //EEView, ERView
+  EE: {}, //면접자
+  ERS: {}, //면접관들
+  //ERView
   InterviewTipList: {}, // 면접 팁
   StudyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
 
   //ErView, FeedbackRoom, ReplayView
-  FBList: [], // 피드백 리스트
+  FBList: [], // 피드백 리스트, 리스트로 하는 게 맞나?
 };
 const getters = {
   //SettingRoom
@@ -36,6 +39,14 @@ const getters = {
   ParticipantList(state) {
     return state.participantList;
   },
+
+  //EEView, ERView
+  EE(state) { //면접자
+    return state.EE
+  }, 
+  ERS(state) { //면접관들
+    return state.ERS
+  }, 
 
   //ErView
   InterviewTipList(state) {
@@ -70,6 +81,15 @@ const mutations = {
   GET_PARTICIPANT_LIST(state, participants) {
     state.participantList = participants;
   },
+
+  //EEView, ERView
+  SET_EE(state, EE) {
+    state.EE = EE
+  }, 
+  SET_ERS(state, ERS) {
+    state.ERS = ERS
+  }, 
+
   //EEView
 
   //ERView
@@ -111,6 +131,15 @@ const actions = {
   //       console.error(e.data);
   //     });
   // },
+
+  //EEView, ERView
+  setEE({commit}, EE) {
+    commit('SET_EE', EE)
+  }, 
+  setERS({commit}, ERS) {
+    commit('SET_ERS', ERS)
+  }, 
+
   //EEView
 
   //ERView
