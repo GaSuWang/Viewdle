@@ -79,6 +79,25 @@
             </div>
           </div>
         </div> 
+    <div class="modal fade" id="enterroom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form @submit.prevent="">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">방입장</h5>
+          </div>
+          <div class="modal-body">
+            <input type="Text" class="form-control form-control-lg" placeholder="Title" /> 
+            <input type="Text" class="form-control form-control-lg" placeholder="Password" /> 
+          </div> 
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button class="btn btn-secondary">입장</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div> 
     </div>
       <!-- 검색 -->
       <!-- 최신순,오래된순 정렬 -->

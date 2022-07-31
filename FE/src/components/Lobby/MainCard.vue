@@ -11,7 +11,7 @@
             <h5 class="card-title">Card title</h5>
             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
             <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-            <button class="btn btn-secondary">입장하기</button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enterroom">입장하기</button>
           </div>
         </div>
       </div>
@@ -26,6 +26,8 @@
     <!-- 만들어진 시간 -->
     <!-- 방장 이메일 -->
   </div>
+
+
 </template>
 
 <script>

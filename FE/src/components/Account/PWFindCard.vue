@@ -15,6 +15,7 @@
           <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
         </div>
         <button class="pwFindsubmit btn btn-primary btn-lg">인증코드받기</button>
+        <router-link to="/">뒤로가기</router-link>
 
       </form>
     </div>
