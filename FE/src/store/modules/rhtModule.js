@@ -91,6 +91,7 @@ const actions= {
         data: credentials
       })
         .then(res => {
+          console.log("해윙")
           console.log(res)
           const token = res.data.accessToken
           dispatch('saveToken', token)
@@ -301,6 +302,16 @@ const actions= {
         alert('실패.')
       })
     },
+    googleLoginButton(){
+      axios({
+        url:'http://localhost:8081/login/oauth2/code/google/', 
+        method:'get'
+      })
+      .then((res) => {
+        console.log(res)
+
+      })
+    }
 };
 
 
