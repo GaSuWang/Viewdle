@@ -4,9 +4,8 @@
     <div class="login">
       <h1>Log In</h1>
       <p>구글 로그인 해</p>
-      <div class="googleloginbtn">
-        <div v-on:click="GoogleLoginBtn"><i class="fab fa-google"></i></div>
-      </div>
+      <!-- <button onclick="GoogleLoginBtn()"><i class="fab fa-google"></i></button> -->
+      <GoogleLogin/>
       <p>or</p>
       <!-- 이메일 인풋 -->
       <form @submit.prevent="login(credentials)">
@@ -33,15 +32,18 @@
 import { useStore } from 'vuex'
 import { reactive } from 'vue'
 import { useRouter } from "vue-router";
+import GoogleLogin from "@/components/Account/GoogleLogin.vue"
 
 export default {
   name: 'LoginCard',
+  components:{
+    GoogleLogin
+  },
   setup () {
     const credentials = reactive({
       email: '',
       password: '',
     })
-
     const store = useStore()
     const router = useRouter()
      
@@ -49,7 +51,6 @@ export default {
       store.dispatch('rhtModule/login', credentials)
       router.push('/main')
     }
-
     return {
       login, credentials
     }
