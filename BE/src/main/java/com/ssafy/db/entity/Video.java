@@ -17,11 +17,12 @@ import java.util.List;
 public class Video {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "video_seq")
-    int viedoSeq;
+    int videoSeq;
 
     @Column(name = "video_title")
-    String videotitle;
+    String videoTitle;
 
     @Column(name = "video_url")
     String videoUrl;
@@ -44,4 +45,10 @@ public class Video {
         videoRegTime = now;
     }
 
+    @Builder
+    public Video(String videoTitle, String videoUrl, User user) {
+        this.videoTitle = videoTitle;
+        this.videoUrl = videoUrl;
+        this.user = user;
+    }
 }
