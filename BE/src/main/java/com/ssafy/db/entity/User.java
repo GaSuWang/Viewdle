@@ -84,6 +84,9 @@ public class User{
     @OneToMany(mappedBy = "user")
     List<CoverLetter> coverLetters = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    List<Video> videos = new ArrayList<>();
+
 
     @PrePersist
     public void prePersist(){
