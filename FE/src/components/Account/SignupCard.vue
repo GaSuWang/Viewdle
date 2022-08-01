@@ -1,44 +1,45 @@
 // 임현탁
 <template>
-  <div class="container" id="SignupCard">
+  <div class="signup">
+    <div class="signupbody">
+      <div class="signupcard">
+        <h1>Signup</h1>
     <!-- 이름 -->
     <!-- 이메일 -->
     <!-- 비밀번호 -->
     <!-- 비밀번호 확인 -->
     <!-- 가입완료 버튼  and 취소버튼-->
     <!-- 가입 실패시 알람 -->
-      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
         <form @submit.prevent="signup(credentials)">
           <!-- 이름 -->
-          <div class="form-outline mb-4">
-            <input type="text" v-model="credentials.userName" id="userName" class="form-control form-control-lg"
+          <div class="nameinput">
+            <input type="text" v-model="credentials.userName" class="form-control form-control-lg"
               placeholder="Nick Name" />
           </div>
           <!-- 이메일 인풋 -->
 
           <form @submit.prevent="checkEmail(credentials)">
-            <div class="form-outline mb-4">
-              <input type="email" v-model="credentials.userEmail" id="userEmail" class="form-control form-control-lg" placeholder="Email address" />
-              <button class="btn btn-primary btn-lg"> 중복 확인 </button>
+            <div class="emailinput">
+              <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
+              <button class="pwchecksubmit btn btn-primary btn-lg"> 중복 확인 </button>
             </div>
           </form>
 
           <!-- 비번 인풋 -->
-          <div class="form-outline mb-3">
-            <input type="password" v-model="credentials.userPassword" id="userPassword1" class="form-control form-control-lg"
+          <div class="pwinput">
+            <input type="password" v-model="credentials.userPassword" class="form-control form-control-lg"
               placeholder="Password" />
           </div>
 
           <!-- 비번 확인 인풋 -->
-          <div class="form-outline mb-3">
-            <input type="password" v-model="credentials.userPassword2" id="userPassword2" class="form-control form-control-lg"
+          <div class="pwcheckinput">
+            <input type="password" v-model="credentials.userPassword2" class="form-control form-control-lg"
               placeholder="Password Check" />
           </div>
 
-
-          <button class="btn btn-primary btn-lg">가입완료</button>
-  
+          <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
         </form>
+      </div>
       </div>
   </div>
 </template>
@@ -121,4 +122,111 @@ export default {
 </script>
 
 <style>
+.signup{
+  width:50%
+}
+.signupbody{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+.signupcard{
+  width: 100%;
+  height: 600px;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.nameinput{
+  margin-top: 20px;
+  width: 100%;
+}
+.nameinput input{
+  margin-top: 50px;
+  width: 80%;
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 1px solid lightgray;
+  outline: none;
+}
+
+.emailinput{
+  margin-top: 20px;
+  width: 100%;
+}
+.emailinput input{
+  margin-top: 50px;
+  width: 80%;
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 1px solid lightgray;
+  outline: none;
+}
+
+.pwinput{
+  margin-top: 50px;
+  width: 100%;
+}
+.pwinput input{
+  margin-top: 50px;
+  width: 80%;
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 1px solid lightgray;
+  outline: none;
+}
+.pwcheckinput{
+  margin-top: 20px;
+  width: 100%;
+}
+.pwcheckinput input{
+  margin-top: 50px;
+  width: 80%;
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 1px solid lightgray;
+  outline: none;
+}
+.pwchecksubmit{
+    margin-top: 20px;
+    width: 100%;
+    height: 50px;
+    border: 0;
+    outline: none;
+    border-radius: 40px;
+    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    color: white;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+}
+.signupsubmit{
+     margin-top:20px;
+    width: 100%;
+    height: 50px;
+    border: 0;
+    outline: none;
+    border-radius: 40px;
+    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    color: white;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+}
 </style>

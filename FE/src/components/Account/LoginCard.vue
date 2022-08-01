@@ -1,75 +1,56 @@
 // 임현탁
 <template>
-<section class="vh-100">
-  <div class="container-fluid h-custom">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-md-9 col-lg-6 col-xl-5">
-        <img id="logoimg" src="@/assets/images/anyimgs.png"
-          class="img-fluid" alt="Sample image">
-      </div>
-      <div class="card" style="width: 25%;">
-          <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-            <p class="lead fw-normal mb-0 me-3">구글 로그인 해</p>
-
-            <section class="googlelogin">
-              <div v-on:click="GoogleLoginBtn"><img id="googlelogo" src="@/assets/images/Google__G__Logo.svg.png"></div>
-              <div id="my-signin2" style="display: none"></div>
-            </section>
-          </div>
-
-          <div class="divider d-flex align-items-center my-4">
-            <p class="text-center fw-bold mx-3 mb-0">or</p>
-          </div>
-
-          <!-- 이메일 인풋 -->
-          <form @submit.prevent="login(credentials)">
-            <div class="form-outline mb-4">
-              <input type="email" v-model="credentials.email" class="form-control form-control-lg"
-                placeholder="Email address" />
-            </div>
-
-            <!-- Password input -->
-            <div class="form-outline mb-4">
-              <input type="password" v-model="credentials.password" class="form-control form-control-lg"
-                placeholder="Password" />
-            </div>
-
-            <div class="">
-              <button class="btn btn-primary btn-lg">로그인</button>
-            </div>
-          </form>
-          <div class="">
-            <!-- Checkbox -->
-            <a href="pw" class="text-body">비번 찾기</a>
-            <a href="signup" class="link-danger">회원가입</a>
-
-          </div>
+  <div class="loginview">     
+    <div class="login">
+      <h1>Log In</h1>
+      <p>구글 로그인 해</p>
+      <!-- <button onclick="GoogleLoginBtn()"><i class="fab fa-google"></i></button> -->
+      <GoogleLogin/>
+      <p>or</p>
+      <!-- 이메일 인풋 -->
+      <form @submit.prevent="login(credentials)">
+        <div class="loginid">
+          <input type="email" v-model="credentials.email" placeholder="Email address" />
+        </div>
+        
+        <!-- Password input -->
+        <div class="loginpw">
+          <input type="password" v-model="credentials.password" placeholder="Password" />
+        </div>
+        <button class="loginsubmit btn btn-primary btn-lg">로그인</button>
+      </form>
+      <!-- Checkbox -->
+      <div class="login_etc">
+        <router-link to="/pw">비번 찾기</router-link>
+        <router-link to="/signup">회원가입</router-link>
       </div>
     </div>
   </div>
-</section>
 </template>
 
 <script>
 import { useStore } from 'vuex'
 import { reactive } from 'vue'
 import { useRouter } from "vue-router";
+import GoogleLogin from "@/components/Account/GoogleLogin.vue"
 
 export default {
   name: 'LoginCard',
+  components:{
+    GoogleLogin
+  },
   setup () {
     const credentials = reactive({
       email: '',
       password: '',
     })
-
     const store = useStore()
-    const router = useRouter() 
+    const router = useRouter()
+     
     function login(){
       store.dispatch('rhtModule/login', credentials)
       router.push('/main')
     }
-
     return {
       login, credentials
     }
@@ -115,30 +96,86 @@ export default {
 </script>
 
 <style>
-#logoimg{
-  width: 500px;
-  height: 500px;
+.login {
+  width: 100%;
+  height: 600px;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
 }
-#googlelogo{
-  color: white;
-  width: 15px;
-  height: 15px;
-  object-fit: cover;
+.googleloginbtn{
+  padding: 20px;
+  display: flex;
+  padding: 0px 15px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 50px;
+  background: white;
+  font-size: 20px;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4), -3px -3px 5px rgba(0, 0, 0, 0.1);
 }
-.divider:after,
-.divider:before {
-content: "";
-flex: 1;
-height: 1px;
-background: #eee;
+
+.loginid{
+  margin-top: 20px;
+  width: 100%;
 }
-.h-custom {
-height: calc(100% - 73px);
+.loginid input{
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 1px solid lightgray;
+  outline: none;
 }
-@media (max-width: 450px) {
-.h-custom {
-height: 100%;
+
+.loginpw{
+  margin-top: 20px;
+  width: 100%;
 }
+.loginpw input{
+  width: 100%;
+  height: 50px;
+  border-radius: 30px;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 1px solid lightgray;
+  outline: none;
+  }
+
+  .loginsubmit{
+    margin-top: 50px;
+    width: 80%;
+    width: 100%;
+    height: 50px;
+    border: 0;
+    outline: none;
+    border-radius: 40px;
+    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    color: white;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+
+  }
+  .login_etc {
+  padding: 10px;
+  width: 80%;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  text-decoration: none;
 }
+  
 </style>
+
 

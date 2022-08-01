@@ -67,38 +67,39 @@ const routes = [
         /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/EEView.vue"
       ),
   },
-  // {
-  //   path: '/ee-room/ez',
-  //   name: 'ee-room-ez',
-  //   component: () => import(/* webpackPrefetch:true */ '@/views/')
-  // },
   {
     path: "/er-room",
     name: "er-room",
     component: () =>
-      import(
-        /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/ERView.vue"
+    import(
+      /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/ERView.vue"
       ),
-  },
-  // {
-  //   path: '/er-room/ez',
-  //   name: 'er-room-ez',
-  //   component: () => import(/* webpackPrefetch:true */ '@/views/')
-  // },
-  {
-    path: "/fb-room",
-    name: "fb-room",
-    component: () =>
-      import(
-        /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/FeedbackView.vue"
-      ),
-  },
-  {
-    path: "/eecl",
-    name: "eecl",
-    component: () =>
-      import(/* webpackPrefetch:true */ "@/views/StudyRoom/CLView.vue"),
-  },
+    },
+    {
+      path: "/fb-room",
+      name: "fb-room",
+      component: () =>
+        import(
+          /* webpackPrefetch:true */ "@/views/StudyRoom/NormalMode/FBView.vue"
+        ),
+    },
+    {
+      path: "/eecl",
+      name: "eecl",
+      component: () =>
+        import(/* webpackPrefetch:true */ "@/views/StudyRoom/CLView.vue"),
+    },
+    {
+      path: '/ee-room/ez',
+      name: 'ee-room-ez',
+      component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/EasyMode/EERView.vue')
+    },
+    {
+      path: '/er-room/ez',
+      name: 'er-room-ez',
+      component: () => import(/* webpackPrefetch:true */ '@/views/StudyRoom/EasyMode/EERView.vue')
+    },
+
 ];
 
 export const router = createRouter({

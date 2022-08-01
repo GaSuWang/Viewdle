@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app">
     <router-view />
   </div>
 </template>
@@ -12,13 +12,13 @@ export default {
 </script>
 
 <style>
-@importurl (https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css);
 
-html * {
-  font-family: "NanumSquare", sans-serif;
-}
-
-*::before {
-  box-sizing: border-box;
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.1);
 }
 </style>

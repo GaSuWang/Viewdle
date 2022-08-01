@@ -14,9 +14,11 @@
           마이크 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">마이크1</a></li>
-          <li><a class="dropdown-item" href="#">마이크2</a></li>
-          <li><a class="dropdown-item" href="#">마이크3</a></li>
+          <li v-for="mic in MicList" :key="mic.deviceId">
+            {{mic.label}}
+            <!-- <mic-device :mic="mic"></mic-device> -->
+          </li>
+          
         </ul>
       </div>
 
@@ -31,9 +33,10 @@
           카메라 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">카메라1</a></li>
-          <li><a class="dropdown-item" href="#">카메라2</a></li>
-          <li><a class="dropdown-item" href="#">카메라3</a></li>
+          <li v-for="camera in CameraList" :key="camera.deviceId">
+            {{camera.label}}
+          <!-- <camera-device :camera="camera"></camera-device> -->
+          </li>
         </ul>
       </div>
 
@@ -64,42 +67,120 @@
     <!-- 하단 -->
     <div class="SettingRoomFooter">
       <!-- 로비 되돌아가기 버튼 -->
-      <button class="toLBBtn">
-        <div class="toLBBtnDiv">
-          <router-link :to="{ name: 'main' }">되돌아가기</router-link>
-        </div>
-      </button>
+      <div class="toLBBtnDiv" @click="SRtoLB">
+        <button class="toLBBtn">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
       <!-- 유저 마이크 온오프 버튼 -->
-      <button class="Mic OnOff">마이크 Off</button>
+      <button class="MicStatus" @click="micStatusSwitch">
+        <i v-if="micOn" class="bi bi-mic"></i>
+        <i v-else class="bi bi-mic-mute"></i>
+      </button>
       <!-- 유저 카메라 온오프 버튼 -->
-      <button class="Camera OnOff">카메라 Off</button>
+      <button class="CameraSTatus" @click="cameraStatusSwitch">
+        <i v-if="cameraOn" class="bi bi-camera-video"></i>
+        <i v-else class="bi bi-camera-video-off"></i>
+      </button>
 
       <!-- 대기실 입장 버튼 -->
-      <button class="toWRBtn">
-        <div class="toWRBtnDiv">
-          <router-link :to="{ name: 'waiting-room' }">대기실 이동</router-link>
-        </div>
-      </button>
+      <div class="toWRBtnDiv" @click="SRtoWR">
+        <button class="toWRBtn">
+          <i class="bi bi-check-lg"></i>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import {useStore} from 'vuex';
+import { useRouter } from "vue-router";
+import { OpenVidu } from 'openvidu-browser';
+// import CameraDevice from '@/components/StudyRoom/CameraDevice.vue'
+// import MicDevice from '@/components/StudyRoom/MicDevice.vue'
 export default {
   name: "SettingRoomView",
+  // components:{CameraDevice, MicDevice},
   setup() {
+    const store = useStore();
+
+    // 디바이스 목록 가져오기
+    var OV = new OpenVidu();
+    function findDevices(){
+      OV.getDevices().then(devices => {
+      var videoDevices = devices.filter(device => device.kind === 'videoinput');
+      store.dispatch('lbhModule/getCameraList', videoDevices)
+      var audioDevices = devices.filter(device => device.kind === 'audioinput');
+      store.dispatch('lbhModule/getMicList', audioDevices)
+    });
+    } 
+    findDevices()
+
+    const CameraList = computed(()=>store.getters['lbhModule/CameraList'])
+    const MicList = computed(()=>store.getters['lbhModule/MicList'])
+
+  //   let publisher = OV.initPublisher(undefined, {
+  //     audioSource: undefined, // The source of audio. If undefined default microphone
+  //     videoSource: undefined, // The source of video. If undefined default webcam
+  //     publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+  //     publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+  //     resolution: '640x480',  // The resolution of your video
+  //     frameRate: 30,			// The frame rate of your video
+  //     insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+  //     mirror: false       	// Whether to mirror your local video or not
+  //   });
+
+  // // 'myPublisher' a Publisher object obtained through 'OpenVidu.initPublisher()' method
+  // // 'myTrack' a MediaStreamTrack object
+  // // 'properties' a PublisherProperties object https://docs.openvidu.io/en/stable/api/openvidu-browser/interfaces/PublisherProperties.html
+
+  // var mediaStream = await OV.getUserMedia(properties);
+
+  // // Getting the video track from mediaStream
+  // var myTrack = mediaStream.getVideoTracks()[0];
+
+  // // Replacing video track
+  // myPublisher.replaceTrack(myTrack)
+  //     .then(() => console.log('New track has been published'))
+  //     .catch(error => console.error('Error replacing track', error));
+
+
+    const router = useRouter();
     const micSelect = ref(false);
     const cameraSelect = ref(false);
     const clSelect = ref(false);
-    const micOnOff = ref("마이크 Off");
-    const cameraOnOff = ref("카메라 Off");
+    let micOn = ref(false);
+    let cameraOn = ref(false);
+    function SRtoLB() {
+      if (confirm("로비로 되돌아가시겠습니까?")) {
+        router.push("main");
+      }
+    }
+    function SRtoWR() {
+      if (confirm("대기실로 이동하시겠습니까?")) {
+        router.push("waiting-room");
+      }
+    }
+    function micStatusSwitch() {
+      micOn.value = !micOn.value;
+    }
+    function cameraStatusSwitch() {
+      cameraOn.value = !cameraOn.value;
+    }
     return {
+      CameraList,
+      MicList,
       micSelect,
       cameraSelect,
       clSelect,
-      micOnOff,
-      cameraOnOff,
+      micOn,
+      cameraOn,
+      SRtoLB,
+      SRtoWR,
+      micStatusSwitch,
+      cameraStatusSwitch,
     };
   },
 };
@@ -117,11 +198,12 @@ export default {
 
 .SettingRoomView {
   position: absolute;
-  width: 80vw;
+  width: 90vw;
   aspect-ratio: 16/9;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  padding: 3%;
 }
 
 .SettingRoomHeader {
@@ -131,12 +213,24 @@ export default {
   width: 100%;
   height: 10%;
   border-radius: 60px 60px 0 0;
-  background-color: lightgrey;
+  background-color: #858a98;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
 }
+
+.SettingRoomHeader > li {
+  padding: 0;
+  border-bottom: 5px rgb(210, 210, 210) solid;
+}
+
+/* .SettingRoomHeader > div:nth-child(1) > ul>li,
+.SettingRoomHeader > div:nth-child(2) > ul>li,
+.SettingRoomHeader > div:nth-child(3) > ul>li{
+  padding: 0;
+  border-bottom: 5px rgb(210, 210, 210) solid;
+} */
 
 .SettingRoomContent {
   position: absolute;
@@ -144,8 +238,8 @@ export default {
   left: 0;
   width: 100%;
   height: 80%;
-  background-color: black;
-  opacity: 30%;
+  background-color: #B5BAC9;
+  /* opacity: 30%; */
 }
 
 .SettingRoomFooter {
@@ -155,7 +249,7 @@ export default {
   width: 100%;
   height: 10%;
   border-radius: 0 0 60px 60px;
-  background-color: lightgrey;
+  background-color: #858a98;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -170,22 +264,59 @@ export default {
 .SettingRoomFooter > button,
 .toLBBtn,
 .toWRBtn {
+  /* border: none;
+  border-radius: 0.5rem; */
   border: none;
-  border-radius: 0.5rem;
+  display: block;
+  background: linear-gradient(#f7f7f7, #e7e7e7);
+  color: #a7a7a7;
+  margin: 18px;
+  width: 36px;
+  height: 36px;
+  position: relative;
+  text-align: center;
+  line-height: 36px;
+  border-radius: 50%;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
-
+.SettingRoomHeader > button:before,
+.SettingRoomFooter > button:before,
+.toLBBtn:before,
+.toWRBtn:before {
+  content: "";
+  display: block;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #fff;
+  width: 100%;
+  height: 1px;
+  position: absolute;
+  top: 50%;
+  z-index: -1;
+}
+.SettingRoomHeader > button:after,
+.SettingRoomFooter > button:after,
+.toLBBtn:after,
+.toWRBtn:after {
+  content: "";
+  display: block;
+  background: #fff;
+  border-top: 2px solid #ddd;
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  bottom: -9px;
+  right: -9px;
+  z-index: -1;
+  border-radius: 50%;
+  box-shadow: inset 0px 4px 24px #ddd;
+}
+.SettingRoomHeader > button:hover,
+.SettingRoomFooter > button:hover,
 .toLBBtn:hover,
-.toWRBtn:hover,
-.toLBBtn:hover a,
-.toWRBtn:hover a {
-  background-color: black;
-  color: white;
-}
-
-.toLBBtnDiv > a,
-.toWRBtnDiv > a {
+.toWRBtn:hover {
   text-decoration: none;
-  color: black;
+  color: #555;
+  background: #f5f5f5;
 }
 
 /* 돌아가기, 대기실 버튼 애니메이션 */

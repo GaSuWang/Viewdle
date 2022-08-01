@@ -289,14 +289,14 @@ export default {
 <style scoped>
 .WaitingRoomView {
   position: absolute;
-  width: 80vw;
+  width: 90vw;
   aspect-ratio: 16/9;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: lightgrey;
+  background-color: #fff;
   border-radius: 60px;
-  padding: 5%;
+  padding: 3%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
