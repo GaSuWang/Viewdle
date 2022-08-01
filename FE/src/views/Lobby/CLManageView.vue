@@ -1,9 +1,9 @@
 // 임현탁
 <template>
 <div class="CLMBoss">
-  <NavBar/>
+  <NavBar class="NavView"/>
   <div class="CLManageView">
-    <p>Cover Letter Manage</p>
+    <p class="pagetitle">Cover Letter Manage</p>
     <div class='clmanageTop'>
         <div class="dropdown clmanageTopitem">
           <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -18,7 +18,6 @@
     </div>
       <hr>
     <div class="clmanageBody">
-      <CLMCard/>
       <CLMCard/>
     </div>
     </div> 
@@ -129,28 +128,37 @@ export default {
 
 <style>
 .CLMBoss{
-  height:100%;
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.NavView{
+  height: 100%;
+  width: 250px;
 }
 .CLManageView{
-  position:fixed;
-  top:50px;
-  left: 300px;
   height: 100%;
   width: 80%;
-  overflow:scroll;
+}
+.pagetitle{
+  margin-top: 20px;
 }
 .clmanageTop{
   display: flex;
   flex-direction: row;
-  justify-content: end;
   align-items: center;
+  height: 80px;
 }
 .clmanageTopitem{
   margin: 0 20px
 }
 .clmanageBody{
   width: 98%;
-  height: 83%;
+  height: 80%;
   background: white;
   border-radius: 20px;
   display: flex;

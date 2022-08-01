@@ -1,9 +1,9 @@
 // 임현탁
 <template>
 <div class="ReplayViewBoss">
-  <NavBar/>
+  <NavBar class="NavView"/>
   <div class="ReplayView">
-    <p>Replay</p>
+    <p class="pagetitle">Replay</p>
     <div class='ReplayTop'>
       <div class="dropdown ReplayTopitem">
         <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -17,7 +17,6 @@
     </div>
       <hr>
       <div class="ReplayBody">
-        <ReplayCard/>
         <ReplayCard/>
       </div>
     <!-- 오래된순, 최신순 정렬 -->
@@ -39,24 +38,35 @@ export default {
 
 <style>
 .ReplayViewBoss{
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.NavView{
   height: 100%;
+  width: 250px;
 }
 .ReplayView{
-  position:fixed;
-  top:50px;
-  left: 300px;
+
   height: 100%;
   width: 80%;
-  overflow:scroll;
 }
 .ReplayTop{
+  height: 80px;
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: space-between;
   align-items: center;
 }
 .ReplayTopitem{
   margin:0 20px;
+}
+.pagetitle{
+  margin-top: 20px;
 }
 .ReplayBody{
   width: 98%;

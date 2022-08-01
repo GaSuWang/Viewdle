@@ -11,10 +11,10 @@
     <!-- 취소버튼 -->
     <!-- 수정완료버튼 누르면 확인 컨펌 -->
   <div class="MyViewBoss">
-    <NavBar/>
+    <NavBar class="NavView"/>
     <div class="MyView">
+      <p class="pagetitle">My Page</p>
       <div class="MyTop">
-        <h5>My Page</h5>
       </div>
       <hr>
       <div class="MyBody">
@@ -183,15 +183,29 @@ export default {
 
 <style>
 .MyViewBoss{
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.NavView{
   height: 100%;
+  width: 250px;
+}
+.pagetitle{
+  margin-top: 20px;
 }
 .MyView{
-  position:fixed;
   top:50px;
   left: 300px;
   height: 100%;
   width: 80%;
-  overflow:scroll;
+}
+.MyTop{
+  height: 80px;
 }
 .card{
   width: 98%;
@@ -201,15 +215,15 @@ export default {
   display: flex;
   justify-content: end;
   position: absolute;  
-  bottom: 10%;
-  right: 4%;
+  bottom: 15%;
+  right: 10%;
 }
 .card-footer button{
   margin: 0 20px;
 }
 .MyBody{
   width: 98%;
-  height: 87%;
+  height: 80%;
   background: white;
   border-radius: 20px;
   padding: 20px;

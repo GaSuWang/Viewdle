@@ -1,9 +1,9 @@
 // 임현탁
 <template>
   <div class="Lobbyboss">
-  <NavBar/>
+  <NavBar class="NavView"/>
   <div class="MainView">
-      <p>Main</p>
+      <p class="pagetitle">Main</p>
       <div class="MainTop">
         <div class="MainTop1">
           <!-- 서치바 -->
@@ -49,7 +49,6 @@
       </div>
       <hr>
       <div class="MainBody">
-          <MainCard/>
           <MainCard/>
       </div>
     </div>
@@ -119,21 +118,33 @@ export default {
 
 <style>
 .Lobbyboss{
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.NavView{
   height: 100%;
+  width: 250px;
 }
 .MainView{
-  position:fixed;
   top:50px;
   left: 300px;
   height: 100%;
   width: 80%;
-  overflow:scroll;
 }
 .MainTop{
+  height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+.pagetitle{
+  margin-top: 20px;
 }
 .MainTop1{
   display: flex;

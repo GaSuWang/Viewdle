@@ -96,16 +96,22 @@ export default {
 </script>
 
 <style>
+.loginview{
+  height: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 .login {
-  width: 100%;
-  height: 600px;
+  width: 80%;
+  height: 100%;
   background: white;
   border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
 }
 .googleloginbtn{
   padding: 20px;

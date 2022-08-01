@@ -41,13 +41,12 @@ export default {
     text-decoration: none;
 }
 .sidebar{
-    position:fixed;
-    left: 0;
-    width:250px;
     height:100%;
-    background: #042331
+    background: #042331;
+    border-radius: 20px;
 }
 .sidebar header{
+    border-radius: 20px;
     font-size:40px;
     color: white;
     text-align: center;
