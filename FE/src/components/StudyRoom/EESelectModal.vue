@@ -29,11 +29,15 @@ data() {
 },
 methods:{
   selectEE(participant){
-    EE = participant
+    this.EE = participant
   },
-  startInterview(EE, ERS){
-    for(participant in ParticipantList){
-    }
+  startInterview(){
+    this.ERS = this.ParticipantList.filter(participant=>participant!==this.EE)
+    this.$store.dispatch('setEE', this.EE)
+    this.$store.dispatch('setERS', this.ERS)
+    this.EE = {}
+    this.ERS = {}
+    this.$store.dispatch('setStartInterview', true) //방장이 면접 시작함
   },
 },
 created(){

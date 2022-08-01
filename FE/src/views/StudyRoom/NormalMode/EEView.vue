@@ -44,6 +44,11 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 export default {
   name: "EEView",
+  created(){
+    // 면접자 페이지가 생성될 때, 유저 정보를 EERParticipantList에 넣어줌
+    // 만약 WRParticipantList와 EERParticipantList가 일치하면, 면접 시작
+    // this.$store.disaptch('setEERParticipantList',user)
+  },
   setup() {
     const router = useRouter();
     const userType = ref("superUser"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
