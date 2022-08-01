@@ -2,6 +2,7 @@ package com.ssafy.api.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import javax.persistence.Column;
  */
 @Getter
 @Setter
+@AllArgsConstructor
 @ApiModel("UserRegisterPostRequest")
 public class UserRegisterPostReq {
 	String userEmail;
@@ -20,4 +22,5 @@ public class UserRegisterPostReq {
 
 	String userPassword;
 	String userPassword2;
+
 }
