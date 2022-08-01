@@ -74,6 +74,12 @@ import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
 export default {
   name: "ERView",
   components: { FeedbackArea },
+  created(){
+    // 면접관 페이지가 생성될 때, 유저 정보를 EERParticipantList에 넣어줌
+    // 만약 WRParticipantList와 EERParticipantList가 일치하면, 면접 시작
+    const user = this.$store.getters['rhtModule/UserList']
+    this.$store.dispatch('setEERParticipantList',user)
+  },
   methods: {
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
