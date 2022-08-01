@@ -93,8 +93,8 @@ public class User{
         userDelYN = "N";
         userTotalTime = "0";
         userTotalVideo = 0;
-        userProfileImage = "resources/static/image/profile.png";
-        userMainBadge = "resources/static/image/welcome.png";
+        userProfileImage = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/base_image%2Fbase_profile.PNG?alt=media";
+        userMainBadge = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/base_image%2Fbase_badge.PNG?alt=media";
     }
 
     @PreUpdate

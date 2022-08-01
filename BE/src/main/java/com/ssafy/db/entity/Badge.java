@@ -1,6 +1,8 @@
 package com.ssafy.db.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -8,16 +10,21 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "Badge")
 public class Badge {
     
     @Id
     @Column(name = "badge_seq")        
-    int badgeSeq;
+    private int badgeSeq;
+
+    @ManyToOne
+    @JoinColumn(name="user_seq")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "common_seq")
-    Common common;
-    
-    public Badge() {} // 기본 생성자
+    private Common common;
+
 }
