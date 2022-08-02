@@ -255,7 +255,10 @@ public class StudyroomController {
 
     @GetMapping
     @ApiOperation(value = "스터디 룸 목록", notes = "<strong>필터와 정렬 순서</strong>를 가지고 스터디 룸 목록을 반환한다.")
-    public ResponseEntity<? extends List<RoomListRes>> getRooms(@RequestParam String order, Integer type, String privateYN, String FullYN){
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+    })
+    public ResponseEntity<? extends List<RoomListRes>> getRooms(@RequestParam(required = false) String order, Integer type, String privateYN, String FullYN){
         return ResponseEntity.status(200).body(studyroomService.getRoomsList(order, type, privateYN, FullYN));
     }
 

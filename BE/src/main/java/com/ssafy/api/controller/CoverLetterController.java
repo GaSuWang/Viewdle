@@ -58,12 +58,12 @@ public class CoverLetterController {
 
 
     //get detail
-    //자소서 상세보기: 자소서 pk
-    @GetMapping("/detail")
-    public ResponseEntity<? extends CoverLetterRes> getCoverLetter(@RequestBody CoverLetterSeqReq seq){
-        CoverLetter res = coverLetterService.getCoverLetter(seq.getCoverLetterSeq());
+    @GetMapping("/{coverLetterSeq}")
+    public ResponseEntity<? extends CoverLetterRes> getCoverLetter(@PathVariable int coverLetterSeq){
+        CoverLetter res = coverLetterService.getCoverLetter(coverLetterSeq);
         return ResponseEntity.status(200).body(CoverLetterRes.of(res));
     }
+
 
 
     //update
