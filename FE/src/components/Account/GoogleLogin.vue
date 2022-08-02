@@ -47,10 +47,12 @@ name: "GoogleLoginView",
 
     },
     async GoogleLoginSuccess(googleUser) {
-      const googleEmail = googleUser.getBasicProfile().getEmail();
-      if (googleEmail !== 'undefined') {
-        console.log(googleEmail);
-      }
+      const profile = googleUser.getBasicProfile()
+      console.log('ID Token: ', googleUser.getAuthResponse().id_token); // 실제 토큰
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail());
     },
     //구글 로그인 콜백함수 (실패)
     GoogleLoginFailure(error) {

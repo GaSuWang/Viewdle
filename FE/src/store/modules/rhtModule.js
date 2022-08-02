@@ -6,6 +6,7 @@ const state= {
     // 회원가입
     token: localStorage.getItem('token') || '',
     UserList:{},
+    HistoryList:{},
     isLoggedIn: true,
     emailcode:{},
     pwcode: false,
@@ -17,10 +18,21 @@ const state= {
     // 뱃지 관리
     BadgeList:{},
     // 자소서관리
-    CoverLetterList:[],
+    CoverLetterList:[
+      {"title":"삼성", "content":"합격하고싶다", "seq": "1", "date":"20200221"},
+      {"title":"현대", "content":"보내줘요", "seq": "2", "date":"20200221"},
+      {"title":"LG", "content":"제바리야~", "seq": "3", "date":"20200221"},
+      {"title":"SK", "content":"화이팅", "seq": "4", "date":"20200221"}
+    ],
     CoverLetterDetail:{},
     // 방 만들기, 
-    StudyroomList:{},
+    StudyroomList:[
+      {"roomSeq":"1", "roomType":"1", "roomTitle": "얍", "roomPrivateYN": "Y", "roomLimit": "5", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "N", "thumbnailUrl":"abc.abc.abc"},
+      {"roomSeq":"2", "roomType":"1", "roomTitle": "얍얍", "roomPrivateYN": "Y", "roomLimit": "5", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "N", "thumbnailUrl":"abc.abc.abc"},
+      {"roomSeq":"3", "roomType":"2", "roomTitle": "얍얍얍", "roomPrivateYN": "N", "roomLimit": "5", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "N", "thumbnailUrl":"abc.abc.abc"},
+      {"roomSeq":"4", "roomType":"1", "roomTitle": "얍얍얍얍", "roomPrivateYN": "Y", "roomLimit": "5", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "N", "thumbnailUrl":"abc.abc.abc"},
+      {"roomSeq":"5", "roomType":"2", "roomTitle": "얍얍얍얍얍", "roomPrivateYN": "N", "roomLimit": "5", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "N", "thumbnailUrl":"abc.abc.abc"},
+    ],
     // 녹화된 영상과 피드백 보기위함
     FeedbackList:{},
     Replayvideo:{},
@@ -30,6 +42,7 @@ const state= {
 const getters = {
     isLoggedIn(state){return !!state.isLoggedIn},
     UserList(state){return state.UserList},
+    HistoryList(state){return state.History},
     Emailcode(state){return state.emailcode},
     pwCode(state){return state.pwcode},
     pwCodeForEdit(state){return state.pwcodeforedit},
@@ -52,6 +65,9 @@ const mutations= {
     SET_USER_LIST(state, user){
       state.UserList = user
     },
+    SET_HISTORY_LIST(state, History){
+      state.HistoryList = History
+    },
     SET_EMAIL_CODE(state, emailcode){
       state.emailcode = emailcode
     },
@@ -66,6 +82,9 @@ const mutations= {
     },
     SET_COVERLETTER_DETAIL(state, CoverLetterDetail){
       state.CoverLetterDetail = CoverLetterDetail
+    },
+    SET_STUDYROOM_LIST(state, StudyroomList){
+      state.StudyroomList = StudyroomList
     },
   }
 
@@ -86,7 +105,7 @@ const actions= {
 
       console.log("로그인아 안녕?")
       axios({
-        url: 'http://localhost:8081/api/v1/users/login',  
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
         method: 'post',
         data: credentials
       })
@@ -98,6 +117,7 @@ const actions= {
           console.log(getters.authHeader)
           dispatch('fetchCurrentUser')
           console.log(getters.UserList)
+          dispatch('fetchHistories')
         })
         .catch(err => {
           console.error(err)
@@ -127,7 +147,7 @@ const actions= {
     fetchCurrentUser({ commit, getters, dispatch }) {
       if (getters.isLoggedIn) {
         axios({
-          url: 'http://localhost:8081/api/v1/users/detail', //정보 가져오는 api
+          url: 'http://' + location.hostname + ':8081' + '/api/v1/users/detail', //정보 가져오는 api
           method: 'get',
           headers: {Authorization: getters.authHeader },
         })
@@ -135,7 +155,24 @@ const actions= {
           .catch(err => {
             if (err.response.status === 401) {
               dispatch('removeToken')
-              console.log('여기가 잘못된거야 병신아')
+              console.log('여기가 잘못된거야 바보아')
+              useRouter.push({ name: 'Account' })
+            }
+          })
+      }
+    },
+    fetchHistories({ commit, getters, dispatch }) {
+      if (getters.isLoggedIn) {
+        axios({
+          url: 'http://' + location.hostname + ':8081' + '/api/v1/users/histories', //정보 가져오는 api
+          method: 'get',
+          headers: {Authorization: getters.authHeader },
+        })
+          .then(res => commit('SET_HISTORY_LIST', res.data))
+          .catch(err => {
+            if (err.response.status === 401) {
+              dispatch('removeToken')
+              console.log('여기가 잘못된거야 바보아')
               useRouter.push({ name: 'Account' })
             }
           })
@@ -146,7 +183,7 @@ const actions= {
     confirmPW({commit}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
-        url:'http://localhost:8081/api/v1/users/check/password', // 비밀번호 컨펌 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
         data: confirmPW
       })
@@ -166,7 +203,7 @@ const actions= {
     confirmPWforEdit({commit}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
-        url:'http://localhost:8081/api/v1/users/check/password', // 비밀번호 컨펌 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
         data: confirmPW
       })
@@ -186,7 +223,7 @@ const actions= {
     deleteID() {
       console.log("회원탈퇴야 안녕?")
       axios({
-        url:'http://localhost:8081/api/v1/users', // 회원탈퇴 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users', // 회원탈퇴 api 
         method:'delete',
       })
       .then(() => {
@@ -203,7 +240,7 @@ const actions= {
     changePW(changepassword) {
       console.log("비번수정아 안녕?")
       axios({
-        url:'http://localhost:8081/api/v1/users/password', // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users/password', // 비번수정 api 
         method:'put',
         data: changepassword
       })
@@ -218,14 +255,15 @@ const actions= {
     },
 
     // 자소서 만들기
-    createCoverLetter(credentials) {
+    createCoverLetter({dispatch},credentials) {
       console.log("자소서만들기야 안녕?")
       axios({
-        url:'http://localhost:8081/api/v1/coverletters', // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'post',
         data: credentials,
       })
       .then(() => {
+        dispatch('getCoverLetter')
         alert('자소서가 생성되었습니다.')
       })
       .catch(err => {
@@ -235,11 +273,12 @@ const actions= {
     },
 
     //자소서 정보 가져오기
-    getCoverLetter({commit}) {
+    getCoverLetter({commit, getters}) {
       console.log("자소서가져오기야 안녕?")
       axios({
-        url:'http://localhost:8081/api/v1/users/coverletters', // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'get',
+        headers: {Authorization: getters.authHeader },
       })
       .then(res => {
         commit('SET_COVERLETTER_LIST', res.data)
@@ -253,12 +292,12 @@ const actions= {
     },
 
     //자소서 상세보기
-    detialCoverLetter({commit}, coverLetterSeq) {
+    detailCoverLetter({commit, getters}, coverLetterSeq) {
       console.log("자소서상세보기야 안녕?")
       axios({
-        url:`http://localhost:8081/api/v1/users/coverletters/${coverLetterSeq}}`, // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + `/api/v1/coverletters/${coverLetterSeq}}`, // 비번수정 api 
         method:'get',
-        data: {coverLetterSeq: `${coverLetterSeq}` }
+        headers: {Authorization: getters.authHeader },
       })
       .then(res => {
         commit('SET_COVERLETTER_DETAIL', res.data)
@@ -271,14 +310,15 @@ const actions= {
     },
 
     //자소서 삭제하기
-    deleteCoverLetter(credentialsTodelete) {
-      console.log("자소서가져오기야 안녕?")
+    deleteCoverLetter({dispatch}, credentialsTodelete) {
+      console.log("자소서 삭제하기야 안녕?")
       axios({
-        url:'http://localhost:8081/api/v1/users/coverletters/', // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters/', // 비번수정 api 
         method:'delete',
         data: credentialsTodelete
       })
       .then(() => {
+        dispatch('getCoverLetter')
         alert('자소서가 삭제 되었습니다.')
       })
       .catch(err => {
@@ -287,14 +327,15 @@ const actions= {
       })
     },
     //자소서 수정하기
-    updateCoverLetter(credentials) {
-      console.log("자소서가져오기야 안녕?")
+    updateCoverLetter({dispatch}, credentials) {
+      console.log("자소서수정하기야 안녕?")
       axios({
-        url:'http://localhost:8081/api/v1/users/coverletters', // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'put',
         data: credentials
       })
       .then(() => {
+        dispatch('getCoverLetter')
         alert('자소서가 수정되었습니다.')
       })
       .catch(err => {
@@ -302,14 +343,38 @@ const actions= {
         alert('실패.')
       })
     },
-    googleLoginButton(){
+    //스터디룸 정보 얻어오기
+    getStudyRoom({commit}) {
+      console.log("스터디룸가져오기야야 안녕?")
       axios({
-        url:'http://localhost:8081/login/oauth2/code/google/', 
-        method:'get'
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        method:'get',
       })
-      .then((res) => {
-        console.log(res)
-
+      .then(res => {
+        commit('SET_STUDYROOM_LIST', res.data)
+        alert('스터디룸정보를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    // 스터디룸 생성
+    createStudyroom({dispatch},credentials) {
+      console.log("스터디룸만들기야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        method:'post',
+        data: credentials,
+      })
+      .then(() => {
+        dispatch('getstudyroom')
+        alert('스터디룸이 생성되었습니다.')
+      })
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
       })
     }
 };

@@ -50,27 +50,39 @@
       <hr>
       <div class="MainBody">
           <MainCard/>
-          <MainCard/>
-          <MainCard/><MainCard/><MainCard/><MainCard/>
       </div>
     </div>
         <div class="modal fade" id="roommaker" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-              <form @submit.prevent="">
               <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">방생성</h5>
               </div>
+              <form @submit.prevent="createStudyroom(credentials)">
               <div class="modal-body">
-                <input type="Text" class="form-control form-control-lg" placeholder="Title" /> 
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  정렬
+                <input type="Text" class="form-control form-control-lg" v-model="credentials.title" placeholder="Title" /> 
+                <div>
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-target="#modecheck" aria-expanded="false">
+                  모드 선택
                 </button>
-                <ul class="dropdown-menu">
-                  <li>유쾌mode</li>
-                  <li>진지mode</li>
+                <ul class="dropdown-menu" id="modecheck">
+                  <li><input type="checkbox" v-model.number="credentials.type" true-value=1>StudyMode</li>
+                  <li><input type="checkbox" v-model.number="credentials.type" true-value=2>Play Mode</li>
                 </ul>
-                <input type="Text" class="form-control form-control-lg" placeholder="Password" /> 
+                </div>
+                <div>
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-target="#modecheck" aria-expanded="false">
+                  최대인원 선택
+                </button>
+                <ul class="dropdown-menu" id="modecheck">
+                  <li><input type="checkbox" v-model.number="credentials.limit" true-value="5"/>5</li>
+                  <li><input type="checkbox" v-model.number="credentials.limit" true-value="4"/>4</li>
+                  <li><input type="checkbox" v-model.number="credentials.limit" true-value="3"/>3</li>
+                  <li><input type="checkbox" v-model.number="credentials.limit" true-value="2"/>2</li>
+                </ul>
+                </div>
+                비밀방생성<input type="checkbox" v-model="credentials.privateYN" true-value="Y" false-value="N"/>
+                <input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /> 
               </div> 
               <div class="modal-footer">
                 <button class="btn btn-secondary">생성</button>
@@ -88,7 +100,6 @@
             <h5 class="modal-title" id="staticBackdropLabel">방입장</h5>
           </div>
           <div class="modal-body">
-            <input type="Text" class="form-control form-control-lg" placeholder="Title" /> 
             <input type="Text" class="form-control form-control-lg" placeholder="Password" /> 
           </div> 
           <div class="modal-footer">
@@ -110,11 +121,30 @@
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
 import MainCard from '@/components/Lobby/MainCard.vue'
+import { useStore } from 'vuex'
+import { reactive } from "vue";
 export default {
   components:{
     NavBar,
     MainCard
-  }
+  },
+   setup() {
+    const credentials = reactive({
+      "type":0,
+      "limit":0,
+      "password":"",
+      "privateYN":"",
+      "title":"",
+      "commonSeq":2
+    })
+    const store = useStore()
+    function createStudyroom(){
+      store.dispatch('rhtModule/createStudyroom', credentials)
+    }
+    return {
+    credentials, createStudyroom
+    }
+   }
 }
 </script>
 

@@ -1,18 +1,18 @@
 // 임현탁
 <template>
-<div class="MainCard">
+<div class="MainCard" v-for="item in StudyroomList" :key="item.seq">
   <div class="MainCardTop">
-     <p><small class="text-muted">4/5</small></p>
+     <p><small class="text-muted">{{item.roomLimit}}</small></p>
   </div>
   <div class="MainCardBottom">
     <div class="MainCardthumnail">
       <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
     </div>
     <div class="col MainCardBody">
-      <h5>방제목</h5>
+      <h5>{{item.roomTitle}}</h5>
       <p></p>
-      <p><small class="text-muted">만들어진 시간</small></p>
-      <p><small class="text-muted">방장 이름</small></p>
+      <p><small class="text-muted">{{item.roomRegTime}}</small></p>
+      <p><small class="text-muted">{{item.roomType}}</small></p>
     </div>
   </div>
   <div class="enterbutton">
@@ -33,6 +33,19 @@
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { computed } from 'vue'
+export default {
+  setup(){
+    const store = useStore()
+    const StudyroomList = computed(
+      () => store.state.rhtModule.StudyroomList
+    );
+    return {
+      StudyroomList
+    }
+  }
+}
 </script>
 
 <style>

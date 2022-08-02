@@ -8,6 +8,11 @@ const routes = [
     component: () => import("@/views/Account/AccountView.vue"),
   },
   {
+    path: "/showcl",
+    name: "ShowCL",
+    component: () => import("@/views/Lobby/ShowCLView.vue"),
+  },
+  {
     path: "/signup",
     name: "Signup",
     component: () =>
