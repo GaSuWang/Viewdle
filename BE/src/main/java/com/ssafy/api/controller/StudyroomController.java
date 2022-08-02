@@ -258,7 +258,7 @@ public class StudyroomController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
     })
-    public ResponseEntity<? extends List<RoomListRes>> getRooms(@RequestParam String order, Integer type, String privateYN, String FullYN){
+    public ResponseEntity<? extends List<RoomListRes>> getRooms(@RequestParam(required = false) String order, Integer type, String privateYN, String FullYN){
         return ResponseEntity.status(200).body(studyroomService.getRoomsList(order, type, privateYN, FullYN));
     }
 
