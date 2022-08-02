@@ -36,11 +36,12 @@
           aria-expanded="false"
           @click="consoleWRParticipantList"
         >
-          면접자 선택
+          <span v-if="!EECnd">면접자 선택</span> 
+          <span v-else-if="EECnd">면접자: {{EECnd}}</span> 
         </button>
         <ul class="dropdown-menu">
           <li v-for="user in WRParticipantList" :key="user.id">
-            {{ user.name }}
+            <span @click="selectEE(user.name)">{{ user.name }}</span> 
           </li>
         </ul>
       </div>
@@ -51,6 +52,7 @@
       <button @click="muteMySelf">내 음성 끄고켜기</button>
       <button @click="ShowMySelf">내 비디오 끄고켜기</button>
       <button @click="joinSession">입장하기</button>
+      <button @click="startInterview">면접 시작</button>
     </div>
   </div>
 </template>
@@ -79,6 +81,7 @@ export default {
     return {
       OV: undefined,
       session: undefined,
+      EECnd: '', //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
     };
   },
   computed: {
@@ -98,12 +101,39 @@ export default {
       }
     }
     const userType = ref("superUser");
+    // function startInterview(){
+    //     if (confirm(`면접자는 ${this.EECnd}님 입니다.\n면접을 시작하시겠습니까?`)) {
+    //     router.push("/waiting-room");
+    //   }
+    // }
     return {
       userType,
       EndStudyConfirm,
+      // startInterview,
     };
   },
   methods: {
+    startInterview(){
+      if (confirm(`면접자는 ${this.EECnd}님 입니다.\n면접을 시작하시겠습니까?`)) {
+        if(this.myUserName === this.EECnd){
+          this.$router.push('/ee-room')
+        } else {this.$router.push('/er-room')}
+      }
+    },
+    selectEE(name){
+      this.EECnd = name
+      this.session.signal({
+      data: `${this.EECnd}`,  // Any string (optional)
+      to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+      type: ''             // The type of message (optional)
+      })
+      .then(() => {
+        console.log('일단 신호는 보냄')
+      })
+      .catch(error => {
+          console.error(error);
+      });
+    },
     consoleWRParticipantList() {
       console.log(this.WRParticipantList);
     },
@@ -198,6 +228,10 @@ export default {
               error.message
             );
           });
+      });
+
+      this.session.on('signal', (event) => {
+       this.EECnd = event.data; // Message
       });
 
       window.addEventListener("beforeunload", this.leaveSession);
