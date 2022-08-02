@@ -79,7 +79,7 @@ export default {
   height: 80px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
 }
 .ReplayTopitem{

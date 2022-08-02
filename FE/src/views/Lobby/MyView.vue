@@ -23,7 +23,7 @@
           <p class="card-text">이름 : {{userLists.userName}}</p>
           <p class="card-text">email :{{userLists.userEmail}}</p>
         </div>
-        <div class="card-body">
+        <div class="Mycard-body">
           <UsageTrend/>
           <BadgeList/>
         </div>
@@ -215,11 +215,18 @@ export default {
 .MyTop{
   height: 80px;
 }
-.card-body{
+.Mycard-body{
+  width:95%;
   height: 45%;
   display: flex;
-  justify-content: space-around;
+  flex-flow: row;
+  justify-content: space-between;
   align-items: space-around;
+  margin: 20px;
+}
+.card-body2{
+  height: 30%;
+  display: flex;
   margin: 20px;
 }
 .card{

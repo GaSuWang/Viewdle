@@ -177,5 +177,8 @@ export default {
   padding: 20px;
   overflow: scroll;
 }
+.Searchbar{
+  margin-left:30px;
+}
 
 </style>

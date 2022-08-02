@@ -191,6 +191,7 @@ export default {
   border-radius: 20px;
   width:98%;
   display: flex;
+  justify-content: end;
   flex-direction: row;
   align-items: center;
   height: 80px;
