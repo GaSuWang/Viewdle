@@ -15,4 +15,5 @@ public interface VideoService {
     public void registFeedback(Video video, List<FeedbackDto> feedbackList);
     public Video getVideoBySeq(int videoSeq);
     public VideoDetailRes getVideoDetail(int videoSeq);
+    public void deleteVideo(int videoSeq);
 }

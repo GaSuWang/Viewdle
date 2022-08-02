@@ -82,4 +82,13 @@ public class VideoServiceImpl implements VideoService{
         return videoDetailRes;
     }
 
+    @Transactional
+    @Override
+    public void deleteVideo(int videoSeq) {
+        Video video = videoRepository.findByVideoSeq(videoSeq);
+        feedbackRepository.deleteAllByWhere(videoSeq);
+//        feedbackRepository.deleteAllByVideo(video);
+        videoRepository.deleteById(videoSeq);
+    }
+
 }
