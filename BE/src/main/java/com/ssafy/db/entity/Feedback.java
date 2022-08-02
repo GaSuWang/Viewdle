@@ -1,5 +1,6 @@
 package com.ssafy.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -13,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 public class Feedback {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feedback_seq")
     int feedbackSeq;
 
@@ -38,5 +40,13 @@ public class Feedback {
     public void prePersist(){
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd:hh:mm:ss"));
         feedbackRegTime = now;
+    }
+
+    @Builder
+    public Feedback(int timeline, String feedbackType, String feedbackContent, Video video) {
+        this.timeline = timeline;
+        this.feedbackType = feedbackType;
+        this.feedbackContent = feedbackContent;
+        this.video = video;
     }
 }

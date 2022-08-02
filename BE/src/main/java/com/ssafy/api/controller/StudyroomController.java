@@ -1,19 +1,18 @@
 package com.ssafy.api.controller;
 
+import com.ssafy.api.request.FeedbackRegPostReq;
 import com.ssafy.api.request.RoomEnterPostReq;
 import com.ssafy.api.request.RoomExitPatchReq;
 import com.ssafy.api.request.RoomRegisterPostReq;
 import com.ssafy.api.response.RoomListRes;
 import com.ssafy.api.response.RoomRegisterPostRes;
-import com.ssafy.api.service.CommonService;
-import com.ssafy.api.service.ParticipantService;
-import com.ssafy.api.service.StudyroomService;
-import com.ssafy.api.service.UserService;
+import com.ssafy.api.service.*;
 import com.ssafy.common.auth.VudleUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.Common;
 import com.ssafy.db.entity.Studyroom;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.entity.Video;
 import com.ssafy.db.mapping.ParticipantResMapping;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,9 @@ public class StudyroomController {
 
     @Autowired
     ParticipantService participantService;
+
+    @Autowired
+    VideoService videoService;
 
     @PostMapping
     @ApiOperation(value = "스터디 룸 등록", notes = "<strong>스터디 룸의 타입, 이름, 공개 여부, 비밀번호, 최대 인원, 썸네일 번호</strong>를 가지고 스터디 룸을 등록한다")
@@ -206,7 +208,7 @@ public class StudyroomController {
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "스터디 룸에서 나왔습니다."));
     }
 
-    @PatchMapping("/interview/start/{roomSeq}")
+    @PatchMapping("/interview/{roomSeq}")
     @ApiOperation(value = "스터디 룸 면접 시작", notes = "<strong>스터디 룸 번호</strong>를 가지고 면접 상태를 변경한다. (면접 진행 중)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
@@ -230,18 +232,25 @@ public class StudyroomController {
     }
 
 
-    @PatchMapping("/interview/end/{roomSeq}")
-    @ApiOperation(value = "스터디 룸 면접 종료", notes = "<strong>스터디 룸 번호</strong>를 가지고 면접 상태를 변경한다. (면접 종료 중)")
+    @PostMapping("/interview")
+    @ApiOperation(value = "스터디 룸 면접 종료", notes = "<strong>스터디 룸 번호, 영상 번호, 피드백 목록</strong>를 가지고 면접 상태를 변경한다. (면접 종료 중)")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 401, message = "인증 실패"),
-            @ApiResponse(code = 901, message = "존재하지 않는 스터디 룸")
+            @ApiResponse(code = 925, message = "존재하지 않는 영상")
     })
-    public ResponseEntity<? extends BaseResponseBody> endInterview(@ApiIgnore Authentication authentication, @PathVariable int roomSeq){
+    public ResponseEntity<? extends BaseResponseBody> endInterview(@ApiIgnore Authentication authentication, @RequestBody FeedbackRegPostReq feedbackRegPostReq){
 
         if(authentication == null){
             System.out.println("로그인이 필요합니다.");
             return ResponseEntity.status(401).body(BaseResponseBody.of(401, "로그인이 필요합니다"));
+        }
+
+        // 스터디 룸 상태 체크
+        int roomSeq = feedbackRegPostReq.getRoomSeq();
+        Studyroom studyroom = studyroomService.getRoomBySeq(roomSeq);
+        if(studyroom == null){
+            return ResponseEntity.status(901).body(BaseResponseBody.of(901, "존재하지 않는 스터디 룸입니다."));
         }
 
         if(studyroomService.getRoomBySeq(roomSeq).getRoomCloseYN().equals("Y")){
@@ -249,8 +258,17 @@ public class StudyroomController {
             return ResponseEntity.status(901).body(BaseResponseBody.of(901, "종료된 스터디 룸은 면접을 종료 할 수 없습니다."));
         }
 
+        // 피드백 저장
+        Video video = videoService.getVideoBySeq(feedbackRegPostReq.getVideoSeq());
+        if(video == null){
+            return ResponseEntity.status(925).body(BaseResponseBody.of(925, "존재하지 않는 영상입니다."));
+        }
+
+        videoService.registFeedback(video, feedbackRegPostReq.getFeedbackList());
+
+        // 방 상태 변경
         studyroomService.endInterview(roomSeq);
-        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "면접을 종료합니다."));
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "피드백을 저장하고 면접을 종료합니다."));
     }
 
     @GetMapping
