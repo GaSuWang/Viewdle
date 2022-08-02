@@ -72,7 +72,7 @@ public class VideoController {
     @DeleteMapping("/{videoSeq}")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
-            @ApiResponse(code = 401, message = "존재하지 않는 사용자")
+            @ApiResponse(code = 401, message = "존재하지 않는 사용자"),
             @ApiResponse(code = 925, message = "존재하지 않는 영상")
     })
     @ApiOperation(value = "영상 및 피드백 삭제하기", notes = "<strong>내 영상 번호</strong>를 가지고 해당 영상과 피드백을 삭제한다.")
