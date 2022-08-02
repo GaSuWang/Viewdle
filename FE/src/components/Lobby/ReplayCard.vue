@@ -8,7 +8,7 @@
             <h5 class="card-title">Card title</h5>
             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
             <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-            <button class="btn btn-secondary">삭제하기</button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteReplay">삭제하기</button>
           </div>
     <!-- 왼쪽 -->
     <!-- 썸네일 -->
@@ -25,9 +25,9 @@
 
 <style>
 .ReplayCard{
-  width:50%;
-  height:400px; 
-  margin:20px;
+  width:45%;
+  height:45%; 
+  margin:10px;
   border-radius: 20px;
   align-items: center;
   align-content: center;

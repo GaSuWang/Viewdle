@@ -19,6 +19,11 @@
       <hr>
     <div class="clmanageBody">
       <CLMCard/>
+      <CLMCard/>
+      <CLMCard/>
+      <CLMCard/>
+      <CLMCard/>
+      <CLMCard/>
     </div>
     </div> 
 
@@ -36,13 +41,47 @@
               <input type="Text" v-model="credentials.coverLetterContent" class="form-control form-control-lg" placeholder="body" /> 
             </div> 
             <div class="modal-footer">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button class="btn btn-secondary">작성</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             </form>
           </div>
         </div>
-      </div>  
+      </div>
+
+      <!-- 자소서 수정모달 -->
+      <div class="modal fade" id="editCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form @submit.prevent="">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">자소서 제목</h5>
+              <input type="Text" v-model="credentials.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
+            </div>
+            <div class="modal-body">
+              <input type="Text" v-model="credentials.coverLetterContent" class="form-control form-control-lg" placeholder="body" /> 
+            </div> 
+            <div class="modal-footer">
+              <button class="btn btn-secondary">작성</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div> 
+
+      <!-- 자소서 삭제모달  -->
+      <div class="modal fade" id="deleteCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form @submit.prevent="">
+              <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
+              <button class="btn btn-secondary">Yes</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </form>
+          </div>
+        </div>
+      </div>   
 
     
     <!-- 내 자기소개서 관리 페이지 -->
@@ -148,6 +187,9 @@ export default {
   margin-top: 20px;
 }
 .clmanageTop{
+  background: white;
+  border-radius: 20px;
+  width:98%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -157,13 +199,15 @@ export default {
   margin: 0 20px
 }
 .clmanageBody{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  justify-content: space-around;
   width: 98%;
   height: 80%;
   background: white;
   border-radius: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: space-around;
   padding: 20px;
+  overflow: scroll;
 }
 </style>

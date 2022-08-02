@@ -50,6 +50,8 @@
       <hr>
       <div class="MainBody">
           <MainCard/>
+          <MainCard/>
+          <MainCard/><MainCard/><MainCard/><MainCard/>
       </div>
     </div>
         <div class="modal fade" id="roommaker" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -71,8 +73,8 @@
                 <input type="Text" class="form-control form-control-lg" placeholder="Password" /> 
               </div> 
               <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button class="btn btn-secondary">생성</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
               </form>
             </div>
@@ -90,8 +92,8 @@
             <input type="Text" class="form-control form-control-lg" placeholder="Password" /> 
           </div> 
           <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button class="btn btn-secondary">입장</button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
           </form>
         </div>
@@ -138,13 +140,15 @@ export default {
 }
 .MainTop{
   background: white;
+  border-radius: 20px;
+  width:98%;
   width: 98%;
   height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-radius: 20px;
+
 }
 .pagetitle{
   margin-top: 20px;
@@ -162,14 +166,16 @@ export default {
   margin: 0 20px;
 }
 .MainBody{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  justify-content: space-around;
   width: 98%;
   height: 80%;
   background: white;
   border-radius: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: space-around;
   padding: 20px;
+  overflow: scroll;
 }
 
 </style>

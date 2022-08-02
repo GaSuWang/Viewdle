@@ -18,9 +18,26 @@
       <hr>
       <div class="ReplayBody">
         <ReplayCard/>
+        <ReplayCard/>
+        <ReplayCard/>
+        <ReplayCard/>
+        <ReplayCard/>
+        <ReplayCard/>
       </div>
     <!-- 오래된순, 최신순 정렬 -->
     <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
+    <!-- 자소서 삭제모달  -->
+      <div class="modal fade" id="deleteReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form @submit.prevent="">
+              <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
+              <button class="btn btn-secondary">Yes</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </form>
+          </div>
+        </div>
+      </div>  
   </div> 
   </div>  
 </template>
@@ -56,6 +73,9 @@ export default {
   width: 80%;
 }
 .ReplayTop{
+  background: white;
+  border-radius: 20px;
+  width:98%;
   height: 80px;
   display: flex;
   flex-direction: row;
@@ -69,13 +89,15 @@ export default {
   margin-top: 20px;
 }
 .ReplayBody{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  justify-content: space-around;
   width: 98%;
   height: 83%;
   background: white;
   border-radius: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: space-around;
   padding: 20px;
+  overflow: scroll;
 }
 </style>

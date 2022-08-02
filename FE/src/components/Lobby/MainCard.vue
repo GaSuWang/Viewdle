@@ -29,9 +29,9 @@
 
 <style>
 .MainCard{
-  width:50%;
-  height:400px; 
-  margin:20px;
+  width:45%;
+  height:45%; 
+  margin:10px;
   border-radius: 20px;
   align-items: center;
   align-content: center;

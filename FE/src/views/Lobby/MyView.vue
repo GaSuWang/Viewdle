@@ -31,8 +31,8 @@
           <GrassShow/>
         </div>
         <div class="card-footer">
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
-          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
+          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
+          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
         </div>
       </div>
     </div>
@@ -59,12 +59,12 @@
                   <button class="btn btn-primary">비번확인하기</button>
                 </form>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   <form @submit.prevent="deleteID()">
                     <div v-if="pwcode != false">
                       <button class="btn btn-primary">회원탈퇴하기</button>
                     </div>
                   </form>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
@@ -92,10 +92,10 @@
                   <button class="btn btn-primary">비번확인하기</button>
                 </form>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <div v-if="pwcodeforedit != false">
                       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editmodal">비번수정모달</button>
                     </div>
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
@@ -239,6 +239,11 @@ export default {
   background: white;
   border-radius: 20px;
   padding: 20px;
+}
+.MyTop{
+  background: white;
+  border-radius: 20px;
+  width:98%;
 }
 </style>
 
