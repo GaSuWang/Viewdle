@@ -67,4 +67,24 @@ public class StudyroomRepositorySupport {
         }
         return new OrderSpecifier(Order.DESC, studyroom.roomSeq);
     }
+
+    public List<RoomListRes> searchStudyroom(String keyword){
+        return jpaQueryFactory
+                .select(Projections.constructor(RoomListRes.class,
+                        studyroom.roomSeq,
+                        studyroom.roomType,
+                        studyroom.roomTitle,
+                        studyroom.roomPrivateYN,
+                        studyroom.roomLimit,
+                        studyroom.roomRegTime,
+                        studyroom.roomActiveYN,
+                        studyroom.roomFullYN,
+                        common.imgUrl
+                ))
+                .from(studyroom)
+                .leftJoin(studyroom.common, common)
+                .where(studyroom.roomTitle.contains(keyword),
+                        studyroom.roomCloseYN.eq("N"))
+                .fetch();
+    }
 }

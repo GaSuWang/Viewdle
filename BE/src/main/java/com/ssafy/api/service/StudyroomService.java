@@ -18,5 +18,6 @@ public interface StudyroomService {
     public void fullRoom(int roomSeq);
     public void notFullRoom(int roomSeq);
     public List<RoomListRes> getRoomsList(String order, Integer type, String privateYN, String FullYN);
+    public List<RoomListRes> searchRoomList(String keyword);
 
 }

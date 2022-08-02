@@ -280,6 +280,14 @@ public class StudyroomController {
         return ResponseEntity.status(200).body(studyroomService.getRoomsList(order, type, privateYN, FullYN));
     }
 
+    @GetMapping("/search")
+    @ApiOperation(value = "스터디 룸 검색", notes = "<strong>검색어</strong>를 가지고 해당 검색어가 포함된 스터디 룸 목록을 반환한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+    })
+    public ResponseEntity<? extends List<RoomListRes>> searchRooms(@RequestParam String keyword){
+        return ResponseEntity.status(200).body(studyroomService.searchRoomList(keyword));
+    }
     // 추후 필요하면 다시 구현 => join 필요
 //    @GetMapping("/{roomSeq}")
 //    @ApiOperation(value = "참여자 목록", notes = "<strong>스터디 룸 번호</strong>로 현재 스터디 룸의 참여자 목록을 반환한다.")
