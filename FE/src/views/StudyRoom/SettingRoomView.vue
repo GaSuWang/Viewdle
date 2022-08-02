@@ -225,13 +225,6 @@ export default {
   border-bottom: 5px rgb(210, 210, 210) solid;
 }
 
-/* .SettingRoomHeader > div:nth-child(1) > ul>li,
-.SettingRoomHeader > div:nth-child(2) > ul>li,
-.SettingRoomHeader > div:nth-child(3) > ul>li{
-  padding: 0;
-  border-bottom: 5px rgb(210, 210, 210) solid;
-} */
-
 .SettingRoomContent {
   position: absolute;
   top: 10%;
@@ -239,7 +232,6 @@ export default {
   width: 100%;
   height: 80%;
   background-color: #B5BAC9;
-  /* opacity: 30%; */
 }
 
 .SettingRoomFooter {
@@ -264,8 +256,6 @@ export default {
 .SettingRoomFooter > button,
 .toLBBtn,
 .toWRBtn {
-  /* border: none;
-  border-radius: 0.5rem; */
   border: none;
   display: block;
   background: linear-gradient(#f7f7f7, #e7e7e7);
@@ -318,75 +308,4 @@ export default {
   color: #555;
   background: #f5f5f5;
 }
-
-/* 돌아가기, 대기실 버튼 애니메이션 */
-/* .toLBBtn {
-  color: #fff;
-  background: none;
-  padding: 0;
-}
-
-.toLBBtn .toLBBtnDiv {
-  top: 0;
-  left: 0;
-  position: absolute;
-  width: 7%;
-  aspect-ratio: 5/2;
-  background: #e7e7e7;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.1, 0, 0.3, 1);
-  display: flext;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-.toLBBtn:hover .toLBBtnDiv {
-  transform: scale3d(1.2, 1.2, 1);
-}
-
-.toLBBtn .toLBBtnDiv::before,
-.toLBBtn .toLBBtnDiv::after {
-  content: "";
-  position: absolute;
-  background: #000;
-}
-
-.toLBBtn .toLBBtnDiv::before {
-  width: 110%;
-  height: 0;
-  padding-bottom: 110%;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1);
-}
-
-.toLBBtn:hover .toLBBtnDiv::before {
-  transition: transform 0.4s cubic-bezier(0.1, 0, 0.3, 1);
-  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
-}
-
-.toLBBtn .toLBBtnDiv::after {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.toLBBtn:hover .toLBBtnDiv::after {
-  opacity: 1;
-  transition-duration: 0.01s;
-  transition-delay: 0.3s;
-}
-
-.toLBBtn.toLBBtnDiv a {
-  display: block;
-  position: relative;
-  padding: 1.5rem 3rem;
-  mix-blend-mode: difference;
-} */
 </style>

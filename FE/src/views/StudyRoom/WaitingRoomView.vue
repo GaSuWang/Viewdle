@@ -2,45 +2,31 @@
 <template>
   <div class="WaitingRoomView">
     <!-- 참가자 영상 나오는 부분 -->
-    <div class="WRContainer">
-      <!-- <div class="participantVideo">1</div>
-      <div class="participantVideo">2</div>
-      <div class="participantVideo">3</div>
-      <div class="participantVideo">4</div>
-      <div class="participantVideo">5</div> -->
+    <div class="WRSession" v-if="session">
       <!-- openvidu 간단히 -->
-      <div id="session" v-if="session">
-        <div id="session-header">
-          <!-- <h1 id="session-title">{{ mySessionId }}</h1> -->
-          <input
-            class="btn btn-large btn-danger"
-            type="button"
-            id="buttonLeaveSession"
-            @click="leaveSession"
-            value="Leave session"
-          />
-        </div>
-        <div id="main-video" class="col-md-6">
-          <user-video :stream-manager="mainStreamManager" />
-        </div>
-        <div id="video-container" class="col-md-6">
-          <!-- vue 3.x에서는 click.native 없어짐 -->
-          <user-video
-            :stream-manager="publisher"
-            @click="updateMainVideoStreamManager(publisher)"
-          />
-          <user-video
-            v-for="sub in subscribers"
-            :key="sub.stream.connection.connectionId"
-            :stream-manager="sub"
-            @click="updateMainVideoStreamManager(sub)"
-          />
-        </div>
+      <div id="wr-video-container" class="col-md-6">
+        <!-- vue 3.x에서는 click.native 없어짐 -->
+        <user-video :stream-manager="publisher" />
+        <user-video
+          v-for="sub in subscribers"
+          :key="sub.stream.connection.connectionId"
+          :stream-manager="sub"
+        />
       </div>
     </div>
 
     <!-- 방장 기능 -->
     <div class="superUser" v-show="userType === 'superUser'">
+      <div id="session-controller">
+        <input
+          class="btn btn-large btn-danger"
+          type="button"
+          id="buttonLeaveSession"
+          @click="leaveSession"
+          value="방 나가기"
+        />
+      </div>
+
       <!-- 면접자 선택 -->
       <div class="dropdown">
         <button
@@ -48,23 +34,23 @@
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
+          @click="consoleWRParticipantList"
         >
           면접자 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">면접자1</a></li>
-          <li><a class="dropdown-item" href="#">면접자2</a></li>
-          <li><a class="dropdown-item" href="#">면접자3</a></li>
+          <li v-for="user in WRParticipantList" :key="user.id">
+            {{ user.name }}
+          </li>
         </ul>
       </div>
       <!-- 스터디 종료 -->
       <button class="btn btn-secondary" @click="EndStudyConfirm">
         스터디 종료
       </button>
-      <!-- openvidu 간단히 -->
-      <!-- join 버튼 대기실에서는 없음 -->
-      <!-- 면접자 선택하고 @/compoenents/StudyRoom/CLSelectModal.vue에서 면접 시작하고 joinSession -->
-      <!-- <button v-show="!session" class="btn btn-lg btn-success" @click="joinSession()">Join!</button> -->
+      <button @click="muteMySelf">내 음성 끄고켜기</button>
+      <button @click="ShowMySelf">내 비디오 끄고켜기</button>
+      <button @click="joinSession">입장하기</button>
     </div>
   </div>
 </template>
@@ -76,15 +62,15 @@
 // 단 도커 설치되어 있어야 함
 
 import { ref } from "vue";
-import axios from "axios";
-// import { OpenVidu } from "openvidu-browser";
-import UserVideo from "@/components/UserVideo.vue";
 import { useRouter } from "vue-router";
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
+import axios from "axios";
+import { OpenVidu } from "openvidu-browser";
+import UserVideo from "@/components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-// const OPENVIDU_SERVER_SECRET = "MY_SECRET";
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "WaitingRoomView",
@@ -93,29 +79,18 @@ export default {
     return {
       OV: undefined,
       session: undefined,
-      mainStreamManager: undefined,
-      publisher: undefined,
-      subscribers: [],
-
-      mySessionId: "SessionA",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
     };
   },
-  computed:{
-    ...mapGetters([
-      // 'OV',
-      // 'session',
-      'mainStreamManager',
-      'publisher',
-      'subscribers',
-      // 'mySessionId',
-      // 'myUserName',
-    ])
+  computed: {
+    ...mapGetters("lbhModule", [
+      "publisher",
+      "subscribers",
+      "mySessionId",
+      "myUserName",
+      "WRParticipantList",
+    ]),
   },
   setup() {
-    // const store = useStore();
-    // const userList = ref(state.lbhModuel.participantList)
-
     const router = useRouter();
     function EndStudyConfirm() {
       if (confirm("정말 스터디를 종료하시겠습니까?")) {
@@ -123,196 +98,208 @@ export default {
       }
     }
     const userType = ref("superUser");
-    // const OV = store.state.lbhModule.OV;
-    // const session = store.state.lbhModule.session;
-    // const mainStreamManager = store.state.lbhModule.mainStreamManager;
-    // const publisher = store.state.lbhModule.publisher;
-    // const subscribers = store.state.lbhModule.subscribers;
-    // const mySessionId = store.state.lbhModule.mySessionId;
-    // const myUserName = store.state.lbhModule.myUserName;
-
     return {
       userType,
       EndStudyConfirm,
-
-      // OV,
-      // session,
-      // mainStreamManager,
-      // publisher,
-      // subscribers,
-      // mySessionId,
-      // myUserName,
     };
   },
   methods: {
-    // joinSession() {
-    //   // --- Get an OpenVidu object ---
-    //   this.OV = new OpenVidu();
+    consoleWRParticipantList() {
+      console.log(this.WRParticipantList);
+    },
+    muteMySelf() {
+      if (this.publisher.stream.audioActive) {
+        console.log(this.publisher.stream.audioActive);
+        this.publisher.publishAudio(false);
+      } else {
+        console.log(this.publisher.stream.audioActive);
+        this.publisher.publishAudio(true);
+      }
+    },
+    ShowMySelf() {
+      if (this.publisher.stream.videoActive) {
+        console.log(this.publisher.stream.videoActive);
+        this.publisher.publishVideo(false);
+        console.log();
+      } else {
+        console.log(this.publisher.stream.videoActive);
+        this.publisher.publishVideo(true);
+      }
+    },
+    joinSession() {
+      // --- Get an OpenVidu object ---
+      this.OV = new OpenVidu();
 
-    //   // --- Init a session ---
-    //   // 튜토리얼에서는 join하면서 세션을 만들지만, 실제로는 방 만들기 단계에서 initSession해야 되지 않을까
-    //   this.session = this.OV.initSession();
+      // --- Init a session ---
+      this.session = this.OV.initSession();
 
-    //   // --- Specify the actions when events take place in the session ---
+      // --- Specify the actions when events take place in the session ---
 
-    //   // On every new Stream received...
-    //   this.session.on("streamCreated", ({ stream }) => {
-    //     const subscriber = this.session.subscribe(stream);
-    //     this.subscribers.push(subscriber);
-    //   });
+      // On every new Stream received...
+      this.session.on("streamCreated", ({ stream }) => {
+        const subscriber = this.session.subscribe(stream);
+        const subscriberName = JSON.parse(stream.connection.data).clientData;
+        this.$store.commit("lbhModule/ADD_SUBSCRIBERS", subscriber);
+        this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", subscriberName);
+      });
 
-    //   // On every Stream destroyed...
-    //   this.session.on("streamDestroyed", ({ stream }) => {
-    //     const index = this.subscribers.indexOf(stream.streamManager, 0);
-    //     if (index >= 0) {
-    //       this.subscribers.splice(index, 1);
-    //     }
-    //   });
+      // On every Stream destroyed...
+      this.session.on("streamDestroyed", ({ stream }) => {
+        const index_s = this.subscribers.indexOf(stream.streamManager, 0);
+        if (index_s >= 0) {
+          this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
+        }
+        const subscriberName = JSON.parse(stream.connection.data).clientData;
+        this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberName);
+      });
 
-    //   // On every asynchronous exception...
-    //   this.session.on("exception", ({ exception }) => {
-    //     console.warn(exception);
-    //   });
+      // On every asynchronous exception...
+      this.session.on("exception", ({ exception }) => {
+        console.warn(exception);
+      });
 
-    //   // --- Connect to the session with a valid user token ---
+      // --- Connect to the session with a valid user token ---
 
-    //   // 'getToken' method is simulating what your server-side should do.
-    //   // 'token' parameter should be retrieved and returned by your own backend
-    //   this.getToken(this.mySessionId).then((token) => {
-    //     this.session
-    //       .connect(token, { clientData: this.myUserName })
-    //       .then(() => {
-    //         // --- Get your own camera stream with the desired properties ---
+      // 'getToken' method is simulating what your server-side should do.
+      // 'token' parameter should be retrieved and returned by your own backend
+      this.getToken(this.mySessionId).then((token) => {
+        console.log("getToken 시작됨 근데 clientData가 뭐지", this.myUserName);
+        this.session
+          .connect(token, { clientData: this.myUserName })
+          .then(() => {
+            // --- Get your own camera stream with the desired properties ---
+            console.log("내이름", this.myUserName);
+            this.$store.commit(
+              "lbhModule/ADD_WR_PARTICIPANT_LIST",
+              this.myUserName
+            );
 
-    //         let publisher = this.OV.initPublisher(undefined, {
-    //           audioSource: undefined, // The source of audio. If undefined default microphone
-    //           videoSource: undefined, // The source of video. If undefined default webcam
-    //           publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-    //           publishVideo: true, // Whether you want to start publishing with your video enabled or not
-    //           resolution: "640x480", // The resolution of your video
-    //           frameRate: 30, // The frame rate of your video
-    //           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-    //           mirror: true, // Whether to mirror your local video or not
-    //         });
+            let publisher = this.OV.initPublisher(undefined, {
+              audioSource: undefined, // The source of audio. If undefined default microphone
+              videoSource: undefined, // The source of video. If undefined default webcam
+              publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+              publishVideo: true, // Whether you want to start publishing with your video enabled or not
+              resolution: "320x240", // The resolution of your video
+              frameRate: 30, // The frame rate of your video
+              insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+              mirror: false, // Whether to mirror your local video or not
+            });
 
-    //         this.mainStreamManager = publisher;
-    //         this.publisher = publisher;
+            this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
 
-    //         // --- Publish your stream ---
+            // --- Publish your stream ---
 
-    //         this.session.publish(this.publisher);
-    //       })
-    //       .catch((error) => {
-    //         console.log(
-    //           "There was an error connecting to the session:",
-    //           error.code,
-    //           error.message
-    //         );
-    //       });
-    //   });
+            this.session.publish(this.publisher);
+          })
+          .catch((error) => {
+            console.log(
+              "There was an error connecting to the session:",
+              error.code,
+              error.message
+            );
+          });
+      });
 
-    //   window.addEventListener("beforeunload", this.leaveSession);
-    // },
+      window.addEventListener("beforeunload", this.leaveSession);
+    },
 
-    // leaveSession() {
-    //   // --- Leave the session by calling 'disconnect' method over the Session object ---
-    //   if (this.session) this.session.disconnect();
+    leaveSession() {
+      // --- Leave the session by calling 'disconnect' method over the Session object ---
+      if (this.session) this.session.disconnect();
 
-    //   this.session = undefined;
-    //   this.mainStreamManager = undefined;
-    //   this.publisher = undefined;
-    //   this.subscribers = [];
-    //   this.OV = undefined;
+      this.session = undefined;
+      this.mainStreamManager = undefined;
+      this.publisher = undefined;
+      this.subscribers = [];
+      this.OV = undefined;
 
-    //   window.removeEventListener("beforeunload", this.leaveSession);
-    // },
+      window.removeEventListener("beforeunload", this.leaveSession);
+    },
 
-    // updateMainVideoStreamManager(stream) {
-    //   if (this.mainStreamManager === stream) return;
-    //   this.mainStreamManager = stream;
-    // },
+    updateMainVideoStreamManager(stream) {
+      if (this.mainStreamManager === stream) return;
+      this.mainStreamManager = stream;
+    },
 
-    // /**
-    //  * --------------------------
-    //  * SERVER-SIDE RESPONSIBILITY
-    //  * --------------------------
-    //  * These methods retrieve the mandatory user token from OpenVidu Server.
-    //  * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-    //  * the API REST, openvidu-java-client or openvidu-node-client):
-    //  *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-    //  *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-    //  *   3) The Connection.token must be consumed in Session.connect() method
-    //  */
+    /**
+     * --------------------------
+     * SERVER-SIDE RESPONSIBILITY
+     * --------------------------
+     * These methods retrieve the mandatory user token from OpenVidu Server.
+     * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
+     * the API REST, openvidu-java-client or openvidu-node-client):
+     *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
+     *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
+     *   3) The Connection.token must be consumed in Session.connect() method
+     */
 
-    // getToken(mySessionId) {
-    //   return this.createSession(mySessionId).then((sessionId) =>
-    //     this.createToken(sessionId)
-    //   );
-    // },
+    getToken(mySessionId) {
+      return this.createSession(mySessionId).then((sessionId) =>
+        this.createToken(sessionId)
+      );
+    },
 
-    // // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
-    // createSession(sessionId) {
-    //   return new Promise((resolve, reject) => {
-    //     axios
-    //       .post(
-    //         `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
-    //         JSON.stringify({
-    //           customSessionId: sessionId,
-    //         }),
-    //         {
-    //           auth: {
-    //             username: "OPENVIDUAPP",
-    //             password: OPENVIDU_SERVER_SECRET,
-    //           },
-    //         }
-    //       )
-    //       .then((response) => response.data)
-    //       .then((data) => resolve(data.id))
-    //       .catch((error) => {
-    //         if (error.response.status === 409) {
-    //           resolve(sessionId);
-    //         } else {
-    //           console.warn(
-    //             `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
-    //           );
-    //           if (
-    //             window.confirm(
-    //               `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
-    //             )
-    //           ) {
-    //             location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
-    //           }
-    //           reject(error.response);
-    //         }
-    //       });
-    //   });
-    // },
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
+    createSession(sessionId) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
+            JSON.stringify({
+              customSessionId: sessionId,
+            }),
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.id))
+          .catch((error) => {
+            if (error.response.status === 409) {
+              resolve(sessionId);
+            } else {
+              console.warn(
+                `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
+              );
+              if (
+                window.confirm(
+                  `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+                )
+              ) {
+                location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
+              }
+              reject(error.response);
+            }
+          });
+      });
+    },
 
-    // // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
-    // createToken(sessionId) {
-    //   return new Promise((resolve, reject) => {
-    //     axios
-    //       .post(
-    //         `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
-    //         {},
-    //         {
-    //           auth: {
-    //             username: "OPENVIDUAPP",
-    //             password: OPENVIDU_SERVER_SECRET,
-    //           },
-    //         }
-    //       )
-    //       .then((response) => response.data)
-    //       .then((data) => resolve(data.token))
-    //       .catch((error) => reject(error.response));
-    //   });
-    // },
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
+    createToken(sessionId) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            {},
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.token))
+          .catch((error) => reject(error.response));
+      });
+    },
   },
-  beforeMount() {
-    // const store = useStore()
-    // store.dispatch('lbhModule/joinSession');
-    this.$store.dispatch('lbhModule/joinSession')
-  },
+  // created() {
+  //   this.joinSession();
+  // },
 };
 </script>
 
@@ -332,16 +319,19 @@ export default {
   justify-content: space-between;
 }
 
-.WRContainer {
+.WRSession {
   width: 65%;
   margin: 0;
   display: flex;
   flex-wrap: wrap;
 }
 
-.participantVideo {
-  width: 30%;
-  background: darkgrey;
+#wr-video-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .superUser {

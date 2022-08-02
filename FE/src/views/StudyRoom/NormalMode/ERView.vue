@@ -7,6 +7,7 @@
     <div class="ERLeftArea">
       <!-- 면접자 영상 구역 -->
       <div class="EEVidContainer">
+        <user-video/>
         <div class="EEVid"></div>
       </div>
       <!-- 면접관 영상 구역 -->
@@ -67,13 +68,14 @@
 </template>
 
 <script>
+import UserVideo from "@/components/UserVideo.vue";
 import swal from "sweetalert2";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
 export default {
   name: "ERView",
-  components: { FeedbackArea },
+  components: { FeedbackArea, UserVideo },
   created(){
     // 면접관 페이지가 생성될 때, 유저 정보를 EERParticipantList에 넣어줌
     // 만약 WRParticipantList와 EERParticipantList가 일치하면, 면접 시작
