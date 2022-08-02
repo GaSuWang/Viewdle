@@ -1,6 +1,6 @@
 // 임현탁
 <template>
-  <div class="MainCard">
+<div class="MainCard">
     <div class="MainCardthumnail">
       <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
     </div>
@@ -29,13 +29,17 @@
 
 <style>
 .MainCard{
-  width: 540px; 
+  width:50%;
   height:400px; 
   margin:20px;
-  border:solid;
   border-radius: 20px;
   align-items: center;
   align-content: center;
   justify-content: center;
+  box-shadow: 1px 1px 1px 1px gray;
+  transition: all 0.1s linear;
+}
+.MainCard:hover {
+  transform:scale(1.04);
 }
 </style>

@@ -1,21 +1,15 @@
 // 임현탁
 <template>
-  <div id="ReplayCard">
-    <div class="card mb-3" style="width: 540px; height: 400px; margin:20px;">
-      <div class="row g-0">
-        <div class="col-md-4">
+  <div class="ReplayCard">
+        <div>
           <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
         </div>
-        <div class="col-md-8">
           <div class="card-body">
             <h5 class="card-title">Card title</h5>
             <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
             <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
             <button class="btn btn-secondary">삭제하기</button>
           </div>
-        </div>
-      </div>
-    </div>
     <!-- 왼쪽 -->
     <!-- 썸네일 -->
     
@@ -30,4 +24,18 @@
 </script>
 
 <style>
+.ReplayCard{
+  width:50%;
+  height:400px; 
+  margin:20px;
+  border-radius: 20px;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  box-shadow: 1px 1px 1px 1px gray;
+  transition: all 0.1s linear;
+}
+.ReplayCard:hover {
+  transform:scale(1.04);
+}
 </style>

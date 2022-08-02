@@ -137,11 +137,14 @@ export default {
   width: 80%;
 }
 .MainTop{
+  background: white;
+  width: 98%;
   height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  border-radius: 20px;
 }
 .pagetitle{
   margin-top: 20px;
@@ -167,7 +170,6 @@ export default {
   justify-content: space-around;
   align-items: space-around;
   padding: 20px;
-  overflow: scroll;
 }
 
 </style>

@@ -1,6 +1,6 @@
 // 임현탁
 <template>
-<div class="UsageTrend">
+<div class="GrassShow">
   <div>
     <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
   </div>
@@ -26,9 +26,9 @@ export default {
 </script>
 
 <style>
-.UsageTrend{
-  width:45%;
-  height:95%; 
+.GrassShow{
+  width:95%;
+  height:25%; 
   margin:20px;
   border-radius: 20px;
   box-shadow: 1px 1px 1px 1px gray;

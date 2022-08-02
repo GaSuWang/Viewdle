@@ -165,6 +165,5 @@ export default {
   justify-content: space-around;
   align-items: space-around;
   padding: 20px;
-  overflow:scroll;
 }
 </style>

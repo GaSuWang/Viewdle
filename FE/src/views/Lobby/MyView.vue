@@ -25,6 +25,10 @@
         </div>
         <div class="card-body">
           <UsageTrend/>
+          <BadgeList/>
+        </div>
+        <div class="card-body2">
+          <GrassShow/>
         </div>
         <div class="card-footer">
           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
@@ -135,12 +139,16 @@
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
 import UsageTrend from '@/components/Lobby/UsageTrend.vue'
+import BadgeList from '@/components/Lobby/BadgeList.vue'
+import GrassShow from '@/components/Lobby/GrassShow.vue'
 import { useStore } from 'vuex'
 import { computed, reactive } from "vue";
 export default {
   components:{
     NavBar,
-    UsageTrend
+    UsageTrend,
+    BadgeList,
+    GrassShow
   },
   name: "PWUpdateModal",
   setup() {
@@ -207,6 +215,13 @@ export default {
 .MyTop{
   height: 80px;
 }
+.card-body{
+  height: 45%;
+  display: flex;
+  justify-content: space-around;
+  align-items: space-around;
+  margin: 20px;
+}
 .card{
   width: 98%;
   height: 88%;
@@ -214,9 +229,6 @@ export default {
 .card-footer{
   display: flex;
   justify-content: end;
-  position: absolute;  
-  bottom: 15%;
-  right: 10%;
 }
 .card-footer button{
   margin: 0 20px;
@@ -227,7 +239,6 @@ export default {
   background: white;
   border-radius: 20px;
   padding: 20px;
-  overflow:scroll;
 }
 </style>
 
