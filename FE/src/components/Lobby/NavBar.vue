@@ -4,11 +4,13 @@
     <div class="sidebar">
     <header>My app</header>
     <ul>
-        <li><router-link to="/main"><i class="fas fa-qrcode"></i>Main</router-link></li>
+        <li><form @submit.prevent="getStudyRoom()"><button><i class="fas fa-qrcode"></i>Main</button></form></li>
         <li><router-link to="/mypage"><i class="fas fa-user"></i>MyPage</router-link></li>
         <li><router-link to="/cl"><i class="fas fa-envelope-open-text"></i>CoverLetter</router-link></li>
+        <li><form @submit.prevent="getCoverLetter()"><button><i class="fas fa-envelope-open-text"></i>CoverLetter</button></form></li>
         <li><router-link to="/replay"><i class="fas fa-video"></i>Replay</router-link></li>
         <li><router-link to="/"><i class="fas fa-sign-out-alt"></i>Logout</router-link></li>
+        
     </ul>
     </div>
 </div>
@@ -17,17 +19,25 @@
 
 <script>
 import { useStore } from 'vuex'
-
+import {useRouter} from 'vue-router'
 export default {
   name: 'NavBar',
   setup () {
-
+    const router = useRouter()
     const store = useStore()
     function logout(){
       store.dispatch('rhtModule/logout')
     }
+    function getCoverLetter(){
+      store.dispatch('rhtModule/getCoverLetter')
+      router.push({name:'cl'})
+    }
+    function getStudyRoom(){
+      store.dispatch('rhtModule/getStudyRoom')
+      router.push({name:'main'})
+    }
     return {
-      logout
+      logout, getCoverLetter, getStudyRoom
     }
   } 
 }
@@ -41,13 +51,12 @@ export default {
     text-decoration: none;
 }
 .sidebar{
-    position:fixed;
-    left: 0;
-    width:250px;
     height:100%;
-    background: #042331
+    background: #042331;
+    border-radius: 20px;
 }
 .sidebar header{
+    border-radius: 20px;
     font-size:40px;
     color: white;
     text-align: center;

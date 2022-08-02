@@ -11,10 +11,10 @@
     <!-- 취소버튼 -->
     <!-- 수정완료버튼 누르면 확인 컨펌 -->
   <div class="MyViewBoss">
-    <NavBar/>
+    <NavBar class="NavView"/>
     <div class="MyView">
+      <p class="pagetitle">My Page</p>
       <div class="MyTop">
-        <h5>My Page</h5>
       </div>
       <hr>
       <div class="MyBody">
@@ -23,12 +23,16 @@
           <p class="card-text">이름 : {{userLists.userName}}</p>
           <p class="card-text">email :{{userLists.userEmail}}</p>
         </div>
-        <div class="card-body">
+        <div class="Mycard-body">
           <UsageTrend/>
+          <BadgeList/>
+        </div>
+        <div class="card-body2">
+          <GrassShow/>
         </div>
         <div class="card-footer">
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
-          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
+          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
+          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
         </div>
       </div>
     </div>
@@ -55,12 +59,12 @@
                   <button class="btn btn-primary">비번확인하기</button>
                 </form>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   <form @submit.prevent="deleteID()">
                     <div v-if="pwcode != false">
                       <button class="btn btn-primary">회원탈퇴하기</button>
                     </div>
                   </form>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
@@ -88,10 +92,10 @@
                   <button class="btn btn-primary">비번확인하기</button>
                 </form>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <div v-if="pwcodeforedit != false">
                       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editmodal">비번수정모달</button>
                     </div>
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
@@ -135,12 +139,16 @@
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
 import UsageTrend from '@/components/Lobby/UsageTrend.vue'
+import BadgeList from '@/components/Lobby/BadgeList.vue'
+import GrassShow from '@/components/Lobby/GrassShow.vue'
 import { useStore } from 'vuex'
 import { computed, reactive } from "vue";
 export default {
   components:{
     NavBar,
-    UsageTrend
+    UsageTrend,
+    BadgeList,
+    GrassShow
   },
   name: "PWUpdateModal",
   setup() {
@@ -183,15 +191,43 @@ export default {
 
 <style>
 .MyViewBoss{
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.NavView{
   height: 100%;
+  width: 250px;
+}
+.pagetitle{
+  margin-top: 20px;
 }
 .MyView{
-  position:fixed;
   top:50px;
   left: 300px;
   height: 100%;
   width: 80%;
-  overflow:scroll;
+}
+.MyTop{
+  height: 80px;
+}
+.Mycard-body{
+  width:95%;
+  height: 45%;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: space-around;
+  margin: 20px;
+}
+.card-body2{
+  height: 30%;
+  display: flex;
+  margin: 20px;
 }
 .card{
   width: 98%;
@@ -200,20 +236,21 @@ export default {
 .card-footer{
   display: flex;
   justify-content: end;
-  position: absolute;  
-  bottom: 10%;
-  right: 4%;
 }
 .card-footer button{
   margin: 0 20px;
 }
 .MyBody{
   width: 98%;
-  height: 87%;
+  height: 80%;
   background: white;
   border-radius: 20px;
   padding: 20px;
-  overflow:scroll;
+}
+.MyTop{
+  background: white;
+  border-radius: 20px;
+  width:98%;
 }
 </style>
 

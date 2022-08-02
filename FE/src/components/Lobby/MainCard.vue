@@ -1,21 +1,24 @@
 // 임현탁
 <template>
-  <div id="MainCard">
-    <div class="card mb-3" style="width: 540px; height:400px; margin:20px;">
-      <div class="row g-0">
-        <div class="col-md-4">
-          <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enterroom">입장하기</button>
-          </div>
-        </div>
-      </div>
+<div class="MainCard" v-for="item in StudyroomList" :key="item.seq">
+  <div class="MainCardTop">
+     <p><small class="text-muted">{{item.roomLimit}}</small></p>
+  </div>
+  <div class="MainCardBottom">
+    <div class="MainCardthumnail">
+      <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
     </div>
+    <div class="col MainCardBody">
+      <h5>{{item.roomTitle}}</h5>
+      <p></p>
+      <p><small class="text-muted">{{item.roomRegTime}}</small></p>
+      <p><small class="text-muted">{{item.roomType}}</small></p>
+    </div>
+  </div>
+  <div class="enterbutton">
+      <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enterroom">입장하기</button>
+  </div>
+  </div>
     <!-- 왼쪽 -->
     <!-- 썸네일 -->
     <!-- 이지, 하드모드 여부 색으로 표현 -->
@@ -25,13 +28,67 @@
     <!-- 방제목 -->
     <!-- 만들어진 시간 -->
     <!-- 방장 이메일 -->
-  </div>
 
 
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { computed } from 'vue'
+export default {
+  setup(){
+    const store = useStore()
+    const StudyroomList = computed(
+      () => store.state.rhtModule.StudyroomList
+    );
+    return {
+      StudyroomList
+    }
+  }
+}
 </script>
 
 <style>
+.MainCard{
+  width:45%;
+  height:45%; 
+  margin:10px;
+  border-radius: 20px;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  box-shadow: 1px 1px 1px 1px gray;
+  transition: all 0.1s linear;
+  display: flex;
+  flex-flow: column;
+}
+.MainCard:hover {
+  transform:scale(1.04);
+}
+.MainCardTop{
+  width:100%;
+  height: 30px;
+  display:flex;
+  justify-content: end;
+  margin-right: 30px
+}
+.MainCardBottom{
+  width: 100%;
+  display:flex;
+}
+.MainCardthumnail{
+  margin:20px;
+  width:40%;
+  display:flex;
+  justify-content: center;
+}
+.MainCardBody{
+  width: 60%;
+}
+.enterbutton{
+  width:100%;
+  display: flex;
+  justify-content: end;
+  margin-right: 20%;
+}
 </style>

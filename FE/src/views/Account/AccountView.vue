@@ -53,7 +53,13 @@ export default {
 
 <style>
 .loginbody{
-  width: 50%;
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+    display:flex;
+  justify-content: center;
+  flex-direction: column;
 }
 </style>
 

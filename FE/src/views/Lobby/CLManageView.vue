@@ -1,9 +1,9 @@
 // 임현탁
 <template>
 <div class="CLMBoss">
-  <NavBar/>
+  <NavBar class="NavView"/>
   <div class="CLManageView">
-    <p>Cover Letter Manage</p>
+    <p class="pagetitle">Cover Letter Manage</p>
     <div class='clmanageTop'>
         <div class="dropdown clmanageTopitem">
           <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -18,8 +18,7 @@
     </div>
       <hr>
     <div class="clmanageBody">
-      <CLMCard/>
-      <CLMCard/>
+      <CLMCard/>  
     </div>
     </div> 
 
@@ -28,7 +27,7 @@
       <div class="modal fade" id="clmaker" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            <form @submit.prevent="">
+            <form @submit.prevent="createCoverLetter(credentials)">
             <div class="modal-header">
               <h5 class="modal-title" id="staticBackdropLabel">자소서 제목</h5>
               <input type="Text" v-model="credentials.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
@@ -37,13 +36,64 @@
               <input type="Text" v-model="credentials.coverLetterContent" class="form-control form-control-lg" placeholder="body" /> 
             </div> 
             <div class="modal-footer">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button class="btn btn-secondary">작성</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             </form>
           </div>
         </div>
-      </div>  
+      </div>
+
+      <!-- 자소서 수정모달 -->
+      <div class="modal fade" id="editCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form @submit.prevent="updateCoverLetter(credentialsToedit)">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">자소서 제목</h5>
+              <input type="Text" v-model="credentials.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
+            </div>
+            <div class="modal-body">
+              <input type="Text" v-model="credentials.coverLetterContent" class="form-control form-control-lg" placeholder="body" /> 
+            </div> 
+            <div class="modal-footer">
+              <button class="btn btn-secondary">작성</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div> 
+
+      <!-- 자소서 삭제모달  -->
+      <div class="modal fade" id="deleteCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form @submit.prevent="deleteCoverLetter(credentialsTodelete)">
+              <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
+              <button class="btn btn-secondary">Yes</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </form>
+          </div>
+        </div>
+      </div>   
+
+      <!-- 자소서 상세보기 -->
+    <div class="modal fade" id="detailCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+
+          </div>
+          <div class="modal-body">
+
+          </div> 
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     
     <!-- 내 자기소개서 관리 페이지 -->
@@ -101,26 +151,18 @@ export default {
       router.push({name:'cl'})
     }
 
-    function getCoverLetter(){
-      store.dispatch('rhtModule/getCoverLetter')
-      router.push({name:'cl'})
-    }
-
     function deleteCoverLetter(){
       store.dispatch('rhtModule/deleteCoverLetter', credentialsTodelete)
       router.push({name:'cl'})
     }
 
-    function detailCoverLetter(){
-      store.dispatch('rhtModule/detailCoverLetter', CoverLetterList.value.coverLetterSeq)
-    }
 
     function updateCoverLetter(){
       store.dispatch('rhtModule/updateCoverLetter', credentialsToedit)
     }
 
     return {
-      credentials, createCoverLetter, getCoverLetter, deleteCoverLetter, detailCoverLetter, updateCoverLetter, 
+      credentials, createCoverLetter, deleteCoverLetter, updateCoverLetter, 
       CoverLetterList, CoverLetterDetail, credentialsToedit, credentialsTodelete
     }
   }
@@ -129,34 +171,48 @@ export default {
 
 <style>
 .CLMBoss{
-  height:100%;
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.NavView{
+  height: 100%;
+  width: 250px;
 }
 .CLManageView{
-  position:fixed;
-  top:50px;
-  left: 300px;
   height: 100%;
   width: 80%;
-  overflow:scroll;
+}
+.pagetitle{
+  margin-top: 20px;
 }
 .clmanageTop{
+  background: white;
+  border-radius: 20px;
+  width:98%;
   display: flex;
-  flex-direction: row;
   justify-content: end;
+  flex-direction: row;
   align-items: center;
+  height: 80px;
 }
 .clmanageTopitem{
   margin: 0 20px
 }
 .clmanageBody{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  justify-content: space-around;
   width: 98%;
-  height: 83%;
+  height: 80%;
   background: white;
   border-radius: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: space-around;
   padding: 20px;
-  overflow:scroll;
+  overflow: scroll;
 }
 </style>

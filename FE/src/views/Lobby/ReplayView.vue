@@ -1,9 +1,9 @@
 // 임현탁
 <template>
 <div class="ReplayViewBoss">
-  <NavBar/>
+  <NavBar class="NavView"/>
   <div class="ReplayView">
-    <p>Replay</p>
+    <p class="pagetitle">Replay</p>
     <div class='ReplayTop'>
       <div class="dropdown ReplayTopitem">
         <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -19,9 +19,25 @@
       <div class="ReplayBody">
         <ReplayCard/>
         <ReplayCard/>
+        <ReplayCard/>
+        <ReplayCard/>
+        <ReplayCard/>
+        <ReplayCard/>
       </div>
     <!-- 오래된순, 최신순 정렬 -->
     <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
+    <!-- 자소서 삭제모달  -->
+      <div class="modal fade" id="deleteReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form @submit.prevent="">
+              <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
+              <button class="btn btn-secondary">Yes</button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </form>
+          </div>
+        </div>
+      </div>  
   </div> 
   </div>  
 </template>
@@ -39,17 +55,28 @@ export default {
 
 <style>
 .ReplayViewBoss{
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.NavView{
   height: 100%;
+  width: 250px;
 }
 .ReplayView{
-  position:fixed;
-  top:50px;
-  left: 300px;
+
   height: 100%;
   width: 80%;
-  overflow:scroll;
 }
 .ReplayTop{
+  background: white;
+  border-radius: 20px;
+  width:98%;
+  height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: end;
@@ -58,15 +85,19 @@ export default {
 .ReplayTopitem{
   margin:0 20px;
 }
+.pagetitle{
+  margin-top: 20px;
+}
 .ReplayBody{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  justify-content: space-around;
   width: 98%;
   height: 83%;
   background: white;
   border-radius: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: space-around;
   padding: 20px;
-  overflow:scroll;
+  overflow: scroll;
 }
 </style>
