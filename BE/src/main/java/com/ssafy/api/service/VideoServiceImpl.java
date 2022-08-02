@@ -40,8 +40,8 @@ public class VideoServiceImpl implements VideoService{
     }
 
     @Override
-    public List<VideoListRes> getVideoList(String order) {
-        return videoRepositorySupport.findVideoByOrder(order);
+    public List<VideoListRes> getVideoList(User user, String order) {
+        return videoRepositorySupport.findVideoByOrder(user, order);
     }
 
     @Transactional

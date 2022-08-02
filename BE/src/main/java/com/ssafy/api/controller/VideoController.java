@@ -6,6 +6,7 @@ import com.ssafy.api.response.VideoListRes;
 import com.ssafy.api.response.VideoSavePostRes;
 import com.ssafy.api.service.UserService;
 import com.ssafy.api.service.VideoService;
+import com.ssafy.common.auth.VudleUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.entity.Video;
@@ -51,7 +52,9 @@ public class VideoController {
     @GetMapping
     @ApiOperation(value = "내 영상 목록보기", notes = "<strong>정렬 순서를 가지고 </strong> 내 영상의 목록을 반환한다.")
     public ResponseEntity<? extends List<VideoListRes>> getVideos(@ApiIgnore Authentication authentication, @RequestParam(required = false) String order) {
-        return ResponseEntity.status(200).body(videoService.getVideoList(order));
+        VudleUserDetails userDetails = (VudleUserDetails) authentication.getDetails();
+        User user = userDetails.getUser();
+        return ResponseEntity.status(200).body(videoService.getVideoList(user, order));
     }
 
     @GetMapping("/{videoSeq}")

@@ -8,6 +8,7 @@ import com.ssafy.api.response.QVideoListRes;
 import com.ssafy.api.response.VideoListRes;
 import com.ssafy.db.entity.QFeedback;
 import com.ssafy.db.entity.QVideo;
+import com.ssafy.db.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +23,7 @@ public class VideoRepositorySupport {
     QVideo video = QVideo.video;
     QFeedback feedback = QFeedback.feedback;
 
-    public List<VideoListRes> findVideoByOrder(String order){
+    public List<VideoListRes> findVideoByOrder(User user, String order){
         return jpaQueryFactory
                 .select(new QVideoListRes(
                         video.videoSeq,
@@ -30,6 +31,7 @@ public class VideoRepositorySupport {
                         video.videoUrl,
                         video.videoRegTime))
                 .from(video)
+                .where(video.user.eq(user))
                 .orderBy(orderEq(order))
                 .fetch();
     }

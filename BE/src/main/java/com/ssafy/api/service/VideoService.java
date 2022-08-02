@@ -11,7 +11,7 @@ import java.util.List;
 public interface VideoService {
 
     public int registVideo(String title, String url, User user);
-    public List<VideoListRes> getVideoList(String order);
+    public List<VideoListRes> getVideoList(User user, String order);
     public void registFeedback(Video video, List<FeedbackDto> feedbackList);
     public Video getVideoBySeq(int videoSeq);
     public VideoDetailRes getVideoDetail(int videoSeq);
