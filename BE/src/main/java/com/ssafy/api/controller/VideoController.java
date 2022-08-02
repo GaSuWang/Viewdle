@@ -1,12 +1,14 @@
 package com.ssafy.api.controller;
 
 import com.ssafy.api.request.VideoSavePostReq;
+import com.ssafy.api.response.VideoDetailRes;
 import com.ssafy.api.response.VideoListRes;
 import com.ssafy.api.response.VideoSavePostRes;
 import com.ssafy.api.service.UserService;
 import com.ssafy.api.service.VideoService;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.entity.Video;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +45,6 @@ public class VideoController {
         String title = videoSavePostReq.getVideoTitle();
         String url = videoSavePostReq.getVideoUrl();
         int videoSeq = videoService.registVideo(title, url, user);
-        System.out.println(videoSeq);
         return ResponseEntity.status(200).body(VideoSavePostRes.of(200, "영상을 정상적으로 저장했습니다.", videoSeq));
     }
 
@@ -51,6 +52,12 @@ public class VideoController {
     @ApiOperation(value = "내 영상 목록보기", notes = "<strong>정렬 순서를 가지고 </strong> 내 영상의 목록을 반환한다.")
     public ResponseEntity<? extends List<VideoListRes>> getVideos(@ApiIgnore Authentication authentication, @RequestParam(required = false) String order) {
         return ResponseEntity.status(200).body(videoService.getVideoList(order));
+    }
+
+    @GetMapping("/{videoSeq}")
+    @ApiOperation(value = "영상 다시보기", notes = "<strong>내 영상 번호</strong>를 가지고 해당 영상과 피드백을 반환한다.")
+    public ResponseEntity<? extends VideoDetailRes> getVideos(@ApiIgnore Authentication authentication, @PathVariable int videoSeq) {
+        return ResponseEntity.status(200).body(videoService.getVideoDetail(videoSeq));
     }
 
 }

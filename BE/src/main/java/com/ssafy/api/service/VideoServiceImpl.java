@@ -1,10 +1,12 @@
 package com.ssafy.api.service;
 
 import com.ssafy.api.dto.FeedbackDto;
+import com.ssafy.api.response.VideoDetailRes;
 import com.ssafy.api.response.VideoListRes;
 import com.ssafy.db.entity.Feedback;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.entity.Video;
+import com.ssafy.db.mapping.FeedbackResMapping;
 import com.ssafy.db.repository.FeedbackRepository;
 import com.ssafy.db.repository.VideoRepository;
 import com.ssafy.db.repository.VideoRepositorySupport;
@@ -64,4 +66,20 @@ public class VideoServiceImpl implements VideoService{
         Video video = videoRepository.findByVideoSeq(videoSeq);
         return video;
     }
+
+    @Transactional
+    @Override
+    public VideoDetailRes getVideoDetail(int videoSeq) {
+        Video video = videoRepository.findByVideoSeq(videoSeq);
+        List<FeedbackResMapping> feedbackList = feedbackRepository.findByVideo(video);
+        VideoDetailRes videoDetailRes = VideoDetailRes.builder()
+                        .videoSeq(video.getVideoSeq())
+                        .videoTitle(video.getVideoTitle())
+                        .videoUrl(video.getVideoUrl())
+                        .videoRegTime(video.getVideoRegTime())
+                        .feedbackList(feedbackList)
+                .build();
+        return videoDetailRes;
+    }
+
 }

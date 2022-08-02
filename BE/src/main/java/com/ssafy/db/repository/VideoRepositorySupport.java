@@ -6,6 +6,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.api.response.QVideoListRes;
 import com.ssafy.api.response.VideoListRes;
+import com.ssafy.db.entity.QFeedback;
 import com.ssafy.db.entity.QVideo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,7 @@ public class VideoRepositorySupport {
 
     private final JPAQueryFactory jpaQueryFactory;
     QVideo video = QVideo.video;
+    QFeedback feedback = QFeedback.feedback;
 
     public List<VideoListRes> findVideoByOrder(String order){
         return jpaQueryFactory
@@ -39,4 +41,5 @@ public class VideoRepositorySupport {
         }
         return new OrderSpecifier(Order.DESC, video.videoSeq);
     }
+
 }
