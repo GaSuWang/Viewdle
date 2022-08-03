@@ -187,8 +187,9 @@ public class StudyroomController {
         System.out.println("스터디 룸 퇴장 유저 : " + user.getUserEmail());
 
         ParticipantResMapping participant = participantService.findRecentByUserSeq(user);
-        // 방장이면서 권한을 넘길 때
-        if("Y".equals(roomExitPatchReq.getOwnerYN()) && roomExitPatchReq.getNextOwnerEmail() != "") {
+        // 방장이 권한을 넘기면서 나갈 때
+//        if("Y".equals(roomExitPatchReq.getOwnerYN()) && roomExitPatchReq.getNextOwnerEmail() != "") {
+        if(roomExitPatchReq.getNextOwnerEmail() != "") {
             User nextUser = userService.getUserByUserEmail(roomExitPatchReq.getNextOwnerEmail());
             ParticipantResMapping nextOwner = participantService.findRecentByUserSeq(nextUser);
             participantService.exitOwner(participant.getParticipantSeq());
