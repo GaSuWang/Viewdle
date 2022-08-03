@@ -2,6 +2,7 @@
 <template>
 <div class="UsageTrend">
   <h1>이용 추이</h1>
+  <h2>{{HistoryList.userTotalTime}}</h2>
   <!-- 이용추이 -->
   <!-- 좌단 -->
   <!-- 연속 출석 일수 잔디? -->
@@ -11,8 +12,18 @@
 </template>
 
 <script>
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 export default {
-
+  setup(){
+    const store = useStore()
+    const HistoryList = computed(
+      () => store.state.rhtModule.HistoryList
+    );
+    return{
+      HistoryList
+    }
+  }
 }
 </script>
 

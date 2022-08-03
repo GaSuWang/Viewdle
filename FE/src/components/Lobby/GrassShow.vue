@@ -2,13 +2,23 @@
 <template>
 <div class="GrassShow">
     <h1>잔디</h1>
-
+    <h2>{{HistoryList.usingDates}}</h2>
 </div>  
 </template>
 
 <script>
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 export default {
-
+  setup(){
+    const store = useStore()
+    const HistoryList = computed(
+      () => store.state.rhtModule.HistoryList
+    );
+    return{
+      HistoryList
+    }
+  }
 }
 </script>
 

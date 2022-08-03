@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 const state= {
     // 회원가입
     token: localStorage.getItem('token') || '',
-    UserList:{"userEmail":"seoktak123@gmail.com", "userMainBadge":"G", "userName":"연딱콩", "userProfileImage":"https://lh3.googleusercontent.com/a/AItbvmncW_yp0Hpoha3SrYuE1ElnJU6SX91-tnBZpQco=s96-c", "userSeq":1, "userTotaltime": "13", "userTotalVideo": 5},
+    UserList:{"userEmail":"seoktak123@gmail.com", "userMainBadge":"https://w7.pngwing.com/pngs/445/743/png-transparent-badge-gold-badge-label-rectangle-pin-thumbnail.png", "userName":"연딱콩", "userProfileImage":"https://lh3.googleusercontent.com/a/AItbvmncW_yp0Hpoha3SrYuE1ElnJU6SX91-tnBZpQco=s96-c", "userSeq":1, "userTotaltime": "13", "userTotalVideo": 5},
     HistoryList:{"userTotalTime":"13", "userTotalViedo":5, "usingDates":["2022:07:27","2022:07:26","2022:07:25"]},
     isLoggedIn: true,
     emailcode:{},

@@ -2,12 +2,24 @@
 <template>
 <div class="BadgeList">
     <h1>뱃지</h1>
+    <h2>{{UserList.userMainBadge}}</h2>
+
 </div>  
 </template>
 
 <script>
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 export default {
-
+  setup(){
+    const store = useStore()
+    const UserList = computed(
+      () => store.state.rhtModule.UserList
+    );
+    return{
+      UserList
+    }
+  }
 }
 </script>
 
