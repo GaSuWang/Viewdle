@@ -12,6 +12,7 @@ public class RoomListRes {
     String roomTitle;
     String roomPrivateYN;
 //    String roomPassword;
+    long roomCnt;
     int roomLimit;
     String roomRegTime;
     String roomActiveYN;
@@ -19,13 +20,15 @@ public class RoomListRes {
     String thumbnailUrl;
 
 
+
     // Q-type을 만들기위한 어노테이션
     @QueryProjection
-    public RoomListRes(int roomSeq, int roomType, String roomTitle, String roomPrivateYN, int roomLimit, String roomRegTime, String roomActiveYN, String roomFullYN, String thumbnailUrl) {
+    public RoomListRes(int roomSeq, int roomType, String roomTitle, String roomPrivateYN, long roomCnt, int roomLimit, String roomRegTime, String roomActiveYN, String roomFullYN, String thumbnailUrl) {
         this.roomSeq = roomSeq;
         this.roomType = roomType;
         this.roomTitle = roomTitle;
         this.roomPrivateYN = roomPrivateYN;
+        this.roomCnt = roomCnt;
         this.roomLimit = roomLimit;
         this.roomRegTime = roomRegTime;
         this.roomActiveYN = roomActiveYN;

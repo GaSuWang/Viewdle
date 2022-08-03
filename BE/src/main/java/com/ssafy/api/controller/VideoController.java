@@ -89,7 +89,7 @@ public class VideoController {
             return ResponseEntity.status(925).body(BaseResponseBody.of(925, "존재하지 않는 영상입니다."));
         }
 
-        videoService.deleteVideo(videoSeq);
+        videoService.deleteVideo(videoSeq, user);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "영상과 피드백을 성공적으로 삭제했습니다."));
     }
 

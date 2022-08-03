@@ -8,6 +8,7 @@ import com.ssafy.db.entity.User;
 import com.ssafy.db.entity.Video;
 import com.ssafy.db.mapping.FeedbackResMapping;
 import com.ssafy.db.repository.FeedbackRepository;
+import com.ssafy.db.repository.UserRepository;
 import com.ssafy.db.repository.VideoRepository;
 import com.ssafy.db.repository.VideoRepositorySupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class VideoServiceImpl implements VideoService{
     @Autowired
     FeedbackRepository feedbackRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Override
     public int registVideo(String title, String url, User user) {
         Video video = Video.builder()
@@ -36,7 +40,15 @@ public class VideoServiceImpl implements VideoService{
                 .videoUrl(url)
                 .user(user)
                 .build();
-        return videoRepository.save(video).getVideoSeq();
+
+        // 비디오 저장
+        int videoSeq = videoRepository.save(video).getVideoSeq();
+
+        // 유저 토탈 피드백 수 + 1
+        int total = user.getUserTotalVideo();
+        user.setUserTotalVideo(total+1);
+        userRepository.save(user);
+        return videoSeq;
     }
 
     @Override
@@ -84,11 +96,17 @@ public class VideoServiceImpl implements VideoService{
 
     @Transactional
     @Override
-    public void deleteVideo(int videoSeq) {
+    public void deleteVideo(int videoSeq, User user) {
         Video video = videoRepository.findByVideoSeq(videoSeq);
+        // 피드백 삭제
         feedbackRepository.deleteAllByWhere(videoSeq);
-//        feedbackRepository.deleteAllByVideo(video);
+        // 비디오 삭제
         videoRepository.deleteById(videoSeq);
+
+        // 유저 토탈 피드백 수 - 1
+        int total = user.getUserTotalVideo();
+        user.setUserTotalVideo(total-1);
+        userRepository.save(user);
     }
 
 }

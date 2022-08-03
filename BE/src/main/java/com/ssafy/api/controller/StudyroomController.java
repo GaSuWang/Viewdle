@@ -92,12 +92,12 @@ public class StudyroomController {
         }
 
         // 방장이 스터디 룸을 삭제하면 스터디 룸에 있던 모든 유저들 방에서 내보내기
-        Studyroom studyroom = studyroomService.getRoomBySeq(roomSeq);
-        List<ParticipantResMapping> participants = participantService.findInStudyroomUser(studyroom, "Y");
-
-        for(int i = 0; i < participants.size(); i++) {
-            participantService.outUser(participants.get(i).getParticipantSeq());
-        }
+//        Studyroom studyroom = studyroomService.getRoomBySeq(roomSeq);
+//        List<ParticipantResMapping> participants = participantService.findInStudyroomUser(studyroom, "Y");
+//
+//        for(int i = 0; i < participants.size(); i++) {
+//            participantService.outUser(participants.get(i).getParticipantSeq());
+//        }
 
         studyroomService.closeRoom(roomSeq);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "스터디 룸을 삭제했습니다."));
@@ -187,14 +187,15 @@ public class StudyroomController {
         System.out.println("스터디 룸 퇴장 유저 : " + user.getUserEmail());
 
         ParticipantResMapping participant = participantService.findRecentByUserSeq(user);
-        // 방장 일 때 권한 넘기기
-        if("Y".equals(roomExitPatchReq.getOwnerYN())) {
+        // 방장이 권한을 넘기면서 나갈 때
+//        if("Y".equals(roomExitPatchReq.getOwnerYN()) && roomExitPatchReq.getNextOwnerEmail() != "") {
+        if(roomExitPatchReq.getNextOwnerEmail() != "") {
             User nextUser = userService.getUserByUserEmail(roomExitPatchReq.getNextOwnerEmail());
             ParticipantResMapping nextOwner = participantService.findRecentByUserSeq(nextUser);
             participantService.exitOwner(participant.getParticipantSeq());
             participantService.changeOwner(nextOwner.getParticipantSeq());
         }
-        // 방장이 아닐 때
+        // 방장이 아닐 때 또는 방장이지만 방을 폭파할 때
         else{
             participantService.outUser(participant.getParticipantSeq());
         }
@@ -280,6 +281,14 @@ public class StudyroomController {
         return ResponseEntity.status(200).body(studyroomService.getRoomsList(order, type, privateYN, FullYN));
     }
 
+    @GetMapping("/search")
+    @ApiOperation(value = "스터디 룸 검색", notes = "<strong>검색어</strong>를 가지고 해당 검색어가 포함된 스터디 룸 목록을 반환한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+    })
+    public ResponseEntity<? extends List<RoomListRes>> searchRooms(@RequestParam String keyword){
+        return ResponseEntity.status(200).body(studyroomService.searchRoomList(keyword));
+    }
     // 추후 필요하면 다시 구현 => join 필요
 //    @GetMapping("/{roomSeq}")
 //    @ApiOperation(value = "참여자 목록", notes = "<strong>스터디 룸 번호</strong>로 현재 스터디 룸의 참여자 목록을 반환한다.")
