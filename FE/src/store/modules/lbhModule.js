@@ -25,8 +25,8 @@ const state = {
   //EEView, ERView
   EERParticipantList: {}, //면접실에 들어온 유저들
   isEERFull: false,
-  EE: {}, //면접자
-  ERS: {}, //면접관들
+  EE: [], //면접자
+  ERS: [], //면접관들
   //ERView
   InterviewTipList: {}, // 면접 팁
   StudyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
@@ -183,9 +183,13 @@ const mutations = {
   },
   SET_EE(state, EE) {
     state.EE = EE;
+    console.log(state.EE)
   },
   SET_ERS(state, ERS) {
-    state.ERS = ERS;
+    // const er = JSON.parse(JSON.stringify(ERS))
+    // console.log('parse stringify',er)
+    state.ERS.push(ERS);
+    console.log(state.ERS)
   },
 
   //EEView

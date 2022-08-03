@@ -6,10 +6,11 @@
     <!-- 면접관 영상 구역 -->
     <div class="EELeft">
       <div class="EEContainer">
-        <div class="participantVideo">1</div>
-        <div class="participantVideo">2</div>
-        <div class="participantVideo">3</div>
-        <div class="participantVideo">4</div>
+        <user-video
+          v-for="ER in ERS"
+          :key="ER.stream.connection.connectionId"
+          :stream-manager="ER"
+        />
       </div>
     </div>
     <!-- 유저 기능 구역 -->
@@ -40,10 +41,18 @@
 </template>
 
 <script>
+import UserVideo from "@/components/UserVideo.vue";
 import { ref } from "vue";
+import { mapGetters } from "vuex";
 import { useRouter } from "vue-router";
 export default {
   name: "EEView",
+  components:{UserVideo},
+  computed:{
+    ...mapGetters('lbhModule',[
+      "ERS"
+    ])
+  },
   created(){
     // 면접자 페이지가 생성될 때, 유저 정보를 EERParticipantList에 넣어줌
     // 만약 WRParticipantList와 EERParticipantList가 일치하면, 면접 시작

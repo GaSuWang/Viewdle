@@ -16,7 +16,7 @@
     </div>
 
     <!-- 방장 기능 -->
-    <div class="superUser" v-show="userType === 'superUser'">
+    <div class="superUser">
       <div id="session-controller">
         <input
           class="btn btn-large btn-danger"
@@ -28,7 +28,7 @@
       </div>
 
       <!-- 면접자 선택 -->
-      <div class="dropdown">
+      <div class="dropdown" v-if="userType === 'superUser'">
         <button
           class="btn btn-secondary dropdown-toggle"
           type="button"
@@ -46,13 +46,14 @@
         </ul>
       </div>
       <!-- 스터디 종료 -->
-      <button class="btn btn-secondary" @click="EndStudyConfirm">
+      <button class="btn btn-secondary"  v-if="userType === 'superUser'" @click="EndStudyConfirm">
         스터디 종료
       </button>
       <button @click="muteMySelf">내 음성 끄고켜기</button>
       <button @click="ShowMySelf">내 비디오 끄고켜기</button>
       <button @click="joinSession">입장하기</button>
-      <button @click="startInterview">면접 시작</button>
+      <button @click="startInterview"  v-if="userType === 'superUser'">면접 시작</button>
+      <button @click="switchUserType">{{userType}}</button>
     </div>
   </div>
 </template>
@@ -63,7 +64,6 @@
 // cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
 // 단 도커 설치되어 있어야 함
 
-import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { mapGetters } from "vuex";
 import axios from "axios";
@@ -82,6 +82,8 @@ export default {
       OV: undefined,
       session: undefined,
       EECnd: '', //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
+      LeaveWR: false,
+      userType: 'user',
     };
   },
   computed: {
@@ -100,24 +102,24 @@ export default {
         router.push("/main");
       }
     }
-    const userType = ref("superUser");
-    // function startInterview(){
-    //     if (confirm(`면접자는 ${this.EECnd}님 입니다.\n면접을 시작하시겠습니까?`)) {
-    //     router.push("/waiting-room");
-    //   }
-    // }
     return {
-      userType,
       EndStudyConfirm,
-      // startInterview,
     };
   },
   methods: {
+    switchUserType(){
+      if(this.userType === 'superUser'){
+        this.userType = 'user'
+      } else { this.userType = 'superUser'}
+    },
+
     startInterview(){
       if (confirm(`면접자는 ${this.EECnd}님 입니다.\n면접을 시작하시겠습니까?`)) {
-        if(this.myUserName === this.EECnd){
-          this.$router.push('/ee-room')
-        } else {this.$router.push('/er-room')}
+        this.session.signal({
+          data: 'true',
+          to:[],
+          type:'startInterview'
+        })
       }
     },
     selectEE(name){
@@ -125,7 +127,7 @@ export default {
       this.session.signal({
       data: `${this.EECnd}`,  // Any string (optional)
       to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-      type: ''             // The type of message (optional)
+      type: 'selectEE'             // The type of message (optional)
       })
       .then(() => {
         console.log('일단 신호는 보냄')
@@ -230,8 +232,33 @@ export default {
           });
       });
 
-      this.session.on('signal', (event) => {
+      this.session.on('signal:selectEE', (event) => {
        this.EECnd = event.data; // Message
+      });
+      this.session.on('signal:startInterview', (event) => {
+       this.LeaveWR = event.data; // Message
+       if(this.LeaveWR){
+        if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
+          console.log('startInterview as EE')
+          this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
+          this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
+            this.$store.commit('lbhModule/SET_ERS', s)
+          })
+          this.$router.push('ee-room')
+        } else { //만약 내가 면접관이라면
+          console.log('startInterview as ER')
+          this.$store.commit('lbhModule/SET_ERS', this.publisher) //나(publisher)를 ERS에 넣음
+          this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회
+            const subscriberName = JSON.parse(s.stream.connection.data).clientData;
+            if(this.EECnd === subscriberName){ //면접자 포지션인 참여자(s)는 EE에 넣음
+              this.$store.commit('lbhModule/SET_EE', s)
+            } else { //그 외의 참여자(s)는 ERS에 넣음
+              this.$store.commit('lbhModule/SET_ERS', s)
+            }
+          })
+          this.$router.push('er-room')
+          }
+       }
       });
 
       window.addEventListener("beforeunload", this.leaveSession);

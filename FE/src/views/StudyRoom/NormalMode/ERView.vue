@@ -7,15 +7,15 @@
     <div class="ERLeftArea">
       <!-- 면접자 영상 구역 -->
       <div class="EEVidContainer">
-        <user-video/>
-        <div class="EEVid"></div>
+        <user-video :stream-manager="EE" />
       </div>
       <!-- 면접관 영상 구역 -->
       <div class="ERVidContainer">
-        <div class="ERVid"></div>
-        <div class="ERVid"></div>
-        <div class="ERVid"></div>
-        <div class="ERVid"></div>
+        <user-video
+          v-for="ER in ERS"
+          :key="ER.stream.connection.connectionId"
+          :stream-manager="ER"
+        />
       </div>
     </div>
 
@@ -72,10 +72,17 @@ import UserVideo from "@/components/UserVideo.vue";
 import swal from "sweetalert2";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { mapGetters } from "vuex";
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
 export default {
   name: "ERView",
   components: { FeedbackArea, UserVideo },
+  computed:{
+    ...mapGetters("lbhModule",[
+      "EE",
+      "ERS"
+    ])
+  },
   created(){
     // 면접관 페이지가 생성될 때, 유저 정보를 EERParticipantList에 넣어줌
     // 만약 WRParticipantList와 EERParticipantList가 일치하면, 면접 시작
