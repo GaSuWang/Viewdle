@@ -3,8 +3,10 @@ const state = {
   //SettingRoom
   CameraList: {}, // 영상 디바이스 리스트
   CameraSelected: {}, // 선택된 영상 디바이스
+  CameraStatus: false,
   MicList: {}, // 오디오 디바이스 리스트
   MicSelected: {}, // 선택된 오디오 디바이스
+  MicStatus: false,
   UserCLList: {}, // 유저의 자소서 리스트
 
   //WaitingRoom
@@ -13,20 +15,21 @@ const state = {
   StartInterview: false,
 
   //WaitingRoom
+  userType: 'user',
   OV: undefined,
   session: undefined,
   mainStreamManager: undefined,
   publisher: undefined,
   subscribers: [],
-
+  SessionToken: undefined,
   mySessionId: "SessionA",
   myUserName: "Participant" + Math.floor(Math.random() * 100),
 
   //EEView, ERView
   EERParticipantList: {}, //면접실에 들어온 유저들
   isEERFull: false,
-  EE: {}, //면접자
-  ERS: {}, //면접관들
+  EE: [], //면접자
+  ERS: [], //면접관들
   //ERView
   InterviewTipList: {}, // 면접 팁
   StudyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
@@ -36,15 +39,13 @@ const state = {
 };
 const getters = {
   //SettingRoom
-  UserCLList(state) {
-    return state.userCLList;
-  },
-  CameraList(state) {
-    return state.CameraList;
-  },
-  MicList(state) {
-    return state.MicList;
-  },
+  UserCLList(state) {return state.userCLList},
+  CameraList(state) {return state.CameraList},
+  CameraSelected(state){return state.CameraSelected},
+  CameraStatus(state){return state.CameraStatus},
+  MicSelected(state){return state.MicSelected},
+  MicList(state) {return state.MicList},
+  MicStatus(state){return state.MicStatus},
 
   //openvidu
   OV(state) {
@@ -68,9 +69,13 @@ const getters = {
   myUserName(state) {
     return state.myUserName;
   },
+  SessionToken(state){ return state.SessionToken},
 
   //WaitingRoom
   //AuthorityPassModal
+  userType(state){
+    return state.userType
+  },
   WRParticipantList(state) {
     console.log(
       "getters state.WRParticipantList",
@@ -127,7 +132,10 @@ const mutations = {
   SET_MYUSERNAME(state, myUserName) {
     state.myUserName = myUserName;
   },
-
+  SET_SESSION_TOKEN(state, token){
+    state.SessionToken = token
+    console.log('SET_SESSION_TOKEN',state.SessionToken)
+  },
   EMPTY_WR_PARTICIPANT_LIST(state) {
     state.WRParticipantList = {};
   },
@@ -153,20 +161,27 @@ const mutations = {
   },
 
   //SettingRoom
+  SWITCH_USER_TYPE(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
+    if(state.userType==='user'){
+      state.userType='superUser'
+      console.log(state.userType)
+    } else {
+      state.userType='user'
+      console.log(state.userType)
+    }
+  },
   GET_CAMERA_LIST(state, cameraList) {
     state.CameraList = JSON.parse(JSON.stringify(cameraList));
     console.log(state.CameraList);
   },
-  SET_CAMERA(state, camera) {
-    state.CameraSelected = camera;
-  },
+  SET_CAMERA(state, camera) { state.CameraSelected = camera },
+  SWITCH_CAMERA_STATUS(state, status){ state.CameraStatus = status },
   GET_MIC_LIST(state, micList) {
     state.MicList = JSON.parse(JSON.stringify(micList));
     console.log(state.MicList);
   },
-  SET_MIC(state, mic) {
-    state.MicSelected = mic;
-  },
+  SET_MIC(state, mic) { state.MicSelected = mic },
+  SWITCH_MIC_STATUS(state, status){ state.MicStatus = status },
   //WaitingRoom
   GET_PARTICIPANT_LIST(state, participants) {
     state.participantList = participants;
@@ -183,9 +198,17 @@ const mutations = {
   },
   SET_EE(state, EE) {
     state.EE = EE;
+    console.log(state.EE)
   },
   SET_ERS(state, ERS) {
-    state.ERS = ERS;
+    // const er = JSON.parse(JSON.stringify(ERS))
+    // console.log('parse stringify',er)
+    state.ERS.push(ERS);
+    console.log(state.ERS)
+  },
+  EMPTY_ERS(state){
+    state.ERS = [];
+    console.log('ERS 비워짐')
   },
 
   //EEView

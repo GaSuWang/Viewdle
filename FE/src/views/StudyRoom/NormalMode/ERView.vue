@@ -7,15 +7,15 @@
     <div class="ERLeftArea">
       <!-- 면접자 영상 구역 -->
       <div class="EEVidContainer">
-        <user-video/>
-        <div class="EEVid"></div>
+        <user-video :stream-manager="EE" />
       </div>
       <!-- 면접관 영상 구역 -->
       <div class="ERVidContainer">
-        <div class="ERVid"></div>
-        <div class="ERVid"></div>
-        <div class="ERVid"></div>
-        <div class="ERVid"></div>
+        <user-video
+          v-for="ER in ERS"
+          :key="ER.stream.connection.connectionId"
+          :stream-manager="ER"
+        />
       </div>
     </div>
 
@@ -61,7 +61,7 @@
             <i class="bi bi-check-lg"></i>
           </button>
         </div>
-
+        <button @click="switchUserType">{{userType}}</button>
       </div>
     </div>
   </div>
@@ -71,18 +71,140 @@
 import UserVideo from "@/components/UserVideo.vue";
 import swal from "sweetalert2";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { mapGetters } from "vuex";
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
+import axios from "axios";
+import { OpenVidu } from "openvidu-browser";
+axios.defaults.headers.post["Content-Type"] = "application/json";
+
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+const OPENVIDU_SERVER_SECRET = "MY_SECRET";
+
 export default {
   name: "ERView",
   components: { FeedbackArea, UserVideo },
+  data(){
+    return{
+    }
+  },
+  computed:{
+    ...mapGetters("lbhModule",[
+      "EE",
+      "ERS",
+      "myUserName",
+      "mySessionId",
+      "userType",
+      "publisher",
+      "subscribers",
+      'SessionToken',
+    ])
+  },
   created(){
-    // 면접관 페이지가 생성될 때, 유저 정보를 EERParticipantList에 넣어줌
-    // 만약 WRParticipantList와 EERParticipantList가 일치하면, 면접 시작
-    const user = this.$store.getters['rhtModule/UserList']
-    this.$store.dispatch('setEERParticipantList',user)
+    this.joinSession();
   },
   methods: {
+    async toFB() {
+      await this.$router.push({name:'fb-room'})
+      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      this.$store.commit('lbhModule/EMPTY_ERS')
+    },
+      // this.session = this.EE.stream.session
+    joinSession() {
+      // --- Get an OpenVidu object ---
+      this.OV = new OpenVidu();
+
+      // --- Init a session ---
+      this.session = this.OV.initSession();
+
+      this.getToken(this.mySessionId).then((token) => {
+        this.session.connect(token)});
+
+      this.session.on('signal:endInterview', () => {
+        console.log('endinterview signal received, erview')
+        this.toFB()
+      });
+
+      window.addEventListener("beforeunload", this.leaveSession);
+    },
+
+    leaveSession() {
+      // --- Leave the session by calling 'disconnect' method over the Session object ---
+      if (this.session) this.session.disconnect();
+
+      this.session = undefined;
+      this.mainStreamManager = undefined;
+      this.publisher = undefined;
+      this.subscribers = [];
+      this.OV = undefined;
+
+      window.removeEventListener("beforeunload", this.leaveSession);
+    },
+    getToken(mySessionId) {
+      return this.createSession(mySessionId).then((sessionId) =>
+        this.createToken(sessionId)
+      );
+    },
+
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
+    createSession(sessionId) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
+            JSON.stringify({
+              customSessionId: sessionId,
+            }),
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.id))
+          .catch((error) => {
+            if (error.response.status === 409) {
+              resolve(sessionId);
+            } else {
+              console.warn(
+                `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
+              );
+              if (
+                window.confirm(
+                  `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+                )
+              ) {
+                location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
+              }
+              reject(error.response);
+            }
+          });
+      });
+    },
+
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
+    createToken(sessionId) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            {},
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.token))
+          .catch((error) => reject(error.response));
+      });
+    },
+    switchUserType(){
+      this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+    },
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
       window.open(route.href);
@@ -96,13 +218,26 @@ export default {
         position: "top-end",
       });
     },
+    StudyDestroy(){
+      if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
+        this.session.signal({
+        data: 'true',  
+        to: [],
+        type: 'endInterview'
+        })
+        .then(() => {
+          console.log('erview send signal test')
+        })
+        .catch(error => {
+            console.error(error);
+        });
+      }
+    },
   },
   setup() {
     const router = useRouter();
-
-    const userType = ref("superUser"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
-    function ERtoLBConfirm(userType) {
-      if (userType === "user") {
+    function ERtoLBConfirm() {
+      if (this.userType === "user") {
         if (
           confirm(
             "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
@@ -110,7 +245,7 @@ export default {
         ) {
           router.push({ name: "main" });
         }
-      } else if (userType === "superUser") {
+      } else if (this.userType === "superUser") {
         if (
           confirm(
             "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
@@ -120,16 +255,8 @@ export default {
         }
       }
     }
-
-    function StudyDestroy(){
-      if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
-        router.push({name:'fb-room'})
-      }
-    }
     return {
-      userType,
       ERtoLBConfirm,
-      StudyDestroy,
     };
   },
 };

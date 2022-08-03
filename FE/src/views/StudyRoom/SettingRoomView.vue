@@ -11,11 +11,13 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          마이크 선택
+          마이크 
+          <span v-show="!MicSelected">선택</span> 
+          <span v-show="MicSelected">선택됨</span> 
         </button>
         <ul class="dropdown-menu">
           <li v-for="mic in MicList" :key="mic.deviceId">
-            {{mic.label}}
+            <span @click="selectMic(mic)">{{mic.label}}</span> 
             <!-- <mic-device :mic="mic"></mic-device> -->
           </li>
           
@@ -30,11 +32,13 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          카메라 선택
+          카메라
+          <span v-show="!CameraSelected">선택</span> 
+          <span v-show="CameraSelected">선택됨</span> 
         </button>
         <ul class="dropdown-menu">
           <li v-for="camera in CameraList" :key="camera.deviceId">
-            {{camera.label}}
+            <span @click="selectCamera(camera)">{{camera.label}}</span>
           <!-- <camera-device :camera="camera"></camera-device> -->
           </li>
         </ul>
@@ -78,7 +82,7 @@
         <i v-else class="bi bi-mic-mute"></i>
       </button>
       <!-- 유저 카메라 온오프 버튼 -->
-      <button class="CameraSTatus" @click="cameraStatusSwitch">
+      <button class="CameraStatus" @click="cameraStatusSwitch">
         <i v-if="cameraOn" class="bi bi-camera-video"></i>
         <i v-else class="bi bi-camera-video-off"></i>
       </button>
@@ -95,7 +99,7 @@
 
 <script>
 import { ref, computed } from "vue";
-import {useStore} from 'vuex';
+import {mapGetters, useStore} from 'vuex';
 import { useRouter } from "vue-router";
 import { OpenVidu } from 'openvidu-browser';
 // import CameraDevice from '@/components/StudyRoom/CameraDevice.vue'
@@ -103,6 +107,23 @@ import { OpenVidu } from 'openvidu-browser';
 export default {
   name: "SettingRoomView",
   // components:{CameraDevice, MicDevice},
+  computed:{
+    ...mapGetters('lbhModule',[
+      "CameraSelected",
+      "MicSelected",
+      "CameraStatus",
+      "MicStatus",
+      
+    ])
+  },
+  methods:{
+    selectCamera(camera){
+      this.$store.commit('lbhModule/SET_CAMERA', camera)
+    },
+    selectMic(mic){
+      this.$store.commit('lbhModule/SET_MIC', mic)
+    },
+  },
   setup() {
     const store = useStore();
 
@@ -120,32 +141,6 @@ export default {
 
     const CameraList = computed(()=>store.getters['lbhModule/CameraList'])
     const MicList = computed(()=>store.getters['lbhModule/MicList'])
-
-  //   let publisher = OV.initPublisher(undefined, {
-  //     audioSource: undefined, // The source of audio. If undefined default microphone
-  //     videoSource: undefined, // The source of video. If undefined default webcam
-  //     publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-  //     publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-  //     resolution: '640x480',  // The resolution of your video
-  //     frameRate: 30,			// The frame rate of your video
-  //     insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-  //     mirror: false       	// Whether to mirror your local video or not
-  //   });
-
-  // // 'myPublisher' a Publisher object obtained through 'OpenVidu.initPublisher()' method
-  // // 'myTrack' a MediaStreamTrack object
-  // // 'properties' a PublisherProperties object https://docs.openvidu.io/en/stable/api/openvidu-browser/interfaces/PublisherProperties.html
-
-  // var mediaStream = await OV.getUserMedia(properties);
-
-  // // Getting the video track from mediaStream
-  // var myTrack = mediaStream.getVideoTracks()[0];
-
-  // // Replacing video track
-  // myPublisher.replaceTrack(myTrack)
-  //     .then(() => console.log('New track has been published'))
-  //     .catch(error => console.error('Error replacing track', error));
-
 
     const router = useRouter();
     const micSelect = ref(false);
@@ -165,9 +160,11 @@ export default {
     }
     function micStatusSwitch() {
       micOn.value = !micOn.value;
+      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', micOn.value)
     }
     function cameraStatusSwitch() {
       cameraOn.value = !cameraOn.value;
+      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', cameraOn.value)
     }
     return {
       CameraList,
