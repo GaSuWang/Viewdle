@@ -13,12 +13,13 @@ const state = {
   StartInterview: false,
 
   //WaitingRoom
+  userType: 'user',
   OV: undefined,
   session: undefined,
   mainStreamManager: undefined,
   publisher: undefined,
   subscribers: [],
-
+  SessionToken: undefined,
   mySessionId: "SessionA",
   myUserName: "Participant" + Math.floor(Math.random() * 100),
 
@@ -68,9 +69,13 @@ const getters = {
   myUserName(state) {
     return state.myUserName;
   },
+  SessionToken(state){ return state.SessionToken},
 
   //WaitingRoom
   //AuthorityPassModal
+  userType(state){
+    return state.userType
+  },
   WRParticipantList(state) {
     console.log(
       "getters state.WRParticipantList",
@@ -127,7 +132,10 @@ const mutations = {
   SET_MYUSERNAME(state, myUserName) {
     state.myUserName = myUserName;
   },
-
+  SET_SESSION_TOKEN(state, token){
+    state.SessionToken = token
+    console.log('SET_SESSION_TOKEN',state.SessionToken)
+  },
   EMPTY_WR_PARTICIPANT_LIST(state) {
     state.WRParticipantList = {};
   },
@@ -153,6 +161,15 @@ const mutations = {
   },
 
   //SettingRoom
+  SWITCH_USER_TYPE(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
+    if(state.userType==='user'){
+      state.userType='superUser'
+      console.log(state.userType)
+    } else {
+      state.userType='user'
+      console.log(state.userType)
+    }
+  },
   GET_CAMERA_LIST(state, cameraList) {
     state.CameraList = JSON.parse(JSON.stringify(cameraList));
     console.log(state.CameraList);
@@ -190,6 +207,10 @@ const mutations = {
     // console.log('parse stringify',er)
     state.ERS.push(ERS);
     console.log(state.ERS)
+  },
+  EMPTY_ERS(state){
+    state.ERS = [];
+    console.log('ERS 비워짐')
   },
 
   //EEView

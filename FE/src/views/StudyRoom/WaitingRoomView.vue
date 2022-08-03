@@ -83,11 +83,11 @@ export default {
       session: undefined,
       EECnd: '', //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
       LeaveWR: false,
-      userType: 'user',
     };
   },
   computed: {
     ...mapGetters("lbhModule", [
+      'userType',
       "publisher",
       "subscribers",
       "mySessionId",
@@ -108,9 +108,7 @@ export default {
   },
   methods: {
     switchUserType(){
-      if(this.userType === 'superUser'){
-        this.userType = 'user'
-      } else { this.userType = 'superUser'}
+      this.$store.commit('lbhModule/SWITCH_USER_TYPE')
     },
 
     startInterview(){
@@ -164,7 +162,7 @@ export default {
 
       // --- Init a session ---
       this.session = this.OV.initSession();
-
+      console.log('wr session',this.session)
       // --- Specify the actions when events take place in the session ---
 
       // On every new Stream received...
@@ -194,7 +192,10 @@ export default {
 
       // 'getToken' method is simulating what your server-side should do.
       // 'token' parameter should be retrieved and returned by your own backend
+
       this.getToken(this.mySessionId).then((token) => {
+        this.$store.commit('lbhModule/SET_SESSION_TOKEN', token)
+        console.log(JSON.stringify(token))
         console.log("getToken 시작됨 근데 clientData가 뭐지", this.myUserName);
         this.session
           .connect(token, { clientData: this.myUserName })
@@ -244,7 +245,8 @@ export default {
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
             this.$store.commit('lbhModule/SET_ERS', s)
           })
-          this.$router.push('ee-room')
+          console.log('startinterview session',this.session )
+          this.$router.push({name:'ee-room', params:{session:this.session}})
         } else { //만약 내가 면접관이라면
           console.log('startInterview as ER')
           this.$store.commit('lbhModule/SET_ERS', this.publisher) //나(publisher)를 ERS에 넣음
@@ -256,7 +258,8 @@ export default {
               this.$store.commit('lbhModule/SET_ERS', s)
             }
           })
-          this.$router.push('er-room')
+          console.log('startinterview session',this.session )
+          this.$router.push({name: 'er-room', params:{session:this.session}})
           }
        }
       });
@@ -299,6 +302,7 @@ export default {
         this.createToken(sessionId)
       );
     },
+
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
     createSession(sessionId) {
