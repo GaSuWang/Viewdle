@@ -92,12 +92,12 @@ public class StudyroomController {
         }
 
         // 방장이 스터디 룸을 삭제하면 스터디 룸에 있던 모든 유저들 방에서 내보내기
-        Studyroom studyroom = studyroomService.getRoomBySeq(roomSeq);
-        List<ParticipantResMapping> participants = participantService.findInStudyroomUser(studyroom, "Y");
-
-        for(int i = 0; i < participants.size(); i++) {
-            participantService.outUser(participants.get(i).getParticipantSeq());
-        }
+//        Studyroom studyroom = studyroomService.getRoomBySeq(roomSeq);
+//        List<ParticipantResMapping> participants = participantService.findInStudyroomUser(studyroom, "Y");
+//
+//        for(int i = 0; i < participants.size(); i++) {
+//            participantService.outUser(participants.get(i).getParticipantSeq());
+//        }
 
         studyroomService.closeRoom(roomSeq);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "스터디 룸을 삭제했습니다."));
@@ -187,14 +187,14 @@ public class StudyroomController {
         System.out.println("스터디 룸 퇴장 유저 : " + user.getUserEmail());
 
         ParticipantResMapping participant = participantService.findRecentByUserSeq(user);
-        // 방장 일 때 권한 넘기기
-        if("Y".equals(roomExitPatchReq.getOwnerYN())) {
+        // 방장이면서 권한을 넘길 때
+        if("Y".equals(roomExitPatchReq.getOwnerYN()) && roomExitPatchReq.getNextOwnerEmail() != "") {
             User nextUser = userService.getUserByUserEmail(roomExitPatchReq.getNextOwnerEmail());
             ParticipantResMapping nextOwner = participantService.findRecentByUserSeq(nextUser);
             participantService.exitOwner(participant.getParticipantSeq());
             participantService.changeOwner(nextOwner.getParticipantSeq());
         }
-        // 방장이 아닐 때
+        // 방장이 아닐 때 또는 방장이지만 방을 폭파할 때
         else{
             participantService.outUser(participant.getParticipantSeq());
         }

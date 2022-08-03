@@ -16,7 +16,10 @@ public class RoomExitPatchReq {
     @ApiModelProperty(name = "방장 여부", example = "Y")
     String ownerYN;
 
-    @ApiModelProperty(name = "다음 방장 이메일", example = "kimssafy@sasfy.com")
+    @ApiModelProperty(name = "다음 방장 이메일", example = "kimssafy@ssafy.com")
     String nextOwnerEmail;
+
+//    @ApiModelProperty(name = "이용 시간", example = "7200")
+//    int time;
 
 }
