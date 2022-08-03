@@ -3,8 +3,10 @@ const state = {
   //SettingRoom
   CameraList: {}, // 영상 디바이스 리스트
   CameraSelected: {}, // 선택된 영상 디바이스
+  CameraStatus: false,
   MicList: {}, // 오디오 디바이스 리스트
   MicSelected: {}, // 선택된 오디오 디바이스
+  MicStatus: false,
   UserCLList: {}, // 유저의 자소서 리스트
 
   //WaitingRoom
@@ -37,15 +39,13 @@ const state = {
 };
 const getters = {
   //SettingRoom
-  UserCLList(state) {
-    return state.userCLList;
-  },
-  CameraList(state) {
-    return state.CameraList;
-  },
-  MicList(state) {
-    return state.MicList;
-  },
+  UserCLList(state) {return state.userCLList},
+  CameraList(state) {return state.CameraList},
+  CameraSelected(state){return state.CameraSelected},
+  CameraStatus(state){return state.CameraStatus},
+  MicSelected(state){return state.MicSelected},
+  MicList(state) {return state.MicList},
+  MicStatus(state){return state.MicStatus},
 
   //openvidu
   OV(state) {
@@ -174,16 +174,14 @@ const mutations = {
     state.CameraList = JSON.parse(JSON.stringify(cameraList));
     console.log(state.CameraList);
   },
-  SET_CAMERA(state, camera) {
-    state.CameraSelected = camera;
-  },
+  SET_CAMERA(state, camera) { state.CameraSelected = camera },
+  SWITCH_CAMERA_STATUS(state, status){ state.CameraStatus = status },
   GET_MIC_LIST(state, micList) {
     state.MicList = JSON.parse(JSON.stringify(micList));
     console.log(state.MicList);
   },
-  SET_MIC(state, mic) {
-    state.MicSelected = mic;
-  },
+  SET_MIC(state, mic) { state.MicSelected = mic },
+  SWITCH_MIC_STATUS(state, status){ state.MicStatus = status },
   //WaitingRoom
   GET_PARTICIPANT_LIST(state, participants) {
     state.participantList = participants;

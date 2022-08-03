@@ -77,6 +77,9 @@ const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "WaitingRoomView",
   components: { UserVideo },
+  created(){
+    console.log(this.subscribers)
+  },
   data() {
     return {
       OV: undefined,
@@ -93,6 +96,10 @@ export default {
       "mySessionId",
       "myUserName",
       "WRParticipantList",
+      "CameraSelected",
+      "MicSelected",
+      "CameraStatus",
+      "MicStatus",
     ]),
   },
   setup() {
@@ -208,10 +215,10 @@ export default {
             );
 
             let publisher = this.OV.initPublisher(undefined, {
-              audioSource: undefined, // The source of audio. If undefined default microphone
-              videoSource: undefined, // The source of video. If undefined default webcam
-              publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-              publishVideo: true, // Whether you want to start publishing with your video enabled or not
+              audioSource: this.MicSelected, // The source of audio. If undefined default microphone
+              videoSource: this.CameraSelected, // The source of video. If undefined default webcam
+              publishAudio: this.MicStatus, // Whether you want to start publishing with your audio unmuted or not
+              publishVideo: this.CameraStatus, // Whether you want to start publishing with your video enabled or not
               resolution: "320x240", // The resolution of your video
               frameRate: 30, // The frame rate of your video
               insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
@@ -223,6 +230,7 @@ export default {
             // --- Publish your stream ---
 
             this.session.publish(this.publisher);
+            console.log('오디오 비디오 어떻게 들어왔나',this.publisher)
           })
           .catch((error) => {
             console.log(
