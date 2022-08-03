@@ -1,6 +1,6 @@
 // 임현탁
 <template>
-  <div class="ReplayCard">
+  <div class="ReplayCard" v-for="item in ReplayList" :key="item.seq">
   <div class="ReplayTop">
   </div>
   <div class="ReplayBottom">
@@ -8,11 +8,13 @@
       <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
     </div>
     <div class="Replaycard-body">
-      <h5>Card title</h5>
-      <p><small class="text-muted">Last updated 3 mins ago</small></p>
+      <h5>{{item.videoTitle}}</h5>
+      <p><small class="text-muted">{{item.videoRegTime}}</small></p>
+   
     </div>
   </div>
   <div class="Replaycard-button">
+    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enterReplay">열람하기</button>
     <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteReplay">삭제하기</button>
   </div>
     <!-- 왼쪽 -->
@@ -26,6 +28,19 @@
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { computed } from 'vue'
+export default {
+  setup(){
+    const store = useStore()
+    const ReplayList = computed(
+      () => store.state.rhtModule.ReplayList
+    );
+    return {
+      ReplayList
+    }
+  }
+}
 </script>
 
 <style>

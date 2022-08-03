@@ -163,6 +163,9 @@ export default {
     const userLists = computed(
       () => store.state.rhtModule.UserList
     );
+    const HistoryList = computed(
+      () => store.state.rhtModule.HistoryList
+    );
     const pwcode = computed(
       () => store.state.rhtModule.pwcode
     )
@@ -183,7 +186,7 @@ export default {
     }
     
     return {
-      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
+      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword, HistoryList
     };
   },
 };

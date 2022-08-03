@@ -4,11 +4,13 @@
     <div class="sidebar">
     <header>My app</header>
     <ul>
+        <li><router-link to="/main"><i class="fas fa-qrcode"></i>Main</router-link></li>
         <li><form @submit.prevent="getStudyRoom()"><button><i class="fas fa-qrcode"></i>Main</button></form></li>
         <li><router-link to="/mypage"><i class="fas fa-user"></i>MyPage</router-link></li>
         <li><router-link to="/cl"><i class="fas fa-envelope-open-text"></i>CoverLetter</router-link></li>
         <li><form @submit.prevent="getCoverLetter()"><button><i class="fas fa-envelope-open-text"></i>CoverLetter</button></form></li>
         <li><router-link to="/replay"><i class="fas fa-video"></i>Replay</router-link></li>
+        <li><form @submit.prevent="getReplay()"><button><i class="fas fa-video"></i>Replay</button></form></li>
         <li><router-link to="/"><i class="fas fa-sign-out-alt"></i>Logout</router-link></li>
         
     </ul>
@@ -36,8 +38,12 @@ export default {
       store.dispatch('rhtModule/getStudyRoom')
       router.push({name:'main'})
     }
+    function getReplay(){
+      store.dispatch('rhtModule/getReplay')
+      router.push({name:'replay'})
+    }
     return {
-      logout, getCoverLetter, getStudyRoom
+      logout, getCoverLetter, getStudyRoom, getReplay
     }
   } 
 }

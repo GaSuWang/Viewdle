@@ -62,24 +62,12 @@
               <div class="modal-body">
                 <input type="Text" class="form-control form-control-lg" v-model="credentials.title" placeholder="Title" /> 
                 <div>
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-target="#modecheck" aria-expanded="false">
-                  모드 선택
-                </button>
-                <ul class="dropdown-menu" id="modecheck">
-                  <li><input type="checkbox" v-model.number="credentials.type" true-value=1>StudyMode</li>
-                  <li><input type="checkbox" v-model.number="credentials.type" true-value=2>Play Mode</li>
-                </ul>
+                  <p>Play Mode : 1  /  Study Mode : 2</p>
+                  <input type="number" min='1' max='2' v-model.number="credentials.type">
                 </div>
                 <div>
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-target="#modecheck" aria-expanded="false">
-                  최대인원 선택
-                </button>
-                <ul class="dropdown-menu" id="modecheck">
-                  <li><input type="checkbox" v-model.number="credentials.limit" true-value="5"/>5</li>
-                  <li><input type="checkbox" v-model.number="credentials.limit" true-value="4"/>4</li>
-                  <li><input type="checkbox" v-model.number="credentials.limit" true-value="3"/>3</li>
-                  <li><input type="checkbox" v-model.number="credentials.limit" true-value="2"/>2</li>
-                </ul>
+                  <p>최소 : 2   /   최대 : 5</p>
+                <input type="number" min='2' max='5' v-model.number="credentials.limit">
                 </div>
                 비밀방생성<input type="checkbox" v-model="credentials.privateYN" true-value="Y" false-value="N"/>
                 <input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /> 
@@ -95,12 +83,13 @@
     <div class="modal fade" id="enterroom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <form @submit.prevent="">
+          <form @submit.prevent="enterStudyroom(credentialsToenter)">
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">방입장</h5>
           </div>
           <div class="modal-body">
-            <input type="Text" class="form-control form-control-lg" placeholder="Password" /> 
+            <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control form-control-lg" placeholder="Password" />
+            <input type="Text" v-model="credentialsToenter.roomSeq" class="form-control form-control-lg" placeholder="Room code" /> 
           </div> 
           <div class="modal-footer">
             <button class="btn btn-secondary">입장</button>
@@ -130,19 +119,26 @@ export default {
   },
    setup() {
     const credentials = reactive({
-      "type":0,
-      "limit":0,
+      "type":'',
+      "limit":'',
       "password":"",
       "privateYN":"",
       "title":"",
       "commonSeq":2
     })
+    const credentialsToenter = reactive({
+      "roomPassword" : "",
+      "roomSeq": "",
+    })
     const store = useStore()
     function createStudyroom(){
       store.dispatch('rhtModule/createStudyroom', credentials)
     }
+    function enterStudyroom(){
+      store.dispatch('rhtModule/enterStudyroom', credentialsToenter)
+    }
     return {
-    credentials, createStudyroom
+    credentials, createStudyroom, credentialsToenter, enterStudyroom
     }
    }
 }

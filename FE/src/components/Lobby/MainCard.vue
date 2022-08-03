@@ -2,7 +2,7 @@
 <template>
 <div class="MainCard" v-for="item in StudyroomList" :key="item.seq">
   <div class="MainCardTop">
-     <p><small class="text-muted">{{item.roomLimit}}</small></p>
+     <p><small class="text-muted">{{item.roomCnt}}/{{item.roomLimit}}</small></p>
   </div>
   <div class="MainCardBottom">
     <div class="MainCardthumnail">

@@ -18,26 +18,35 @@
       <hr>
       <div class="ReplayBody">
         <ReplayCard/>
-        <ReplayCard/>
-        <ReplayCard/>
-        <ReplayCard/>
-        <ReplayCard/>
-        <ReplayCard/>
       </div>
     <!-- 오래된순, 최신순 정렬 -->
     <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
-    <!-- 자소서 삭제모달  -->
+    <!-- 영상 삭제모달  -->
       <div class="modal fade" id="deleteReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            <form @submit.prevent="">
+            <form @submit.prevent="deleteReplay(credentialsTodelete)">
               <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
+              <input type="number" v-model="credentialsTodelete.replaySeq">
               <button class="btn btn-secondary">Yes</button>
               <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
             </form>
           </div>
         </div>
-      </div>  
+      </div>
+
+    <!-- 영상 다시보기 -->
+    <div class="modal fade" id="enterReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+          {{replayDetail.videoSeq}}
+          {{replayDetail.Title}}
+          {{replayDetail.videoRegTime}}
+          {{replayDetail.videoUrl}}
+          {{replayDetail.feedbackList}}
+          </div>
+        </div>
+    </div>  
   </div> 
   </div>  
 </template>
@@ -45,10 +54,27 @@
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
 import ReplayCard from '@/components/Lobby/ReplayCard.vue'
+import { useStore } from 'vuex'
+import { reactive, computed } from "vue";
 export default {
   components:{
     NavBar,
     ReplayCard 
+  },
+  setup(){
+    const credentialsTodelete= reactive({
+      'replaySeq':0,
+    })
+    const store = useStore()
+    const replayDetail = computed(
+      () => store.state.rhtModule.ReplayDetail
+    );
+    function deleteReplay(){
+      store.dispatch('rhtModule/deleteReplay', credentialsTodelete)
+    }
+    return {
+      deleteReplay, credentialsTodelete, replayDetail
+    }
   }
 }
 </script>

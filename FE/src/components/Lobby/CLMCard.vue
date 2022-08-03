@@ -10,7 +10,7 @@
       <div class="CLMcard-body">
         <h5>{{item.title}}</h5>
         <p><small class="text-muted">{{item.date}}</small></p>
-        <p><small class="text-muted">자소서 코드: {{item.seq}}</small></p>
+        <p><small class="text-muted">자소서 코드: {{item.coverLetterSeq}}</small></p>
       </div>
     </div>
     <div class="CLMcard-button">
