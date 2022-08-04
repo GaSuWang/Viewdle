@@ -10,8 +10,8 @@
           정렬
         </button>
         <ul class="dropdown-menu">
-          <li>오래된순</li>
-          <li>최신순</li>
+          <li><input type="checkbox" @click="filterReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="ASC">오래된순</li>
+          <li><input type="checkbox" @click="filterReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="DESC">최신순</li>
         </ul>
       </div>
     </div>
@@ -29,8 +29,8 @@
               <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
               <input type="number" v-model="credentialsTodelete.replaySeq">
               <button class="btn btn-secondary">Yes</button>
-              <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
             </form>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
           </div>
         </div>
       </div>
@@ -65,6 +65,9 @@ export default {
     const credentialsTodelete= reactive({
       'replaySeq':0,
     })
+    const credentialsToFilterReplay= reactive({
+      order:"",
+    })
     const store = useStore()
     const replayDetail = computed(
       () => store.state.rhtModule.ReplayDetail
@@ -72,8 +75,11 @@ export default {
     function deleteReplay(){
       store.dispatch('rhtModule/deleteReplay', credentialsTodelete)
     }
+    function filterReplay(){
+      store.dispatch('rhtModule/filterReplay', credentialsToFilterReplay)
+    }
     return {
-      deleteReplay, credentialsTodelete, replayDetail
+      deleteReplay, credentialsTodelete, replayDetail,filterReplay, credentialsToFilterReplay
     }
   }
 }

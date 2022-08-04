@@ -8,28 +8,18 @@
           <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
       </div>
       <div class="CLMcard-body">
-        <h5>{{item.title}}</h5>
-        <p><small class="text-muted">{{item.date}}</small></p>
+        <h5>{{item.coverLetterTitle}}</h5>
+        <p><small class="text-muted">{{item.coverLetterRegTime}}</small></p>
         <p><small class="text-muted">자소서 코드: {{item.coverLetterSeq}}</small></p>
       </div>
     </div>
-    <div class="CLMcard-button">
-      <div class="CLMcard-buttonitem1">
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#detailCL">상세보기</button>
-      </div>
-      <div class="CLMcard-buttonitem2">
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCL">수정하기</button>
-      </div>
-      <div class="CLMcard-buttonitem3">
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteCL">삭제하기</button>
-      </div>
-    </div>
+
   </div>
 </template>
 
 <script>
 import { useStore } from 'vuex'
-import { computed } from 'vue'
+import { computed} from 'vue'
 export default {
   setup(){
     const store = useStore()
@@ -39,15 +29,12 @@ export default {
     const CoverLetterDetail = computed(
       () => store.state.rhtModule.CoverLetterDetail
     );
-    function detailCoverLetter(){
-      store.dispatch('rhtModule/detailCoverLetter', 1)
-    }
-
     return {
-      CoverLetterList, CoverLetterDetail, detailCoverLetter
+      CoverLetterList, CoverLetterDetail
     }
   }
 }
+
 </script>
 
 <style>

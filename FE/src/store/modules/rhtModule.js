@@ -271,11 +271,12 @@ const actions= {
     },
 
     // 자소서 만들기
-    createCoverLetter({dispatch},credentials) {
+    createCoverLetter({dispatch, getters}, credentials) {
       console.log("자소서만들기야 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'post',
+        headers: {Authorization: getters.authHeader },
         data: credentials,
       })
       .then(() => {
@@ -308,10 +309,10 @@ const actions= {
     },
 
     //자소서 상세보기
-    detailCoverLetter({commit, getters}, coverLetterSeq) {
+    detailCoverLetter({commit, getters}, credentialsTodelete) {
       console.log("자소서상세보기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + `/api/v1/coverletters/${coverLetterSeq}}`, // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + `/api/v1/coverletters/${credentialsTodelete}`, // 비번수정 api 
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -324,14 +325,33 @@ const actions= {
         alert('실패.')
       })
     },
+        // //자소서 상세보기
+        // detailCoverLetter({commit, getters}, credentialsTodelete) {
+        //   console.log("자소서상세보기야 안녕?")
+        //   axios({
+        //     url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
+        //     method:'get',
+        //     headers: {Authorization: getters.authHeader },
+        //     data: credentialsTodelete
+        //   })
+        //   .then(res => {
+        //     commit('SET_COVERLETTER_DETAIL', res.data)
+        //     alert('자소서 상세 정보를 가져왔습니다.')
+        //   })
+        //   .catch(err => {
+        //     console.error(err.response)
+        //     alert('실패.')
+        //   })
+        // },
 
     //자소서 삭제하기
-    deleteCoverLetter({dispatch}, credentialsTodelete) {
+    deleteCoverLetter({dispatch, getters}, credentialsTodelete) {
       console.log("자소서 삭제하기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters/', // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'delete',
-        data: credentialsTodelete
+        data: credentialsTodelete,
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         dispatch('getCoverLetter')
@@ -343,12 +363,13 @@ const actions= {
       })
     },
     //자소서 수정하기
-    updateCoverLetter({dispatch}, credentials) {
+    updateCoverLetter({dispatch, getters}, credentialsToedit) {
       console.log("자소서수정하기야 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'put',
-        data: credentials
+        data: credentialsToedit,
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         dispatch('getCoverLetter')
@@ -484,16 +505,77 @@ const actions= {
       })
     },
     // 스터디룸 서치
-    searchStudyroom({commit}, credentials) {
+    searchStudyroom({commit}, credentialsTosearch) {
       console.log("서치기능아 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom/search', // 비번수정 api 
         method:'get',
-        params: { keyword : credentials},
+        params: { keyword: credentialsTosearch.keyword },
       })
       .then(res => {
         commit('SET_STUDYROOM_LIST', res.data)
         console.log('서치했어용')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //스터디룸 필터
+    filterStudyRoom({commit}, credentialsToFilter) {
+      console.log("스터디룸가져오기야야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        method:'get',
+        params:{ 
+          privateYN: credentialsToFilter.privateYN,
+        }
+      })
+      .then(res => {
+        commit('SET_STUDYROOM_LIST', res.data)
+        alert('스터디룸정보를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //스터디룸 정렬
+    sortStudyRoom({commit}, credentialsToFilter) {
+      console.log("스터디룸가져오기야야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        method:'get',
+        params:{ 
+          order: credentialsToFilter.order,
+        }
+      })
+      .then(res => {
+        commit('SET_STUDYROOM_LIST', res.data)
+        alert('스터디룸정보를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //영상다시보기 필터
+    filterReplay
+    ({commit}, credentialsToFilterReplay) {
+      console.log("리플레이필터가져오기야야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/video', // 비번수정 api 
+        method:'get',
+        params:{ 
+          order: credentialsToFilterReplay.order,
+        }
+      })
+      .then(res => {
+        commit('SET_REPLAY_LIST', res.data)
+        alert('리플레이를 가져왔습니다.')
       }
       )
       .catch(err => {
