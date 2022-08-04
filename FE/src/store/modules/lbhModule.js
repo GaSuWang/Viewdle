@@ -7,27 +7,27 @@ const state = {
   MicList: {}, // 오디오 디바이스 리스트
   MicSelected: {}, // 선택된 오디오 디바이스
   MicStatus: false,
-  UserCLList: {}, // 유저의 자소서 리스트
+  CLSelected: {},
+  // UserCLList: {}, // 유저의 자소서 리스트
 
   //WaitingRoom
-  //AuthorityPassModal
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
-  StartInterview: false,
-
-  //WaitingRoom
-  userType: 'user',
+  StartInterview: false, // 대기실에서 면접자를 정하고 면접을 시작할 때 true로 바뀜, 방장이 면접 종료 버튼을 누르면 false로 다시 바뀌어야 됨
+  userType: 'user', //일반 유저는 user, 방장 유저는 suuperUser
   OV: undefined,
   session: undefined,
-  mainStreamManager: undefined,
-  publisher: undefined,
-  subscribers: [],
-  SessionToken: undefined,
   mySessionId: "SessionA",
   myUserName: "Participant" + Math.floor(Math.random() * 100),
+  publisher: undefined,
+  subscribers: [],
+  mainStreamManager: undefined,
+  SessionToken: undefined,
 
   //EEView, ERView
   EERParticipantList: {}, //면접실에 들어온 유저들
   isEERFull: false,
+  isEE: false, //면접자 포지션인지
+  isER: false, //면접관 포지션인지
   EE: [], //면접자
   ERS: [], //면접관들
   //ERView
@@ -46,6 +46,7 @@ const getters = {
   MicSelected(state){return state.MicSelected},
   MicList(state) {return state.MicList},
   MicStatus(state){return state.MicStatus},
+  CLSelected(state){return state.CLSelected},
 
   //openvidu
   OV(state) {
@@ -98,12 +99,8 @@ const getters = {
   }, //면접관들
 
   //ErView
-  InterviewTipList(state) {
-    return state.interviewTipList;
-  },
-  StudyRoomCL(state) {
-    return state.studyRoomCL;
-  },
+  InterviewTipList(state) {return state.interviewTipList},
+  StudyRoomCL(state) {return state.studyRoomCL},
 
   //ErView, FeedbackRoom, ReplayView
   FBList(state) {
@@ -182,6 +179,8 @@ const mutations = {
   },
   SET_MIC(state, mic) { state.MicSelected = mic },
   SWITCH_MIC_STATUS(state, status){ state.MicStatus = status },
+  SET_CL_SELECTED(state, cl){state.CLSelected = cl}, //대기실에서 자신이 이번 면접에서 쓸 자소서
+  
   //WaitingRoom
   GET_PARTICIPANT_LIST(state, participants) {
     state.participantList = participants;
@@ -190,6 +189,7 @@ const mutations = {
     state.StartInterview = tf;
   },
   //EEView, ERView
+  SET_STUDYROOM_CL(state,cl){state.studyRoomCL = cl},
   SET_EER_PARTICIPANT_LIST(state, participant) {
     state.EERParticipantList.participant = participant;
   },

@@ -100,6 +100,7 @@ export default {
       "MicSelected",
       "CameraStatus",
       "MicStatus",
+      "CLSelected",
     ]),
   },
   setup() {
@@ -241,13 +242,26 @@ export default {
           });
       });
 
-      this.session.on('signal:selectEE', (event) => {
+      this.session.on('signal:EECL', (e)=>{ //면접자의 자소서를 받아옴
+        const cl = JSON.parse(e.data)
+        this.$store.commit('SET_STUDYROOM_CL', cl)
+      })
+
+      this.session.on('signal:selectEE', (event) => { //면접자가 누구인지 받음
        this.EECnd = event.data; // Message
       });
+
       this.session.on('signal:startInterview', (event) => {
-       this.LeaveWR = event.data; // Message
+       this.LeaveWR = event.data; 
        if(this.LeaveWR){
         if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
+          this.session.signal({ // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+          data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`, 
+          to: [], 
+          type: 'EECL' 
+          })
+          .then(() => {console.log('자소서 보냄')})
+          .catch(error => {console.error(error)});
           console.log('startInterview as EE')
           this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음

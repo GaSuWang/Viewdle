@@ -12,8 +12,8 @@
           aria-expanded="false"
         >
           마이크 
-          <span v-show="!MicSelected">선택</span> 
-          <span v-show="MicSelected">선택됨</span> 
+          <span v-if="Object.keys(MicSelected).length === 0">선택</span> 
+          <span v-else>선택됨 {{MicSelected.label}} {{typeof(MicSelected)}} </span> 
         </button>
         <ul class="dropdown-menu">
           <li v-for="mic in MicList" :key="mic.deviceId">
@@ -33,8 +33,8 @@
           aria-expanded="false"
         >
           카메라
-          <span v-show="!CameraSelected">선택</span> 
-          <span v-show="CameraSelected">선택됨</span> 
+          <span v-if="Object.keys(CameraSelected).length === 0">선택</span> 
+          <span v-else>선택됨 {{CameraSelected.label}} </span> 
         </button>
         <ul class="dropdown-menu">
           <li v-for="camera in CameraList" :key="camera.deviceId">
@@ -55,9 +55,9 @@
           자소서 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">자소서1</a></li>
-          <li><a class="dropdown-item" href="#">자소서2</a></li>
-          <li><a class="dropdown-item" href="#">자소서3</a></li>
+          <li v-for="cl in CoverLetterList" :key="cl.coverLetterSeq">
+            <span @clicked="selectCL(cl)">{{cl.coverLetterTitle}}</span>
+          </li>
         </ul>
       </div>
     </div>
@@ -98,25 +98,33 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import {mapGetters, useStore} from 'vuex';
 import { useRouter } from "vue-router";
 import { OpenVidu } from 'openvidu-browser';
-// import CameraDevice from '@/components/StudyRoom/CameraDevice.vue'
-// import MicDevice from '@/components/StudyRoom/MicDevice.vue'
+
 export default {
   name: "SettingRoomView",
-  // components:{CameraDevice, MicDevice},
+  created(){
+    // this.$store.dispatch('rhtModule/getCoverLetter')
+  },
   computed:{
     ...mapGetters('lbhModule',[
+      "CameraList",
       "CameraSelected",
-      "MicSelected",
       "CameraStatus",
+      "MicList",
+      "MicSelected",
       "MicStatus",
-      
+    ]),
+    ...mapGetters('rhtModule',[
+      "CoverLetterList"
     ])
   },
   methods:{
+    selectCL(cl){
+      this.$store.commit('lbhModule/SET_CL_SELECTED', cl)
+    },
     selectCamera(camera){
       this.$store.commit('lbhModule/SET_CAMERA', camera)
     },
@@ -139,8 +147,8 @@ export default {
     } 
     findDevices()
 
-    const CameraList = computed(()=>store.getters['lbhModule/CameraList'])
-    const MicList = computed(()=>store.getters['lbhModule/MicList'])
+    // const CameraList = computed(()=>store.getters['lbhModule/CameraList'])
+    // const MicList = computed(()=>store.getters['lbhModule/MicList'])
 
     const router = useRouter();
     const micSelect = ref(false);
@@ -167,8 +175,8 @@ export default {
       this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', cameraOn.value)
     }
     return {
-      CameraList,
-      MicList,
+      // CameraList,
+      // MicList,
       micSelect,
       cameraSelect,
       clSelect,
