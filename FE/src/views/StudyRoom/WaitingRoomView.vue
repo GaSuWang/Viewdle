@@ -1,6 +1,7 @@
 // 이병헌
 <template>
   <div class="WaitingRoomView">
+    <!-- <AuthorityPassModal/> -->
     <!-- 참가자 영상 나오는 부분 -->
     <div class="WRSession" v-if="session">
       <!-- openvidu 간단히 -->
@@ -49,12 +50,14 @@
       <button class="btn btn-secondary"  v-if="userType === 'superUser'" @click="EndStudyConfirm">
         스터디 종료
       </button>
+      <button v-if="userType === 'superUser'" @click="superUserOutClick">나가기</button>
+      <button @click="startInterview"  v-if="userType === 'superUser'">면접 시작</button>
+      <button v-if="userType === 'user'" @click="userOutClick">나가기</button>
       <button @click="muteMySelf">내 음성 끄고켜기</button>
       <button @click="ShowMySelf">내 비디오 끄고켜기</button>
       <button @click="joinSession">입장하기</button>
-      <button @click="startInterview"  v-if="userType === 'superUser'">면접 시작</button>
       <button @click="switchUserType">{{userType}}</button>
-    </div>
+     </div>
   </div>
 </template>
 
@@ -64,8 +67,11 @@
 // cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
 // 단 도커 설치되어 있어야 함
 
+// import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 import { useRouter } from "vue-router";
-import { mapGetters } from "vuex";
+import { 
+  // mapActions,
+mapGetters } from "vuex";
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/UserVideo.vue";
@@ -76,17 +82,29 @@ const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "WaitingRoomView",
-  components: { UserVideo },
+  components: { UserVideo,
+  //  AuthorityPassModal 
+   },
   created(){
     console.log(this.subscribers)
   },
   data() {
     return {
-      OV: undefined,
-      session: undefined,
+      // OV: undefined,
+      // session: undefined,
       EECnd: '', //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
       LeaveWR: false,
+      recordingId: '',
     };
+  },
+  watcher:{
+    superUserOut(){
+      this.session.signal({
+        data: `${this.superUser}`,
+        to:[],
+        type:'switchSuperUser'
+      })
+    }
   },
   computed: {
     ...mapGetters("lbhModule", [
@@ -101,6 +119,10 @@ export default {
       "CameraStatus",
       "MicStatus",
       "CLSelected",
+      "superUserOut",
+      "superUser",
+      "OV",
+      "session",
     ]),
   },
   setup() {
@@ -115,7 +137,15 @@ export default {
     };
   },
   methods: {
+    superUserOutClick(){
+      if(this.userType === 'superUser'){
+        this.$router.push
+      }
+    },
+    userOutClick(){
+    },
     switchUserType(){
+      console.log('why not ')
       this.$store.commit('lbhModule/SWITCH_USER_TYPE')
     },
 
@@ -166,10 +196,13 @@ export default {
     },
     joinSession() {
       // --- Get an OpenVidu object ---
-      this.OV = new OpenVidu();
+      const newOv = new OpenVidu();
+      this.$store.commit('lbhModule/SET_OV', newOv)
 
       // --- Init a session ---
-      this.session = this.OV.initSession();
+      const ovInitSession = this.OV.initSession();
+      this.$store.commit('lbhModule/SET_SESSION', ovInitSession)
+
       console.log('wr session',this.session)
       // --- Specify the actions when events take place in the session ---
 
@@ -179,6 +212,14 @@ export default {
         const subscriberName = JSON.parse(stream.connection.data).clientData;
         this.$store.commit("lbhModule/ADD_SUBSCRIBERS", subscriber);
         this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", subscriberName);
+
+        this.session.signal({ 
+          //새로운 유저가 들어오면, 모든 유저에게 현재의 방장 유저가 누군지 알려주는 데이터 전송
+          //향후 새로운 유저에게 줘야 할 데이터 있으면 여기에서 보내주는 걸로
+          data: `"superUser": ${this.superUser}, WRParticipantList: ${this.WRParticipantList},`,
+          to:[],
+          type:'welcomeNewUser'
+        })
       });
 
       // On every Stream destroyed...
@@ -202,9 +243,7 @@ export default {
       // 'token' parameter should be retrieved and returned by your own backend
 
       this.getToken(this.mySessionId).then((token) => {
-        this.$store.commit('lbhModule/SET_SESSION_TOKEN', token)
-        console.log(JSON.stringify(token))
-        console.log("getToken 시작됨 근데 clientData가 뭐지", this.myUserName);
+        console.log('getToken 다음이 시작됨?')
         this.session
           .connect(token, { clientData: this.myUserName })
           .then(() => {
@@ -231,7 +270,7 @@ export default {
             // --- Publish your stream ---
 
             this.session.publish(this.publisher);
-            console.log('오디오 비디오 어떻게 들어왔나',this.publisher)
+            console.log('오디오 비디오 어떻게 들어왔나',this.publisher.stream)
           })
           .catch((error) => {
             console.log(
@@ -241,6 +280,19 @@ export default {
             );
           });
       });
+
+
+      this.session.on('signal:welcomeNewUser', (e)=>{ //방에 처음 들어왔을 때 받는 signal
+        const json = JSON.parse(e.data)
+        this.superUser = json.superUser
+        this.WRParticipantList = json.WRParticipantList
+        this.switchSuperUser = false
+      })
+
+      this.session.on('signal:switchSuperUser', (e)=>{
+        this.$store.commit('lbhModule/SET_SUPERUSER', e.data)
+        this.$store.commit('lbhModule/SET_SUPERUSER_OUT', false)
+      })
 
       this.session.on('signal:EECL', (e)=>{ //면접자의 자소서를 받아옴
         const cl = JSON.parse(e.data)
@@ -290,21 +342,30 @@ export default {
     },
 
     leaveSession() {
+      this.session.signal({
+        data: '',
+        to: [],
+        type: ''
+      })
       // --- Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
 
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
+      // this.session = undefined;
+      // this.mainStreamManager = undefined;
+      // this.publisher = undefined;
+      // this.subscribers = [];
+      // this.OV = undefined;
+  
+      // this.superUser = {};
+      // this.superUserOut = false;
+      // this.AMP
+
+      this.$store.commit('lbhModule/SET_SESSION', undefined)
+      this.$store.commit('lbhModule/SET_OV', undefined)
+      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
 
       window.removeEventListener("beforeunload", this.leaveSession);
-    },
-
-    updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
     },
 
     /**
@@ -320,6 +381,7 @@ export default {
      */
 
     getToken(mySessionId) {
+      console.log('getToken이 시작되긴 했음', mySessionId)
       return this.createSession(mySessionId).then((sessionId) =>
         this.createToken(sessionId)
       );
@@ -328,6 +390,7 @@ export default {
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
     createSession(sessionId) {
+      console.log('createSession이 시작되긴 했음')
       return new Promise((resolve, reject) => {
         axios
           .post(
@@ -366,6 +429,7 @@ export default {
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
     createToken(sessionId) {
+      console.log('createToken이 시작되긴 했음')
       return new Promise((resolve, reject) => {
         axios
           .post(
@@ -383,11 +447,8 @@ export default {
           .catch((error) => reject(error.response));
       });
     },
-  },
-  // created() {
-  //   this.joinSession();
-  // },
-};
+  }
+}
 </script>
 
 <style scoped>

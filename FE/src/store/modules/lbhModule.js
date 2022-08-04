@@ -1,5 +1,9 @@
 // import axios from "axios";
 const state = {
+  superUser: {},
+  superUserOut: false,
+  APMOpen: false,
+  APMDestination: undefined,
   //SettingRoom
   CameraList: {}, // 영상 디바이스 리스트
   CameraSelected: {}, // 선택된 영상 디바이스
@@ -14,14 +18,14 @@ const state = {
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
   StartInterview: false, // 대기실에서 면접자를 정하고 면접을 시작할 때 true로 바뀜, 방장이 면접 종료 버튼을 누르면 false로 다시 바뀌어야 됨
   userType: 'user', //일반 유저는 user, 방장 유저는 suuperUser
-  OV: undefined,
-  session: undefined,
   mySessionId: "SessionA",
   myUserName: "Participant" + Math.floor(Math.random() * 100),
   publisher: undefined,
   subscribers: [],
-  mainStreamManager: undefined,
-  SessionToken: undefined,
+  OV: undefined,
+  session: undefined,
+  // mainStreamManager: undefined,
+  // SessionToken: undefined,
 
   //EEView, ERView
   EERParticipantList: {}, //면접실에 들어온 유저들
@@ -38,6 +42,10 @@ const state = {
   FBList: [], // 피드백 리스트, 리스트로 하는 게 맞나?
 };
 const getters = {
+  superUser(state){return state.superUser},
+  superUserOut(state){return state.superUserOut},
+  APMOpen(state){return state.APMOpen},
+  APMDestination(state){return state.APMDestination},
   //SettingRoom
   UserCLList(state) {return state.userCLList},
   CameraList(state) {return state.CameraList},
@@ -49,12 +57,8 @@ const getters = {
   CLSelected(state){return state.CLSelected},
 
   //openvidu
-  OV(state) {
-    return state.OV;
-  },
-  session(state) {
-    return state.session;
-  },
+  OV(state) {return state.OV},
+  session(state) {return state.session},
   mainStreamManager(state) {
     return state.mainStreamManager;
   },
@@ -108,9 +112,13 @@ const getters = {
   },
 };
 const mutations = {
+  SET_SUPERUSER(state, user){state.superUser = user},
+  SET_SUPERUSER_OUT(state, boolean){state.superUserOut = boolean},
+  SET_APM_OPEN(state, boolean){state.APMOpen = boolean},
+  SET_APM_DESTINATION(state, destination){state.APMDestination = destination},
   //openvidu
-  // SET_OV(state, ov){state.OV = ov},
-  // SET_SESSION(state, session){state.session = session},
+  SET_OV(state, ov){state.OV = ov},
+  SET_SESSION(state, session){state.session = session},
   SET_PUBLISHER(state, publisher) {
     state.publisher = publisher;
   },
@@ -159,6 +167,7 @@ const mutations = {
 
   //SettingRoom
   SWITCH_USER_TYPE(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
+    console.log('switch user type 눌리긴 함')
     if(state.userType==='user'){
       state.userType='superUser'
       console.log(state.userType)
@@ -172,13 +181,20 @@ const mutations = {
     console.log(state.CameraList);
   },
   SET_CAMERA(state, camera) { state.CameraSelected = camera },
-  SWITCH_CAMERA_STATUS(state, status){ state.CameraStatus = status },
+  SWITCH_CAMERA_STATUS(state, status){ 
+    state.CameraStatus = status 
+    console.log('카메라 온오프',state.CameraStatus)
+  },
   GET_MIC_LIST(state, micList) {
     state.MicList = JSON.parse(JSON.stringify(micList));
     console.log(state.MicList);
   },
   SET_MIC(state, mic) { state.MicSelected = mic },
-  SWITCH_MIC_STATUS(state, status){ state.MicStatus = status },
+  SWITCH_MIC_STATUS(state, status){ 
+    state.MicStatus = status 
+    console.log('마이크 온오프',state.MicStatus)
+
+  },
   SET_CL_SELECTED(state, cl){state.CLSelected = cl}, //대기실에서 자신이 이번 면접에서 쓸 자소서
   
   //WaitingRoom
