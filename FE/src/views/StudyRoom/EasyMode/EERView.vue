@@ -39,7 +39,7 @@
         </button>
       </div>
       <div class="SuddenAttackBtn">
-        <button >
+        <button @click="sendWarningSignal">
           <i class="bi bi-exclamation-triangle-fill"></i>
         </button>
       </div>
@@ -53,9 +53,34 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+import { OpenVidu } from "openvidu-browser";
+import axios from "axios";
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+const OPENVIDU_SERVER_SECRET = "MY_SECRET";
+axios.defaults.headers.post["Content-Type"] = "application/json";
 export default {
   name: "EERView",
   components: {},
+  computed: {
+    ...mapGetters('lbhModule',[
+      'EE',
+      'myUserName',
+      'mySessionId',
+    ])
+  },
+  data() {
+    return {
+      warningCount:0,
+    }
+  },
+
+  //----------------------joinSession----------------------------
+  created(){
+    this.joinSession();
+  },
+  //--------------------joinSession end----------------------------
+
   methods: {
     openCL() {
       let route = this.$router.resolve({ path: "/eecl" });
@@ -64,7 +89,130 @@ export default {
     changeVoice() {},
     suddenAttack() {},
     capture() {},
+    addWarn() { //경고 누적용
+      this.warningCount++;
+      console.log('warningCount: ',this.warningCount);
+      if(this.warningCount >=3){
+        console.log('warningCount limit, return waiting room');
+      }
+    },
+      //---------------------openvidu mehtod---------------------------
+  joinSession() {
+      // --- Get an OpenVidu object ---
+      this.OV = new OpenVidu();
+
+      // --- Init a session ---
+      this.session = this.OV.initSession();
+
+      this.getToken(this.mySessionId).then((token) => {
+        this.session.connect(token)});
+
+      this.session.on('signal:warning', (event) => {
+        console.log(event.data)
+        //신호를 받고, 내가 면접자인 경우에만 warningCount++
+        if(this.EE[0]===this.myUserName){
+          console.log('EE: ',this.EE);
+          this.addWarn(); 
+        }
+        
+      });
+      window.addEventListener("beforeunload", this.leaveSession);
+    },
+
+    leaveSession() {
+      // --- Leave the session by calling 'disconnect' method over the Session object ---
+      if (this.session) this.session.disconnect();
+
+      this.session = undefined;
+      this.mainStreamManager = undefined;
+      this.publisher = undefined;
+      this.subscribers = [];
+      this.OV = undefined;
+
+      window.removeEventListener("beforeunload", this.leaveSession);
+    },
+    getToken(mySessionId) {
+      return this.createSession(mySessionId).then((sessionId) =>
+        this.createToken(sessionId)
+      );
+    },
+
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
+    createSession(sessionId) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
+            JSON.stringify({
+              customSessionId: sessionId,
+            }),
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.id))
+          .catch((error) => {
+            if (error.response.status === 409) {
+              resolve(sessionId);
+            } else {
+              console.warn(
+                `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
+              );
+              if (
+                window.confirm(
+                  `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+                )
+              ) {
+                location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
+              }
+              reject(error.response);
+            }
+          });
+      });
+    },
+
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
+    createToken(sessionId) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            {},
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.token))
+          .catch((error) => reject(error.response));
+      });
+    },
+    //---------------------openvidu mehtod end---------------------------
+
+
+    //---------------------send warning singal---------------------------
+    sendWarningSignal(){
+      this.session.signal({
+        data:'stacked warning count',
+        to:[], //<- 면접자만 어떻게 골라서 보내지...
+        type: 'warning'
+      }).then(()=>{
+        console.log('successed send warning');
+      }).catch(()=>{
+        console.log("failed send warning");
+      });
+    }
+    //---------------------send warning singal end---------------------------
   },
+
+
 };
 </script>
 
