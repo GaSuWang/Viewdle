@@ -15,7 +15,7 @@ const state= {
     // 썸네일 따오기
     ThumnailList:{},
     // 뱃지 관리
-    BadgeList:{},
+    BadgeList:[],
     // 자소서관리
     CoverLetterList:[
       {"title":"삼성", "content":"합격하고싶다", "coverLetterSeq": 1, "date":"20200221"},
@@ -98,9 +98,11 @@ const mutations= {
     SET_REPLAY_DETAIL(state, ReplayDetail){
       state.ReplayDetail = ReplayDetail
     },
+    SET_BADGE_LIST(state, BadgeList){
+      state.BadgeList = BadgeList
+    },
   }
-
-
+// const router = useRouter()
 const actions= {
   // 토큰저장
     saveToken({ commit }, token){
@@ -113,37 +115,39 @@ const actions= {
     },
     
   // 로그인 
-    login({ dispatch, getters }, credentials) {
+    // login({ dispatch, getters }, credentials) {
 
-      console.log("로그인아 안녕?")
-      axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
-        method: 'post',
-        data: credentials
-      })
-        .then(res => {
-          console.log("해윙")
-          console.log(res)
-          const token = res.data.accessToken
-          dispatch('saveToken', token)
-          console.log(getters.authHeader)
-          dispatch('fetchCurrentUser')
-          console.log(getters.UserList)
-          dispatch('fetchHistories')
-        })
-        .catch(err => {
-          console.error(err)
-          alert("이메일 및 비밀번호를 확인하세요")
-        })
-    },
+    //   console.log("로그인아 안녕?")
+    //   axios({
+    //     url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
+    //     method: 'post',
+    //     data: credentials
+    //   })
+    //     .then(res => {
+    //       console.log("해윙")
+    //       console.log(res)
+    //       const token = res.data.accessToken
+    //       dispatch('saveToken', token)
+    //       console.log(getters.authHeader)
+    //       dispatch('fetchCurrentUser')
+    //       console.log(getters.UserList)
+    //       dispatch('fetchHistories')
+    //       dispatch('getBadge')
+    //       router.push('/main')
+    //     })
+    //     .catch(err => {
+    //       console.error(err)
+    //       alert("이메일 및 비밀번호를 확인하세요")
+    //     })
+    // },
 
     // 로그아웃
     logout({ getters, dispatch }) {
       console.log("로그아웃아 안녕?")
       axios({
-        url: '', //logout api로 
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/detail', //logout api로 
         method: 'post',
-        headers: getters.authHeader,
+        headers: {Authorization: getters.authHeader },
       })
         .then(() => {
           dispatch('removeToken')
@@ -453,6 +457,43 @@ const actions= {
       .then(res => {
         commit('SET_REPLAY_LIST', res.data)
         alert('리플레이 상세보기.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+
+    // 뱃지 가져오기
+    getBadge({commit, getters}) {
+      console.log("뱃지가져오기야야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users/badges', // 비번수정 api 
+        method:'get',
+        headers: {Authorization: getters.authHeader },
+      })
+      .then(res => {
+        commit('SET_BADGE_LIST', res.data)
+        console.log('뱃지정보를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    // 스터디룸 서치
+    searchStudyroom({commit}, credentials) {
+      console.log("서치기능아 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom/search', // 비번수정 api 
+        method:'get',
+        params: { keyword : credentials},
+      })
+      .then(res => {
+        commit('SET_STUDYROOM_LIST', res.data)
+        console.log('서치했어용')
       }
       )
       .catch(err => {

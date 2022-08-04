@@ -31,15 +31,26 @@ export default {
 .MiniProfile{
     display:flex;
     flex-flow: row;
-}
+    height: 100px;
+    margin-left: 25px;
+  }
 .MiniProfileItem1{
-
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 100%;
 }
 .MiniProfileItem2{
-    
+  display:flex;
+  flex-flow:column;
+  justify-content: end;
+  width: 50%;
+  height: 100%;
 }
 .MiniProfileImg{
-
+    width:70px;
+    height: 70px; 
     border-radius: 70%;
     overflow: hidden;
 }
@@ -51,5 +62,6 @@ export default {
 }
 .MiniProfileUserName{
     color:white;
+    margin-bottom: 15px;
 }
 </style>

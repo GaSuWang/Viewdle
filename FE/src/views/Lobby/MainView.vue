@@ -137,6 +137,9 @@ export default {
     function enterStudyroom(){
       store.dispatch('rhtModule/enterStudyroom', credentialsToenter)
     }
+    fucntion searchStudyroom(){
+      
+    }
     return {
     credentials, createStudyroom, credentialsToenter, enterStudyroom
     }

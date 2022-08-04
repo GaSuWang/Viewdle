@@ -2,7 +2,10 @@
 <template>
 <div class="BadgeList">
     <h1>뱃지</h1>
-    <h2>{{UserList.userMainBadge}}</h2>
+    <div v-for="item in BadgeList" :key="item.seq">
+      <img class="Badgeimg" :src="item.imgUrl">
+    </div>
+    
 
 </div>  
 </template>
@@ -13,11 +16,11 @@ import { computed } from 'vue';
 export default {
   setup(){
     const store = useStore()
-    const UserList = computed(
-      () => store.state.rhtModule.UserList
+    const BadgeList = computed(
+      () => store.state.rhtModule.BadgeList
     );
     return{
-      UserList
+      BadgeList
     }
   }
 }
@@ -30,5 +33,9 @@ export default {
   margin:20px;
   border-radius: 20px;
   box-shadow: 1px 1px 1px 1px gray;
+}
+.Badgeimg{
+  width:30px;
+  height: 30px;
 }
 </style>
