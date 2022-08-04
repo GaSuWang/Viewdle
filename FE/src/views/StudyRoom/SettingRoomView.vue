@@ -108,6 +108,12 @@ export default {
   created(){
     // this.$store.dispatch('rhtModule/getCoverLetter')
   },
+  data(){
+    return{
+      micOn: false,
+      cameraOn : false,
+    }
+  },
   computed:{
     ...mapGetters('lbhModule',[
       "CameraList",
@@ -122,6 +128,16 @@ export default {
     ])
   },
   methods:{
+    async micStatusSwitch() {
+      this.micOn = !this.micOn;
+      console.log(this.micOn)
+      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)
+    },
+    cameraStatusSwitch() {
+      this.cameraOn = !this.cameraOn;
+      console.log(this.cameraOn)
+      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.cameraOn)
+    },
     selectCL(cl){
       this.$store.commit('lbhModule/SET_CL_SELECTED', cl)
     },
@@ -154,8 +170,6 @@ export default {
     const micSelect = ref(false);
     const cameraSelect = ref(false);
     const clSelect = ref(false);
-    let micOn = ref(false);
-    let cameraOn = ref(false);
     function SRtoLB() {
       if (confirm("로비로 되돌아가시겠습니까?")) {
         router.push("main");
@@ -166,26 +180,14 @@ export default {
         router.push("waiting-room");
       }
     }
-    function micStatusSwitch() {
-      micOn.value = !micOn.value;
-      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', micOn.value)
-    }
-    function cameraStatusSwitch() {
-      cameraOn.value = !cameraOn.value;
-      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', cameraOn.value)
-    }
     return {
       // CameraList,
       // MicList,
       micSelect,
       cameraSelect,
       clSelect,
-      micOn,
-      cameraOn,
       SRtoLB,
       SRtoWR,
-      micStatusSwitch,
-      cameraStatusSwitch,
     };
   },
 };
