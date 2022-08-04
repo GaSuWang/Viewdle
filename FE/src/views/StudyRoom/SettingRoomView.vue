@@ -128,7 +128,7 @@ export default {
     ])
   },
   methods:{
-    async micStatusSwitch() {
+    micStatusSwitch() {
       this.micOn = !this.micOn;
       console.log(this.micOn)
       this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)

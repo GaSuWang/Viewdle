@@ -2,11 +2,11 @@
 <template>
   <div class="WaitingRoomView">
     <!-- <AuthorityPassModal/> -->
+
     <!-- 참가자 영상 나오는 부분 -->
-    <div class="WRSession" v-if="session">
+    <div class="WRSession">
       <!-- openvidu 간단히 -->
       <div id="wr-video-container" class="col-md-6">
-        <!-- vue 3.x에서는 click.native 없어짐 -->
         <user-video :stream-manager="publisher" />
         <user-video
           v-for="sub in subscribers"
@@ -17,7 +17,7 @@
     </div>
 
     <!-- 방장 기능 -->
-    <div class="superUser">
+    <div class="WRRightArea">
       <div id="session-controller">
         <input
           class="btn btn-large btn-danger"
@@ -35,7 +35,6 @@
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
-          @click="consoleWRParticipantList"
         >
           <span v-if="!EECnd">면접자 선택</span> 
           <span v-else-if="EECnd">면접자: {{EECnd}}</span> 
@@ -47,16 +46,50 @@
         </ul>
       </div>
       <!-- 스터디 종료 -->
-      <button class="btn btn-secondary"  v-if="userType === 'superUser'" @click="EndStudyConfirm">
-        스터디 종료
-      </button>
-      <button v-if="userType === 'superUser'" @click="superUserOutClick">나가기</button>
-      <button @click="startInterview"  v-if="userType === 'superUser'">면접 시작</button>
-      <button v-if="userType === 'user'" @click="userOutClick">나가기</button>
-      <button @click="muteMySelf">내 음성 끄고켜기</button>
-      <button @click="ShowMySelf">내 비디오 끄고켜기</button>
-      <button @click="joinSession">입장하기</button>
-      <button @click="switchUserType">{{userType}}</button>
+      <div class="endStudy" v-if="userType === 'superUser'">
+        <button class="btn btn-secondary" @click="EndStudyConfirm">
+          <span>스터디 종료</span> 
+        </button>
+      </div>
+
+      <div class="wr-to-lb super-user" v-if="userType === 'superUser'" >
+        <button @click="superUserOutClick">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="start-interview" v-if="userType === 'superUser'">
+        <button @click="startInterview"  >
+          <i class="bi bi-check-lg"></i>
+        </button>
+      </div>
+
+      <div class="user-out" v-if="userType === 'user'">
+        <button @click="userOutClick">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="mic-status">
+        <button @click="(muteMySelf) (switchMicStatus)" v-if="session">
+          <i v-if="micOn" class="bi bi-mic"></i>
+          <i v-else class="bi bi-mic-mute"></i>
+        </button>
+      </div>
+
+      <div class="camera-status">
+        <button @click="(ShowMySelf) (switchCameraStatus)" v-if="session">
+          <i v-if="cameraOn" class="bi bi-camera-video"></i>
+          <i v-else class="bi bi-camera-video-off"></i>
+        </button>
+      </div>
+
+      <!-- 삭제할 버튼들 -->
+      <div class="tempBtn"> 
+        <button @click="joinSession">입장하기</button>
+        <button @click="switchUserType">{{userType}}</button>
+      </div>
+
      </div>
   </div>
 </template>
@@ -68,7 +101,7 @@
 // 단 도커 설치되어 있어야 함
 
 // import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
 import { 
   // mapActions,
 mapGetters } from "vuex";
@@ -90,8 +123,6 @@ export default {
   },
   data() {
     return {
-      // OV: undefined,
-      // session: undefined,
       EECnd: '', //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
       LeaveWR: false,
       recordingId: '',
@@ -108,41 +139,60 @@ export default {
   },
   computed: {
     ...mapGetters("lbhModule", [
-      'userType',
+      //openvidu
       "publisher",
       "subscribers",
       "mySessionId",
       "myUserName",
-      "WRParticipantList",
-      "CameraSelected",
-      "MicSelected",
-      "CameraStatus",
-      "MicStatus",
-      "CLSelected",
-      "superUserOut",
-      "superUser",
       "OV",
       "session",
+
+      //기기
+      "CameraSelected",
+      "CameraStatus",
+      "cameraOn",
+      "MicSelected",
+      "MicStatus",
+      "micOn",
+
+      //유저 권한
+      'userType',
+      "superUserOut",
+      "superUser",
+
+      //기타
+      "WRParticipantList",
+      "CLSelected",
     ]),
   },
   setup() {
-    const router = useRouter();
-    function EndStudyConfirm() {
-      if (confirm("정말 스터디를 종료하시겠습니까?")) {
-        router.push("/main");
-      }
-    }
-    return {
-      EndStudyConfirm,
-    };
   },
   methods: {
+    EndStudyConfirm() {
+      if (confirm("정말 스터디를 종료하시겠습니까?")) {
+        this.$router.push("/main");
+      }
+    },
+    switchMicStatus() { //마이크 On/Off
+      this.micOn = !this.micOn;
+      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)
+    },
+    switchCameraStatus() { //카메라 On/Off
+      this.cameraOn = !this.cameraOn;
+      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.cameraOn)
+    },
     superUserOutClick(){
       if(this.userType === 'superUser'){
         this.$router.push
       }
     },
     userOutClick(){
+      if(this.userType === 'user'){
+        if(confirm('정말 이 방에서 나가시겠습니까?')){
+          this.leaveSession()
+          this.$router.push('/main')
+        }
+      }
     },
     switchUserType(){
       console.log('why not ')
@@ -171,9 +221,6 @@ export default {
       .catch(error => {
           console.error(error);
       });
-    },
-    consoleWRParticipantList() {
-      console.log(this.WRParticipantList);
     },
     muteMySelf() {
       if (this.publisher.stream.audioActive) {
@@ -342,20 +389,13 @@ export default {
     },
 
     leaveSession() {
-      this.session.signal({
-        data: '',
-        to: [],
-        type: ''
-      })
+      // this.session.signal({
+      //   data: '',
+      //   to: [],
+      //   type: ''
+      // })
       // --- Leave the session by calling 'disconnect' method over the Session object ---
       if (this.session) this.session.disconnect();
-
-      // this.session = undefined;
-      // this.mainStreamManager = undefined;
-      // this.publisher = undefined;
-      // this.subscribers = [];
-      // this.OV = undefined;
-  
       // this.superUser = {};
       // this.superUserOut = false;
       // this.AMP
@@ -429,12 +469,10 @@ export default {
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
     createToken(sessionId) {
-      console.log('createToken이 시작되긴 했음')
       return new Promise((resolve, reject) => {
         axios
           .post(
             `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
-            {},
             {
               auth: {
                 username: "OPENVIDUAPP",
@@ -482,10 +520,21 @@ export default {
   flex-wrap: wrap;
 }
 
-.superUser {
-  width: 20%;
-  margin: 0;
-  flex-direction: row;
+.WRRightArea {
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  width: 30%;
+  height: 100%;
+  border-radius: 20px;
+  background-color: #edf0f6;
+}
+
+.WRRightArea button{
+  border: none;
+  border-radius: 10%;
+  width: 20%;
+  aspect-ratio: 2/1;
+  background-color: rgb(181, 180, 180);
 }
 </style>
