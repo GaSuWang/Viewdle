@@ -1,6 +1,7 @@
 import { createLogger, createStore } from "vuex";
 import lbhModule from "./modules/lbhModule";
 import rhtModule from "./modules/rhtModule";
+import ov from "./modules/ov";
 // import rhtModule from "@/store/modules/rhtModule";
 
 // // state는 기존대로state.moduleName.stateName으로호출
@@ -11,6 +12,6 @@ import rhtModule from "./modules/rhtModule";
 
 export default createStore({
   plugins: [createLogger()], //vuex store의 모든 행위를 console log해줌
-  modules: { lbhModule, rhtModule },
+  modules: { lbhModule, rhtModule, ov },
   // modules: { lbhModule, rhtModule },
 });
