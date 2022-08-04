@@ -76,10 +76,10 @@
                 <input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /> 
               </div> 
               <div class="modal-footer">
-                <button class="btn btn-secondary">생성</button>
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">생성</button>
               </div>
               </form>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
         </div> 

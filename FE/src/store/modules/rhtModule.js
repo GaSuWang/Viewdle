@@ -364,7 +364,7 @@ const actions= {
     },
     //자소서 수정하기
     updateCoverLetter({dispatch, getters}, credentialsToedit) {
-      console.log("자소서수정하기야 안녕?")
+      console.log("자소서수정하기야 안녕? 여기까진 괜찮네?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'put',
@@ -373,11 +373,11 @@ const actions= {
       })
       .then(() => {
         dispatch('getCoverLetter')
-        alert('자소서가 수정되었습니다.')
+        alert('자소서가 수정되었습니다 됐다^^')
       })
       .catch(err => {
         console.error(err.response)
-        alert('실패.')
+        alert('실패 ㅅㅂ....')
       })
     },
     //스터디룸 정보 얻어오기
