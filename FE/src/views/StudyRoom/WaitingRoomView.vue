@@ -97,7 +97,7 @@
 <script>
 // 여기서 영상 띄우는 법
 // npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
+// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET2 openvidu/openvidu-server-kms:2.22.0
 // 단 도커 설치되어 있어야 함
 
 // import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
@@ -111,7 +111,7 @@ import UserVideo from "@/components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-const OPENVIDU_SERVER_SECRET = "MY_SECRET";
+const OPENVIDU_SERVER_SECRET = "MY_SECRET2";
 
 export default {
   name: "WaitingRoomView",
@@ -422,8 +422,11 @@ export default {
 
     getToken(mySessionId) {
       console.log('getToken이 시작되긴 했음', mySessionId)
-      return this.createSession(mySessionId).then((sessionId) =>
-        this.createToken(sessionId)
+      return this.createSession(mySessionId).then((sessionId) =>{
+        console.log('createSession은 잘 됨')
+        return this.createToken(sessionId)
+
+        }
       );
     },
 
@@ -448,6 +451,7 @@ export default {
           .then((response) => response.data)
           .then((data) => resolve(data.id))
           .catch((error) => {
+            console.log('createSession에서 막힘')
             if (error.response.status === 409) {
               resolve(sessionId);
             } else {
@@ -469,10 +473,11 @@ export default {
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
     createToken(sessionId) {
+      console.log('createToken까지 왔나?')
       return new Promise((resolve, reject) => {
         axios
           .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,{},
             {
               auth: {
                 username: "OPENVIDUAPP",
@@ -482,9 +487,25 @@ export default {
           )
           .then((response) => response.data)
           .then((data) => resolve(data.token))
-          .catch((error) => reject(error.response));
+          .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
       });
     },
+
+    // // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
+		// createToken (sessionId) {
+		// 	return new Promise((resolve, reject) => {
+		// 		axios
+		// 			.post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`, {}, {
+		// 				auth: {
+		// 					username: 'OPENVIDUAPP',
+		// 					password: OPENVIDU_SERVER_SECRET,
+		// 				},
+		// 			})
+		// 			.then(response => response.data)
+		// 			.then(data => resolve(data.token))
+		// 			.catch(error => reject(error.response));
+		// 	});
+		// },
   }
 }
 </script>
