@@ -490,22 +490,6 @@ export default {
           .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
       });
     },
-
-    // // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
-		// createToken (sessionId) {
-		// 	return new Promise((resolve, reject) => {
-		// 		axios
-		// 			.post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`, {}, {
-		// 				auth: {
-		// 					username: 'OPENVIDUAPP',
-		// 					password: OPENVIDU_SERVER_SECRET,
-		// 				},
-		// 			})
-		// 			.then(response => response.data)
-		// 			.then(data => resolve(data.token))
-		// 			.catch(error => reject(error.response));
-		// 	});
-		// },
   }
 }
 </script>
