@@ -85,4 +85,9 @@ public class StudyroomServiceImpl implements StudyroomService{
         return studyroomRepositorySupport.findStudyroomByWhere(order, type, privateYN, FullYN);
     }
 
+    @Override
+    public List<RoomListRes> searchRoomList(String keyword) {
+        return studyroomRepositorySupport.searchStudyroom(keyword);
+    }
+
 }
