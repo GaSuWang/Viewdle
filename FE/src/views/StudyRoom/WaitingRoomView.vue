@@ -515,7 +515,7 @@ export default {
           method : 'post',
           data : {
             session: this.session.sessionId,
-            outputMode: "COMPOSED",
+            outputMode: "INDIVIDUAL",
             hasAudio: true,
             hasVideo: true
           },          
