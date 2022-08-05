@@ -72,14 +72,14 @@
 
       <div class="mic-status">
         <button @click="(muteMySelf) (switchMicStatus)" v-if="session">
-          <i v-if="micOn" class="bi bi-mic"></i>
+          <i v-if="MicStatus" class="bi bi-mic"></i>
           <i v-else class="bi bi-mic-mute"></i>
         </button>
       </div>
 
       <div class="camera-status">
         <button @click="(ShowMySelf) (switchCameraStatus)" v-if="session">
-          <i v-if="cameraOn" class="bi bi-camera-video"></i>
+          <i v-if="CameraStatus" class="bi bi-camera-video"></i>
           <i v-else class="bi bi-camera-video-off"></i>
         </button>
       </div>
@@ -90,6 +90,18 @@
         <button @click="switchUserType">{{userType}}</button>
       </div>
 
+      <!-- 녹화 테스트용 버튼 -->
+      <!-- 백하고 연동하게 될거라서 API만 필요하지 버튼은 필요없습니다! 그냥 결과값 확인하는 용도로 사용하세요!
+      아마 녹화 종료하고 필요한 값 들 전달하면 될 거 같습니다. -->
+      <!-- 입장 후 3초 후 녹화 시작으로, 면접 종료하면 녹화도 stop되게 연결하면 될 거 같아요! -->
+      <div class="tempBtn"> 
+        <button @click="startRecording">녹화 시작</button>
+        <button @click="stopRecording">녹화 종료</button>
+        <button @click="getRecording">녹화 하나</button>
+        <button @click="getRecordings">녹화 여러개</button>    
+        <button @click="deleteRecording">녹화 삭제</button>
+      </div>
+
      </div>
   </div>
 </template>
@@ -97,7 +109,7 @@
 <script>
 // 여기서 영상 띄우는 법
 // npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
+// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET2 openvidu/openvidu-server-kms:2.22.0
 // 단 도커 설치되어 있어야 함
 
 // import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
@@ -125,7 +137,9 @@ export default {
     return {
       EECnd: '', //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
       LeaveWR: false,
-      recordingId: '',
+
+      recordingObject : null,
+      recordingObjects : null
     };
   },
   watcher:{
@@ -150,10 +164,10 @@ export default {
       //기기
       "CameraSelected",
       "CameraStatus",
-      "cameraOn",
+      "CameraStatus",
       "MicSelected",
       "MicStatus",
-      "micOn",
+      "MicStatus",
 
       //유저 권한
       'userType',
@@ -174,12 +188,12 @@ export default {
       }
     },
     switchMicStatus() { //마이크 On/Off
-      this.micOn = !this.micOn;
-      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)
+      this.MicStatus = !this.MicStatus;
+      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.MicStatus)
     },
     switchCameraStatus() { //카메라 On/Off
-      this.cameraOn = !this.cameraOn;
-      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.cameraOn)
+      this.CameraStatus = !this.CameraStatus;
+      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.CameraStatus)
     },
     superUserOutClick(){
       if(this.userType === 'superUser'){
@@ -422,8 +436,11 @@ export default {
 
     getToken(mySessionId) {
       console.log('getToken이 시작되긴 했음', mySessionId)
-      return this.createSession(mySessionId).then((sessionId) =>
-        this.createToken(sessionId)
+      return this.createSession(mySessionId).then((sessionId) =>{
+        console.log('createSession은 잘 됨')
+        return this.createToken(sessionId)
+
+        }
       );
     },
 
@@ -448,6 +465,7 @@ export default {
           .then((response) => response.data)
           .then((data) => resolve(data.id))
           .catch((error) => {
+            console.log('createSession에서 막힘')
             if (error.response.status === 409) {
               resolve(sessionId);
             } else {
@@ -469,10 +487,11 @@ export default {
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
     createToken(sessionId) {
+      console.log('createToken까지 왔나?')
       return new Promise((resolve, reject) => {
         axios
           .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,{},
             {
               auth: {
                 username: "OPENVIDUAPP",
@@ -482,9 +501,105 @@ export default {
           )
           .then((response) => response.data)
           .then((data) => resolve(data.token))
-          .catch((error) => reject(error.response));
+          .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
       });
     },
+
+    // 녹화 funcion
+    startRecording() {
+      console.log(this.session)
+
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/start`,
+          method : 'post',
+          data : {
+            session: this.session.sessionId,
+            outputMode: "INDIVIDUAL",
+            hasAudio: true,
+            hasVideo: true
+          },          
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          this.recordingObject = res.data
+        })
+      })
+    },
+
+    stopRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${this.recordingObject.id}`,
+          method : 'post',
+          data : {
+            session: this.session.sessionId,
+            outputMode: "COMPOSED",
+            hasAudio: true,
+            hasVideo: true
+          },          
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`stop recording id ${res.data.id}`)
+        })
+      })
+    },
+
+    deleteRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
+          method : 'delete',       
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          if (res.status == "204") {
+            console.log(`success delete recording id ${this.recordingObject.id}`)
+          } else {
+            console.log(`fail delete recording id ${this.recordingObject.id}, status code ${res.status}`)
+          }
+        })
+      })
+    },
+
+    getRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
+          method : 'get',        
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`get recording id ${res.data.id}`)
+          this.recordingObject = res
+        })
+      })
+    },
+
+    getRecordings() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings`,
+          method : 'get',     
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`get recordings ${JSON.stringify(res.data)}`)
+          this.recordingObjects = res.data
+        })
+      })
+    }
   }
 }
 </script>
