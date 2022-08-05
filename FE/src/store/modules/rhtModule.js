@@ -5,7 +5,7 @@ const state= {
     // 회원가입
     token: localStorage.getItem('token') || '',
     UserList:{"userEmail":"seoktak123@gmail.com", "userMainBadge":"https://w7.pngwing.com/pngs/445/743/png-transparent-badge-gold-badge-label-rectangle-pin-thumbnail.png", "userName":"연딱콩", "userProfileImage":"https://lh3.googleusercontent.com/a/AItbvmncW_yp0Hpoha3SrYuE1ElnJU6SX91-tnBZpQco=s96-c", "userSeq":1, "userTotaltime": "13", "userTotalVideo": 5},
-    HistoryList:{"userTotalTime":"13", "userTotalViedo":5, "usingDates":["2022:07:27","2022:07:26","2022:07:25"]},
+    HistoryList:{"userTotalTime":"13", "userTotalVideo":5, "usingDates":["2022:08:27","2022:08:26","2022:08:25"]},
     isLoggedIn: true,
     emailcode:{},
     pwcode: false,
@@ -576,6 +576,26 @@ const actions= {
       .then(res => {
         commit('SET_REPLAY_LIST', res.data)
         alert('리플레이를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //뱃지 설정
+    setBadge
+    ({dispatch, getters}, credentialsToset) {
+      console.log("메인뱃지설정아 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users/badge', // 비번수정 api 
+        method:'put',
+        data: credentialsToset,
+        headers: {Authorization: getters.authHeader },
+      })
+      .then(() => {
+        dispatch('fetchCurrentUser')
+        alert('메인뱃지를 설정했습니다.')
       }
       )
       .catch(err => {

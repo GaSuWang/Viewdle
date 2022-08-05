@@ -25,10 +25,10 @@
         </div>
         <div class="Mycard-body">
           <UsageTrend/>
-          <BadgeList/>
+          <GrassShow/>
         </div>
         <div class="card-body2">
-          <GrassShow/>
+          <BadgeList/>
         </div>
         <div class="card-footer">
           <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
@@ -225,6 +225,7 @@ export default {
   margin: 20px;
 }
 .card-body2{
+  width: 98%;
   height: 30%;
   display: flex;
   margin: 20px;
