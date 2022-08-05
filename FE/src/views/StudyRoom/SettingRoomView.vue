@@ -11,11 +11,13 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          마이크 선택
+          마이크 
+          <span v-if="Object.keys(MicSelected).length === 0">선택</span> 
+          <span v-else>선택됨 {{MicSelected.label}} {{typeof(MicSelected)}} </span> 
         </button>
         <ul class="dropdown-menu">
           <li v-for="mic in MicList" :key="mic.deviceId">
-            {{mic.label}}
+            <span @click="selectMic(mic)">{{mic.label}}</span> 
             <!-- <mic-device :mic="mic"></mic-device> -->
           </li>
           
@@ -30,11 +32,13 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          카메라 선택
+          카메라
+          <span v-if="Object.keys(CameraSelected).length === 0">선택</span> 
+          <span v-else>선택됨 {{CameraSelected.label}} </span> 
         </button>
         <ul class="dropdown-menu">
           <li v-for="camera in CameraList" :key="camera.deviceId">
-            {{camera.label}}
+            <span @click="selectCamera(camera)">{{camera.label}}</span>
           <!-- <camera-device :camera="camera"></camera-device> -->
           </li>
         </ul>
@@ -51,9 +55,9 @@
           자소서 선택
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">자소서1</a></li>
-          <li><a class="dropdown-item" href="#">자소서2</a></li>
-          <li><a class="dropdown-item" href="#">자소서3</a></li>
+          <li v-for="cl in CoverLetterList" :key="cl.coverLetterSeq">
+            <span @clicked="selectCL(cl)">{{cl.coverLetterTitle}}</span>
+          </li>
         </ul>
       </div>
     </div>
@@ -78,7 +82,7 @@
         <i v-else class="bi bi-mic-mute"></i>
       </button>
       <!-- 유저 카메라 온오프 버튼 -->
-      <button class="CameraSTatus" @click="cameraStatusSwitch">
+      <button class="CameraStatus" @click="cameraStatusSwitch">
         <i v-if="cameraOn" class="bi bi-camera-video"></i>
         <i v-else class="bi bi-camera-video-off"></i>
       </button>
@@ -94,15 +98,56 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
-import {useStore} from 'vuex';
+import { ref } from "vue";
+import {mapGetters, useStore} from 'vuex';
 import { useRouter } from "vue-router";
 import { OpenVidu } from 'openvidu-browser';
-// import CameraDevice from '@/components/StudyRoom/CameraDevice.vue'
-// import MicDevice from '@/components/StudyRoom/MicDevice.vue'
+
 export default {
   name: "SettingRoomView",
-  // components:{CameraDevice, MicDevice},
+  created(){
+    // this.$store.dispatch('rhtModule/getCoverLetter')
+  },
+  data(){
+    return{
+      micOn: false,
+      cameraOn : false,
+    }
+  },
+  computed:{
+    ...mapGetters('lbhModule',[
+      "CameraList",
+      "CameraSelected",
+      "CameraStatus",
+      "MicList",
+      "MicSelected",
+      "MicStatus",
+    ]),
+    ...mapGetters('rhtModule',[
+      "CoverLetterList"
+    ])
+  },
+  methods:{
+    micStatusSwitch() {
+      this.micOn = !this.micOn;
+      console.log(this.micOn)
+      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)
+    },
+    cameraStatusSwitch() {
+      this.cameraOn = !this.cameraOn;
+      console.log(this.cameraOn)
+      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.cameraOn)
+    },
+    selectCL(cl){
+      this.$store.commit('lbhModule/SET_CL_SELECTED', cl)
+    },
+    selectCamera(camera){
+      this.$store.commit('lbhModule/SET_CAMERA', camera)
+    },
+    selectMic(mic){
+      this.$store.commit('lbhModule/SET_MIC', mic)
+    },
+  },
   setup() {
     const store = useStore();
 
@@ -118,41 +163,13 @@ export default {
     } 
     findDevices()
 
-    const CameraList = computed(()=>store.getters['lbhModule/CameraList'])
-    const MicList = computed(()=>store.getters['lbhModule/MicList'])
-
-  //   let publisher = OV.initPublisher(undefined, {
-  //     audioSource: undefined, // The source of audio. If undefined default microphone
-  //     videoSource: undefined, // The source of video. If undefined default webcam
-  //     publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-  //     publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-  //     resolution: '640x480',  // The resolution of your video
-  //     frameRate: 30,			// The frame rate of your video
-  //     insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-  //     mirror: false       	// Whether to mirror your local video or not
-  //   });
-
-  // // 'myPublisher' a Publisher object obtained through 'OpenVidu.initPublisher()' method
-  // // 'myTrack' a MediaStreamTrack object
-  // // 'properties' a PublisherProperties object https://docs.openvidu.io/en/stable/api/openvidu-browser/interfaces/PublisherProperties.html
-
-  // var mediaStream = await OV.getUserMedia(properties);
-
-  // // Getting the video track from mediaStream
-  // var myTrack = mediaStream.getVideoTracks()[0];
-
-  // // Replacing video track
-  // myPublisher.replaceTrack(myTrack)
-  //     .then(() => console.log('New track has been published'))
-  //     .catch(error => console.error('Error replacing track', error));
-
+    // const CameraList = computed(()=>store.getters['lbhModule/CameraList'])
+    // const MicList = computed(()=>store.getters['lbhModule/MicList'])
 
     const router = useRouter();
     const micSelect = ref(false);
     const cameraSelect = ref(false);
     const clSelect = ref(false);
-    let micOn = ref(false);
-    let cameraOn = ref(false);
     function SRtoLB() {
       if (confirm("로비로 되돌아가시겠습니까?")) {
         router.push("main");
@@ -163,24 +180,14 @@ export default {
         router.push("waiting-room");
       }
     }
-    function micStatusSwitch() {
-      micOn.value = !micOn.value;
-    }
-    function cameraStatusSwitch() {
-      cameraOn.value = !cameraOn.value;
-    }
     return {
-      CameraList,
-      MicList,
+      // CameraList,
+      // MicList,
       micSelect,
       cameraSelect,
       clSelect,
-      micOn,
-      cameraOn,
       SRtoLB,
       SRtoWR,
-      micStatusSwitch,
-      cameraStatusSwitch,
     };
   },
 };
@@ -225,13 +232,6 @@ export default {
   border-bottom: 5px rgb(210, 210, 210) solid;
 }
 
-/* .SettingRoomHeader > div:nth-child(1) > ul>li,
-.SettingRoomHeader > div:nth-child(2) > ul>li,
-.SettingRoomHeader > div:nth-child(3) > ul>li{
-  padding: 0;
-  border-bottom: 5px rgb(210, 210, 210) solid;
-} */
-
 .SettingRoomContent {
   position: absolute;
   top: 10%;
@@ -239,7 +239,6 @@ export default {
   width: 100%;
   height: 80%;
   background-color: #B5BAC9;
-  /* opacity: 30%; */
 }
 
 .SettingRoomFooter {
@@ -264,8 +263,6 @@ export default {
 .SettingRoomFooter > button,
 .toLBBtn,
 .toWRBtn {
-  /* border: none;
-  border-radius: 0.5rem; */
   border: none;
   display: block;
   background: linear-gradient(#f7f7f7, #e7e7e7);
@@ -318,75 +315,4 @@ export default {
   color: #555;
   background: #f5f5f5;
 }
-
-/* 돌아가기, 대기실 버튼 애니메이션 */
-/* .toLBBtn {
-  color: #fff;
-  background: none;
-  padding: 0;
-}
-
-.toLBBtn .toLBBtnDiv {
-  top: 0;
-  left: 0;
-  position: absolute;
-  width: 7%;
-  aspect-ratio: 5/2;
-  background: #e7e7e7;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.1, 0, 0.3, 1);
-  display: flext;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-.toLBBtn:hover .toLBBtnDiv {
-  transform: scale3d(1.2, 1.2, 1);
-}
-
-.toLBBtn .toLBBtnDiv::before,
-.toLBBtn .toLBBtnDiv::after {
-  content: "";
-  position: absolute;
-  background: #000;
-}
-
-.toLBBtn .toLBBtnDiv::before {
-  width: 110%;
-  height: 0;
-  padding-bottom: 110%;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1);
-}
-
-.toLBBtn:hover .toLBBtnDiv::before {
-  transition: transform 0.4s cubic-bezier(0.1, 0, 0.3, 1);
-  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
-}
-
-.toLBBtn .toLBBtnDiv::after {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.toLBBtn:hover .toLBBtnDiv::after {
-  opacity: 1;
-  transition-duration: 0.01s;
-  transition-delay: 0.3s;
-}
-
-.toLBBtn.toLBBtnDiv a {
-  display: block;
-  position: relative;
-  padding: 1.5rem 3rem;
-  mix-blend-mode: difference;
-} */
 </style>

@@ -1,19 +1,21 @@
 // 임현탁
 <template>
   <div class="Lobbyboss">
-  <NavBar/>
+  <NavBar class="NavView"/>
   <div class="MainView">
-      <p>Main</p>
+      <p class="pagetitle">Main</p>
       <div class="MainTop">
         <div class="MainTop1">
           <!-- 서치바 -->
+          <form @submit.prevent="searchStudyroom(credentialsTosearch)">
           <div class="Searchbar">
-            <div class="input-group">
-              <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-              <button type="button" class="btn btn-outline-primary">search</button>
-            </div>
+              <div class="input-group">
+                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <button class="btn btn-outline-primary">search</button>
+              </div>
           </div>
-        </div>
+          </form>
+          </div>
       <!-- 필터링 -->
         <div class="MainTop2">
           <div class="MainTop2item">
@@ -21,9 +23,10 @@
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               필터
             </button>
+            
             <ul class="dropdown-menu">
-              <li>풀방여부</li>
-              <li>공개방여부</li>
+              <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="N">공개방</li>
+              <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="Y">비공개방</li>
             </ul>
           </div>
           </div>
@@ -34,8 +37,8 @@
               정렬
             </button>
             <ul class="dropdown-menu">
-              <li>최신순</li> 
-              <li>오래된순</li>
+              <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="DESC">최신순</li> 
+              <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="ASC">오래된순</li>
             </ul>
           </div>
           </div>
@@ -50,49 +53,50 @@
       <hr>
       <div class="MainBody">
           <MainCard/>
-          <MainCard/>
       </div>
     </div>
         <div class="modal fade" id="roommaker" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-              <form @submit.prevent="">
               <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">방생성</h5>
               </div>
+              <form @submit.prevent="createStudyroom(credentials)">
               <div class="modal-body">
-                <input type="Text" class="form-control form-control-lg" placeholder="Title" /> 
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  정렬
-                </button>
-                <ul class="dropdown-menu">
-                  <li>유쾌mode</li>
-                  <li>진지mode</li>
-                </ul>
-                <input type="Text" class="form-control form-control-lg" placeholder="Password" /> 
+                <input type="Text" class="form-control form-control-lg" v-model="credentials.title" placeholder="Title" /> 
+                <div>
+                  <p>Play Mode : 1  /  Study Mode : 2</p>
+                  <input type="number" min='1' max='2' v-model.number="credentials.type">
+                </div>
+                <div>
+                  <p>최소 : 2   /   최대 : 5</p>
+                <input type="number" min='2' max='5' v-model.number="credentials.limit">
+                </div>
+                비밀방생성<input type="checkbox" v-model="credentials.privateYN" true-value="Y" false-value="N"/>
+                <input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /> 
               </div> 
               <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-secondary">생성</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">생성</button>
               </div>
               </form>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
         </div> 
     <div class="modal fade" id="enterroom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <form @submit.prevent="">
+          <form @submit.prevent="enterStudyroom(credentialsToenter)">
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">방입장</h5>
           </div>
           <div class="modal-body">
-            <input type="Text" class="form-control form-control-lg" placeholder="Title" /> 
-            <input type="Text" class="form-control form-control-lg" placeholder="Password" /> 
+            <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control form-control-lg" placeholder="Password" />
+            <input type="Text" v-model="credentialsToenter.roomSeq" class="form-control form-control-lg" placeholder="Room code" /> 
           </div> 
           <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button class="btn btn-secondary">입장</button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
           </form>
         </div>
@@ -109,31 +113,92 @@
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
 import MainCard from '@/components/Lobby/MainCard.vue'
+import { useStore } from 'vuex'
+import { reactive } from "vue";
 export default {
   components:{
     NavBar,
     MainCard
-  }
+  },
+   setup() {
+    const credentials = reactive({
+      "type":'',
+      "limit":'',
+      "password":"",
+      "privateYN":"",
+      "title":"",
+      "commonSeq":2
+    })
+    const credentialsToenter = reactive({
+      "roomPassword" : "",
+      "roomSeq": "",
+    })
+    const credentialsTosearch = reactive({
+      keyword:""
+    })
+    const credentialsToFilter= reactive({
+      privateYN: "",
+    })
+      const credentialsToSort= reactive({
+      order: "",
+    })
+    const store = useStore()
+    function createStudyroom(){
+      store.dispatch('rhtModule/createStudyroom', credentials)
+    }
+    function enterStudyroom(){
+      store.dispatch('rhtModule/enterStudyroom', credentialsToenter)
+    }
+    function searchStudyroom(){
+      store.dispatch('rhtModule/searchStudyroom', credentialsTosearch)
+    }
+    function filterStudyRoom(){
+      store.dispatch('rhtModule/filterStudyRoom', credentialsToFilter)
+    }
+     function sortStudyRoom(){
+      store.dispatch('rhtModule/sortStudyRoom', credentialsToSort)
+    }
+    return {
+    credentials, createStudyroom, credentialsToenter, enterStudyroom, credentialsTosearch, searchStudyroom, credentialsToFilter,filterStudyRoom, credentialsToSort, sortStudyRoom
+   }
+}
 }
 </script>
 
 <style>
 .Lobbyboss{
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.NavView{
   height: 100%;
+  width: 250px;
 }
 .MainView{
-  position:fixed;
   top:50px;
   left: 300px;
   height: 100%;
   width: 80%;
-  overflow:scroll;
 }
 .MainTop{
+  background: white;
+  border-radius: 20px;
+  width:98%;
+  width: 98%;
+  height: 80px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
+}
+.pagetitle{
+  margin-top: 20px;
 }
 .MainTop1{
   display: flex;
@@ -148,15 +213,19 @@ export default {
   margin: 0 20px;
 }
 .MainBody{
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
+  justify-content: space-around;
   width: 98%;
   height: 80%;
   background: white;
   border-radius: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: space-around;
   padding: 20px;
   overflow: scroll;
+}
+.Searchbar{
+  margin-left:30px;
 }
 
 </style>

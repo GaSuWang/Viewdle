@@ -2,11 +2,26 @@
   <section class="test">
     <div v-on:click="GoogleLoginBtn"><i class="fab fa-google"></i></div>
     <div id="my-signin2" style="display: none"></div>
+    <!-- <a href="http://localhost:8081/login/oauth2/code/google"> 현탁이가만든 버튼 </a> -->
+    <!-- <div v-on:click="GoogleLoginBtn">현탁이가만든 버튼</div> -->
   </section>
 </template>
 
 <script>
+// import { useStore } from 'vuex'
+// import { useRouter } from "vue-router"; 
 export default {
+    // setup(){
+    //     const store = useStore()
+    //     const router = useRouter()
+    //     function GoogleLoginBtn(){
+    //         store.dispatch('rhtModule/googleLoginButton')
+    //         router.push({name:"main"})
+    //     }
+    // return {
+    //   GoogleLoginBtn
+    // }
+    // }
 name: "GoogleLoginView",
   methods: {
     GoogleLoginBtn:function(){
@@ -32,10 +47,12 @@ name: "GoogleLoginView",
 
     },
     async GoogleLoginSuccess(googleUser) {
-      const googleEmail = googleUser.getBasicProfile().getEmail();
-      if (googleEmail !== 'undefined') {
-        console.log(googleEmail);
-      }
+      const profile = googleUser.getBasicProfile()
+      console.log('ID Token: ', googleUser.getAuthResponse().id_token); // 실제 토큰
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail());
     },
     //구글 로그인 콜백함수 (실패)
     GoogleLoginFailure(error) {

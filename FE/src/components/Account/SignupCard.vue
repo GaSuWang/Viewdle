@@ -38,6 +38,7 @@
           </div>
 
           <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
+          <router-link to="/">뒤로가기</router-link>
         </form>
       </div>
       </div>
@@ -123,19 +124,25 @@ export default {
 
 <style>
 .signup{
-  width:50%
+  width: 90%;
+  height: 90%;
+  background : rgb(255,255,255,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .signupbody{
   width: 100%;
-  height: 100vh;
+  height: 70%;
   display: flex;
   align-items: center;
   justify-content: center;
 
 }
 .signupcard{
-  width: 100%;
-  height: 600px;
+  width: 80%;
+  height: 100%;
   background: white;
   border-radius: 20px;
   display: flex;

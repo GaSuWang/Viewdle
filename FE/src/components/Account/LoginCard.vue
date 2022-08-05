@@ -30,6 +30,7 @@
 
 <script>
 import { useStore } from 'vuex'
+import axios from 'axios'
 import { reactive } from 'vue'
 import { useRouter } from "vue-router";
 import GoogleLogin from "@/components/Account/GoogleLogin.vue"
@@ -47,65 +48,62 @@ export default {
     const store = useStore()
     const router = useRouter()
      
-    function login(){
-      store.dispatch('rhtModule/login', credentials)
-      router.push('/main')
+    // function login(){
+    //   store.dispatch('rhtModule/login', credentials)
+    //   router.push('/main')
+    // }
+    function login(credentials) {
+
+      console.log("로그인아 안녕?")
+      axios({
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
+        method: 'post',
+        data: credentials
+      })
+        .then(res => {
+          console.log("해윙")
+          console.log(res)
+          const token = res.data.accessToken
+          store.dispatch('rhtModule/saveToken', token)
+          store.dispatch('rhtModule/fetchCurrentUser')
+          store.dispatch('rhtModule/fetchHistories')
+          store.dispatch('rhtModule/getBadge')
+          store.dispatch('rhtModule/getCoverLetter')
+          store.dispatch('rhtModule/getStudyRoom')
+          store.dispatch('rhtModule/getReplay')
+          router.push('/main')
+        })
+        .catch(err => {
+          console.error(err)
+          alert("이메일 및 비밀번호를 확인하세요")
+        })
     }
+      
     return {
       login, credentials
     }
   }
 }
 
-// name: "GoogleLoginView",
-//   methods: {
-//     GoogleLoginBtn:function(){
-//       var self = this;
-
-//       window.gapi.signin2.render('my-signin2', {
-//         scope: 'profile email',
-//         width: 240,
-//         height: 50,
-//         longtitle: true,
-//         theme: 'dark',
-//         onsuccess: this.GoogleLoginSuccess,
-//         onfailure: this.GoogleLoginFailure,
-//       });
-
-//       setTimeout(function () {
-//         if (!self.googleLoginCheck) {
-//           const auth = window.gapi.auth2.getAuthInstance();
-//           auth.isSignedIn.get();
-//           document.querySelector('.abcRioButton').click();
-//         }
-//       }, 1500)
-
-//     },
-//     async GoogleLoginSuccess(googleUser) {
-//       const googleEmail = googleUser.getBasicProfile().getEmail();
-//       if (googleEmail !== 'undefined') {
-//         console.log(googleEmail);
-//       }
-//     },
-//     //구글 로그인 콜백함수 (실패)
-//     GoogleLoginFailure(error) {
-//       console.log(error);
-//     },
-//   }
-
 </script>
 
 <style>
+.loginview{
+  height: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 .login {
-  width: 100%;
-  height: 600px;
+  width: 80%;
+  height: 100%;
   background: white;
   border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
 }
 .googleloginbtn{
   padding: 20px;

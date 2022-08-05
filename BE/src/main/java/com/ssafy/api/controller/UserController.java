@@ -41,6 +41,7 @@ import java.util.List;
 @Api(value = "유저 API", tags = {"User"})
 @RestController
 @RequestMapping("/api/v1/users")
+//@CrossOrigin("*")
 public class UserController {
 	
 	@Autowired

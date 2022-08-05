@@ -3,6 +3,8 @@
 <div class="sidebarall">
     <div class="sidebar">
     <header>My app</header>
+    <div class="sidebarbody">
+    <MiniProfile class="SidebarMiniProfile"/>
     <ul>
         <li><router-link to="/main"><i class="fas fa-qrcode"></i>Main</router-link></li>
         <li><router-link to="/mypage"><i class="fas fa-user"></i>MyPage</router-link></li>
@@ -11,17 +13,20 @@
         <li><router-link to="/"><i class="fas fa-sign-out-alt"></i>Logout</router-link></li>
     </ul>
     </div>
+    </div>
 </div>
     
 </template>
 
 <script>
+import MiniProfile from '@/components/Lobby/MiniProfile.vue'
 import { useStore } from 'vuex'
-
 export default {
   name: 'NavBar',
+  components:{
+    MiniProfile
+  },
   setup () {
-
     const store = useStore()
     function logout(){
       store.dispatch('rhtModule/logout')
@@ -41,13 +46,12 @@ export default {
     text-decoration: none;
 }
 .sidebar{
-    position:fixed;
-    left: 0;
-    width:250px;
     height:100%;
-    background: #042331
+    background: #042331;
+    border-radius: 20px;
 }
 .sidebar header{
+    border-radius: 20px;
     font-size:40px;
     color: white;
     text-align: center;
@@ -84,5 +88,8 @@ button{
     background: #042331;
     color: white;
     border: #042331;
+}
+.SidebarMiniProfile{
+
 }
 </style>

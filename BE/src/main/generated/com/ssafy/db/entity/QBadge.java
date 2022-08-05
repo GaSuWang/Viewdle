@@ -26,6 +26,8 @@ public class QBadge extends EntityPathBase<Badge> {
 
     public final QCommon common;
 
+    public final QUser user;
+
     public QBadge(String variable) {
         this(Badge.class, forVariable(variable), INITS);
     }
@@ -45,6 +47,7 @@ public class QBadge extends EntityPathBase<Badge> {
     public QBadge(Class<? extends Badge> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.common = inits.isInitialized("common") ? new QCommon(forProperty("common")) : null;
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 
 }

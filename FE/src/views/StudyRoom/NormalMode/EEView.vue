@@ -6,10 +6,11 @@
     <!-- 면접관 영상 구역 -->
     <div class="EELeft">
       <div class="EEContainer">
-        <div class="participantVideo">1</div>
-        <div class="participantVideo">2</div>
-        <div class="participantVideo">3</div>
-        <div class="participantVideo">4</div>
+        <user-video
+          v-for="ER in ERS"
+          :key="ER.stream.connection.connectionId"
+          :stream-manager="ER"
+        />
       </div>
     </div>
     <!-- 유저 기능 구역 -->
@@ -40,10 +41,47 @@
 </template>
 
 <script>
+import UserVideo from "@/components/UserVideo.vue";
 import { ref } from "vue";
+import { mapGetters } from "vuex";
 import { useRouter } from "vue-router";
+
 export default {
   name: "EEView",
+  components:{UserVideo},
+  computed:{
+    ...mapGetters('lbhModule',[
+      "EE",
+      "ERS",
+      "myUserName",
+      "mySessionId",
+      "userType",
+      "publisher",
+      "subscribers",
+      'SessionToken',
+      "session",
+    ])
+  },
+  data(){
+    return {
+    }
+  },
+  created(){
+    this.session.on('signal:endInterview', () => {
+      console.log('endinterview signal received, eeview')
+      this.toWR()
+    });  
+  },
+  methods:{
+    async toWR() {
+      await this.$router.push({name:'waiting-room'})
+      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      this.$store.commit('lbhModule/EMPTY_ERS')
+    },
+    switchUserType(){
+      this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+    },
+  },
   setup() {
     const router = useRouter();
     const userType = ref("superUser"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
