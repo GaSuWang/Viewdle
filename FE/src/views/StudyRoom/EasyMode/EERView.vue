@@ -4,7 +4,9 @@
     <!-- 영상 구역 -->
     <div class="EERContent">
       <!-- 면접자 영상 구역  -->
-      <div class="EEVid"></div>
+      <div class="EEVid">
+        <warningStackBar :stack="warningCount"></warningStackBar>
+      </div>
       <!-- 면접관 영상 구역 -->
       <div class="ERVidContainer">
         <div class="ERVid"></div>
@@ -16,7 +18,7 @@
     <!-- BtnContainer -->
     <div class="EERBtnContainer top">
       <div class="EERtoLB">
-        <button >
+        <button>
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
@@ -24,17 +26,17 @@
 
     <div class="EERBtnContainer bottom">
       <div class="CLViewBtn">
-        <button @click="openCL" >
+        <button @click="openCL">
           <i class="bi bi-file-earmark-text"></i>
         </button>
-      </div>  
+      </div>
       <div class="VoiceChangeBtn">
-        <button >
+        <button>
           <i class="bi bi-mic-fill"></i>
         </button>
       </div>
       <div class="StudyEnd">
-        <button >
+        <button>
           <i class="bi bi-check-lg"></i>
         </button>
       </div>
@@ -44,7 +46,7 @@
         </button>
       </div>
       <div class="CaptureBtn">
-        <button >
+        <button>
           <i class="bi bi-camera"></i>
         </button>
       </div>
@@ -53,30 +55,41 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
+import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue";
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
+import { useRouter } from "vue-router";
 const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 export default {
   name: "EERView",
-  components: {},
+  components: {
+    warningStackBar,
+  },
   computed: {
-    ...mapGetters('lbhModule',[
-      'EE',
-      'myUserName',
-      'mySessionId',
-    ])
+    ...mapGetters("lbhModule", ["EE", "myUserName", "mySessionId"]),
+  },
+  setup() {
+    const router = useRouter();
+    //--------------------return waitingRoom ---------------------------
+    function returnWaitingRoom() {
+      router.push({ name: "waiting-room" });
+    }
+    //--------------------return waitingRoom end---------------------------
+    return {
+      returnWaitingRoom,
+    };
   },
   data() {
     return {
-      warningCount:0,
-    }
+      warningCount: 0,
+    };
   },
 
   //----------------------joinSession----------------------------
-  created(){
+  created() {
     this.joinSession();
   },
   //--------------------joinSession end----------------------------
@@ -89,15 +102,24 @@ export default {
     changeVoice() {},
     suddenAttack() {},
     capture() {},
-    addWarn() { //경고 누적용
+
+    addWarn() {
+      //경고 누적용
       this.warningCount++;
-      console.log('warningCount: ',this.warningCount);
-      if(this.warningCount >=3){
-        console.log('warningCount limit, return waiting room');
+      console.log("warningCount: ", this.warningCount);
+      if (this.warningCount >= 3) {
+        console.log("warningCount limit, return waiting room");
+        //면접 종료
+        this.session.signal({
+          data: "End Interview by over warning stack limit",
+          to: [],
+          type: "EndInterviewByWarning",
+        });
       }
     },
-      //---------------------openvidu mehtod---------------------------
-  joinSession() {
+
+    //---------------------openvidu mehtod---------------------------
+    joinSession() {
       // --- Get an OpenVidu object ---
       this.OV = new OpenVidu();
 
@@ -105,17 +127,27 @@ export default {
       this.session = this.OV.initSession();
 
       this.getToken(this.mySessionId).then((token) => {
-        this.session.connect(token)});
+        this.session.connect(token);
+      });
 
-      this.session.on('signal:warning', (event) => {
-        console.log(event.data)
+      this.session.on("signal:warning", (event) => {
+        console.log(event.data);
         //신호를 받고, 내가 면접자인 경우에만 warningCount++
-        if(this.EE[0]===this.myUserName){
-          console.log('EE: ',this.EE);
-          this.addWarn(); 
-        }
+        // if (this.EE[0] === this.myUserName) {
+        //   console.log("EE: ", this.EE);
+        //   this.addWarn();
+        // }
+
+      // <- 테스트용, 모든 참여자 warningCoutn 올림
+        this.addWarn();
         
       });
+      this.session.on("signal:EndInterviewByWarning", (event) => {
+        console.log(event.data);
+        this.returnWaitingRoom();
+        //대기실로 돌아가는 메소드 구현
+      });
+
       window.addEventListener("beforeunload", this.leaveSession);
     },
 
@@ -132,9 +164,7 @@ export default {
       window.removeEventListener("beforeunload", this.leaveSession);
     },
     getToken(mySessionId) {
-      return this.createSession(mySessionId).then((sessionId) =>
-        this.createToken(sessionId)
-      );
+      return this.createSession(mySessionId).then((sessionId) => this.createToken(sessionId));
     },
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
@@ -196,23 +226,23 @@ export default {
     },
     //---------------------openvidu mehtod end---------------------------
 
-
     //---------------------send warning singal---------------------------
-    sendWarningSignal(){
-      this.session.signal({
-        data:'stacked warning count',
-        to:[], //<- 면접자만 어떻게 골라서 보내지...
-        type: 'warning'
-      }).then(()=>{
-        console.log('successed send warning');
-      }).catch(()=>{
-        console.log("failed send warning");
-      });
-    }
+    sendWarningSignal() {
+      this.session
+        .signal({
+          data: "stacked warning count",
+          to: [], //<- 면접자만 어떻게 골라서 보내지...
+          type: "warning",
+        })
+        .then(() => {
+          console.log("successed send warning");
+        })
+        .catch(() => {
+          console.log("failed send warning");
+        });
+    },
     //---------------------send warning singal end---------------------------
   },
-
-
 };
 </script>
 
@@ -272,14 +302,14 @@ export default {
   flex-direction: row;
 }
 
-.top{
+.top {
   position: absolute;
-  top: 8%; 
+  top: 8%;
   align-self: flex-end;
   left: 66%;
 }
 
-.bottom{
+.bottom {
   position: absolute;
   bottom: 10%;
   justify-content: space-evenly;
@@ -300,17 +330,17 @@ export default {
   font-size: 100%;
   color: black;
 }
-.EERBtnContainer >div> button {
+.EERBtnContainer > div > button {
   border: none;
   background-color: rgb(209, 209, 209);
   border-radius: 50%;
 }
 
-.EERBtnContainer >div> button {
-  padding:15px;
+.EERBtnContainer > div > button {
+  padding: 15px;
 }
 
-.EERBtnContainer >div> button > i {
+.EERBtnContainer > div > button > i {
   font-size: 150%;
   color: black;
 }
