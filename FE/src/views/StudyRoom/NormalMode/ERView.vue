@@ -2,7 +2,37 @@
 //면접실(일반 모드)에서 면접관이 보는 페이지 (Interviewee Room VIew => EEView)
 
 <template>
-  <div class="ERView">
+
+  <!-- 방장 권한 위임 모달 -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <li v-for="user in nextSuperUserList" :key="user.id">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="nextSuperUser = user.name">
+                <label class="form-check-label" for="flexRadioDefault1">
+                  {{user.name}}
+                </label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button>
+          <button type="button" class="btn btn-primary" @click="superUserOut">로비로 나가기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ERView" id="ERView">
+    <!-- <AuthorityPassModal/> -->
     <!-- 영상 구역  -->
     <div class="ERLeftArea">
       <!-- 면접자 영상 구역 -->
@@ -37,16 +67,19 @@
         </div>
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div v-show="userType === 'user'" class="ERtoLBbtn user">
-          <button @click.prevent="ERtoLBConfirm(userType)">
+          <button @click.prevent="ERleaveSession">
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
-          <button @click.prevent="ERtoLBConfirm(userType)">
+          <button @click.prevent="ERleaveSession">
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Launch demo modal
+        </button>
       </div>
 
       <!-- 중단 -->
@@ -68,23 +101,18 @@
 </template>
 
 <script>
+// import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import UserVideo from "@/components/UserVideo.vue";
 import swal from "sweetalert2";
-import { useRouter } from "vue-router";
 import { mapGetters } from "vuex";
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
-// import axios from "axios";
-// import { OpenVidu } from "openvidu-browser";
-// axios.defaults.headers.post["Content-Type"] = "application/json";
-
-// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-// const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "ERView",
-  components: { FeedbackArea, UserVideo },
+  components: { FeedbackArea, UserVideo},
   data(){
     return{
+      nextSuperUser: '',
     }
   },
   computed:{
@@ -98,22 +126,93 @@ export default {
       "subscribers",
       'SessionToken',
       "session",
-    ])
+      "currentUserList",
+    ]),
+    nextSuperUserList(){
+    return this.currentUserList.filter(p => p.name !== this.myUserName)
+  }
   },
   created(){
+    this.nextSuperUser = ''
+    window.addEventListener("beforeunload", this.ERleaveSession);
+    console.log('erview cretaed', this.EE)
+    console.log('erview cretaed', this.ERS)
+    this.session.on('signal:EECL', (e)=>{ // 면접자의 자소서를 받아옴
+        const cl = JSON.parse(e.data)
+        this.$store.commit('SET_STUDYROOM_CL', cl)
+    });
     this.session.on('signal:endInterview', () => {
       console.log('endinterview signal received, erview')
       this.toFB()
     });
+    this.session.on('signal:superUserOut', (e) => {
+      if(this.myUserName === e.data){
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+        console.log('이제', this.myUserName,'가', this.userType, '이다.')
+      } else{'방장바뀜'}
+    })
+
   },
   methods: {
+    closeAPM(){
+      this.nextSuperUser = ''
+    },
+    superUserOut(){
+      this.$store.commit('lbhModule/SET_SESSION', undefined)
+      this.$store.commit('lbhModule/SET_OV', undefined)
+      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+      this.$store.commit('lbhModule/SET_SUPERUSER', {})
+      
+      window.removeEventListener("beforeunload", this.ERleaveSession);      
+      this.session.signal({
+        data: `${this.nextSuperUser}`,
+        to: [],
+        type: 'superUserOut'
+      })
+
+      console.log(this.nextSuperUser)
+
+      this.session.disconnect()
+      this.$router.push('/main')
+
+    },
+    //면접관실에서 나갈 때
+    ERleaveSession() {
+      if(this.userType === 'superUser') {
+        this.$store.commit('lbhModule/SET_APM_DESTINATION', 'ERView')
+        this.$store.commit('lbhModule/SET_APM_OPEN', true)
+
+      } else {
+        if (this.session) this.session.disconnect();
+    
+          this.$store.commit('lbhModule/SET_SESSION', undefined)
+          this.$store.commit('lbhModule/SET_OV', undefined)
+          this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+          this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+          this.$store.commit('lbhModule/SET_SUPERUSER', {})
+          
+          window.removeEventListener("beforeunload", this.ERleaveSession);
+      }
+    },
+    ERtoLBConfirm() {
+      if (this.userType === "user") {
+        if (confirm(
+            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다.")) 
+        {this.$router.push({ name: "main" });}} 
+        else if (this.userType === "superUser") {
+        if (confirm(
+            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다.")) 
+          { console.log('권한 위임 모달 실행') }
+      }
+    },
     async toFB() {
       await this.$router.push({name:'fb-room'})
       this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
       this.$store.commit('lbhModule/EMPTY_ERS')
     },
-    switchUserType(){
-      this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+    switchUserTypeTemp(){
+      this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
     },
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
@@ -143,31 +242,6 @@ export default {
         });
       }
     },
-  },
-  setup() {
-    const router = useRouter();
-    function ERtoLBConfirm() {
-      if (this.userType === "user") {
-        if (
-          confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
-          )
-        ) {
-          router.push({ name: "main" });
-        }
-      } else if (this.userType === "superUser") {
-        if (
-          confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
-          )
-        ) {
-          // 권한위임 모달 실행
-        }
-      }
-    }
-    return {
-      ERtoLBConfirm,
-    };
   },
 };
 </script>

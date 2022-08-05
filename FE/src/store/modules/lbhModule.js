@@ -4,6 +4,7 @@ const state = {
   superUserOut: false,
   APMOpen: false,
   APMDestination: undefined,
+  currentUserList: [],
   //SettingRoom
   CameraList: {}, // 영상 디바이스 리스트
   CameraSelected: {}, // 선택된 영상 디바이스
@@ -24,11 +25,10 @@ const state = {
   subscribers: [],
   OV: undefined,
   session: undefined,
-  // mainStreamManager: undefined,
-  // SessionToken: undefined,
+
 
   //EEView, ERView
-  EERParticipantList: {}, //면접실에 들어온 유저들
+  EERParticipantList: [], //면접실에 들어온 유저들
   isEERFull: false,
   isEE: false, //면접자 포지션인지
   isER: false, //면접관 포지션인지
@@ -39,9 +39,11 @@ const state = {
   StudyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
 
   //ErView, FeedbackRoom, ReplayView
+  FBParticipantList:[],
   FBList: [], // 피드백 리스트, 리스트로 하는 게 맞나?
 };
 const getters = {
+  currentUserList(state) {return state.currentUserList},
   superUser(state){return state.superUser},
   superUserOut(state){return state.superUserOut},
   APMOpen(state){return state.APMOpen},
@@ -82,10 +84,6 @@ const getters = {
     return state.userType
   },
   WRParticipantList(state) {
-    console.log(
-      "getters state.WRParticipantList",
-      JSON.parse(JSON.stringify(state.WRParticipantList))
-    );
     return JSON.parse(JSON.stringify(state.WRParticipantList));
   },
   StartInterview(state) {
@@ -114,8 +112,10 @@ const getters = {
 const mutations = {
   SET_SUPERUSER(state, user){state.superUser = user},
   SET_SUPERUSER_OUT(state, boolean){state.superUserOut = boolean},
-  SET_APM_OPEN(state, boolean){state.APMOpen = boolean},
-  SET_APM_DESTINATION(state, destination){state.APMDestination = destination},
+  SET_APM_OPEN(state, boolean){state.APMOpen = boolean
+  console.log('apmopen',state.APMOpen)},
+  SET_APM_DESTINATION(state, destination){state.APMDestination = destination
+  console.log('APMDestination',state.APMDestination)},
   //openvidu
   SET_OV(state, ov){state.OV = ov},
   SET_SESSION(state, session){state.session = session},
@@ -143,6 +143,12 @@ const mutations = {
   },
   EMPTY_WR_PARTICIPANT_LIST(state) {
     state.WRParticipantList = {};
+    console.log('WRParticipantList 비웠다', state.WRParticipantList)
+  },
+  SET_WR_PARTICIPANT_LIST({state}, inputList) {
+    console.log('SET_WR_PARTICIPANT_LIST',inputList)
+    state.WRParticipantList = inputList;
+    console.log('WRParticipantList 바꿈', state.WRParticipantList)
   },
   ADD_WR_PARTICIPANT_LIST(state, user) {
     console.log("ADD_WR_PARTICIPANT_LIST", state.WRParticipantList);
@@ -154,19 +160,50 @@ const mutations = {
   },
   DELETE_WR_PARTICIPANT_LIST(state, subscriberName) {
     //이렇게 지우는 게 맞는 지 모르겠다...
-    const delArray = [...state.WRParticipantList]
+    console.log('wrlist 지워지고 있기는 한가', state.WRParticipantList)
+    const idx = state.WRParticipantList.findIndex(function(item) {return item.name === subscriberName})
+    if (idx>-1) state.WRParticipantList.splice(idx, 1)  
+    console.log('지워진 결과물', state.WRParticipantLis)
+    // const delArray = [...state.WRParticipantList]
+    // console.log(delArray)
+    // delArray.forEach(e=>{
+    //   if(e.name === subscriberName){
+    //     const i = state.WRParticipantList.indexOf(e)
+    //     state.WRParticipantList.splice(i,1)
+    //     console.log([...state.WRParticipantList])
+    //   }
+    // })    
+  },
+
+  EMPTY_CURRENT_USER_LIST(state) {
+    state.currentUserList = {};
+    console.log('currentUserList 비웠다', state.currentUserList)
+  },
+  SET_CURRENT_USER_LIST({state}, inputList) {
+    console.log('SET_WR_PARTICIPANT_LIST',inputList)
+    state.currentUserList = inputList;
+    console.log('currentUserList 바꿈', state.currentUserList)
+  },
+  ADD_CURRENT_USER_LIST(state, user) {
+    console.log("ADD_CURRENT_USER_LIST", state.currentUserList);
+    if (!state.currentUserList.includes(user)) {
+      state.currentUserList.push({ id: Date.now(), name: user });
+    }
+  },
+  DELETE_CURRENT_USER_LIST(state, subscriberName) {
+    //이렇게 지우는 게 맞는 지 모르겠다...
+    const delArray = [...state.currentUserList]
     console.log(delArray)
     delArray.forEach(e=>{
       if(e.name === subscriberName){
-        const i = state.WRParticipantList.indexOf(e)
-        state.WRParticipantList.splice(i,1)
-        console.log([...state.WRParticipantList])
+        const i = state.currentUserList.indexOf(e)
+        state.currentUserList.splice(i,1)
       }
     })    
   },
 
   //SettingRoom
-  SWITCH_USER_TYPE(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
+  SWITCH_USER_TYPE_TEMP(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
     console.log('switch user type 눌리긴 함')
     if(state.userType==='user'){
       state.userType='superUser'
@@ -175,6 +212,9 @@ const mutations = {
       state.userType='user'
       console.log(state.userType)
     }
+  },
+  SWITCH_USER_TYPE(state){ //아마 진짜로 쓰일 방장 권한 위임 기능
+    state.userType = 'superUser'
   },
   GET_CAMERA_LIST(state, cameraList) {
     state.CameraList = JSON.parse(JSON.stringify(cameraList));

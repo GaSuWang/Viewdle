@@ -23,7 +23,7 @@
           class="btn btn-large btn-danger"
           type="button"
           id="buttonLeaveSession"
-          @click="leaveSession"
+          @click="WRleaveSession"
           value="방 나가기"
         />
       </div>
@@ -53,7 +53,7 @@
       </div>
 
       <div class="wr-to-lb super-user" v-if="userType === 'superUser'" >
-        <button @click="superUserOutClick">
+        <button @click="userOutClick(userType)">
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
@@ -65,7 +65,7 @@
       </div>
 
       <div class="user-out" v-if="userType === 'user'">
-        <button @click="userOutClick">
+        <button @click="userOutClick(userType)">
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
@@ -119,23 +119,12 @@ export default {
   //  AuthorityPassModal 
    },
   created(){
-    console.log(this.subscribers)
   },
   data() {
     return {
-      EECnd: '', //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
-      LeaveWR: false,
+      EECnd: "", //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
       recordingId: '',
     };
-  },
-  watcher:{
-    superUserOut(){
-      this.session.signal({
-        data: `${this.superUser}`,
-        to:[],
-        type:'switchSuperUser'
-      })
-    }
   },
   computed: {
     ...mapGetters("lbhModule", [
@@ -157,10 +146,11 @@ export default {
 
       //유저 권한
       'userType',
-      "superUserOut",
+      // "superUserOut",
       "superUser",
 
       //기타
+      "currentUserList",
       "WRParticipantList",
       "CLSelected",
     ]),
@@ -181,16 +171,15 @@ export default {
       this.CameraStatus = !this.CameraStatus;
       this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.CameraStatus)
     },
-    superUserOutClick(){
-      if(this.userType === 'superUser'){
-        this.$router.push
+    superUserOutClick(userType){
+      if(userType === 'superUser'){
+        console.log('방장 바꿈?')
       }
     },
     userOutClick(){
       if(this.userType === 'user'){
         if(confirm('정말 이 방에서 나가시겠습니까?')){
-          this.leaveSession()
-          this.$router.push('/main')
+          this.WRleaveSession()
         }
       }
     },
@@ -200,27 +189,17 @@ export default {
     },
 
     startInterview(){
-      if (confirm(`면접자는 ${this.EECnd}님 입니다.\n면접을 시작하시겠습니까?`)) {
-        this.session.signal({
-          data: 'true',
-          to:[],
-          type:'startInterview'
-        })
-      }
+      if(this.EECnd){
+        if(confirm(`면접자는 ${this.EECnd}입니다.\n면접을 시작하시겠습니까?`)){
+          this.session.signal({
+            data: `${this.EECnd}`,
+            to:[],
+            type:'startInterview'
+          })}
+      } else {alert('면접자를 선택한 후에 면접을 시작해주세요.')}
     },
     selectEE(name){
       this.EECnd = name
-      this.session.signal({
-      data: `${this.EECnd}`,  // Any string (optional)
-      to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-      type: 'selectEE'             // The type of message (optional)
-      })
-      .then(() => {
-        console.log('일단 신호는 보냄')
-      })
-      .catch(error => {
-          console.error(error);
-      });
     },
     muteMySelf() {
       if (this.publisher.stream.audioActive) {
@@ -259,11 +238,14 @@ export default {
         const subscriberName = JSON.parse(stream.connection.data).clientData;
         this.$store.commit("lbhModule/ADD_SUBSCRIBERS", subscriber);
         this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", subscriberName);
+        this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", subscriberName);
 
+        const superUser = this.superUser
+        const WRParticipantList = this.WRParticipantList
         this.session.signal({ 
           //새로운 유저가 들어오면, 모든 유저에게 현재의 방장 유저가 누군지 알려주는 데이터 전송
           //향후 새로운 유저에게 줘야 할 데이터 있으면 여기에서 보내주는 걸로
-          data: `"superUser": ${this.superUser}, WRParticipantList: ${this.WRParticipantList},`,
+          data: `{"superUser": "${superUser}", "WRParticipantList": "${WRParticipantList}"}`,
           to:[],
           type:'welcomeNewUser'
         })
@@ -277,6 +259,7 @@ export default {
         }
         const subscriberName = JSON.parse(stream.connection.data).clientData;
         this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberName);
+        this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberName);
       });
 
       // On every asynchronous exception...
@@ -295,11 +278,8 @@ export default {
           .connect(token, { clientData: this.myUserName })
           .then(() => {
             // --- Get your own camera stream with the desired properties ---
-            console.log("내이름", this.myUserName);
-            this.$store.commit(
-              "lbhModule/ADD_WR_PARTICIPANT_LIST",
-              this.myUserName
-            );
+            this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", this.myUserName);
+            this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", this.myUserName);
 
             let publisher = this.OV.initPublisher(undefined, {
               audioSource: this.MicSelected, // The source of audio. If undefined default microphone
@@ -331,9 +311,9 @@ export default {
 
       this.session.on('signal:welcomeNewUser', (e)=>{ //방에 처음 들어왔을 때 받는 signal
         const json = JSON.parse(e.data)
-        this.superUser = json.superUser
-        this.WRParticipantList = json.WRParticipantList
-        this.switchSuperUser = false
+        this.$store.commit('lbhModule/SET_SUPERUSER', json.superUser)
+        this.$store.commit('lbhModule/SET_WR_PARTICIPANT_LIST', json.WRParticipantList)
+        this.$store.commit('lbhModule/SET_CURRENT_USER_LIST', json.WRParticipantList)
       })
 
       this.session.on('signal:switchSuperUser', (e)=>{
@@ -341,19 +321,12 @@ export default {
         this.$store.commit('lbhModule/SET_SUPERUSER_OUT', false)
       })
 
-      this.session.on('signal:EECL', (e)=>{ //면접자의 자소서를 받아옴
-        const cl = JSON.parse(e.data)
-        this.$store.commit('SET_STUDYROOM_CL', cl)
-      })
-
-      this.session.on('signal:selectEE', (event) => { //면접자가 누구인지 받음
-       this.EECnd = event.data; // Message
-      });
-
-      this.session.on('signal:startInterview', (event) => {
-       this.LeaveWR = event.data; 
-       if(this.LeaveWR){
+      // 면접 시작
+      this.session.on('signal:startInterview', (e) => { 
+        this.EECnd = e.data
         if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
+          console.log('startInterview as EE')
+
           this.session.signal({ // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
           data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`, 
           to: [], 
@@ -361,16 +334,19 @@ export default {
           })
           .then(() => {console.log('자소서 보냄')})
           .catch(error => {console.error(error)});
-          console.log('startInterview as EE')
+
           this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
             this.$store.commit('lbhModule/SET_ERS', s)
           })
-          console.log('startinterview session',this.session )
-          this.$router.push({name:'ee-room', params:{session:this.session}})
+
+          this.$router.push({name:'ee-room'})
+
         } else { //만약 내가 면접관이라면
           console.log('startInterview as ER')
+
           this.$store.commit('lbhModule/SET_ERS', this.publisher) //나(publisher)를 ERS에 넣음
+
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회
             const subscriberName = JSON.parse(s.stream.connection.data).clientData;
             if(this.EECnd === subscriberName){ //면접자 포지션인 참여자(s)는 EE에 넣음
@@ -379,33 +355,23 @@ export default {
               this.$store.commit('lbhModule/SET_ERS', s)
             }
           })
-          console.log('startinterview session',this.session )
-          this.$router.push({name: 'er-room', params:{session:this.session}})
+          this.$router.push({name: 'er-room'})
           }
-       }
-      });
+        this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
+        window.addEventListener("beforeunload", this.WRleaveSession);
+    })},
 
-      window.addEventListener("beforeunload", this.leaveSession);
-    },
-
-    leaveSession() {
-      // this.session.signal({
-      //   data: '',
-      //   to: [],
-      //   type: ''
-      // })
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
-      if (this.session) this.session.disconnect();
-      // this.superUser = {};
-      // this.superUserOut = false;
-      // this.AMP
+    //대기실에서 나갈 때
+    WRleaveSession() {
+    if (this.session) this.session.disconnect();
 
       this.$store.commit('lbhModule/SET_SESSION', undefined)
       this.$store.commit('lbhModule/SET_OV', undefined)
       this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
       this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+      this.$store.commit('lbhModule/SET_SUPERUSER', {})
 
-      window.removeEventListener("beforeunload", this.leaveSession);
+      window.removeEventListener("beforeunload", this.WRleaveSession);
     },
 
     /**
