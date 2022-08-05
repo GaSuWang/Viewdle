@@ -72,14 +72,14 @@
 
       <div class="mic-status">
         <button @click="(muteMySelf) (switchMicStatus)" v-if="session">
-          <i v-if="micOn" class="bi bi-mic"></i>
+          <i v-if="MicStatus" class="bi bi-mic"></i>
           <i v-else class="bi bi-mic-mute"></i>
         </button>
       </div>
 
       <div class="camera-status">
         <button @click="(ShowMySelf) (switchCameraStatus)" v-if="session">
-          <i v-if="cameraOn" class="bi bi-camera-video"></i>
+          <i v-if="CameraStatus" class="bi bi-camera-video"></i>
           <i v-else class="bi bi-camera-video-off"></i>
         </button>
       </div>
@@ -150,10 +150,10 @@ export default {
       //기기
       "CameraSelected",
       "CameraStatus",
-      "cameraOn",
+      "CameraStatus",
       "MicSelected",
       "MicStatus",
-      "micOn",
+      "MicStatus",
 
       //유저 권한
       'userType',
@@ -174,12 +174,12 @@ export default {
       }
     },
     switchMicStatus() { //마이크 On/Off
-      this.micOn = !this.micOn;
-      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)
+      this.MicStatus = !this.MicStatus;
+      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.MicStatus)
     },
     switchCameraStatus() { //카메라 On/Off
-      this.cameraOn = !this.cameraOn;
-      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.cameraOn)
+      this.CameraStatus = !this.CameraStatus;
+      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.CameraStatus)
     },
     superUserOutClick(){
       if(this.userType === 'superUser'){
