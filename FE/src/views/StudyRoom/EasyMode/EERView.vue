@@ -96,7 +96,7 @@ export default {
 
 .EEVid {
   width: 80%;
-  height: 100%;
+  aspect-ratio: 16/9;
   background-color: #edf0f6;
   border-radius: 5%;
   border: 1px solid rgb(161, 161, 161);

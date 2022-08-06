@@ -37,15 +37,19 @@
     <div class="ERLeftArea">
       <!-- 면접자 영상 구역 -->
       <div class="EEVidContainer">
-        <user-video :stream-manager="EE" />
+        <div class="EEVid">
+          <user-video :stream-manager="EE" />
+        </div>
       </div>
       <!-- 면접관 영상 구역 -->
       <div class="ERVidContainer">
-        <user-video
-          v-for="ER in ERS"
-          :key="ER.stream.connection.connectionId"
-          :stream-manager="ER"
-        />
+        <div class="ERVid">
+          <user-video
+            v-for="ER in ERS"
+            :key="ER.stream.connection.connectionId"
+            :stream-manager="ER"/>
+        </div>
+
       </div>
     </div>
 
@@ -273,30 +277,29 @@ export default {
 
 .EEVidContainer{
   width: 100%;
-  height: 80%;
+  display:flex;
+  justify-content: center;
+
 }
 
 .EEVid{
-  width: 98%;
-  height: 98%;
-  background-color: #edf0f6;
-  /* border: 1px solid black; */
-  border-radius: 8px;
+  width: 90%;
+  height: 80%;
 }
 
 .ERVidContainer{
   display:flex;
   flex-direction: row;
-  justify-content: space-between;
-  width: 98%;
-  height: 20%; 
+  justify-content: center;
+  width: 100%;
+  overflow-x: scroll;
+  /* height: 20%;  */
 }
 
 .ERVid{
-  width: 24%;
-  background-color: #edf0f6;
-  /* border: 1px solid black; */
-  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 

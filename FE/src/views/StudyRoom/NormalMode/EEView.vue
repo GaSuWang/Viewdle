@@ -4,14 +4,15 @@
   <div class="EEView">
     <!-- 영상 구역  -->
     <!-- 면접관 영상 구역 -->
-    <div class="EELeft">
-      <div class="EEContainer">
-        <user-video
-          v-for="ER in ERS"
-          :key="ER.stream.connection.connectionId"
-          :stream-manager="ER"
-        />
-      </div>
+    <div class="EELeftArea">
+        <div class="ERVideo container">
+          <div class="row row-cols-2">
+            <user-video class="video"
+              v-for="ER in ERS"
+              :key="ER.stream.connection.connectionId"
+              :stream-manager="ER"/>
+          </div>
+        </div>
     </div>
     <!-- 유저 기능 구역 -->
     <!-- 상단  -->
@@ -69,6 +70,7 @@ export default {
   created(){
     this.session.on('signal:endInterview', () => {
       console.log('endinterview signal received, eeview')
+      this.$store.commit('SET_PUBLISHER', )
       this.toWR()
     });  
   },
@@ -139,25 +141,38 @@ export default {
   justify-content: space-between;
 }
 
-.EELeft {
-  width: 65%;
+.EELeftArea {
+  width: 95%;
   margin: 0;
-}
-
-.EEContainer {
-  width: 100%;
-  height: 100%;
+  padding: 0;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.participantVideo {
-  width: 40%;
-  background: #cbcfd9;
+.ERVideo {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  overflow-y: scroll;
+}
+
+.row {
+  width: 100%;
+}
+
+.video{
+  width: 45%;
+  margin-left: 2%;
+  margin-right: 2%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .EERight {
-  width: 20%;
+  width: 5%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

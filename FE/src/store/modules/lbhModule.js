@@ -5,6 +5,7 @@ const state = {
   APMOpen: false,
   APMDestination: undefined,
   currentUserList: [],
+  
   //SettingRoom
   CameraList: {}, // 영상 디바이스 리스트
   CameraSelected: {}, // 선택된 영상 디바이스

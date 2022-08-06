@@ -4,15 +4,14 @@
     <!-- <AuthorityPassModal/> -->
 
     <!-- 참가자 영상 나오는 부분 -->
-    <div class="WRSession">
-      <!-- openvidu 간단히 -->
-      <div id="wr-video-container" class="col-md-6">
-        <user-video :stream-manager="publisher" />
-        <user-video
-          v-for="sub in subscribers"
+    <div class="WRLeftArea">
+      <div class="WRVideo container">
+        <div class="row row-cols-2">
+        <user-video class="video" :stream-manager="publisher" />
+        <user-video class="video" v-for="sub in subscribers"
           :key="sub.stream.connection.connectionId"
-          :stream-manager="sub"
-        />
+          :stream-manager="sub" />
+        </div>
       </div>
     </div>
 
@@ -86,7 +85,7 @@
 
       <!-- 삭제할 버튼들 -->
       <div class="tempBtn"> 
-        <button @click="joinSession">입장하기</button>
+        <button v-if="!session" @click="joinSession">입장하기</button>
         <button @click="switchUserType">{{userType}}</button>
       </div>
 
@@ -102,9 +101,7 @@
 
 // import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 // import { useRouter } from "vue-router";
-import { 
-  // mapActions,
-mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/UserVideo.vue";
@@ -184,8 +181,7 @@ export default {
       }
     },
     switchUserType(){
-      console.log('why not ')
-      this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+      this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
     },
 
     startInterview(){
@@ -229,7 +225,6 @@ export default {
       const ovInitSession = this.OV.initSession();
       this.$store.commit('lbhModule/SET_SESSION', ovInitSession)
 
-      console.log('wr session',this.session)
       // --- Specify the actions when events take place in the session ---
 
       // On every new Stream received...
@@ -286,7 +281,7 @@ export default {
               videoSource: this.CameraSelected, // The source of video. If undefined default webcam
               publishAudio: this.MicStatus, // Whether you want to start publishing with your audio unmuted or not
               publishVideo: this.CameraStatus, // Whether you want to start publishing with your video enabled or not
-              resolution: "320x240", // The resolution of your video
+              resolution: "320x180", // The resolution of your video
               frameRate: 30, // The frame rate of your video
               insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
               mirror: false, // Whether to mirror your local video or not
@@ -323,6 +318,8 @@ export default {
 
       // 면접 시작
       this.session.on('signal:startInterview', (e) => { 
+        this.$store.commit('SET_PUBLISHER', undefined)
+        this.$store.commit('SET_SUBSCRIBERS', [])
         this.EECnd = e.data
         if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
           console.log('startInterview as EE')
@@ -363,13 +360,15 @@ export default {
 
     //대기실에서 나갈 때
     WRleaveSession() {
-    if (this.session) this.session.disconnect();
+      // this.session.signal({
+      if (this.session) this.session.disconnect();
 
       this.$store.commit('lbhModule/SET_SESSION', undefined)
       this.$store.commit('lbhModule/SET_OV', undefined)
       this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
       this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
       this.$store.commit('lbhModule/SET_SUPERUSER', {})
+      this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
 
       window.removeEventListener("beforeunload", this.WRleaveSession);
     },
@@ -476,19 +475,36 @@ export default {
   justify-content: space-between;
 }
 
-.WRSession {
-  width: 65%;
+.WRLeftArea {
+  width: 70%;
   margin: 0;
+  padding: 0;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
 }
 
-#wr-video-container {
+.WRVideo{
   width: 100%;
-  height: 100%;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-y: scroll;
+}
+
+.row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.video{
+  align-self: center;
+  width: 35%;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .WRRightArea {
