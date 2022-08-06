@@ -61,6 +61,9 @@
         <button @click="startInterview"  >
           <i class="bi bi-check-lg"></i>
         </button>
+        <button @click="startEZInterview"  >
+          EZ<i class="bi bi-check-lg"></i>
+        </button>
       </div>
 
       <div class="user-out" v-if="userType === 'user'">
@@ -194,6 +197,16 @@ export default {
           })}
       } else {alert('면접자를 선택한 후에 면접을 시작해주세요.')}
     },
+    startEZInterview(){
+      if(this.EECnd){
+        if(confirm(`면접자는 ${this.EECnd}입니다.\n면접을 시작하시겠습니까?`)){
+          this.session.signal({
+            data: `${this.EECnd}`,
+            to:[],
+            type:'startEZInterview'
+          })}
+      } else {alert('면접자를 선택한 후에 면접을 시작해주세요.')}
+    },
     selectEE(name){
       this.EECnd = name
     },
@@ -318,8 +331,6 @@ export default {
 
       // 면접 시작
       this.session.on('signal:startInterview', (e) => { 
-        this.$store.commit('SET_PUBLISHER', undefined)
-        this.$store.commit('SET_SUBSCRIBERS', [])
         this.EECnd = e.data
         if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
           console.log('startInterview as EE')
@@ -355,8 +366,54 @@ export default {
           this.$router.push({name: 'er-room'})
           }
         this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
+        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
         window.addEventListener("beforeunload", this.WRleaveSession);
-    })},
+    })
+
+      // EZ면접 시작
+      this.session.on('signal:startEZInterview', (e) => { 
+        this.EECnd = e.data
+        if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
+          console.log('startEZInterview as EE')
+
+          this.session.signal({ // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+          data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`, 
+          to: [], 
+          type: 'EECL' 
+          })
+          .then(() => {console.log('자소서 보냄')})
+          .catch(error => {console.error(error)});
+
+          this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
+          this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
+            this.$store.commit('lbhModule/SET_ERS', s)
+          })
+
+          this.$router.push({name:'ee-room-ez'})
+
+        } else { //만약 내가 면접관이라면
+          console.log('startEZInterview as ER')
+
+          this.$store.commit('lbhModule/SET_ERS', this.publisher) //나(publisher)를 ERS에 넣음
+
+          this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회
+            const subscriberName = JSON.parse(s.stream.connection.data).clientData;
+            if(this.EECnd === subscriberName){ //면접자 포지션인 참여자(s)는 EE에 넣음
+              this.$store.commit('lbhModule/SET_EE', s)
+            } else { //그 외의 참여자(s)는 ERS에 넣음
+              this.$store.commit('lbhModule/SET_ERS', s)
+            }
+          })
+          this.$router.push({name: 'er-room-ez'})
+          }
+        this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
+        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+        window.addEventListener("beforeunload", this.WRleaveSession);
+    })
+    
+    },
 
     //대기실에서 나갈 때
     WRleaveSession() {

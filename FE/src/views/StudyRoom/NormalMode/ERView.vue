@@ -49,7 +49,6 @@
             :key="ER.stream.connection.connectionId"
             :stream-manager="ER"/>
         </div>
-
       </div>
     </div>
 
@@ -279,7 +278,6 @@ export default {
   width: 100%;
   display:flex;
   justify-content: center;
-
 }
 
 .EEVid{
