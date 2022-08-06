@@ -155,6 +155,7 @@ export default {
   padding: 0;
   display: flex;
   justify-content: center;
+  align-items: center;  
   overflow-y: scroll;
 }
 
