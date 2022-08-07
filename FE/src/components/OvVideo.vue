@@ -17,5 +17,9 @@ export default {
 </script>
 
 <style scoped>
-
+video{
+	width: 100%;
+	border-radius: 2%;
+	border: 1px rgb(231, 231, 231) solid;
+}
 </style>

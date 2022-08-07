@@ -13,10 +13,8 @@
   <div class="MyViewBoss">
     <NavBar class="NavView"/>
     <div class="MyView">
+      <!-- <SendImg/> -->
       <p class="pagetitle">My Page</p>
-      <div class="MyTop">
-      </div>
-      <hr>
       <div class="MyBody">
         <div class="card-top">
           <img :src="userLists.userProfileImage">
@@ -25,10 +23,10 @@
         </div>
         <div class="Mycard-body">
           <UsageTrend/>
-          <BadgeList/>
+          <GrassShow/>
         </div>
         <div class="card-body2">
-          <GrassShow/>
+          <BadgeList/>
         </div>
         <div class="card-footer">
           <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
@@ -141,6 +139,7 @@ import NavBar from '@/components/Lobby/NavBar.vue'
 import UsageTrend from '@/components/Lobby/UsageTrend.vue'
 import BadgeList from '@/components/Lobby/BadgeList.vue'
 import GrassShow from '@/components/Lobby/GrassShow.vue'
+// import SendImg from '@/components/Lobby/SendImg.vue'
 import { useStore } from 'vuex'
 import { computed, reactive } from "vue";
 export default {
@@ -148,7 +147,8 @@ export default {
     NavBar,
     UsageTrend,
     BadgeList,
-    GrassShow
+    GrassShow,
+    // SendImg,
   },
   name: "PWUpdateModal",
   setup() {
@@ -181,7 +181,8 @@ export default {
     function changePW(){
       store.dispatch('rhtModule/changePW', changepassword)
     }
-    
+
+
     return {
       userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
     };
@@ -212,9 +213,6 @@ export default {
   height: 100%;
   width: 80%;
 }
-.MyTop{
-  height: 80px;
-}
 .Mycard-body{
   width:95%;
   height: 45%;
@@ -225,6 +223,7 @@ export default {
   margin: 20px;
 }
 .card-body2{
+  width: 98%;
   height: 30%;
   display: flex;
   margin: 20px;
