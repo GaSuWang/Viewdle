@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.annotation.Resource;
@@ -34,7 +35,7 @@ import java.util.List;
   `user_total_time` VARCHAR(20) NOT NULL DEFAULT 0,
   `user_total_video` INT NOT NULL DEFAULT 0,
 * */
-
+@NoArgsConstructor
 @Table(name="User")
 public class User{
     @Id
@@ -118,4 +119,11 @@ public class User{
     @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;*/
+
+    public User(String userEmail, String userName, String userProfileImage){
+        this.userEmail = userEmail;
+        this.userName = userName;
+        this.userProfileImage = userProfileImage;
+    }
+
 }
