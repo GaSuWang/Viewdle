@@ -92,6 +92,18 @@
         <button @click="switchUserType">{{userType}}</button>
       </div>
 
+      <!-- 녹화 테스트용 버튼 -->
+      <!-- 백하고 연동하게 될거라서 API만 필요하지 버튼은 필요없습니다! 그냥 결과값 확인하는 용도로 사용하세요!
+      아마 녹화 종료하고 필요한 값 들 전달하면 될 거 같습니다. -->
+      <!-- 입장 후 3초 후 녹화 시작으로, 면접 종료하면 녹화도 stop되게 연결하면 될 거 같아요! -->
+      <div class="tempBtn"> 
+        <button @click="startRecording">녹화 시작</button>
+        <button @click="stopRecording">녹화 종료</button>
+        <button @click="getRecording">녹화 하나</button>
+        <button @click="getRecordings">녹화 여러개</button>    
+        <button @click="deleteRecording">녹화 삭제</button>
+      </div>
+
      </div>
   </div>
 </template>
@@ -111,7 +123,7 @@ import UserVideo from "@/components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-const OPENVIDU_SERVER_SECRET = "MY_SECRET2";
+const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "WaitingRoomView",
@@ -124,6 +136,10 @@ export default {
     return {
       EECnd: "", //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
       recordingId: '',
+      LeaveWR: false,
+
+      recordingObject : null,
+      recordingObjects : null
     };
   },
   computed: {
@@ -512,6 +528,102 @@ export default {
           .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
       });
     },
+
+    // 녹화 funcion
+    startRecording() {
+      console.log(this.session)
+
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/start`,
+          method : 'post',
+          data : {
+            session: this.session.sessionId,
+            outputMode: "INDIVIDUAL",
+            hasAudio: true,
+            hasVideo: true
+          },          
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          this.recordingObject = res.data
+        })
+      })
+    },
+
+    stopRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${this.recordingObject.id}`,
+          method : 'post',
+          data : {
+            session: this.session.sessionId,
+            outputMode: "COMPOSED",
+            hasAudio: true,
+            hasVideo: true
+          },          
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`stop recording id ${res.data.id}`)
+        })
+      })
+    },
+
+    deleteRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
+          method : 'delete',       
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          if (res.status == "204") {
+            console.log(`success delete recording id ${this.recordingObject.id}`)
+          } else {
+            console.log(`fail delete recording id ${this.recordingObject.id}, status code ${res.status}`)
+          }
+        })
+      })
+    },
+
+    getRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
+          method : 'get',        
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`get recording id ${res.data.id}`)
+          this.recordingObject = res
+        })
+      })
+    },
+
+    getRecordings() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings`,
+          method : 'get',     
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`get recordings ${JSON.stringify(res.data)}`)
+          this.recordingObjects = res.data
+        })
+      })
+    }
   }
 }
 </script>
