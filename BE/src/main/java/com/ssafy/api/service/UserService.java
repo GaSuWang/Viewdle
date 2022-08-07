@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface UserService {
-	User createUser(UserRegisterPostReq userRegisterInfo);
+	User createUser(String email, String name, String password, String password2);
 	User getUserByUserEmail(String userEmail);
 	User loginUser(String email, String password);
 	User getUserByUserSeq(int userSeq);
@@ -22,4 +22,6 @@ public interface UserService {
 	void changeBadge(User user, String badge);
 	UserHistoryRes getUserHistory(User user);
 	void getNewBadge(User user, Common common);
+
+	void cretaeGoogleUser(String userEmail, String name, String profile_image);
 }

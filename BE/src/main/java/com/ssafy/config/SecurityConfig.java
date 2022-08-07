@@ -1,12 +1,9 @@
 package com.ssafy.config;
 
-import com.ssafy.common.oauth2.CustomOAuth2UserService;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.JwtAuthenticationFilter;
 import com.ssafy.common.auth.SsafyUserDetailService;
-import com.ssafy.common.oauth2.JwtAuthFilter;
-import com.ssafy.common.oauth2.OAuth2SuccessHandler;
-import com.ssafy.common.oauth2.TokenService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -38,9 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SsafyUserDetailService ssafyUserDetailService;
 
-    private final CustomOAuth2UserService oAuth2UserService;
-    private final OAuth2SuccessHandler successHandler;
-    private final TokenService tokenService;
     @Autowired
     private UserService userService;
 
@@ -88,14 +82,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //체크 - 이메일 중복확인
                 .antMatchers("/api/v1/users/check/*").permitAll()
                 .anyRequest().permitAll()
+                .and().cors();
 
-                .and()
-                .oauth2Login()
-                .successHandler(successHandler)
-                .userInfoEndpoint().userService(oAuth2UserService);
-
-
-        http.addFilterBefore(new JwtAuthFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
+//                .and()
+//                .oauth2Login()
+//                .successHandler(successHandler)
+//                .userInfoEndpoint().userService(oAuth2UserService);
+//
+//
+//        http.addFilterBefore(new JwtAuthFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
 
 
 
