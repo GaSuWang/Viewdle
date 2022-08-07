@@ -13,10 +13,8 @@
   <div class="MyViewBoss">
     <NavBar class="NavView"/>
     <div class="MyView">
+      <!-- <SendImg/> -->
       <p class="pagetitle">My Page</p>
-      <div class="MyTop">
-      </div>
-      <hr>
       <div class="MyBody">
         <div class="card-top">
           <img :src="userLists.userProfileImage">
@@ -141,6 +139,7 @@ import NavBar from '@/components/Lobby/NavBar.vue'
 import UsageTrend from '@/components/Lobby/UsageTrend.vue'
 import BadgeList from '@/components/Lobby/BadgeList.vue'
 import GrassShow from '@/components/Lobby/GrassShow.vue'
+// import SendImg from '@/components/Lobby/SendImg.vue'
 import { useStore } from 'vuex'
 import { computed, reactive } from "vue";
 export default {
@@ -148,7 +147,8 @@ export default {
     NavBar,
     UsageTrend,
     BadgeList,
-    GrassShow
+    GrassShow,
+    // SendImg,
   },
   name: "PWUpdateModal",
   setup() {
@@ -181,7 +181,8 @@ export default {
     function changePW(){
       store.dispatch('rhtModule/changePW', changepassword)
     }
-    
+
+
     return {
       userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
     };
@@ -211,9 +212,6 @@ export default {
   left: 300px;
   height: 100%;
   width: 80%;
-}
-.MyTop{
-  height: 80px;
 }
 .Mycard-body{
   width:95%;
