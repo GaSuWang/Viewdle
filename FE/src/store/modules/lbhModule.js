@@ -1,4 +1,5 @@
 // import axios from "axios";
+
 const state = {
   superUser: {},
   superUserOut: false,
@@ -273,14 +274,20 @@ const mutations = {
   //ERView
 
   //FeedbackRoom
+  ADD_FB(state,fb){
+    state.FBList.push(fb)
+  },
   DELETE_FB(state, id) {
-    console.log(typeof state.FBList, state.FBList);
-    state.FBList.foreach((e) => {
-      if (e.reg_dt === id) {
-        const index = state.FBList.indexOf("e");
-        if (index > -1) state.FBList.splice(index, 1);
-      }
-    });
+    console.log('들어온 id', id)
+    const idx = state.FBList.findIndex(function(item) {return item.reg_dt === id})
+    if (idx > -1) state.FBList.splice(idx, 1);
+    console.log('delete_fb됐나?', state.FBList)
+  },
+  UPDATE_FB(state, fb) {
+    console.log('업데이트 시 들어온 fb', fb)
+    const idx = state.FBList.findIndex(function(item) {return item.reg_dt === fb.reg_dt})
+    console.log('업데이트 위해 필요한 idx 찾음', idx)
+    state.FBList[idx] = fb;
   },
 };
 const actions = {
