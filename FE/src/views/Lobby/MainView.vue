@@ -96,9 +96,9 @@
           </div> 
           <div class="modal-footer">
             <button class="btn btn-secondary">입장</button>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
           </form>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div> 
