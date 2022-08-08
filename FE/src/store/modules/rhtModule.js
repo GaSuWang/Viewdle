@@ -400,20 +400,22 @@ const actions= {
       })
     },
     //스터디룸 정보 얻어오기
-    getStudyRoom({commit}, params) {
+    getStudyRoom({commit}) {
       console.log("스터디룸가져오기야야 안녕?")
       axios.get( 
-        'http://' + location.hostname + ':8081' + '/api/vi/studyroom',  //나중에 api/v1으로 고치기
+        'http://' + location.hostname + ':8081' + '/api/v1/studyroom',  //나중에 api/v1으로 고치기
         {
           params:{
-            params
+            FullYN: '',
+            order: '',
+            privateYN: '',
+            type: ''            
           }
         }
       
       )
       .then(res => {
         commit('SET_STUDYROOM_LIST', res.data)
-        console.log(params)
         alert('스터디룸정보를 가져왔습니다.')
       }
       )
@@ -434,12 +436,13 @@ const actions= {
     //   })
     // },
     // 스터디룸 생성
-    createStudyroom({dispatch},credentials) {
+    createStudyroom({dispatch, getters},credentials) {
       console.log("스터디룸만들기야 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
         method:'post',
         data: credentials,
+        headers: {Authorization: getters.authHeader }
       })
       .then(() => {
         dispatch('getstudyroom')
@@ -485,15 +488,15 @@ const actions= {
     //     alert('실패.')
     //   })
     // },
-    getReplay({commit,getters}, params){
+    getReplay({commit,getters}){
       axios.get( 
-        'http://' + location.hostname + ':8081' + '/api/vi/video',
+        'http://' + location.hostname + ':8081' + '/api/v1/video',
         {
           headers: {Authorization: getters.authHeader }
         },
         {
           params:{
-            params
+            order:''
           }
         },
       )

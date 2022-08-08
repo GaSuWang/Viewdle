@@ -50,12 +50,7 @@ export default {
     })
     const store = useStore()
     const router = useRouter()
-    const params = reactive({
-      FullYN : '',
-      order : '',
-      privateYN : '',
-      type: '',
-    }).toString()
+
      
     // function login(){
     //   store.dispatch('rhtModule/login', credentials)
@@ -73,13 +68,14 @@ export default {
           console.log("해윙")
           console.log(res)
           const token = res.data.accessToken
+          console.log(token)
           store.dispatch('rhtModule/saveToken', token)
           store.dispatch('rhtModule/fetchCurrentUser')
           store.dispatch('rhtModule/fetchHistories')
           store.dispatch('rhtModule/getBadge')
           store.dispatch('rhtModule/getCoverLetter')
-          store.dispatch('rhtModule/getStudyRoom', params)
-          store.dispatch('rhtModule/getReplay', params)
+          store.dispatch('rhtModule/getStudyRoom')
+          store.dispatch('rhtModule/getReplay')
           router.push('/main')
         })
         .catch(err => {
@@ -89,7 +85,7 @@ export default {
     }
       
     return {
-      login, credentials, credentialsTogetReplay, params
+      login, credentials, credentialsTogetReplay
     }
   }
 }
