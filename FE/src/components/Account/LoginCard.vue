@@ -45,8 +45,17 @@ export default {
       email: '',
       password: '',
     })
+    const credentialsTogetReplay = reactive({
+      order:''
+    })
     const store = useStore()
     const router = useRouter()
+    const params = reactive({
+      FullYN : '',
+      order : '',
+      privateYN : '',
+      type: '',
+    }).toString()
      
     // function login(){
     //   store.dispatch('rhtModule/login', credentials)
@@ -69,8 +78,8 @@ export default {
           store.dispatch('rhtModule/fetchHistories')
           store.dispatch('rhtModule/getBadge')
           store.dispatch('rhtModule/getCoverLetter')
-          store.dispatch('rhtModule/getStudyRoom')
-          store.dispatch('rhtModule/getReplay')
+          store.dispatch('rhtModule/getStudyRoom', params)
+          store.dispatch('rhtModule/getReplay', params)
           router.push('/main')
         })
         .catch(err => {
@@ -80,7 +89,7 @@ export default {
     }
       
     return {
-      login, credentials
+      login, credentials, credentialsTogetReplay, params
     }
   }
 }

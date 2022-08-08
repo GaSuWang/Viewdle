@@ -30,9 +30,11 @@
 
 import { reactive } from 'vue'
 import axios from 'axios'
+import { useRouter } from "vue-router";
 export default {
   name: 'PWFindCard',
   setup () {
+    const router = useRouter()
     const credentials = reactive({
       userEmail: '',
     })
@@ -42,12 +44,13 @@ export default {
     function getEmailCode(credentials) {
         console.log("코드보내기야 안녕?")
         axios({
-          url: 'http://localhost:8081/api/v1/users/check/users/password',  // 비밀번호찾기 api
+          url: 'http://' + location.hostname + ':8081' + '/api/v1/users/password',  // 비밀번호찾기 api
           method: 'post',
-          data: credentials.userEmail
+          data: {"email":credentials.userEmail}
         })
           .then(() => {
             alert('가입한 이메일로 새 비밀번호가 전송 되었습니다.')
+            router.push('/')
           })
           .catch(err => {
             console.error(err.response)
