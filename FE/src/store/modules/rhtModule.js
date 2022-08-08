@@ -5,7 +5,7 @@ const state= {
     // 회원가입
     token: localStorage.getItem('token') || '',
     UserList:{"userEmail":"seoktak123@gmail.com", "userMainBadge":"https://w7.pngwing.com/pngs/445/743/png-transparent-badge-gold-badge-label-rectangle-pin-thumbnail.png", "userName":"연딱콩", "userProfileImage":"https://lh3.googleusercontent.com/a/AItbvmncW_yp0Hpoha3SrYuE1ElnJU6SX91-tnBZpQco=s96-c", "userSeq":1, "userTotaltime": "13", "userTotalVideo": 5},
-    HistoryList:{"userTotalTime":"13", "userTotalViedo":5, "usingDates":["2022:07:27","2022:07:26","2022:07:25"]},
+    HistoryList:{"userTotalTime":"13", "userTotalVideo":5, "usingDates":["2022:08:27","2022:08:26","2022:08:25"]},
     isLoggedIn: true,
     emailcode:{},
     pwcode: false,
@@ -15,7 +15,7 @@ const state= {
     // 썸네일 따오기
     ThumnailList:{},
     // 뱃지 관리
-    BadgeList:{},
+    BadgeList:[],
     // 자소서관리
     CoverLetterList:[
       {"title":"삼성", "content":"합격하고싶다", "coverLetterSeq": 1, "date":"20200221"},
@@ -98,9 +98,11 @@ const mutations= {
     SET_REPLAY_DETAIL(state, ReplayDetail){
       state.ReplayDetail = ReplayDetail
     },
+    SET_BADGE_LIST(state, BadgeList){
+      state.BadgeList = BadgeList
+    },
   }
-
-
+// const router = useRouter()
 const actions= {
   // 토큰저장
     saveToken({ commit }, token){
@@ -113,37 +115,39 @@ const actions= {
     },
     
   // 로그인 
-    login({ dispatch, getters }, credentials) {
+    // login({ dispatch, getters }, credentials) {
 
-      console.log("로그인아 안녕?")
-      axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
-        method: 'post',
-        data: credentials
-      })
-        .then(res => {
-          console.log("해윙")
-          console.log(res)
-          const token = res.data.accessToken
-          dispatch('saveToken', token)
-          console.log(getters.authHeader)
-          dispatch('fetchCurrentUser')
-          console.log(getters.UserList)
-          dispatch('fetchHistories')
-        })
-        .catch(err => {
-          console.error(err)
-          alert("이메일 및 비밀번호를 확인하세요")
-        })
-    },
+    //   console.log("로그인아 안녕?")
+    //   axios({
+    //     url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
+    //     method: 'post',
+    //     data: credentials
+    //   })
+    //     .then(res => {
+    //       console.log("해윙")
+    //       console.log(res)
+    //       const token = res.data.accessToken
+    //       dispatch('saveToken', token)
+    //       console.log(getters.authHeader)
+    //       dispatch('fetchCurrentUser')
+    //       console.log(getters.UserList)
+    //       dispatch('fetchHistories')
+    //       dispatch('getBadge')
+    //       router.push('/main')
+    //     })
+    //     .catch(err => {
+    //       console.error(err)
+    //       alert("이메일 및 비밀번호를 확인하세요")
+    //     })
+    // },
 
     // 로그아웃
     logout({ getters, dispatch }) {
       console.log("로그아웃아 안녕?")
       axios({
-        url: '', //logout api로 
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/detail', //logout api로 
         method: 'post',
-        headers: getters.authHeader,
+        headers: {Authorization: getters.authHeader },
       })
         .then(() => {
           dispatch('removeToken')
@@ -232,11 +236,12 @@ const actions= {
     },
 
     // 회원탈퇴
-    deleteID() {
+    deleteID({getters}) {
       console.log("회원탈퇴야 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users', // 회원탈퇴 api 
         method:'delete',
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('정상적으로 회원탈퇴 되었습니다.')
@@ -267,11 +272,12 @@ const actions= {
     },
 
     // 자소서 만들기
-    createCoverLetter({dispatch},credentials) {
+    createCoverLetter({dispatch, getters}, credentials) {
       console.log("자소서만들기야 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'post',
+        headers: {Authorization: getters.authHeader },
         data: credentials,
       })
       .then(() => {
@@ -304,10 +310,10 @@ const actions= {
     },
 
     //자소서 상세보기
-    detailCoverLetter({commit, getters}, coverLetterSeq) {
+    detailCoverLetter({commit, getters}, credentialsTodelete) {
       console.log("자소서상세보기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + `/api/v1/coverletters/${coverLetterSeq}}`, // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + `/api/v1/coverletters/${credentialsTodelete.coverLetterSeq}`, // 비번수정 api 
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -320,14 +326,33 @@ const actions= {
         alert('실패.')
       })
     },
+        // //자소서 상세보기
+        // detailCoverLetter({commit, getters}, credentialsTodelete) {
+        //   console.log("자소서상세보기야 안녕?")
+        //   axios({
+        //     url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
+        //     method:'get',
+        //     headers: {Authorization: getters.authHeader },
+        //     data: credentialsTodelete
+        //   })
+        //   .then(res => {
+        //     commit('SET_COVERLETTER_DETAIL', res.data)
+        //     alert('자소서 상세 정보를 가져왔습니다.')
+        //   })
+        //   .catch(err => {
+        //     console.error(err.response)
+        //     alert('실패.')
+        //   })
+        // },
 
     //자소서 삭제하기
-    deleteCoverLetter({dispatch}, credentialsTodelete) {
+    deleteCoverLetter({dispatch, getters}, credentialsTodelete) {
       console.log("자소서 삭제하기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters/', // 비번수정 api 
+        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'delete',
-        data: credentialsTodelete
+        data: credentialsTodelete,
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         dispatch('getCoverLetter')
@@ -339,20 +364,21 @@ const actions= {
       })
     },
     //자소서 수정하기
-    updateCoverLetter({dispatch}, credentials) {
-      console.log("자소서수정하기야 안녕?")
+    updateCoverLetter({dispatch, getters}, credentialsToedit) {
+      console.log("자소서수정하기야 안녕? 여기까진 괜찮네?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         method:'put',
-        data: credentials
+        data: credentialsToedit,
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         dispatch('getCoverLetter')
-        alert('자소서가 수정되었습니다.')
+        alert('자소서가 수정되었습니다 됐다^^')
       })
       .catch(err => {
         console.error(err.response)
-        alert('실패.')
+        alert('실패 ㅅㅂ....')
       })
     },
     //스터디룸 정보 얻어오기
@@ -453,6 +479,145 @@ const actions= {
       .then(res => {
         commit('SET_REPLAY_LIST', res.data)
         alert('리플레이 상세보기.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+
+    // 뱃지 가져오기
+    getBadge({commit, getters}) {
+      console.log("뱃지가져오기야야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users/badges', // 비번수정 api 
+        method:'get',
+        headers: {Authorization: getters.authHeader },
+      })
+      .then(res => {
+        commit('SET_BADGE_LIST', res.data)
+        console.log('뱃지정보를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    // 스터디룸 서치
+    searchStudyroom({commit}, credentialsTosearch) {
+      console.log("서치기능아 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom/search', // 비번수정 api 
+        method:'get',
+        params: { keyword: credentialsTosearch.keyword },
+      })
+      .then(res => {
+        commit('SET_STUDYROOM_LIST', res.data)
+        console.log('서치했어용')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //스터디룸 필터
+    filterStudyRoom({commit}, credentialsToFilter) {
+      console.log("스터디룸가져오기야야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        method:'get',
+        params:{ 
+          privateYN: credentialsToFilter.privateYN,
+        }
+      })
+      .then(res => {
+        commit('SET_STUDYROOM_LIST', res.data)
+        alert('스터디룸정보를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //스터디룸 정렬
+    sortStudyRoom({commit}, credentialsToFilter) {
+      console.log("스터디룸가져오기야야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        method:'get',
+        params:{ 
+          order: credentialsToFilter.order,
+        }
+      })
+      .then(res => {
+        commit('SET_STUDYROOM_LIST', res.data)
+        alert('스터디룸정보를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //영상다시보기 필터
+    filterReplay
+    ({commit}, credentialsToFilterReplay) {
+      console.log("리플레이필터가져오기야야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/video', // 비번수정 api 
+        method:'get',
+        params:{ 
+          order: credentialsToFilterReplay.order,
+        }
+      })
+      .then(res => {
+        commit('SET_REPLAY_LIST', res.data)
+        alert('리플레이를 가져왔습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    //뱃지 설정
+    setBadge
+    ({dispatch, getters}, credentialsToset) {
+      console.log("메인뱃지설정아 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users/badge', // 비번수정 api 
+        method:'put',
+        data: credentialsToset,
+        headers: {Authorization: getters.authHeader },
+      })
+      .then(() => {
+        dispatch('fetchCurrentUser')
+        alert('메인뱃지를 설정했습니다.')
+      }
+      )
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    profileImg ({ getters}, formdata) {
+      console.log("프로필 이미지야 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/users/profile', // 비번수정 api 
+        method:'put',
+        data: formdata,
+        headers: {
+          Authorization: getters.authHeader,
+          'Content-Type': 'multipart/form-data' 
+        },
+      })
+      .then(() => {
+        // dispatch('fetchCurrentUser')
+        alert('메인뱃지를 설정했습니다.')
       }
       )
       .catch(err => {

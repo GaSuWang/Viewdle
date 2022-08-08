@@ -50,12 +50,12 @@ group 'com.ssafy'
 version '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 
-node {
-    download = true
-    version = '16.16.0'
-    // Set the work directory where node_modules should be located
-    nodeModulesDir = file("${project.projectDir}/../FE")
-}
+//node {
+//    download = true
+//    version = '16.16.0'
+//    // Set the work directory where node_modules should be located
+//    nodeModulesDir = file("${project.projectDir}/../FE")
+//}
 
 configurations {
     providedRuntime
@@ -65,12 +65,12 @@ configurations {
     args = ['install']
 }*/
 
-task webpack(type: NpmTask, dependsOn: 'npmInstall') {
-    args = ['run','build']
-}
+//task webpack(type: NpmTask, dependsOn: 'npmInstall') {
+//    args = ['run','build']
+//}
 
 // processResources is a Java task. Run the webpack bundling before this task using the 'build' task in the package.json
-processResources.dependsOn 'webpack'
+//processResources.dependsOn 'webpack'
 
 //set build time and inject value to application.properties
 def buildTime() {
@@ -189,14 +189,17 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // 소셜 로그인 의존성 추가가
-    compile('org.springframework.boot:spring-boot-starter-oauth2-client')
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'javax.xml.bind:jaxb-api'
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+//    compile('org.springframework.boot:spring-boot-starter-oauth2-client')
+//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+//    implementation 'org.springframework.boot:spring-boot-starter-validation'
+//    implementation 'javax.xml.bind:jaxb-api'
+//    implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
     // 파이어베이스
     implementation 'com.google.firebase:firebase-admin:9.0.0'
+
+    //소셜 로그인
+    implementation 'com.google.api-client:google-api-client:2.0.0'
 }
 
 test {

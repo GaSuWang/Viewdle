@@ -30,6 +30,7 @@
 
 <script>
 import { useStore } from 'vuex'
+import axios from 'axios'
 import { reactive } from 'vue'
 import { useRouter } from "vue-router";
 import GoogleLogin from "@/components/Account/GoogleLogin.vue"
@@ -47,10 +48,37 @@ export default {
     const store = useStore()
     const router = useRouter()
      
-    function login(){
-      store.dispatch('rhtModule/login', credentials)
-      router.push('/main')
+    // function login(){
+    //   store.dispatch('rhtModule/login', credentials)
+    //   router.push('/main')
+    // }
+    function login(credentials) {
+
+      console.log("로그인아 안녕?")
+      axios({
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
+        method: 'post',
+        data: credentials
+      })
+        .then(res => {
+          console.log("해윙")
+          console.log(res)
+          const token = res.data.accessToken
+          store.dispatch('rhtModule/saveToken', token)
+          store.dispatch('rhtModule/fetchCurrentUser')
+          store.dispatch('rhtModule/fetchHistories')
+          store.dispatch('rhtModule/getBadge')
+          store.dispatch('rhtModule/getCoverLetter')
+          store.dispatch('rhtModule/getStudyRoom')
+          store.dispatch('rhtModule/getReplay')
+          router.push('/main')
+        })
+        .catch(err => {
+          console.error(err)
+          alert("이메일 및 비밀번호를 확인하세요")
+        })
     }
+      
     return {
       login, credentials
     }

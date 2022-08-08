@@ -38,17 +38,17 @@ public class UserServiceImpl implements UserService {
 	PasswordEncoder passwordEncoder;
 	
 	@Override
-	public User createUser(UserRegisterPostReq userRegisterInfo) {
-		if(userRepository.findByUserEmail(userRegisterInfo.getUserEmail()) != null){
+	public User createUser(String email, String name, String password, String password2){
+		if(userRepository.findByUserEmail(email) != null){
 			throw new AlreadyExistEmailException();
-		} else if (!userRegisterInfo.getUserPassword().equals(userRegisterInfo.getUserPassword2())) {
+		} else if (!password.equals(password2)) {
 			throw new NotMatchPasswordException();
 		}
 
 		User user = new User();
-		user.setUserEmail(userRegisterInfo.getUserEmail());
-		user.setUserPassword(passwordEncoder.encode(userRegisterInfo.getUserPassword()));
-		user.setUserName(userRegisterInfo.getUserName());
+		user.setUserEmail(email);
+		user.setUserPassword(passwordEncoder.encode(password));
+		user.setUserName(name);
 		return userRepository.save(user);
 	}
 
@@ -99,7 +99,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteUser(User user) {
-		userRepository.delete(user);
+		user.setUserDelYN("Y");
+		userRepository.save(user);
 	}
 
 	@Override
@@ -136,6 +137,12 @@ public class UserServiceImpl implements UserService {
 		badge.setUser(user);
 		badge.setCommon(common);
 		badgeRepository.save(badge);
+	}
+
+	@Override
+	public void cretaeGoogleUser(String userEmail, String name, String profile_image) {
+		User user = new User(userEmail, name, profile_image);
+		userRepository.save(user);
 	}
 
 }

@@ -9,20 +9,30 @@
         <feedback-box :fb="fb"></feedback-box>
       </li>
     </ul>
-    <div :class="[BtnClicked === 'good' ? ' FBInputBox good' : 'FBInputBox bad']" v-if="BtnClicked">
-      <input
+    <!-- 피드백 없을 때 보여줄 문구 -->
+    <span v-if="FBList === []">아직 피드백이 존재하지 않습니다.</span>
+
+    <!-- 피드백 굿/뱃 버튼 -->
+    <div class="FBBtncontainer inputOn" v-if="FBInputType">
+      <textarea
         type="text"
         class="form-control"
         v-model="FBContent"
         @keypress.enter="saveFB"
-      />
-      <button class="FBInputBoxBtn" @click="closeFB">X</button>
+        placeholder="피드백을 등록하려면 엔터를 누르세요."/>
+      <div class="FBGoodBtn" v-if="FBInputType==='good'">
+        <button @click="createFB('good')">
+          <i class="bi bi-hand-thumbs-up-fill"></i>
+        </button>
+      </div>
+      <div class="FBBadBtn" v-else-if="FBInputType==='bad'">
+        <button @click="createFB('bad')">
+          <i class="bi bi-hand-thumbs-down-fill"></i>
+        </button>
+      </div>
     </div>
-    <!-- 피드백 없을 때 보여줄 문구 -->
-    <span v-if="FBList == []">아직 피드백이 존재하지 않습니다.</span>
 
-    <!-- 피드백 굿/뱃 버튼 -->
-    <div class="FBBtncontainer">
+    <div class="FBBtncontainer inputOff" v-else>
       <div class="FBGoodBtn">
         <button @click="createFB('good')">
           <i class="bi bi-hand-thumbs-up-fill"></i>
@@ -39,69 +49,58 @@
 
 <script>
 import FeedbackBox from "@/components/StudyRoom/NormalMode/FeedbackBox.vue";
-import { ref, computed } from "vue";
-import { useStore } from "vuex";
+// import { ref, computed } from "vue";
+import { mapGetters } from "vuex";
 export default {
   name: "FeedbackArea",
   components: { FeedbackBox },
   props: {
     videoInfo: Object,
   },
-  setup() {
-    // 영상에 피드백이 존재하는 지 알아야 함
-    // 영상 정보를 넘겨줘 해당 영상에 피드백이 달려있는지 확인
-    const store = useStore();
-    const FBList = computed(() => store.getters["lbhModule/FBList"]);
-    const BtnClicked = ref(""); //피드백 버튼이 클릭되지 않은 상태가 '', 굿 버튼 클릭되면 good, 뱃 버튼 클릭되면 bad
-    const FBContent = ref(""); //새롭게 만들어진 피드백 박스와 연동됨
-
-    // 피드백 입력란 생성
-    const createFB = (gb) => {
-      if (!BtnClicked.value) {
+  data(){
+    return{
+      FBInputType: undefined,
+      FBContent: "",
+    }
+  },
+  computed:{
+    ...mapGetters('lbhModule',[
+      'FBList',
+    ])
+  },
+  methods:{
+    createFB(gb){
+      if (!this.FBInputType) {
         //만약 굿/뱃 버튼 둘 다 눌리지 않은 상태에서 굿/뱃 버튼이 눌린다면
         if (gb === "good") {
-          BtnClicked.value = "good";
+          this.FBInputType = "good";
         } else {
-          BtnClicked.value = "bad";
+          this.FBInputType = "bad";
         }
       } else {
         //만약 굿/뱃 버튼 둘 중 하나가 눌린 상태에서 또 다시 굿/뱃 버튼이 눌린다면
         if (gb === "good") {
-          BtnClicked.value = "good";
+          this.FBInputType= "good";
         } else {
-          BtnClicked.value = "bad";
+          this.FBInputType = "bad";
         }
       }
-    };
-
-    // 피드백 저장
-    const saveFB = () => {
-      // store.dispatch("saveFB",  FBContent.value) // 원래 로직은 이거
-      FBList.value.push({
-        // 임시로 만든 로직, fbList가 어떤 자료를 리턴할 지 모르겄네
-        gb: BtnClicked.value,
-        content: FBContent.value,
+    },
+    saveFB(){
+      const data = {
+        gb: this.FBInputType,
+        content: this.FBContent,
         reg_dt: Date.now(),
-      });
-      console.log(BtnClicked.value, FBContent.value, Date.now());
-      FBContent.value = "";
-      BtnClicked.value = "";
-    };
+      }
+      this.$store.commit('lbhModule/ADD_FB', data)
+      this.FBContent = "";
+      this.FBInputType= undefined;
+    },
+    closeFBInput(){
+      this.FBContent = "";
+      this.FBInputType= undefined;
+    },
 
-    // 피드백 입력란 닫기
-    const closeFB = () => {
-      FBContent.value = "";
-      BtnClicked.value = "";
-    };
-
-    return {
-      BtnClicked,
-      FBContent,
-      FBList,
-      createFB,
-      saveFB,
-      closeFB,
-    };
   },
 };
 </script>
@@ -111,23 +110,20 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   height: 80%;
   width: 100%;
   max-height: 80%;
   padding: 0;
   margin: 0;
   border-radius: 20px;
-  /* background-color: #edf0f6; */
 
-}
-
-.FeedbackArea > ul {
-  padding: 0;
 }
 
 .FBList {
   width: 100%;
   height: 80%;
+  padding-right: 0;
   max-height: 80%;
   overflow-y: scroll;
   scrollbar-color: #d4aa70 #e4e4e4;
@@ -175,10 +171,20 @@ export default {
   background: linear-gradient(#fee7e7, #fff3f3)
 }
 
+.FBBtncontainer{
+  width: 90%;
+  height: 20%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
 .form-control {
   background: none;
-  width: 85%;
+  width: 80%;
+  height: 100%;
   border: none;
+  overflow-y: scroll;
 }
 
 .form-control:focus {
@@ -194,8 +200,8 @@ export default {
 .FBGoodBtn > button{
   border: none;
   display: block;
-  background-color: #e1f3f2;
-  color: #00a38a;
+  background-color: #89B2E8;
+  color: #fff;
   margin: 18px;
   width: 36px;
   height: 36px;
@@ -208,8 +214,8 @@ export default {
 .FBBadBtn > button{
   border: none;
   display: block;
-  background-color: #fee7e7;
-  color: #fa5d5c;
+  background-color: #ffcc74;
+  color: #fff;
   margin: 18px;
   width: 36px;
   height: 36px;
@@ -263,12 +269,23 @@ export default {
   padding-left: 0;
 }
 
-.FBBtncontainer {
+.inputOff {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-self: center;
-  width: 80%;
+  /* width: 80%; */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px 3px #d8dae3; 
+}
+
+.inputOn{
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-evenly; */
+  align-self: center;
+  /* width: 80%; */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 4px 4px 3px #d8dae3; 

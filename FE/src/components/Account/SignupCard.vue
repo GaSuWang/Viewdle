@@ -38,6 +38,7 @@
           </div>
 
           <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
+          <router-link to="/">뒤로가기</router-link>
         </form>
       </div>
       </div>

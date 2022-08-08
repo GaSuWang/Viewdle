@@ -1,28 +1,28 @@
 // 이병헌
 <template>
   <div class="WaitingRoomView">
+    <!-- <AuthorityPassModal/> -->
+
     <!-- 참가자 영상 나오는 부분 -->
-    <div class="WRSession" v-if="session">
-      <!-- openvidu 간단히 -->
-      <div id="wr-video-container" class="col-md-6">
-        <!-- vue 3.x에서는 click.native 없어짐 -->
-        <user-video :stream-manager="publisher" />
-        <user-video
-          v-for="sub in subscribers"
+    <div class="WRLeftArea">
+      <div class="WRVideo container">
+        <div class="row row-cols-2">
+        <user-video class="video" :stream-manager="publisher" />
+        <user-video class="video" v-for="sub in subscribers"
           :key="sub.stream.connection.connectionId"
-          :stream-manager="sub"
-        />
+          :stream-manager="sub" />
+        </div>
       </div>
     </div>
 
     <!-- 방장 기능 -->
-    <div class="superUser">
+    <div class="WRRightArea">
       <div id="session-controller">
         <input
           class="btn btn-large btn-danger"
           type="button"
           id="buttonLeaveSession"
-          @click="leaveSession"
+          @click="WRleaveSession"
           value="방 나가기"
         />
       </div>
@@ -34,7 +34,6 @@
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
-          @click="consoleWRParticipantList"
         >
           <span v-if="!EECnd">면접자 선택</span> 
           <span v-else-if="EECnd">면접자: {{EECnd}}</span> 
@@ -46,25 +45,77 @@
         </ul>
       </div>
       <!-- 스터디 종료 -->
-      <button class="btn btn-secondary"  v-if="userType === 'superUser'" @click="EndStudyConfirm">
-        스터디 종료
-      </button>
-      <button @click="muteMySelf">내 음성 끄고켜기</button>
-      <button @click="ShowMySelf">내 비디오 끄고켜기</button>
-      <button @click="joinSession">입장하기</button>
-      <button @click="startInterview"  v-if="userType === 'superUser'">면접 시작</button>
-      <button @click="switchUserType">{{userType}}</button>
-    </div>
+      <div class="endStudy" v-if="userType === 'superUser'">
+        <button class="btn btn-secondary" @click="EndStudyConfirm">
+          <span>스터디 종료</span> 
+        </button>
+      </div>
+
+      <div class="wr-to-lb super-user" v-if="userType === 'superUser'" >
+        <button @click="userOutClick(userType)">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="start-interview" v-if="userType === 'superUser'">
+        <button @click="startInterview"  >
+          <i class="bi bi-check-lg"></i>
+        </button>
+        <button @click="startEZInterview"  >
+          EZ<i class="bi bi-check-lg"></i>
+        </button>
+      </div>
+
+      <div class="user-out" v-if="userType === 'user'">
+        <button @click="userOutClick(userType)">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="mic-status">
+        <button @click="(muteMySelf) (switchMicStatus)" v-if="session">
+          <i v-if="MicStatus" class="bi bi-mic"></i>
+          <i v-else class="bi bi-mic-mute"></i>
+        </button>
+      </div>
+
+      <div class="camera-status">
+        <button @click="(ShowMySelf) (switchCameraStatus)" v-if="session">
+          <i v-if="CameraStatus" class="bi bi-camera-video"></i>
+          <i v-else class="bi bi-camera-video-off"></i>
+        </button>
+      </div>
+
+      <!-- 삭제할 버튼들 -->
+      <div class="tempBtn"> 
+        <button v-if="!session" @click="joinSession">입장하기</button>
+        <button @click="switchUserType">{{userType}}</button>
+      </div>
+
+      <!-- 녹화 테스트용 버튼 -->
+      <!-- 백하고 연동하게 될거라서 API만 필요하지 버튼은 필요없습니다! 그냥 결과값 확인하는 용도로 사용하세요!
+      아마 녹화 종료하고 필요한 값 들 전달하면 될 거 같습니다. -->
+      <!-- 입장 후 3초 후 녹화 시작으로, 면접 종료하면 녹화도 stop되게 연결하면 될 거 같아요! -->
+      <div class="tempBtn"> 
+        <button @click="startRecording">녹화 시작</button>
+        <button @click="stopRecording">녹화 종료</button>
+        <button @click="getRecording">녹화 하나</button>
+        <button @click="getRecordings">녹화 여러개</button>    
+        <button @click="deleteRecording">녹화 삭제</button>
+      </div>
+
+     </div>
   </div>
 </template>
 
 <script>
 // 여기서 영상 띄우는 법
 // npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
+// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET2 openvidu/openvidu-server-kms:2.22.0
 // 단 도커 설치되어 있어야 함
 
-import { useRouter } from "vue-router";
+// import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
+// import { useRouter } from "vue-router";
 import { mapGetters } from "vuex";
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
@@ -76,73 +127,104 @@ const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "WaitingRoomView",
-  components: { UserVideo },
+  components: { UserVideo,
+  //  AuthorityPassModal 
+   },
   created(){
-    console.log(this.subscribers)
   },
   data() {
     return {
-      OV: undefined,
-      session: undefined,
-      EECnd: '', //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
+      EECnd: "", //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
+      recordingId: '',
       LeaveWR: false,
+
+      recordingObject : null,
+      recordingObjects : null
     };
   },
   computed: {
     ...mapGetters("lbhModule", [
-      'userType',
+      //openvidu
       "publisher",
       "subscribers",
       "mySessionId",
       "myUserName",
-      "WRParticipantList",
+      "OV",
+      "session",
+
+      //기기
       "CameraSelected",
-      "MicSelected",
       "CameraStatus",
+      "CameraStatus",
+      "MicSelected",
       "MicStatus",
+      "MicStatus",
+
+      //유저 권한
+      'userType',
+      // "superUserOut",
+      "superUser",
+
+      //기타
+      "currentUserList",
+      "WRParticipantList",
+      "CLSelected",
     ]),
   },
   setup() {
-    const router = useRouter();
-    function EndStudyConfirm() {
-      if (confirm("정말 스터디를 종료하시겠습니까?")) {
-        router.push("/main");
-      }
-    }
-    return {
-      EndStudyConfirm,
-    };
   },
   methods: {
+    EndStudyConfirm() {
+      if (confirm("정말 스터디를 종료하시겠습니까?")) {
+        this.$router.push("/main");
+      }
+    },
+    switchMicStatus() { //마이크 On/Off
+      this.MicStatus = !this.MicStatus;
+      this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.MicStatus)
+    },
+    switchCameraStatus() { //카메라 On/Off
+      this.CameraStatus = !this.CameraStatus;
+      this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.CameraStatus)
+    },
+    superUserOutClick(userType){
+      if(userType === 'superUser'){
+        console.log('방장 바꿈?')
+      }
+    },
+    userOutClick(){
+      if(this.userType === 'user'){
+        if(confirm('정말 이 방에서 나가시겠습니까?')){
+          this.WRleaveSession()
+        }
+      }
+    },
     switchUserType(){
-      this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+      this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
     },
 
     startInterview(){
-      if (confirm(`면접자는 ${this.EECnd}님 입니다.\n면접을 시작하시겠습니까?`)) {
-        this.session.signal({
-          data: 'true',
-          to:[],
-          type:'startInterview'
-        })
-      }
+      if(this.EECnd){
+        if(confirm(`면접자는 ${this.EECnd}입니다.\n면접을 시작하시겠습니까?`)){
+          this.session.signal({
+            data: `${this.EECnd}`,
+            to:[],
+            type:'startInterview'
+          })}
+      } else {alert('면접자를 선택한 후에 면접을 시작해주세요.')}
+    },
+    startEZInterview(){
+      if(this.EECnd){
+        if(confirm(`면접자는 ${this.EECnd}입니다.\n면접을 시작하시겠습니까?`)){
+          this.session.signal({
+            data: `${this.EECnd}`,
+            to:[],
+            type:'startEZInterview'
+          })}
+      } else {alert('면접자를 선택한 후에 면접을 시작해주세요.')}
     },
     selectEE(name){
       this.EECnd = name
-      this.session.signal({
-      data: `${this.EECnd}`,  // Any string (optional)
-      to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-      type: 'selectEE'             // The type of message (optional)
-      })
-      .then(() => {
-        console.log('일단 신호는 보냄')
-      })
-      .catch(error => {
-          console.error(error);
-      });
-    },
-    consoleWRParticipantList() {
-      console.log(this.WRParticipantList);
     },
     muteMySelf() {
       if (this.publisher.stream.audioActive) {
@@ -165,11 +247,13 @@ export default {
     },
     joinSession() {
       // --- Get an OpenVidu object ---
-      this.OV = new OpenVidu();
+      const newOv = new OpenVidu();
+      this.$store.commit('lbhModule/SET_OV', newOv)
 
       // --- Init a session ---
-      this.session = this.OV.initSession();
-      console.log('wr session',this.session)
+      const ovInitSession = this.OV.initSession();
+      this.$store.commit('lbhModule/SET_SESSION', ovInitSession)
+
       // --- Specify the actions when events take place in the session ---
 
       // On every new Stream received...
@@ -178,6 +262,17 @@ export default {
         const subscriberName = JSON.parse(stream.connection.data).clientData;
         this.$store.commit("lbhModule/ADD_SUBSCRIBERS", subscriber);
         this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", subscriberName);
+        this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", subscriberName);
+
+        const superUser = this.superUser
+        const WRParticipantList = this.WRParticipantList
+        this.session.signal({ 
+          //새로운 유저가 들어오면, 모든 유저에게 현재의 방장 유저가 누군지 알려주는 데이터 전송
+          //향후 새로운 유저에게 줘야 할 데이터 있으면 여기에서 보내주는 걸로
+          data: `{"superUser": "${superUser}", "WRParticipantList": "${WRParticipantList}"}`,
+          to:[],
+          type:'welcomeNewUser'
+        })
       });
 
       // On every Stream destroyed...
@@ -188,6 +283,7 @@ export default {
         }
         const subscriberName = JSON.parse(stream.connection.data).clientData;
         this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberName);
+        this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberName);
       });
 
       // On every asynchronous exception...
@@ -201,25 +297,20 @@ export default {
       // 'token' parameter should be retrieved and returned by your own backend
 
       this.getToken(this.mySessionId).then((token) => {
-        this.$store.commit('lbhModule/SET_SESSION_TOKEN', token)
-        console.log(JSON.stringify(token))
-        console.log("getToken 시작됨 근데 clientData가 뭐지", this.myUserName);
+        console.log('getToken 다음이 시작됨?')
         this.session
           .connect(token, { clientData: this.myUserName })
           .then(() => {
             // --- Get your own camera stream with the desired properties ---
-            console.log("내이름", this.myUserName);
-            this.$store.commit(
-              "lbhModule/ADD_WR_PARTICIPANT_LIST",
-              this.myUserName
-            );
+            this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", this.myUserName);
+            this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", this.myUserName);
 
             let publisher = this.OV.initPublisher(undefined, {
               audioSource: this.MicSelected, // The source of audio. If undefined default microphone
               videoSource: this.CameraSelected, // The source of video. If undefined default webcam
               publishAudio: this.MicStatus, // Whether you want to start publishing with your audio unmuted or not
               publishVideo: this.CameraStatus, // Whether you want to start publishing with your video enabled or not
-              resolution: "320x240", // The resolution of your video
+              resolution: "320x180", // The resolution of your video
               frameRate: 30, // The frame rate of your video
               insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
               mirror: false, // Whether to mirror your local video or not
@@ -230,7 +321,7 @@ export default {
             // --- Publish your stream ---
 
             this.session.publish(this.publisher);
-            console.log('오디오 비디오 어떻게 들어왔나',this.publisher)
+            console.log('오디오 비디오 어떻게 들어왔나',this.publisher.stream)
           })
           .catch((error) => {
             console.log(
@@ -241,23 +332,45 @@ export default {
           });
       });
 
-      this.session.on('signal:selectEE', (event) => {
-       this.EECnd = event.data; // Message
-      });
-      this.session.on('signal:startInterview', (event) => {
-       this.LeaveWR = event.data; // Message
-       if(this.LeaveWR){
+
+      this.session.on('signal:welcomeNewUser', (e)=>{ //방에 처음 들어왔을 때 받는 signal
+        const json = JSON.parse(e.data)
+        this.$store.commit('lbhModule/SET_SUPERUSER', json.superUser)
+        this.$store.commit('lbhModule/SET_WR_PARTICIPANT_LIST', json.WRParticipantList)
+        this.$store.commit('lbhModule/SET_CURRENT_USER_LIST', json.WRParticipantList)
+      })
+
+      this.session.on('signal:switchSuperUser', (e)=>{
+        this.$store.commit('lbhModule/SET_SUPERUSER', e.data)
+        this.$store.commit('lbhModule/SET_SUPERUSER_OUT', false)
+      })
+
+      // 면접 시작
+      this.session.on('signal:startInterview', (e) => { 
+        this.EECnd = e.data
         if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
           console.log('startInterview as EE')
+
+          this.session.signal({ // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+          data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`, 
+          to: [], 
+          type: 'EECL' 
+          })
+          .then(() => {console.log('자소서 보냄')})
+          .catch(error => {console.error(error)});
+
           this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
             this.$store.commit('lbhModule/SET_ERS', s)
           })
-          console.log('startinterview session',this.session )
-          this.$router.push({name:'ee-room', params:{session:this.session}})
+
+          this.$router.push({name:'ee-room'})
+
         } else { //만약 내가 면접관이라면
           console.log('startInterview as ER')
+
           this.$store.commit('lbhModule/SET_ERS', this.publisher) //나(publisher)를 ERS에 넣음
+
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회
             const subscriberName = JSON.parse(s.stream.connection.data).clientData;
             if(this.EECnd === subscriberName){ //면접자 포지션인 참여자(s)는 EE에 넣음
@@ -266,31 +379,71 @@ export default {
               this.$store.commit('lbhModule/SET_ERS', s)
             }
           })
-          console.log('startinterview session',this.session )
-          this.$router.push({name: 'er-room', params:{session:this.session}})
+          this.$router.push({name: 'er-room'})
           }
-       }
-      });
+        this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
+        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+        window.addEventListener("beforeunload", this.WRleaveSession);
+    })
 
-      window.addEventListener("beforeunload", this.leaveSession);
+      // EZ면접 시작
+      this.session.on('signal:startEZInterview', (e) => { 
+        this.EECnd = e.data
+        if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
+          console.log('startEZInterview as EE')
+
+          this.session.signal({ // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+          data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`, 
+          to: [], 
+          type: 'EECL' 
+          })
+          .then(() => {console.log('자소서 보냄')})
+          .catch(error => {console.error(error)});
+
+          this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
+          this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
+            this.$store.commit('lbhModule/SET_ERS', s)
+          })
+
+          this.$router.push({name:'ee-room-ez'})
+
+        } else { //만약 내가 면접관이라면
+          console.log('startEZInterview as ER')
+
+          this.$store.commit('lbhModule/SET_ERS', this.publisher) //나(publisher)를 ERS에 넣음
+
+          this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회
+            const subscriberName = JSON.parse(s.stream.connection.data).clientData;
+            if(this.EECnd === subscriberName){ //면접자 포지션인 참여자(s)는 EE에 넣음
+              this.$store.commit('lbhModule/SET_EE', s)
+            } else { //그 외의 참여자(s)는 ERS에 넣음
+              this.$store.commit('lbhModule/SET_ERS', s)
+            }
+          })
+          this.$router.push({name: 'er-room-ez'})
+          }
+        this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
+        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+        window.addEventListener("beforeunload", this.WRleaveSession);
+    })
+    
     },
 
-    leaveSession() {
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
+    //대기실에서 나갈 때
+    WRleaveSession() {
+      // this.session.signal({
       if (this.session) this.session.disconnect();
 
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
+      this.$store.commit('lbhModule/SET_SESSION', undefined)
+      this.$store.commit('lbhModule/SET_OV', undefined)
+      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+      this.$store.commit('lbhModule/SET_SUPERUSER', {})
+      this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
 
-      window.removeEventListener("beforeunload", this.leaveSession);
-    },
-
-    updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
+      window.removeEventListener("beforeunload", this.WRleaveSession);
     },
 
     /**
@@ -306,14 +459,19 @@ export default {
      */
 
     getToken(mySessionId) {
-      return this.createSession(mySessionId).then((sessionId) =>
-        this.createToken(sessionId)
+      console.log('getToken이 시작되긴 했음', mySessionId)
+      return this.createSession(mySessionId).then((sessionId) =>{
+        console.log('createSession은 잘 됨')
+        return this.createToken(sessionId)
+
+        }
       );
     },
 
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
     createSession(sessionId) {
+      console.log('createSession이 시작되긴 했음')
       return new Promise((resolve, reject) => {
         axios
           .post(
@@ -331,6 +489,7 @@ export default {
           .then((response) => response.data)
           .then((data) => resolve(data.id))
           .catch((error) => {
+            console.log('createSession에서 막힘')
             if (error.response.status === 409) {
               resolve(sessionId);
             } else {
@@ -352,11 +511,11 @@ export default {
 
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
     createToken(sessionId) {
+      console.log('createToken까지 왔나?')
       return new Promise((resolve, reject) => {
         axios
           .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
-            {},
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,{},
             {
               auth: {
                 username: "OPENVIDUAPP",
@@ -366,14 +525,107 @@ export default {
           )
           .then((response) => response.data)
           .then((data) => resolve(data.token))
-          .catch((error) => reject(error.response));
+          .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
       });
     },
-  },
-  // created() {
-  //   this.joinSession();
-  // },
-};
+
+    // 녹화 funcion
+    startRecording() {
+      console.log(this.session)
+
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/start`,
+          method : 'post',
+          data : {
+            session: this.session.sessionId,
+            outputMode: "INDIVIDUAL",
+            hasAudio: true,
+            hasVideo: true
+          },          
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          this.recordingObject = res.data
+        })
+      })
+    },
+
+    stopRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${this.recordingObject.id}`,
+          method : 'post',
+          data : {
+            session: this.session.sessionId,
+            outputMode: "COMPOSED",
+            hasAudio: true,
+            hasVideo: true
+          },          
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`stop recording id ${res.data.id}`)
+        })
+      })
+    },
+
+    deleteRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
+          method : 'delete',       
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          if (res.status == "204") {
+            console.log(`success delete recording id ${this.recordingObject.id}`)
+          } else {
+            console.log(`fail delete recording id ${this.recordingObject.id}, status code ${res.status}`)
+          }
+        })
+      })
+    },
+
+    getRecording() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
+          method : 'get',        
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`get recording id ${res.data.id}`)
+          this.recordingObject = res
+        })
+      })
+    },
+
+    getRecordings() {
+      return new Promise(() => {
+        axios({
+          url : `${OPENVIDU_SERVER_URL}/openvidu/api/recordings`,
+          method : 'get',     
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`
+          }
+        })
+        .then((res) => {
+          console.log(`get recordings ${JSON.stringify(res.data)}`)
+          this.recordingObjects = res.data
+        })
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -392,25 +644,53 @@ export default {
   justify-content: space-between;
 }
 
-.WRSession {
-  width: 65%;
+.WRLeftArea {
+  width: 70%;
   margin: 0;
+  padding: 0;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
 }
 
-#wr-video-container {
+.WRVideo{
   width: 100%;
-  height: 100%;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-y: scroll;
 }
 
-.superUser {
-  width: 20%;
-  margin: 0;
-  flex-direction: row;
+.row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.video{
+  align-self: center;
+  width: 35%;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.WRRightArea {
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  width: 30%;
+  height: 100%;
+  border-radius: 20px;
+  background-color: #edf0f6;
+}
+
+.WRRightArea button{
+  border: none;
+  border-radius: 10%;
+  width: 20%;
+  aspect-ratio: 2/1;
+  background-color: rgb(181, 180, 180);
 }
 </style>

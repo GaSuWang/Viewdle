@@ -7,13 +7,15 @@
       <div class="MainTop">
         <div class="MainTop1">
           <!-- 서치바 -->
+          <form @submit.prevent="searchStudyroom(credentialsTosearch)">
           <div class="Searchbar">
-            <div class="input-group">
-              <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-              <button type="button" class="btn btn-outline-primary">search</button>
-            </div>
+              <div class="input-group">
+                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <button class="btn btn-outline-primary">search</button>
+              </div>
           </div>
-        </div>
+          </form>
+          </div>
       <!-- 필터링 -->
         <div class="MainTop2">
           <div class="MainTop2item">
@@ -21,9 +23,10 @@
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               필터
             </button>
+            
             <ul class="dropdown-menu">
-              <li>풀방여부</li>
-              <li>공개방여부</li>
+              <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="N">공개방</li>
+              <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="Y">비공개방</li>
             </ul>
           </div>
           </div>
@@ -34,8 +37,8 @@
               정렬
             </button>
             <ul class="dropdown-menu">
-              <li>최신순</li> 
-              <li>오래된순</li>
+              <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="DESC">최신순</li> 
+              <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="ASC">오래된순</li>
             </ul>
           </div>
           </div>
@@ -73,10 +76,10 @@
                 <input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /> 
               </div> 
               <div class="modal-footer">
-                <button class="btn btn-secondary">생성</button>
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">생성</button>
               </div>
               </form>
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
         </div> 
@@ -93,9 +96,9 @@
           </div> 
           <div class="modal-footer">
             <button class="btn btn-secondary">입장</button>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
           </form>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div> 
@@ -130,6 +133,15 @@ export default {
       "roomPassword" : "",
       "roomSeq": "",
     })
+    const credentialsTosearch = reactive({
+      keyword:""
+    })
+    const credentialsToFilter= reactive({
+      privateYN: "",
+    })
+      const credentialsToSort= reactive({
+      order: "",
+    })
     const store = useStore()
     function createStudyroom(){
       store.dispatch('rhtModule/createStudyroom', credentials)
@@ -137,10 +149,19 @@ export default {
     function enterStudyroom(){
       store.dispatch('rhtModule/enterStudyroom', credentialsToenter)
     }
-    return {
-    credentials, createStudyroom, credentialsToenter, enterStudyroom
+    function searchStudyroom(){
+      store.dispatch('rhtModule/searchStudyroom', credentialsTosearch)
     }
+    function filterStudyRoom(){
+      store.dispatch('rhtModule/filterStudyRoom', credentialsToFilter)
+    }
+     function sortStudyRoom(){
+      store.dispatch('rhtModule/sortStudyRoom', credentialsToSort)
+    }
+    return {
+    credentials, createStudyroom, credentialsToenter, enterStudyroom, credentialsTosearch, searchStudyroom, credentialsToFilter,filterStudyRoom, credentialsToSort, sortStudyRoom
    }
+}
 }
 </script>
 

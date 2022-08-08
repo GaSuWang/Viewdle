@@ -72,7 +72,7 @@ public class UserController {
 		
 		//임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
 		try {
-			userService.createUser(registerInfo);
+			userService.createUser(registerInfo.getUserEmail(), registerInfo.getUserName(), registerInfo.getUserPassword(), registerInfo.getUserPassword2());
 		} catch (AlreadyExistEmailException e) {
 			return ResponseEntity.status(e.getStatus()).body(BaseResponseBody.of(e.getStatus(), e.getMessage()));
 		} catch (NotMatchPasswordException e) {
@@ -93,9 +93,10 @@ public class UserController {
 	public ResponseEntity<? extends BaseResponseBody> emailDeplicateCheck(
 			@RequestBody UserEmailReq emailInfo) {
 		//임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
-		try {
+		User user = userService.getUserByUserEmail(emailInfo.getEmail());
 
-			if (userService.getUserByUserEmail(emailInfo.getEmail()) != null){
+		try {
+			if (user != null && user.getUserDelYN() == "N"){
 				throw new AlreadyExistEmailException();
 			}
 		}
@@ -197,7 +198,7 @@ public class UserController {
 		return ResponseEntity.status(200).body(UserLoginPostRes.of(200, "비밀번호 변경을 완료하였습니다."));
 	}
 
-	@DeleteMapping()
+	@PutMapping()
 	@ApiOperation(value = "회원탈퇴", notes = "회원탈퇴합니당")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),

@@ -4,14 +4,15 @@
   <div class="EEView">
     <!-- 영상 구역  -->
     <!-- 면접관 영상 구역 -->
-    <div class="EELeft">
-      <div class="EEContainer">
-        <user-video
-          v-for="ER in ERS"
-          :key="ER.stream.connection.connectionId"
-          :stream-manager="ER"
-        />
-      </div>
+    <div class="EELeftArea">
+        <div class="ERVideo container">
+          <div class="row row-cols-2">
+            <user-video class="video"
+              v-for="ER in ERS"
+              :key="ER.stream.connection.connectionId"
+              :stream-manager="ER"/>
+          </div>
+        </div>
     </div>
     <!-- 유저 기능 구역 -->
     <!-- 상단  -->
@@ -45,12 +46,6 @@ import UserVideo from "@/components/UserVideo.vue";
 import { ref } from "vue";
 import { mapGetters } from "vuex";
 import { useRouter } from "vue-router";
-import axios from "axios";
-import { OpenVidu } from "openvidu-browser";
-axios.defaults.headers.post["Content-Type"] = "application/json";
-
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "EEView",
@@ -65,6 +60,7 @@ export default {
       "publisher",
       "subscribers",
       'SessionToken',
+      "session",
     ])
   },
   data(){
@@ -72,106 +68,17 @@ export default {
     }
   },
   created(){
-    this.joinSession();
+    this.session.on('signal:endInterview', () => {
+      console.log('endinterview signal received, eeview')
+      this.$store.commit('SET_PUBLISHER', )
+      this.toWR()
+    });  
   },
   methods:{
     async toWR() {
       await this.$router.push({name:'waiting-room'})
       this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
       this.$store.commit('lbhModule/EMPTY_ERS')
-    },
-    joinSession() {
-      // --- Get an OpenVidu object ---
-      this.OV = new OpenVidu();
-
-      // --- Init a session ---
-      this.session = this.OV.initSession();
-
-      this.getToken(this.mySessionId).then((token) => {
-        this.session.connect(token)});
-
-      this.session.on('signal:endInterview', () => {
-        console.log('endinterview signal received, eeview')
-        this.toWR()
-      });
-
-      window.addEventListener("beforeunload", this.leaveSession);
-    },
-
-    leaveSession() {
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
-      if (this.session) this.session.disconnect();
-
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
-
-      window.removeEventListener("beforeunload", this.leaveSession);
-    },
-    getToken(mySessionId) {
-      return this.createSession(mySessionId).then((sessionId) =>
-        this.createToken(sessionId)
-      );
-    },
-
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
-    createSession(sessionId) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
-            JSON.stringify({
-              customSessionId: sessionId,
-            }),
-            {
-              auth: {
-                username: "OPENVIDUAPP",
-                password: OPENVIDU_SERVER_SECRET,
-              },
-            }
-          )
-          .then((response) => response.data)
-          .then((data) => resolve(data.id))
-          .catch((error) => {
-            if (error.response.status === 409) {
-              resolve(sessionId);
-            } else {
-              console.warn(
-                `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
-              );
-              if (
-                window.confirm(
-                  `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
-                )
-              ) {
-                location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
-              }
-              reject(error.response);
-            }
-          });
-      });
-    },
-
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
-    createToken(sessionId) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
-            {},
-            {
-              auth: {
-                username: "OPENVIDUAPP",
-                password: OPENVIDU_SERVER_SECRET,
-              },
-            }
-          )
-          .then((response) => response.data)
-          .then((data) => resolve(data.token))
-          .catch((error) => reject(error.response));
-      });
     },
     switchUserType(){
       this.$store.commit('lbhModule/SWITCH_USER_TYPE')
@@ -234,25 +141,39 @@ export default {
   justify-content: space-between;
 }
 
-.EELeft {
-  width: 65%;
+.EELeftArea {
+  width: 95%;
   margin: 0;
-}
-
-.EEContainer {
-  width: 100%;
-  height: 100%;
+  padding: 0;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.participantVideo {
-  width: 40%;
-  background: #cbcfd9;
+.ERVideo {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  overflow-y: scroll;
+}
+
+.row {
+  width: 100%;
+}
+
+.video{
+  width: 45%;
+  margin-left: 2%;
+  margin-right: 2%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .EERight {
-  width: 20%;
+  width: 5%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

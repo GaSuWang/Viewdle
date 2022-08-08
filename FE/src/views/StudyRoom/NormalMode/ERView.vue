@@ -2,20 +2,53 @@
 //면접실(일반 모드)에서 면접관이 보는 페이지 (Interviewee Room VIew => EEView)
 
 <template>
-  <div class="ERView">
+
+  <!-- 방장 권한 위임 모달 -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <li v-for="user in nextSuperUserList" :key="user.id">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="nextSuperUser = user.name">
+                <label class="form-check-label" for="flexRadioDefault1">
+                  {{user.name}}
+                </label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button>
+          <button type="button" class="btn btn-primary" @click="superUserOut">로비로 나가기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ERView" id="ERView">
+    <!-- <AuthorityPassModal/> -->
     <!-- 영상 구역  -->
     <div class="ERLeftArea">
       <!-- 면접자 영상 구역 -->
       <div class="EEVidContainer">
-        <user-video :stream-manager="EE" />
+        <div class="EEVid">
+          <user-video :stream-manager="EE" />
+        </div>
       </div>
       <!-- 면접관 영상 구역 -->
       <div class="ERVidContainer">
-        <user-video
-          v-for="ER in ERS"
-          :key="ER.stream.connection.connectionId"
-          :stream-manager="ER"
-        />
+        <div class="ERVid">
+          <user-video
+            v-for="ER in ERS"
+            :key="ER.stream.connection.connectionId"
+            :stream-manager="ER"/>
+        </div>
       </div>
     </div>
 
@@ -37,16 +70,19 @@
         </div>
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div v-show="userType === 'user'" class="ERtoLBbtn user">
-          <button @click.prevent="ERtoLBConfirm(userType)">
+          <button @click.prevent="ERleaveSession">
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
-          <button @click.prevent="ERtoLBConfirm(userType)">
+          <button @click.prevent="ERleaveSession">
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Launch demo modal
+        </button>
       </div>
 
       <!-- 중단 -->
@@ -68,23 +104,18 @@
 </template>
 
 <script>
+// import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import UserVideo from "@/components/UserVideo.vue";
 import swal from "sweetalert2";
-import { useRouter } from "vue-router";
 import { mapGetters } from "vuex";
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
-import axios from "axios";
-import { OpenVidu } from "openvidu-browser";
-axios.defaults.headers.post["Content-Type"] = "application/json";
-
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "ERView",
-  components: { FeedbackArea, UserVideo },
+  components: { FeedbackArea, UserVideo},
   data(){
     return{
+      nextSuperUser: '',
     }
   },
   computed:{
@@ -97,113 +128,94 @@ export default {
       "publisher",
       "subscribers",
       'SessionToken',
-    ])
+      "session",
+      "currentUserList",
+    ]),
+    nextSuperUserList(){
+    return this.currentUserList.filter(p => p.name !== this.myUserName)
+  }
   },
   created(){
-    this.joinSession();
+    this.nextSuperUser = ''
+    window.addEventListener("beforeunload", this.ERleaveSession);
+    console.log('erview cretaed', this.EE)
+    console.log('erview cretaed', this.ERS)
+    this.session.on('signal:EECL', (e)=>{ // 면접자의 자소서를 받아옴
+        const cl = JSON.parse(e.data)
+        this.$store.commit('SET_STUDYROOM_CL', cl)
+    });
+    this.session.on('signal:endInterview', () => {
+      console.log('endinterview signal received, erview')
+      this.toFB()
+    });
+    this.session.on('signal:superUserOut', (e) => {
+      if(this.myUserName === e.data){
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+        console.log('이제', this.myUserName,'가', this.userType, '이다.')
+      } else{'방장바뀜'}
+    })
+
   },
   methods: {
+    closeAPM(){
+      this.nextSuperUser = ''
+    },
+    superUserOut(){
+      this.$store.commit('lbhModule/SET_SESSION', undefined)
+      this.$store.commit('lbhModule/SET_OV', undefined)
+      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+      this.$store.commit('lbhModule/SET_SUPERUSER', {})
+      
+      window.removeEventListener("beforeunload", this.ERleaveSession);      
+      this.session.signal({
+        data: `${this.nextSuperUser}`,
+        to: [],
+        type: 'superUserOut'
+      })
+
+      console.log(this.nextSuperUser)
+
+      this.session.disconnect()
+      this.$router.push('/main')
+
+    },
+    //면접관실에서 나갈 때
+    ERleaveSession() {
+      if(this.userType === 'superUser') {
+        this.$store.commit('lbhModule/SET_APM_DESTINATION', 'ERView')
+        this.$store.commit('lbhModule/SET_APM_OPEN', true)
+
+      } else {
+        if (this.session) this.session.disconnect();
+    
+          this.$store.commit('lbhModule/SET_SESSION', undefined)
+          this.$store.commit('lbhModule/SET_OV', undefined)
+          this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+          this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+          this.$store.commit('lbhModule/SET_SUPERUSER', {})
+          
+          window.removeEventListener("beforeunload", this.ERleaveSession);
+      }
+    },
+    ERtoLBConfirm() {
+      if (this.userType === "user") {
+        if (confirm(
+            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다.")) 
+        {this.$router.push({ name: "main" });}} 
+        else if (this.userType === "superUser") {
+        if (confirm(
+            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다.")) 
+          { console.log('권한 위임 모달 실행') }
+      }
+    },
     async toFB() {
       await this.$router.push({name:'fb-room'})
       this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
       this.$store.commit('lbhModule/EMPTY_ERS')
     },
-      // this.session = this.EE.stream.session
-    joinSession() {
-      // --- Get an OpenVidu object ---
-      this.OV = new OpenVidu();
-
-      // --- Init a session ---
-      this.session = this.OV.initSession();
-
-      this.getToken(this.mySessionId).then((token) => {
-        this.session.connect(token)});
-
-      this.session.on('signal:endInterview', () => {
-        console.log('endinterview signal received, erview')
-        this.toFB()
-      });
-
-      window.addEventListener("beforeunload", this.leaveSession);
-    },
-
-    leaveSession() {
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
-      if (this.session) this.session.disconnect();
-
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
-
-      window.removeEventListener("beforeunload", this.leaveSession);
-    },
-    getToken(mySessionId) {
-      return this.createSession(mySessionId).then((sessionId) =>
-        this.createToken(sessionId)
-      );
-    },
-
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
-    createSession(sessionId) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
-            JSON.stringify({
-              customSessionId: sessionId,
-            }),
-            {
-              auth: {
-                username: "OPENVIDUAPP",
-                password: OPENVIDU_SERVER_SECRET,
-              },
-            }
-          )
-          .then((response) => response.data)
-          .then((data) => resolve(data.id))
-          .catch((error) => {
-            if (error.response.status === 409) {
-              resolve(sessionId);
-            } else {
-              console.warn(
-                `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
-              );
-              if (
-                window.confirm(
-                  `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
-                )
-              ) {
-                location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
-              }
-              reject(error.response);
-            }
-          });
-      });
-    },
-
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
-    createToken(sessionId) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
-            {},
-            {
-              auth: {
-                username: "OPENVIDUAPP",
-                password: OPENVIDU_SERVER_SECRET,
-              },
-            }
-          )
-          .then((response) => response.data)
-          .then((data) => resolve(data.token))
-          .catch((error) => reject(error.response));
-      });
-    },
-    switchUserType(){
-      this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+    switchUserTypeTemp(){
+      this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
     },
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
@@ -233,31 +245,6 @@ export default {
         });
       }
     },
-  },
-  setup() {
-    const router = useRouter();
-    function ERtoLBConfirm() {
-      if (this.userType === "user") {
-        if (
-          confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
-          )
-        ) {
-          router.push({ name: "main" });
-        }
-      } else if (this.userType === "superUser") {
-        if (
-          confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
-          )
-        ) {
-          // 권한위임 모달 실행
-        }
-      }
-    }
-    return {
-      ERtoLBConfirm,
-    };
   },
 };
 </script>
@@ -289,30 +276,28 @@ export default {
 
 .EEVidContainer{
   width: 100%;
-  height: 80%;
+  display:flex;
+  justify-content: center;
 }
 
 .EEVid{
-  width: 98%;
-  height: 98%;
-  background-color: #edf0f6;
-  /* border: 1px solid black; */
-  border-radius: 8px;
+  width: 90%;
+  height: 80%;
 }
 
 .ERVidContainer{
   display:flex;
   flex-direction: row;
-  justify-content: space-between;
-  width: 98%;
-  height: 20%; 
+  justify-content: center;
+  width: 100%;
+  overflow-x: scroll;
+  /* height: 20%;  */
 }
 
 .ERVid{
-  width: 24%;
-  background-color: #edf0f6;
-  /* border: 1px solid black; */
-  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 

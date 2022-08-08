@@ -10,8 +10,8 @@
           정렬
         </button>
         <ul class="dropdown-menu">
-          <li>오래된순</li>
-          <li>최신순</li>
+          <li><input type="checkbox" @click="filterReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="ASC">오래된순</li>
+          <li><input type="checkbox" @click="filterReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="DESC">최신순</li>
         </ul>
       </div>
     </div>
@@ -29,8 +29,8 @@
               <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
               <input type="number" v-model="credentialsTodelete.replaySeq">
               <button class="btn btn-secondary">Yes</button>
-              <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
             </form>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
           </div>
         </div>
       </div>
@@ -44,6 +44,21 @@
           {{replayDetail.videoRegTime}}
           {{replayDetail.videoUrl}}
           {{replayDetail.feedbackList}}
+
+          <!-- 동영상 삽입 및 AI 평가 입력 -->
+          <video id="video" ref="video" crossOrigin='anonymous' width="300" height="200" controls="" autoplay="" name="media" >
+              <source src="https://localhost:4443/openvidu/recordings/SessionA~2/SessionA~2.mp4" type="video/mp4">
+              <!-- <source src = "file://C:/Users/multicampus/Desktop/test.mp4"> -->
+          </video>
+          <div>
+            <!-- style="display: none" -->
+            <canvas id="canvas" ref="canvas" style="display: none" ></canvas>
+          </div>
+          <div>
+            {{ maxClassName }}
+          </div>
+
+
           </div>
         </div>
     </div>  
@@ -56,14 +71,22 @@ import NavBar from '@/components/Lobby/NavBar.vue'
 import ReplayCard from '@/components/Lobby/ReplayCard.vue'
 import { useStore } from 'vuex'
 import { reactive, computed } from "vue";
+
+// AI 코드
+import * as tmPose from '@teachablemachine/pose';
+
 export default {
   components:{
     NavBar,
     ReplayCard 
   },
+
   setup(){
     const credentialsTodelete= reactive({
       'replaySeq':0,
+    })
+    const credentialsToFilterReplay= reactive({
+      order:"",
     })
     const store = useStore()
     const replayDetail = computed(
@@ -72,10 +95,80 @@ export default {
     function deleteReplay(){
       store.dispatch('rhtModule/deleteReplay', credentialsTodelete)
     }
+    function filterReplay(){
+      store.dispatch('rhtModule/filterReplay', credentialsToFilterReplay)
+    }
     return {
-      deleteReplay, credentialsTodelete, replayDetail
+      deleteReplay, credentialsTodelete, replayDetail,filterReplay, credentialsToFilterReplay
+    }
+  },
+
+  // AI 자세평가 코드
+  data () {
+    return {
+      context : null,
+      model : null,
+      maxPredictions : null,
+      result : null,
+
+      maxClassName : null,
+      maxProbability : null,
+      posenetOutput : null,
+      prediction : null,
+
+      video : null,
+      canvas : null,
+    }
+  },
+
+  async mounted() {
+
+    this.video = this.$refs.video;
+    this.canvas = this.$refs.canvas;
+
+    this.context = this.$refs.canvas.getContext('2d');
+
+  
+    this.canvas.setAttribute("width", this.video.width/2);
+    this.canvas.setAttribute("height", this.video.height);
+
+    const modelURL = `https://teachablemachine.withgoogle.com/models/Td01sX2R5/model.json`
+    const metadataURL = `https://teachablemachine.withgoogle.com/models/Td01sX2R5/metadata.json`
+
+    this.model = Object.freeze(await tmPose.load(modelURL, metadataURL));
+    
+    this.maxPredictions = this.model.getTotalClasses();    
+
+
+    await this.predict();
+  },
+
+  methods : { 
+   async predict() {
+      this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+      const {pose, posenetOutput}= await this.model.estimatePose(this.canvas);
+
+      this.maxProbability = 0;
+      pose;
+      // console.log(posenetOutput)
+
+      this.prediction = await this.model.predict(posenetOutput);
+
+      for (let i = 0; i < this.maxPredictions; i++) {
+        if (this.prediction[i].probability>this.maxProbability) {
+          this.maxClassName = this.prediction[i].className;
+          this.maxProbability = this.prediction[i].probability;
+        }        
+      }
+
+      // console.log(this.maxClassName)
+          
+      setTimeout(() => {
+        this.predict();
+      }, 100);         
     }
   }
+
 }
 </script>
 
