@@ -1,21 +1,24 @@
 // import axios from "axios";
 
 const state = {
+  //방장권한
   superUser: {},
   superUserOut: false,
   APMOpen: false,
-  APMDestination: undefined,
-  currentUserList: [],
+  currentUserList: [], //방장 권한 위임을 위해서만 존재
+  // APMDestination: undefined, //아마 vue3 teleport 모달 쓰지 않으면 이것도 안쓸 듯
   
   //SettingRoom
-  CameraList: {}, // 영상 디바이스 리스트
+  CameraList: [], // 영상 디바이스 리스트
+  MicList: [], // 오디오 디바이스 리스트
+  CLList: [{'coverLetterSeq': '1', 'coverLetterTitle': 'first cl'}, {'coverLetterSeq': '2', 'coverLetterTitle': 'second cl'},{'coverLetterSeq': '3', 'coverLetterTitle': 'third cl'}], // 유저의 자소서 리스트
   CameraSelected: {}, // 선택된 영상 디바이스
-  CameraStatus: false,
-  MicList: {}, // 오디오 디바이스 리스트
   MicSelected: {}, // 선택된 오디오 디바이스
-  MicStatus: false,
-  CLSelected: {},
-  // UserCLList: {}, // 유저의 자소서 리스트
+  CLSelected: {}, //선택된 자소서 
+  //근데 카메라나 마이크를 선택했다는 것 자체가 이미 해당 기기를 키겠다는 거 아닌가? 
+  CameraStatus: false, //카메라 온오프
+  MicStatus: false, //마이크 온오프
+  CLStatus: false, //자소서 온오프
 
   //WaitingRoom
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
@@ -52,13 +55,14 @@ const getters = {
   APMOpen(state){return state.APMOpen},
   APMDestination(state){return state.APMDestination},
   //SettingRoom
-  UserCLList(state) {return state.userCLList},
+  CLList(state) {return state.CLList},
   CameraList(state) {return state.CameraList},
   CameraSelected(state){return state.CameraSelected},
   CameraStatus(state){return state.CameraStatus},
   MicSelected(state){return state.MicSelected},
   MicList(state) {return state.MicList},
   MicStatus(state){return state.MicStatus},
+  CLStatus(state){return state.CLStatus},
   CLSelected(state){return state.CLSelected},
 
   //openvidu
@@ -201,18 +205,16 @@ const mutations = {
   SWITCH_USER_TYPE(state){ //아마 진짜로 쓰일 방장 권한 위임 기능
     state.userType = 'superUser'
   },
-  GET_CAMERA_LIST(state, cameraList) {
-    state.CameraList = JSON.parse(JSON.stringify(cameraList));
-    console.log(state.CameraList);
+  SET_CAMERA_LIST(state, cameraList) {
+    state.CameraList = cameraList;
   },
   SET_CAMERA(state, camera) { state.CameraSelected = camera },
   SWITCH_CAMERA_STATUS(state, status){ 
     state.CameraStatus = status 
     console.log('카메라 온오프',state.CameraStatus)
   },
-  GET_MIC_LIST(state, micList) {
-    state.MicList = JSON.parse(JSON.stringify(micList));
-    console.log(state.MicList);
+  SET_MIC_LIST(state, micList) {
+    state.MicList = micList;
   },
   SET_MIC(state, mic) { state.MicSelected = mic },
   SWITCH_MIC_STATUS(state, status){ 
@@ -220,7 +222,14 @@ const mutations = {
     console.log('마이크 온오프',state.MicStatus)
 
   },
-  SET_CL_SELECTED(state, cl){state.CLSelected = cl}, //대기실에서 자신이 이번 면접에서 쓸 자소서
+  SWITCH_CL_STATUS(state, status){ 
+    state.CLStatus = status 
+    console.log('자소서 온오프',state.CLStatus)
+
+  },
+  SET_CL(state, cl){state.CLSelected = cl
+  console.log(cl, state.CLSelected)
+  }, //대기실에서 자신이 이번 면접에서 쓸 자소서
   
   //WaitingRoom
   GET_PARTICIPANT_LIST(state, participants) {
@@ -297,14 +306,14 @@ const actions = {
   },
 
   //SettingRoom
-  getCameraList({ commit }, cameraList) {
-    commit("GET_CAMERA_LIST", cameraList);
+  setCameraList({ commit }, cameraList) {
+    commit("SET_CAMERA_LIST", cameraList);
   },
   setCamera({ commit }, camera) {
     commit("SET_CAMERA", camera);
   },
-  getMicList({ commit }, micList) {
-    commit("GET_MIC_LIST", micList);
+  setMicList({ commit }, micList) {
+    commit("SET_MIC_LIST", micList);
   },
   setMic({ commit }, mic) {
     commit("SET_MIC", mic);
