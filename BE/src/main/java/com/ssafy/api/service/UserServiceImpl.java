@@ -39,17 +39,23 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public User createUser(String email, String name, String password, String password2){
-		if(userRepository.findByUserEmail(email) != null){
+		User user = userRepository.findByUserEmail(email);
+
+		if (user != null && user.getUserDelYN().equals("N")) {
 			throw new AlreadyExistEmailException();
 		} else if (!password.equals(password2)) {
 			throw new NotMatchPasswordException();
 		}
 
-		User user = new User();
-		user.setUserEmail(email);
-		user.setUserPassword(passwordEncoder.encode(password));
-		user.setUserName(name);
-		return userRepository.save(user);
+		if (user != null) {
+			badgeRepository.deleteAllByUser(user);
+			userRepository.delete(user);
+		}
+		User newUser = new User();
+		newUser.setUserEmail(email);
+		newUser.setUserPassword(passwordEncoder.encode(password));
+		newUser.setUserName(name);
+		return userRepository.save(newUser);
 	}
 
 	@Override
@@ -63,7 +69,7 @@ public class UserServiceImpl implements UserService {
 	public User loginUser(String email, String password) {
 		User user = userRepository.findByUserEmail(email);
 
-		if (user == null) {
+		if (user == null || user.getUserDelYN().equals("Y")) {
 			throw new NotExistEmailException();
 		} else if (!passwordEncoder.matches(password, user.getUserPassword())) {
 			throw new NotMatchPasswordException();
@@ -75,7 +81,7 @@ public class UserServiceImpl implements UserService {
 	public User getUserByUserSeq(int userSeq) {
 		User user = userRepository.findByUserSeq(userSeq);
 
-		if (user == null) {
+		if (user == null || user.getUserDelYN().equals("Y")) {
 			throw new NotExistUserException();
 		}
 		return user;
@@ -139,10 +145,5 @@ public class UserServiceImpl implements UserService {
 		badgeRepository.save(badge);
 	}
 
-	@Override
-	public void cretaeGoogleUser(String userEmail, String name, String profile_image) {
-		User user = new User(userEmail, name, profile_image);
-		userRepository.save(user);
-	}
 
 }
