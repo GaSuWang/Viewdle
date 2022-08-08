@@ -13,7 +13,7 @@
   <div class="MyViewBoss">
     <NavBar class="NavView"/>
     <div class="MyView">
-      <!-- <SendImg/> -->
+      <SendImg/>
       <p class="pagetitle">My Page</p>
       <div class="MyBody">
         <div class="card-top">
@@ -139,7 +139,7 @@ import NavBar from '@/components/Lobby/NavBar.vue'
 import UsageTrend from '@/components/Lobby/UsageTrend.vue'
 import BadgeList from '@/components/Lobby/BadgeList.vue'
 import GrassShow from '@/components/Lobby/GrassShow.vue'
-// import SendImg from '@/components/Lobby/SendImg.vue'
+import SendImg from '@/components/Lobby/SendImg.vue'
 import { useStore } from 'vuex'
 import { computed, reactive } from "vue";
 export default {
@@ -148,7 +148,7 @@ export default {
     UsageTrend,
     BadgeList,
     GrassShow,
-    // SendImg,
+    SendImg,
   },
   name: "PWUpdateModal",
   setup() {

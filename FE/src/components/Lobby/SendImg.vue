@@ -1,40 +1,54 @@
-// 임현탁
+// 이랑 -> 현탁 auth하고 다음 라우터 설정 물어보기
 <template>
   <div class="SendImg">
-    <input multiple @change='onInputImage()' ref="serveyImage" type="file">
-    <button @click="onClickFormButton()">이미지 변경</button>
-    <p>{{credentialsImg.image}}</p>
+      <form @submit.prevent="onUpload">
+          <div class="form-group">
+              <input type="file" name="imagesArray" @change="onChange">
+          </div>
+          <div class="form-group">
+              <button class="btn btn-success">Submit</button>
+          </div>
+      </form>>
   </div>
 
 </template>
 
 <script>
-import { useStore } from 'vuex'
+import axios from "axios";
+// import { useStore } from 'vuex';
+
+// import { mapGetters } from 'vuex';
+
 export default {
     data(){
-        return{
-            credentialsImg:{
-                image:'',
-            }
-        }   
+      return {
+         profile: null
+      };  
     },
+    // setup(){
+    //     const store = useStore();
+    // },
     methods:{
-    onInputImage(){
-        this.credentialsImg.image = this.$refs.serveyImage.file
-    },
-    onClickFormButton(credentialsImg){
-        const formdata = new FormData()
-        const store = useStore()
-        if (credentialsImg.image.length > -1){
-            for (let i=0; i< credentialsImg; i++){
-                const imageForm = credentialsImg.image[i]
-
-                formdata.append(`profile[${i}]`, imageForm)
-            }
-            formdata.append('imageCount', credentialsImg.image.length)
-        }
-        store.dispatch('rhtModule/profileImg', formdata)
-    }
+       onChange (event) {
+          this.profile = event.target.files[0]
+        },
+        onUpload() {
+          const formData = new FormData()
+          formData.append('profile', this.profile, this.profile.name)
+        axios({
+            url: 'http://localhost:8081/api/v1/users/profile', //회원가입 api로
+            method: 'post',
+            data: formData,
+            headers : {"Authorization" : "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHJpbmciLCJpc3MiOiJzc2FmeS5jb20iLCJleHAiOjE2NjEyNDQ1NTcsImlhdCI6MTY1OTk0ODU1N30.ikiUm-s9X26H2ty74ySpZPh-0Qpi82jPanQ18HVtZ2G5ugTXc0JDE5Z6rWJECbs1hH6V-NwQ3o-1GlMDggZPOw"}
+        })
+            // .then(() => {
+            // alert('성공적으로 회원가입!')
+            // router.push({ name: 'Account' })
+            // })
+            // .catch(err => {
+            // console.error(err)
+            // })
+        }  
     }
 };
 </script>
