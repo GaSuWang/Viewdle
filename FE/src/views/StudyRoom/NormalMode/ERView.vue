@@ -12,6 +12,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+          <span>
+            정말 면접 도중에 나가시겠습니까? <br>
+            지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다.
+          </span>
           <ul>
             <li v-for="user in nextSuperUserList" :key="user.id">
               <div class="form-check">
@@ -76,13 +80,13 @@
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
-          <button @click.prevent="ERleaveSession">
+          <!-- <button @click.prevent="ERleaveSession">
             <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          Launch demo modal
+          </button> -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop=false>
+            <i class="bi bi-x-lg"></i>
         </button>
+        </div>
       </div>
 
       <!-- 중단 -->
@@ -97,7 +101,7 @@
             <i class="bi bi-check-lg"></i>
           </button>
         </div>
-        <button @click="switchUserType">{{userType}}</button>
+        <button @click="switchUserTypeTemp">{{userType}}</button>
       </div>
     </div>
   </div>
@@ -158,7 +162,7 @@ export default {
     });
     this.session.on('signal:superUserOut', (e) => {
       if(this.myUserName === e.data){
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
         console.log('이제', this.myUserName,'가', this.userType, '이다.')
       } else{'방장바뀜'}
     })
@@ -169,6 +173,12 @@ export default {
       this.nextSuperUser = ''
     },
     superUserOut(){
+      this.session.signal({
+        data: `${this.nextSuperUser}`,
+        to: [],
+        type: 'superUserOut'
+      })
+      this.session.disconnect()
       this.$store.commit('lbhModule/SET_SESSION', undefined)
       this.$store.commit('lbhModule/SET_OV', undefined)
       this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
@@ -176,15 +186,6 @@ export default {
       this.$store.commit('lbhModule/SET_SUPERUSER', {})
       
       window.removeEventListener("beforeunload", this.ERleaveSession);      
-      this.session.signal({
-        data: `${this.nextSuperUser}`,
-        to: [],
-        type: 'superUserOut'
-      })
-
-      console.log(this.nextSuperUser)
-
-      this.session.disconnect()
       this.$router.push('/main')
 
     },
