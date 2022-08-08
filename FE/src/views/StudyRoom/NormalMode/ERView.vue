@@ -130,6 +130,14 @@ export default {
       'SessionToken',
       "session",
       "currentUserList",
+
+      //기기
+      "CameraSelected",
+      "CameraStatus",
+      "CameraStatus",
+      "MicSelected",
+      "MicStatus",
+      "MicStatus",
     ]),
     nextSuperUserList(){
     return this.currentUserList.filter(p => p.name !== this.myUserName)
@@ -231,19 +239,7 @@ export default {
       });
     },
     StudyDestroy(){
-      if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
-        this.session.signal({
-        data: 'true',  
-        to: [],
-        type: 'endInterview'
-        })
-        .then(() => {
-          console.log('erview send signal test')
-        })
-        .catch(error => {
-            console.error(error);
-        });
-      }
+      this.$store.dispatch('lbhModule/StudyDestroy')
     },
   },
 };

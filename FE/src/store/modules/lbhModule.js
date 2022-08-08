@@ -27,6 +27,7 @@ const state = {
   subscribers: [],
   OV: undefined,
   session: undefined,
+  // inWR: true,
 
 
   //EEView, ERView
@@ -63,22 +64,12 @@ const getters = {
   //openvidu
   OV(state) {return state.OV},
   session(state) {return state.session},
-  mainStreamManager(state) {
-    return state.mainStreamManager;
-  },
-  publisher(state) {
-    return state.publisher;
-  },
-  subscribers(state) {
-    return state.subscribers;
-  },
-  mySessionId(state) {
-    return state.mySessionId;
-  },
-  myUserName(state) {
-    return state.myUserName;
-  },
+  publisher(state) {return state.publisher},
+  subscribers(state) {return state.subscribers},
+  mySessionId(state) {return state.mySessionId},
+  myUserName(state) {return state.myUserName},
   SessionToken(state){ return state.SessionToken},
+  // inWR(state){return state.inWR},
 
   //WaitingRoom
   //AuthorityPassModal
@@ -86,6 +77,7 @@ const getters = {
     return state.userType
   },
   WRParticipantList(state) {
+    console.log('wrparticipantlist에서 에러가 나나?')
     return JSON.parse(JSON.stringify(state.WRParticipantList));
   },
   StartInterview(state) {
@@ -122,50 +114,42 @@ const mutations = {
   SET_OV(state, ov){state.OV = ov},
   SET_SESSION(state, session){state.session = session},
   SET_PUBLISHER(state, publisher) {
-    state.publisher = publisher;
+    console.log('setpublisher mutations start', state.publisher)
+    state.publisher = publisher
+    console.log('setpublisher mutations end', state.publisher)
   },
-  SET_SUBSCRIBERS(state, subscriber) {
-    state.subscribers = subscriber;
-  },
-  ADD_SUBSCRIBERS(state, subscriber) {
-    state.subscribers.push(subscriber);
-  },
-  DELETE_SUBSCRIBERS(state, index) {
-    state.subscribers.splice(index, 1);
-  },
-  SET_MYSESSIONID(state, mySessionId) {
-    state.mySessionId = mySessionId;
-  },
-  SET_MYUSERNAME(state, myUserName) {
-    state.myUserName = myUserName;
-  },
-  SET_SESSION_TOKEN(state, token){
-    state.SessionToken = token
-    console.log('SET_SESSION_TOKEN',state.SessionToken)
-  },
+  SET_SUBSCRIBERS(state, subscriber) {state.subscribers = subscriber},
+  ADD_SUBSCRIBERS(state, subscriber) {state.subscribers.push(subscriber)},
+  DELETE_SUBSCRIBERS(state, index) {state.subscribers.splice(index, 1)},
+  SET_MYSESSIONID(state, mySessionId) {state.mySessionId = mySessionId},
+  SET_MYUSERNAME(state, myUserName) {state.myUserName = myUserName},
+  // SET_INWR(state){state.inWR = !state.inWR},
+  // SET_SESSION_TOKEN(state, token){
+  //   state.SessionToken = token
+  //   console.log('SET_SESSION_TOKEN',state.SessionToken)
+  // },
   EMPTY_WR_PARTICIPANT_LIST(state) {
-    state.WRParticipantList = {};
+    state.WRParticipantList = [];
     console.log('WRParticipantList 비웠다', state.WRParticipantList)
   },
-  SET_WR_PARTICIPANT_LIST({state}, inputList) {
-    console.log('SET_WR_PARTICIPANT_LIST',inputList)
+  SET_WR_PARTICIPANT_LIST(state, inputList) {
+    console.log('SET_WR_PARTICIPANT_LIST 시작',inputList)
     state.WRParticipantList = inputList;
-    console.log('WRParticipantList 바꿈', state.WRParticipantList)
+    console.log('SET_WR_PARTICIPANT_LIST 끝',state.WRParticipantList)
   },
   ADD_WR_PARTICIPANT_LIST(state, user) {
-    console.log("ADD_WR_PARTICIPANT_LIST", state.WRParticipantList);
+    console.log("ADD_WR_PARTICIPANT_LIST 시작", state.WRParticipantList, user);
     if (!state.WRParticipantList.includes(user)) {
-      console.log(state.WRParticipantList)
       state.WRParticipantList.push({ id: Date.now(), name: user });
-      console.log(state.WRParticipantList)
     }
+    console.log("ADD_WR_PARTICIPANT_LIST 끝", state.WRParticipantList, user);
   },
   DELETE_WR_PARTICIPANT_LIST(state, subscriberName) {
     //이렇게 지우는 게 맞는 지 모르겠다...
-    console.log('wrlist 지워지고 있기는 한가', state.WRParticipantList)
+    console.log("DELETE_WR_PARTICIPANT_LIST 시작", state.WRParticipantList);
     const idx = state.WRParticipantList.findIndex(function(item) {return item.name === subscriberName})
     if (idx>-1) state.WRParticipantList.splice(idx, 1)  
-    console.log('지워진 결과물', state.WRParticipantLis)
+    console.log("DELETE_WR_PARTICIPANT_LIST 끝", state.WRParticipantList);
     // const delArray = [...state.WRParticipantList]
     // console.log(delArray)
     // delArray.forEach(e=>{
@@ -182,7 +166,6 @@ const mutations = {
     console.log('currentUserList 비웠다', state.currentUserList)
   },
   SET_CURRENT_USER_LIST({state}, inputList) {
-    console.log('SET_WR_PARTICIPANT_LIST',inputList)
     state.currentUserList = inputList;
     console.log('currentUserList 바꿈', state.currentUserList)
   },
@@ -291,12 +274,20 @@ const mutations = {
   },
 };
 const actions = {
-  //openvidu
-  setOV({ commit }, ov) {
-    commit("SET_OV", ov);
-  },
-  setSession({ commit }, session) {
-    commit("SET_SESSION", session);
+  StudyDestroy(){
+    if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
+      state.session.signal({
+      data: 'true',  
+      to: [],
+      type: 'endInterview'
+      })
+      .then(() => {
+        console.log('erview send signal test')
+      })
+      .catch(error => {
+          console.error(error);
+      });
+    }
   },
   setMySessionId({ commit }, mySessionId) {
     commit("SET_MYSESSIONID", mySessionId);
