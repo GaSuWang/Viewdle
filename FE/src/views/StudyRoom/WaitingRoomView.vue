@@ -103,7 +103,9 @@
         <button @click="getRecordings">녹화 여러개</button>    
         <button @click="deleteRecording">녹화 삭제</button>
       </div>
-
+      <div>
+        <button @click="moveEZRoom"></button>
+      </div>
      </div>
   </div>
 </template>
@@ -111,7 +113,7 @@
 <script>
 // 여기서 영상 띄우는 법
 // npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET2 openvidu/openvidu-server-kms:2.22.0
+// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
 // 단 도커 설치되어 있어야 함
 
 // import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
@@ -174,6 +176,10 @@ export default {
   setup() {
   },
   methods: {
+    //이지룸으로 이동
+    moveEZRoom(){
+      this.$router.push("/ee-room/ez");
+    },
     EndStudyConfirm() {
       if (confirm("정말 스터디를 종료하시겠습니까?")) {
         this.$router.push("/main");
@@ -515,7 +521,14 @@ export default {
       return new Promise((resolve, reject) => {
         axios
           .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,{},
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            {
+              type:'WEBRTC',
+              role: 'PUBLISHER',
+              kurentoOptions:{
+                allowedFilters: ['GStreamerFilter'],
+              }
+            },
             {
               auth: {
                 username: "OPENVIDUAPP",
