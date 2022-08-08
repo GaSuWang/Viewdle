@@ -7,6 +7,7 @@
       <!-- 면접자 영상 구역  -->
       <div class="EEVidContainer">
         <div class="EEVid">
+          <warningStackBar :stack="warningCount"></warningStackBar>
           <user-video :stream-manager="EE" />
         </div>
       </div>
@@ -45,7 +46,7 @@
           </button>
         </div>
         <div class="SuddenAttackBtn">
-          <button >
+          <button @click="sendWarningSignal">
             <i class="bi bi-exclamation-triangle-fill"></i>
           </button>
         </div>
@@ -62,14 +63,33 @@
 <script>
 import UserVideo from "@/components/UserVideo.vue";
 import {mapGetters} from 'vuex'
+import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue";
+import { useRouter } from "vue-router";
 export default {
   name: "EERView",
-  components: {UserVideo},
+  components: {UserVideo, warningStackBar,},
   created(){
     this.nextSuperUser = ''
     window.addEventListener("beforeunload", this.EERleaveSession);
     console.log('eerview cretaed', this.EE)
     console.log('eerview cretaed', this.ERS)
+     this.session.on("signal:warning", (event) => {
+        console.log(event.data);
+        //신호를 받고, 내가 면접자인 경우에만 warningCount++
+        // if (this.EE[0] === this.myUserName) {
+        //   console.log("EE: ", this.EE);
+        //   this.addWarn();
+        // }
+
+      // <- 테스트용, 모든 참여자 warningCoutn 올림
+        this.addWarn();
+        
+      });
+      this.session.on("signal:EndInterviewByWarning", (event) => {
+        console.log(event.data);
+        this.returnWaitingRoom();
+        //대기실로 돌아가는 메소드 구현
+      });
     this.session.on('signal:EECL', (e)=>{ // 면접자의 자소서를 받아옴
         const cl = JSON.parse(e.data)
         this.$store.commit('SET_STUDYROOM_CL', cl)
@@ -80,6 +100,22 @@ export default {
         console.log('이제', this.myUserName,'가', this.userType, '이다.')
       } else{'방장바뀜'}
     })
+  },
+    setup() {
+    const router = useRouter();
+    //--------------------return waitingRoom ---------------------------
+    function returnWaitingRoom() {
+      router.push({ name: "waiting-room" });
+    }
+    //--------------------return waitingRoom end---------------------------
+    return {
+      returnWaitingRoom,
+    };
+  },
+   data() {
+    return {
+      warningCount: 0,
+    };
   },
   computed:{
     ...mapGetters("lbhModule",[
@@ -98,6 +134,7 @@ export default {
       return this.currentUserList.filter(p => p.name !== this.myUserName)
     }
   },
+
   methods: {
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
@@ -106,7 +143,37 @@ export default {
     changeVoice() {},
     suddenAttack() {},
     capture() {},
+    addWarn() {
+      //경고 누적용
+      this.warningCount++;
+      console.log("warningCount: ", this.warningCount);
+      if (this.warningCount >= 3) {
+        console.log("warningCount limit, return waiting room");
+        //면접 종료
+        this.session.signal({
+          data: "End Interview by over warning stack limit",
+          to: [],
+          type: "EndInterviewByWarning",
+        });
+      }
+    },
 
+    //---------------------send warning singal---------------------------
+    sendWarningSignal() {
+      this.session
+        .signal({
+          data: "stacked warning count",
+          to: [], //<- 면접자만 어떻게 골라서 보내지...
+          type: "warning",
+        })
+        .then(() => {
+          console.log("successed send warning");
+        })
+        .catch(() => {
+          console.log("failed send warning");
+        });
+    },
+    //---------------------send warning singal end---------------------------
     //면접관실에서 나갈 때
     EERleaveSession() {
       if(this.userType === 'superUser') {
@@ -255,6 +322,7 @@ export default {
   font-size: 100%;
   color: black;
 }
+
 .EERButtonHeader >div> button, 
 .EERButtonFooter >div> button{
   border: none;
