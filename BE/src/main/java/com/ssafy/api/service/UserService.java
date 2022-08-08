@@ -23,5 +23,4 @@ public interface UserService {
 	UserHistoryRes getUserHistory(User user);
 	void getNewBadge(User user, Common common);
 
-	void cretaeGoogleUser(String userEmail, String name, String profile_image);
 }
