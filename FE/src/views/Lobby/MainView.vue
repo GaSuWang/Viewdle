@@ -159,7 +159,7 @@ export default {
       store.dispatch('rhtModule/sortStudyRoom', credentialsToSort)
     }
     return {
-    credentials, createStudyroom, credentialsToenter, enterStudyroom, credentialsTosearch, searchStudyroom, credentialsToFilter,filterStudyRoom, credentialsToSort, sortStudyRoom
+      credentials, createStudyroom, credentialsToenter, enterStudyroom, credentialsTosearch, searchStudyroom, credentialsToFilter,filterStudyRoom, credentialsToSort, sortStudyRoom
    }
 }
 }

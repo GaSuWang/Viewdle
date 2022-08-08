@@ -33,7 +33,7 @@
       </div>
       <!-- 면접 완료 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EndStudyBtn superUser">
-        <button @click.prevent="EndStudyConfirm()">
+        <button @click.prevent="StudyDestroy">
           <i class="bi bi-check-lg"></i>
         </button>
       </div>
@@ -46,6 +46,11 @@ import UserVideo from "@/components/UserVideo.vue";
 import { ref } from "vue";
 import { mapGetters } from "vuex";
 import { useRouter } from "vue-router";
+import axios from "axios";
+axios.defaults.headers.post["Content-Type"] = "application/json";
+
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "EEView",
@@ -61,6 +66,14 @@ export default {
       "subscribers",
       'SessionToken',
       "session",
+
+      //기기
+      "CameraSelected",
+      "CameraStatus",
+      "CameraStatus",
+      "MicSelected",
+      "MicStatus",
+      "MicStatus",
     ])
   },
   data(){
@@ -68,13 +81,18 @@ export default {
     }
   },
   created(){
+    console.log('면접자 정보', this.publisher.stream.connection.data)
     this.session.on('signal:endInterview', () => {
-      console.log('endinterview signal received, eeview')
-      this.$store.commit('SET_PUBLISHER', )
+      console.log('signal endinterview 받음')
+      console.log('면접자가 면접자실에서 나감', JSON.parse(this.publisher.stream.connection.data).clientData)
+      this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserName)
       this.toWR()
     });  
   },
   methods:{
+    StudyDestroy(){
+      this.$store.dispatch('lbhModule/StudyDestroy')
+    },
     async toWR() {
       await this.$router.push({name:'waiting-room'})
       this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
@@ -82,6 +100,71 @@ export default {
     },
     switchUserType(){
       this.$store.commit('lbhModule/SWITCH_USER_TYPE')
+    },
+    getToken(mySessionId) {
+        console.log('getToken이 시작되긴 했음', mySessionId)
+        return this.createSession(mySessionId).then((sessionId) =>{
+          console.log('createSession은 잘 됨')
+          return this.createToken(sessionId)
+          }
+        );
+    },  
+    createSession(sessionId) {
+      console.log('createSession이 시작되긴 했음')
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
+            // {},
+            JSON.stringify({
+              customSessionId: sessionId,
+            }),
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.id))
+          .catch((error) => {
+            console.log('createSession에서 막힘')
+            if (error.response.status === 409) {
+              resolve(sessionId);
+            } else {
+              console.warn(
+                `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
+              );
+              if (
+                window.confirm(
+                  `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+                )
+              ) {
+                location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
+              }
+              reject(error.response);
+            }
+          });
+      });
+    },
+    createToken(sessionId) {
+      console.log('createToken까지 왔나?')
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,{},
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.token))
+          .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
+      });
     },
   },
   setup() {
