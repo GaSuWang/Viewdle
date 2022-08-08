@@ -25,7 +25,7 @@ import java.util.List;
 
 @Api(value = "스터디 룸 API", tags = {"Studyroom"})
 @RestController
-@RequestMapping("/api/vi/studyroom")
+@RequestMapping("/api/v1/studyroom")
 public class StudyroomController {
 
     @Autowired

@@ -21,7 +21,7 @@ import java.util.List;
 
 @Api(value = "내 영상 API", tags = {"Video"})
 @RestController
-@RequestMapping("/api/vi/video")
+@RequestMapping("/api/v1/video")
 public class VideoController {
 
     @Autowired
