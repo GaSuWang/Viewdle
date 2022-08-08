@@ -111,7 +111,9 @@
 <script>
 // 여기서 영상 띄우는 법
 // npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET2 openvidu/openvidu-server-kms:2.22.0
+// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET -e OPENVIDU_RECORDING=true -e OPENVIDU_RECORDING_PUBLIC_ACCESS=true -e OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings -v /var/run/docker.sock:/var/run/docker.sock -v /opt/openvidu/recordings:/opt/openvidu/recordings openvidu/openvidu-server-kms:2.22.0
+// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
+
 // 단 도커 설치되어 있어야 함
 
 // import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
@@ -139,7 +141,7 @@ export default {
       LeaveWR: false,
 
       recordingObject : null,
-      recordingObjects : null
+      recordingObjects : null,
     };
   },
   computed: {
@@ -170,6 +172,12 @@ export default {
       "WRParticipantList",
       "CLSelected",
     ]),
+		showVid() {
+			if(this.$router.currentRoute.value.name === 'waiting-room'){
+				if(this.videoStatus===true){return true
+				} else {return false}
+			} else {return true}
+		},
   },
   setup() {
   },
@@ -246,6 +254,7 @@ export default {
       }
     },
     joinSession() {
+      console.log('joinSession start')
       // --- Get an OpenVidu object ---
       const newOv = new OpenVidu();
       this.$store.commit('lbhModule/SET_OV', newOv)
@@ -265,7 +274,9 @@ export default {
         this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", subscriberName);
 
         const superUser = this.superUser
+        console.log('superUser', superUser)
         const WRParticipantList = this.WRParticipantList
+        console.log('WRParticipantList', WRParticipantList)
         this.session.signal({ 
           //새로운 유저가 들어오면, 모든 유저에게 현재의 방장 유저가 누군지 알려주는 데이터 전송
           //향후 새로운 유저에게 줘야 할 데이터 있으면 여기에서 보내주는 걸로
@@ -317,7 +328,11 @@ export default {
             });
 
             this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
-
+            this.session.signal({
+              data: '',
+              to: [],
+              type: 'publisherOn'
+            })
             // --- Publish your stream ---
 
             this.session.publish(this.publisher);
@@ -335,6 +350,7 @@ export default {
 
       this.session.on('signal:welcomeNewUser', (e)=>{ //방에 처음 들어왔을 때 받는 signal
         const json = JSON.parse(e.data)
+        console.log('welcomenewuser로 받아온 정보', json, JSON.parse(json.superUser), JSON.parse(json.WRParticipantList))
         this.$store.commit('lbhModule/SET_SUPERUSER', json.superUser)
         this.$store.commit('lbhModule/SET_WR_PARTICIPANT_LIST', json.WRParticipantList)
         this.$store.commit('lbhModule/SET_CURRENT_USER_LIST', json.WRParticipantList)
@@ -347,6 +363,9 @@ export default {
 
       // 면접 시작
       this.session.on('signal:startInterview', (e) => { 
+        //대기실에서 내 이름 지우기
+        this.$store.commit("lbhModule/SET_WR_PARTICIPANT_LIST", []);
+
         this.EECnd = e.data
         if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
           console.log('startInterview as EE')
@@ -382,8 +401,8 @@ export default {
           this.$router.push({name: 'er-room'})
           }
         this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
-        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+        // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
         window.addEventListener("beforeunload", this.WRleaveSession);
     })
 
@@ -424,8 +443,8 @@ export default {
           this.$router.push({name: 'er-room-ez'})
           }
         this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
-        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+        // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
         window.addEventListener("beforeunload", this.WRleaveSession);
     })
     
@@ -463,7 +482,6 @@ export default {
       return this.createSession(mySessionId).then((sessionId) =>{
         console.log('createSession은 잘 됨')
         return this.createToken(sessionId)
-
         }
       );
     },
@@ -476,6 +494,7 @@ export default {
         axios
           .post(
             `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
+            // {},
             JSON.stringify({
               customSessionId: sessionId,
             }),
