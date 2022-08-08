@@ -286,21 +286,6 @@ export default {
   justify-self: center;
 }
 
-<<<<<<< FE/src/views/StudyRoom/EasyMode/EERView.vue
-.top {
-  position: absolute;
-  top: 8%;
-  align-self: flex-end;
-  left: 66%;
-}
-
-.bottom {
-  position: absolute;
-  bottom: 10%;
-  justify-content: space-evenly;
-  align-items: center;
-  align-self: flex-start;
-=======
 .EERRightArea{
   display: flex;
   flex-direction: column;
@@ -315,7 +300,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
->>>>>>> FE/src/views/StudyRoom/EasyMode/EERView.vue
 }
 
 .EERButtonFooter {
@@ -338,24 +322,14 @@ export default {
   font-size: 100%;
   color: black;
 }
-<<<<<<< FE/src/views/StudyRoom/EasyMode/EERView.vue
-.EERBtnContainer > div > button {
-=======
+
 .EERButtonHeader >div> button, 
 .EERButtonFooter >div> button{
->>>>>>> FE/src/views/StudyRoom/EasyMode/EERView.vue
   border: none;
   background-color: rgb(209, 209, 209);
   border-radius: 50%;
 }
 
-<<<<<<< FE/src/views/StudyRoom/EasyMode/EERView.vue
-.EERBtnContainer > div > button {
-  padding: 15px;
-}
-
-.EERBtnContainer > div > button > i {
-=======
 .EERButtonHeader >div> button, 
 .EERButtonFooter >div> button{
   padding:15px;
@@ -363,7 +337,6 @@ export default {
 
 .EERButtonHeader >div> button > i, 
 .EERButtonFooter >div> button > i {
->>>>>>> FE/src/views/StudyRoom/EasyMode/EERView.vue
   font-size: 150%;
   color: black;
 }
