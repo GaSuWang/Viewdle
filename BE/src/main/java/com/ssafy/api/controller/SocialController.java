@@ -6,6 +6,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+import com.ssafy.api.request.SocialLoginInfoReq;
+import com.ssafy.api.request.SocialSignupInfoReq;
 import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.common.exception.AlreadyExistEmailException;
 import com.ssafy.common.exception.NotMatchPasswordException;
@@ -50,7 +52,11 @@ public class SocialController {
 			@ApiResponse(code = 404, message = "사용자 없음", response = BaseResponseBody.class),
 			@ApiResponse(code = 500, message = "서버 오류", response = BaseResponseBody.class)
 	})
-	public ResponseEntity<UserLoginPostRes> googleAuthSignup(@RequestBody String Token, String password1, String password2) {
+	public ResponseEntity<UserLoginPostRes> googleAuthSignup(@RequestBody SocialSignupInfoReq signupInfoReq) {
+
+		String Token = signupInfoReq.getIdToken();
+		String password1 = signupInfoReq.getPassword();
+		String password2 = signupInfoReq.getPassword2();
 
 		HttpTransport transport = new NetHttpTransport();
 		JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
@@ -93,7 +99,9 @@ public class SocialController {
 			@ApiResponse(code = 404, message = "사용자 없음", response = BaseResponseBody.class),
 			@ApiResponse(code = 500, message = "서버 오류", response = BaseResponseBody.class)
 	})
-	public ResponseEntity<UserLoginPostRes> googleAuthLogin(@RequestBody String Token) {
+	public ResponseEntity<UserLoginPostRes> googleAuthLogin(@RequestBody SocialLoginInfoReq loginInfoReq) {
+		String Token = loginInfoReq.getIdToken();
+
 		HttpTransport transport = new NetHttpTransport();
 		JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 
