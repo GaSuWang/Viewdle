@@ -312,19 +312,18 @@ export default {
         this.session
           .connect(token, { clientData: this.myUserName })
           .then(() => {
-            // --- Get your own camera stream with the desired properties ---
             this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", this.myUserName);
             this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", this.myUserName);
 
             let publisher = this.OV.initPublisher(undefined, {
-              audioSource: this.MicSelected, // The source of audio. If undefined default microphone
-              videoSource: this.CameraSelected, // The source of video. If undefined default webcam
-              publishAudio: this.MicStatus, // Whether you want to start publishing with your audio unmuted or not
-              publishVideo: this.CameraStatus, // Whether you want to start publishing with your video enabled or not
-              resolution: "320x180", // The resolution of your video
-              frameRate: 30, // The frame rate of your video
-              insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-              mirror: false, // Whether to mirror your local video or not
+              audioSource: this.MicSelected, 
+              videoSource: this.CameraSelected, 
+              publishAudio: this.MicStatus, 
+              publishVideo: this.CameraStatus, 
+              resolution: "320x180", 
+              frameRate: 30, 
+              insertMode: "APPEND", 
+              mirror: false, 
             });
 
             this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
@@ -333,7 +332,6 @@ export default {
               to: [],
               type: 'publisherOn'
             })
-            // --- Publish your stream ---
 
             this.session.publish(this.publisher);
             console.log('오디오 비디오 어떻게 들어왔나',this.publisher.stream)
@@ -465,18 +463,6 @@ export default {
       window.removeEventListener("beforeunload", this.WRleaveSession);
     },
 
-    /**
-     * --------------------------
-     * SERVER-SIDE RESPONSIBILITY
-     * --------------------------
-     * These methods retrieve the mandatory user token from OpenVidu Server.
-     * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-     * the API REST, openvidu-java-client or openvidu-node-client):
-     *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-     *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-     *   3) The Connection.token must be consumed in Session.connect() method
-     */
-
     getToken(mySessionId) {
       console.log('getToken이 시작되긴 했음', mySessionId)
       return this.createSession(mySessionId).then((sessionId) =>{
@@ -486,8 +472,6 @@ export default {
       );
     },
 
-
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
     createSession(sessionId) {
       console.log('createSession이 시작되긴 했음')
       return new Promise((resolve, reject) => {
@@ -528,7 +512,6 @@ export default {
       });
     },
 
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
     createToken(sessionId) {
       console.log('createToken까지 왔나?')
       return new Promise((resolve, reject) => {
