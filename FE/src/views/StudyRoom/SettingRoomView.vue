@@ -151,13 +151,13 @@ export default {
       this.$store.commit('lbhModule/SWITCH_CL_STATUS', this.CLOn)
     },
     selectCL(cl){
-      this.$store.commit('lbhModule/SET_CL', cl)
+      this.$store.commit('lbhModule/SELECT_CL', cl)
     },
     selectCamera(camera){
-      this.$store.commit('lbhModule/SET_CAMERA', camera)
+      this.$store.commit('lbhModule/SELECT_CAMERA', camera)
     },
     selectMic(mic){
-      this.$store.commit('lbhModule/SET_MIC', mic)
+      this.$store.commit('lbhModule/SELECT_MIC', mic)
     },
     SRtoLB() {
       if (confirm("로비로 되돌아가시겠습니까?")) {

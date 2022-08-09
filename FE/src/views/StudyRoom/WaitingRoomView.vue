@@ -401,7 +401,7 @@ export default {
         this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
         // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
         // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-        window.addEventListener("beforeunload", this.WRleaveSession);
+        window.addEventListener("close", this.WRleaveSession);
     })
 
       // EZ면접 시작
@@ -443,7 +443,7 @@ export default {
         this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
         // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
         // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-        window.addEventListener("beforeunload", this.WRleaveSession);
+        window.addEventListener("close", this.WRleaveSession);
     })
     
     },
