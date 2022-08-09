@@ -2,40 +2,7 @@
 //면접실(일반 모드)에서 면접관이 보는 페이지 (Interviewee Room VIew => EEView)
 
 <template>
-
-  <!-- 방장 권한 위임 모달 -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>
-            정말 면접 도중에 나가시겠습니까? <br>
-            지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다.
-          </p>
-
-          <ul>
-            <li v-for="user in nextSuperUserList" :key="user.id">
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="nextSuperUser = user.name">
-                <label class="form-check-label" for="flexRadioDefault1">
-                  {{user.name}}
-                </label>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button>
-          <button type="button" class="btn btn-primary" @click="superUserOut">로비로 나가기</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <AuthorityPassModal/>
   <div class="ERView" id="ERView">
     <!-- <AuthorityPassModal/> -->
     <!-- 영상 구역  -->
@@ -81,10 +48,7 @@
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
-          <!-- <button @click.prevent="ERleaveSession">
-            <i class="bi bi-x-lg"></i>
-          </button> -->
-          <button type="button" class="btn btn-primary" @click="ERleaveSession" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
               <i class="bi bi-x-lg"></i>
           </button>
         </div>
@@ -109,15 +73,16 @@
 </template>
 
 <script>
-// import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
+import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import UserVideo from "@/components/UserVideo.vue";
+// import { OpenVidu } from "openvidu-browser";
 import swal from "sweetalert2";
 import { mapGetters } from "vuex";
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
 
 export default {
   name: "ERView",
-  components: { FeedbackArea, UserVideo},
+  components: { FeedbackArea, UserVideo, AuthorityPassModal},
   data(){
     return{
       nextSuperUser: '',
@@ -132,94 +97,100 @@ export default {
       "userType",
       "publisher",
       "subscribers",
-      'SessionToken',
+      'sessionToken',
       "session",
       "currentUserList",
+      "nextSuperUserList",
     ]),
-    nextSuperUserList(){
-    return this.currentUserList.filter(p => p.name !== this.myUserName)
-  }
+  //   nextSuperUserList(){
+  //   return this.currentUserList.filter(p => p.name !== this.myUserName)
+  // }
   },
   created(){
+    // this.OV = new OpenVidu();
+    // this.session = this.OV.initSession();
+    // this.session.connect(this.sessionToken)
+    // .then(console.log('session connect success'))
+    // .catch(err=>console.err(err.response))
     this.nextSuperUser = ''
     window.addEventListener("beforeunload", this.ERleaveSession);
-    console.log('erview cretaed', this.EE)
-    console.log('erview cretaed', this.ERS)
-    this.session.on('signal:EECL', (e)=>{ // 면접자의 자소서를 받아옴
+
+    //면접자로 지정된 유저가 자소서를 보낸 것을 받음
+    this.session.on('signal:EECL', (e)=>{
         const cl = JSON.parse(e.data)
         this.$store.commit('SET_STUDYROOM_CL', cl)
     });
+
+    //방장이 면접을 완료할 경우
     this.session.on('signal:endInterview', () => {
       console.log('endinterview signal received, erview')
       this.toFB()
     });
-    this.session.on('signal:superUserOut', (e) => {
+
+    //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:ERleaveSession', (e)=>{
+      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
+    })
+
+    //방장인 면접관이, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:superERLeaveSession', (e) => {
       if(this.myUserName === e.data){
+        console.log('내이름은', this.myUserName, '넘겨 받은 다음 방장 이름은', e.data)
         this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
-        console.log('이제', this.myUserName,'가', this.userType, '이다.')
       } else{'방장바뀜'}
     })
 
+    //방장인 면접자가, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:superEELeaveSession', (e)=>{
+      if(this.myUserName === e.data){
+        alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        this.toWR()
+      } else{
+        alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
+        this.toWR()
+      }        
+    })
+
+    //일반 유저인 면접자가, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:EELeaveSession', ()=>{
+      alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
+      this.$store.commit('lbhModule/EMPTY_FB')
+      this.toWR()
+    })
   },
   methods: {
     closeAPM(){
       this.nextSuperUser = ''
     },
-    superUserOut(){
-      console.log('방장 바뀔 때 작동해야 될 게 방장 받은 애한테도 작동된다고????')
+
+    //일반 유저가 면접관인데, 면접 도중에 나간 경우
+    ERleaveSession() {
       this.session.signal({
-        data: `${this.nextSuperUser}`,
+        data:`${this.myUserName}`,
         to: [],
-        type: 'superUserOut'
+        type: 'ERleaveSession'
       })
-      this.session.disconnect()
+
+      if (this.session) this.session.disconnect();
+
       this.$store.commit('lbhModule/SET_SESSION', undefined)
       this.$store.commit('lbhModule/SET_OV', undefined)
       this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
       this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
       this.$store.commit('lbhModule/SET_SUPERUSER', {})
       
-      window.removeEventListener("beforeunload", this.ERleaveSession);      
-
-      this.$router.push('/main')
-
-    },
-    //면접관실에서 나갈 때
-    ERleaveSession() {
-      if(this.userType === 'superUser') {
-        this.$store.commit('lbhModule/SET_APM_DESTINATION', 'ERView')
-        this.$store.commit('lbhModule/SET_APM_OPEN', true)
-
-      } else {
-        if (this.session) this.session.disconnect();
-    
-          this.$store.commit('lbhModule/SET_SESSION', undefined)
-          this.$store.commit('lbhModule/SET_OV', undefined)
-          this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-          this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-          this.$store.commit('lbhModule/SET_SUPERUSER', {})
-          
-          window.removeEventListener("beforeunload", this.ERleaveSession);
-      }
-    },
-    ERtoLBConfirm() {
-      if (this.userType === "user") {
-        if (confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다.")) 
-        {this.$router.push({ name: "main" });}} 
-      //   else if (this.userType === "superUser") {
-      //   if (confirm(
-      //       "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다.")) 
-      //     { console.log('권한 위임 모달 실행') }
-      // }
+      window.removeEventListener("beforeunload", this.ERleaveSession);
     },
     async toFB() {
       await this.$router.push({name:'fb-room'})
       this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
       this.$store.commit('lbhModule/EMPTY_ERS')
     },
-    switchUserTypeTemp(){
-      this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+    async toWR() {
+      await this.$router.push({name:'waiting-room'})
+      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      this.$store.commit('lbhModule/EMPTY_ERS')
     },
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
@@ -249,7 +220,7 @@ export default {
         });
       }
     },
-  },
+  }
 };
 </script>
 
