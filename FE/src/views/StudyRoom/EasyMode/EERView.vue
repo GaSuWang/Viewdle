@@ -93,9 +93,9 @@ export default {
       var filter = "";
       //data를 이용해서 분기,
       if (data === "1") {
-        filter = "agingtv";
+        filter = "dicetv";
       } else if (data === "2") {
-        filter = "streaktv";
+        filter = "optv";
       }
 
       if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
