@@ -1,12 +1,11 @@
 // import axios from "axios";
 
+import axios from "axios";
+
 const state = {
   //방장권한
-  superUser: {},
-  superUserOut: false,
   APMOpen: false,
   currentUserList: [], //방장 권한 위임을 위해서만 존재
-  // APMDestination: undefined, //아마 vue3 teleport 모달 쓰지 않으면 이것도 안쓸 듯
   
   //SettingRoom
   CameraList: [], // 영상 디바이스 리스트
@@ -27,10 +26,10 @@ const state = {
   myUserName: "Participant" + Math.floor(Math.random() * 100),
   publisher: undefined,
   subscribers: [],
-  OV: undefined,
-  session: undefined,
-  // inWR: true,
-
+  // OV: undefined,
+  // session: undefined,
+  roomSeq: undefined,
+  sessionToken: undefined,
 
   //EEView, ERView
   EE: [], //면접자
@@ -47,9 +46,7 @@ const getters = {
   WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
   StartInterview(state) {return state.StartInterview},
   currentUserList(state) {return state.currentUserList},
-  superUser(state){return state.superUser},
-  superUserOut(state){return state.superUserOut},
-  APMOpen(state){return state.APMOpen},
+  nextSuperUserList(state){return state.currentUserList.filter(p => p.name !== state.myUserName)},
 
   //SettingRoom
   MicList(state) {return state.MicList},
@@ -69,10 +66,22 @@ const getters = {
   subscribers(state) {return state.subscribers},
   mySessionId(state) {return state.mySessionId},
   myUserName(state) {return state.myUserName},
-
+  roomSeq(state){return state.roomSeq},
+  sessionToken(state){return state.sessionToken},
+  
   //EEView, ERView
   EE(state) {return state.EE}, //면접자
   ERS(state) {return state.ERS}, //면접관들
+  EEName(state) {
+    if(Object.keys(state.EE).length !== 0){
+      return JSON.parse(state.EE.stream.connection.data).clientData
+  }},
+  ERSNameList(state){
+    if(state.ERS.length !== 0){
+      return state.ERS.map(e=>{
+        return JSON.parse(e.stream.connection.data).clientData
+      })
+  }},
   InterviewTipList(state) {return state.interviewTipList},
   StudyRoomCL(state) {return state.studyRoomCL},
 
@@ -80,16 +89,12 @@ const getters = {
   FBList(state) {return state.FBList},
 };
 const mutations = {
-  SET_SUPERUSER(state, user){state.superUser = user},
-  SET_SUPERUSER_OUT(state, boolean){state.superUserOut = boolean},
-  SET_APM_OPEN(state, boolean){state.APMOpen = boolean},
   SWITCH_USER_TYPE_TEMP(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
+    console.log('지금 유저타입 변경됨')
     if(state.userType==='user'){
       state.userType='superUser'
-      console.log(state.userType)
     } else {
       state.userType='user'
-      console.log(state.userType)
     }
   },
   SWITCH_USER_TYPE(state){ //아마 진짜로 쓰일 방장 권한 위임 기능
@@ -99,15 +104,34 @@ const mutations = {
   //openvidu
   SET_OV(state, ov){state.OV = ov},
   SET_SESSION(state, session){state.session = session},
+  SET_SESSION_TOKEN(state,token){
+    state.sessionToken = token
+    console.log('SET_SESSION_TOKEN', state.sessionToken)
+  },
   SET_PUBLISHER(state, publisher) {state.publisher = publisher},
 
   SET_SUBSCRIBERS(state, subscriber) {state.subscribers = subscriber},
-  ADD_SUBSCRIBERS(state, subscriber) {state.subscribers.push(subscriber)},
+  ADD_SUBSCRIBERS(state, subscriber) {state.subscribers.push(subscriber) 
+    console.log('아니',subscriber,'가 들어왔는데 왜 localstorage에는 안들어가있는데?')},
   DELETE_SUBSCRIBERS(state, index) {state.subscribers.splice(index, 1)},
 
   SET_MYSESSIONID(state, mySessionId) {state.mySessionId = mySessionId},
   SET_MYUSERNAME(state, myUserName) {state.myUserName = myUserName},
 
+  //SettingRoom
+  GET_CAMERA_LIST(state, cameraList) {state.CameraList = cameraList},
+  SELECT_CAMERA(state, camera) { state.CameraSelected = camera },
+  SWITCH_CAMERA_STATUS(state){state.CameraStatus = !state.CameraStatus},
+
+  GET_MIC_LIST(state, micList) {state.MicList = micList},
+  SELECT_MIC(state, mic) { state.MicSelected = mic },
+  SWITCH_MIC_STATUS(state){state.MicStatus = !state.MicStatus},
+
+  // GET_CL_LIST(state){axios 통해 불러오기},
+  SELECT_CL(state, cl){state.CLSelected = cl}, 
+  SWITCH_CL_STATUS(state, status){state.CLStatus = status},
+
+  //waiting-room
   SET_WR_PARTICIPANT_LIST(state, inputList) {
     console.log('SET_WR_PARTICIPANT_LIST 시작',inputList)
     state.WRParticipantList = inputList;
@@ -155,22 +179,7 @@ const mutations = {
     state.currentUserList = {};
     console.log('currentUserList 비웠다', state.currentUserList)
   },
-
-  //SettingRoom
-  GET_CAMERA_LIST(state, cameraList) {state.CameraList = cameraList},
-  SELECT_CAMERA(state, camera) { state.CameraSelected = camera },
-  SWITCH_CAMERA_STATUS(state, status){state.CameraStatus = status},
-
-  GET_MIC_LIST(state, micList) {state.MicList = micList},
-  SELECT_MIC(state, mic) { state.MicSelected = mic },
-  SWITCH_MIC_STATUS(state, status){state.MicStatus = status},
-
-  // GET_CL_LIST(state){axios 통해 불러오기},
-  SELECT_CL(state, cl){state.CLSelected = cl}, 
-  SWITCH_CL_STATUS(state, status){state.CLStatus = status},
-  
-  //WaitingRoom
-  GET_PARTICIPANT_LIST(state, participants) {state.participantList = participants},
+  GET_ROOMSEQ(state, data){state.roomSeq = data},
   SET_STARTINTERVIEW(state, tf) {state.StartInterview = tf},
 
   //EEView, ERView
@@ -189,9 +198,10 @@ const mutations = {
     const idx = state.FBList.findIndex(function(item) {return item.reg_dt === fb.reg_dt})
     state.FBList[idx] = fb;
   },
+  EMPTY_FB(state){state.FBList = []},
 };
 const actions = {
-  StudyDestroy(){
+  finishInterview(){
     if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
       state.session.signal({
       data: 'true',  
@@ -223,16 +233,21 @@ const actions = {
   setStartInterview({ commit }, tf) {
     commit("SET_STARTINTERVIEW", tf);
   },
-  // getParticipantList({ commit }) {
-  //   axios
-  //     .get("url")
-  //     .then((res) => {
-  //       commit("GET_PARTICIPANT_LIST", res.data.participants);
-  //     })
-  //     .catch((e) => {
-  //       console.error(e.data);
-  //     });
-  // },
+  startInterview({state}, ee){
+    axios({
+      url: 'http://' + location.hostname + ':8081' + `/studyroom/interview/${state.roomSeq}`,
+      method: 'post',
+      headers: {Authorization: getters.rhtModule.authHeader },
+    })
+    .then(()=>{
+      state.session.signal({
+        data: `${ee}`,
+        to:[],
+        type:'startInterview'
+      })
+    })
+    .catch(err=>console.err(err.response))
+  },
 
   //EEView, ERView
   setEE({ commit }, EE) {

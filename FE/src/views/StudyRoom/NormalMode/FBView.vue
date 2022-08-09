@@ -5,7 +5,7 @@
   <div class="FeedbackView">
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
-    <saved-video></saved-video>
+    <div class="savedEEVid"></div>
     <!-- 우단 -->
     <div class="FBRightArea">
       <div class="FBButtonHeader">
@@ -46,7 +46,6 @@
 
 <script>
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
-import SavedVideo from "@/components/StudyRoom/SavedVideo.vue";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { mapGetters } from 'vuex';
@@ -57,7 +56,7 @@ const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
-  components: { FeedbackArea, SavedVideo },
+  components: { FeedbackArea },
   computed:{
     ...mapGetters('lbhModule', [
       'session',
@@ -75,42 +74,29 @@ export default {
       "MicStatus",
     ])
   },
+  created(){
+
+    //방장인 면접자가, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:superEELeaveSession', (e)=>{
+      if(this.myUserName === e.data){
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        alert('현재 방장이 스터디를 종료했으며, 다음 방장으로 선택되셨습니다.')
+      } 
+    })
+  },
   methods: {
+    async toWR() {
+      await this.$router.push({name:'waiting-room'})
+      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      this.$store.commit('lbhModule/EMPTY_ERS')
+    },
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
       window.open(route.href);
     },
     FBComplete() {
       if (confirm("피드백을 이대로 제출하시겠습니까? 이후에 대기실로 이동합니다.")) {
-        this.getToken(this.mySessionId).then((token) => {
-          this.session
-            .connect(token, { clientData: this.myUserName })
-            .then(() => {
-              this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", this.myUserName);
-
-              // let publisher = this.OV.initPublisher(undefined, {
-              //   audioSource: this.MicSelected, 
-              //   videoSource: this.CameraSelected, 
-              //   publishAudio: this.MicStatus, 
-              //   publishVideo: this.CameraStatus,
-              //   resolution: "320x180", 
-              //   frameRate: 30,
-              //   insertMode: "APPEND",
-              //   mirror: false, 
-              // });
-
-              // this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
-
-              this.session.publish(this.publisher);
-            })
-            .catch((error) => {
-              console.log(
-                "There was an error connecting to the session:",
-                error.code,
-                error.message
-              );
-            });
-        });
+        this.toWR();
       }
     },
     getToken(mySessionId) {

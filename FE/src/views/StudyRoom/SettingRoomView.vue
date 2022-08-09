@@ -186,10 +186,10 @@ export default {
       OV.getDevices().then(devices => {
       var videoDevices = devices.filter(device => device.kind === 'videoinput');
       console.log('videoDevices는 이거', videoDevices)
-      store.dispatch('lbhModule/setCameraList', videoDevices)
+      store.dispatch('lbhModule/getCameraList', videoDevices)
       var audioDevices = devices.filter(device => device.kind === 'audioinput');
       console.log('audioDevices는 이거', audioDevices)
-      store.dispatch('lbhModule/setMicList', audioDevices)
+      store.dispatch('lbhModule/getMicList', audioDevices)
     });
     } 
     findDevices()

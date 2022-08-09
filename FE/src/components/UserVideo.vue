@@ -18,7 +18,6 @@ export default {
 	},
 	computed: {
 		...mapGetters('lbhModule',[
-			'superUser',
 			'WRParticipantList',
 			'session',
 		]),
