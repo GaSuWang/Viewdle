@@ -65,7 +65,7 @@ export default {
 
       console.log("로그인아 안녕?")
       axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
+        url: 'https://' + location.hostname + ':8081' + '/api/v1/users/login',  
         method: 'post',
         data: credentials
       })
