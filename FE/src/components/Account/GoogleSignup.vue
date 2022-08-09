@@ -1,39 +1,18 @@
 // 임현탁
 <template>
-  <div class="signup">
-    <div class="signupbody">
-      <div class="signupcard">
-        <h1>Signup</h1>
-    <!-- 이름 -->
-    <!-- 이메일 -->
-    <!-- 비밀번호 -->
-    <!-- 비밀번호 확인 -->
-    <!-- 가입완료 버튼  and 취소버튼-->
-    <!-- 가입 실패시 알람 -->
-        <form @submit.prevent="signup(credentials)">
-          <!-- 이름 -->
-          <div class="nameinput">
-            <input type="text" v-model="credentials.userName" class="form-control form-control-lg"
-              placeholder="Nick Name" />
-          </div>
-          <!-- 이메일 인풋 -->
-
-          <form @submit.prevent="checkEmail(credentials)">
-            <div class="emailinput">
-              <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
-              <button class="pwchecksubmit btn btn-primary btn-lg"> 중복 확인 </button>
-            </div>
-          </form>
-
+  <div class="Googlesignup">
+    <div class="Googlesignupbody">
+      <div class="Googlesignupcard">
+        <h1>GoogleSignup</h1>
+        <form @submit.prevent="googlesignup(credentials)">
           <!-- 비번 인풋 -->
           <div class="pwinput">
-            <input type="password" v-model="credentials.userPassword" class="form-control form-control-lg"
+            <input type="password" v-model="credentials.password" class="form-control form-control-lg"
               placeholder="Password" />
           </div>
-
           <!-- 비번 확인 인풋 -->
           <div class="pwcheckinput">
-            <input type="password" v-model="credentials.userPassword2" class="form-control form-control-lg"
+            <input type="password" v-model="credentials.password2" class="form-control form-control-lg"
               placeholder="Password Check" />
           </div>
 
@@ -46,22 +25,22 @@
 </template>
 
 <script>
-// import { mapActions } from 'vuex'
 import { reactive } from 'vue'
-import { useRouter } from "vue-router";
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from "vue-router";
 import axios from 'axios'
 export default {
   name: 'SignupCard',
   setup () {
-    const credentials = reactive({
-      userEmail: '',
-      userName: '',
-      userPassword: '',
-      userPassword2: ''
-    })
-
+    const store = useStore()
     const router = useRouter();
-    function signup(credentials) {
+    const route= useRoute()
+    const credentials = reactive({
+      "idToken" : route.params.idToken,
+      "password": '',
+      "password2": ''
+    })
+    function googlesignup(credentials) {
       /* 
       POST: 사용자 입력정보를 signup URL로 보내기
         성공하면
@@ -73,58 +52,39 @@ export default {
       */
       console.log("회원가입아 안녕?")
       axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users', //회원가입 api로
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/social/google/signup', //회원가입 api로
         method: 'post',
         data: credentials
       })
-        .then(() => {
+        .then((res) => {
           alert('성공적으로 회원가입!')
-          router.push({ name: 'Account' })
+          const token = res.data.accessToken
+          store.dispatch('rhtModule/saveToken', token)
+          store.dispatch('rhtModule/fetchCurrentUser')
+          store.dispatch('rhtModule/fetchHistories')
+          store.dispatch('rhtModule/getBadge')
+          store.dispatch('rhtModule/getCoverLetter')
+          store.dispatch('rhtModule/getStudyRoom')
+          store.dispatch('rhtModule/getReplay')
+          router.push('/main')
         })
         .catch(err => {
           console.error(err)
+          console.log(credentials)
+          router.push('/main')
         })
     }
 
-    function checkEmail(credentials) {
-    console.log("중복확인아 안녕?")
-      axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/check/duplicate',  // 이메일확인 api
-        method: 'post',
-        data: {"email":credentials.userEmial}
-      })
-        .then(() => {
-          alert('가입가능한 이메일입니다.')
-        })
-        .catch(err => {
-          console.log(credentials)
-          console.error(err.response)
-          alert('이미 가입된 이메일입니다.')
-        })
-    }
       
     return {
-      signup, checkEmail, credentials
+      googlesignup, credentials
     }
   }
-  // data() {
-  //   return {
-  //     credentials: {
-  //       username: '',
-  //       useremail: '',
-  //       password1: '',
-  //       password2: '',
-  //     }
-  //   }
-  // },
-  // methods: {
-  //   ...mapActions(['signup'])
-  // },
 }
 </script>
 
 <style>
-.signup{
+.Googlesignup{
   width: 90%;
   height: 90%;
   background : rgb(255,255,255,0.5);
@@ -133,7 +93,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
-.signupbody{
+.Googlesignupbody{
   width: 100%;
   height: 70%;
   display: flex;
@@ -141,7 +101,7 @@ export default {
   justify-content: center;
 
 }
-.signupcard{
+.Googlesignupcard{
   width: 80%;
   height: 100%;
   background: white;

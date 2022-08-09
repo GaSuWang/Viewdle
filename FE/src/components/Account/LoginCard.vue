@@ -45,8 +45,12 @@ export default {
       email: '',
       password: '',
     })
+    const credentialsTogetReplay = reactive({
+      order:''
+    })
     const store = useStore()
     const router = useRouter()
+
      
     // function login(){
     //   store.dispatch('rhtModule/login', credentials)
@@ -64,6 +68,7 @@ export default {
           console.log("해윙")
           console.log(res)
           const token = res.data.accessToken
+          console.log(token)
           store.dispatch('rhtModule/saveToken', token)
           store.dispatch('rhtModule/fetchCurrentUser')
           store.dispatch('rhtModule/fetchHistories')
@@ -80,7 +85,7 @@ export default {
     }
       
     return {
-      login, credentials
+      login, credentials, credentialsTogetReplay
     }
   }
 }

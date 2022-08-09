@@ -215,6 +215,24 @@ const actions= {
       })
     },
 
+    // 회원삭제를 위한 비번 확인
+    confirmEmail({commit}, Email) {
+      console.log("비밀번호 확인아 안녕?")
+      axios({
+        url:'http://' + location.hostname + ':8081' + `/api/v1/users/check/${Email}`, // 비밀번호 컨펌 api 
+        method:'get',
+      })
+      .then(() => {
+        alert('진심 탈퇴 할거여?.')
+      })
+      .catch(err => {
+        console.error(err.response)
+        commit('SET_PW_CODE', true)
+        alert('비밀번호를 확인하세요.')
+            
+      })
+    },
+
     //비번수정을 위한 비번확인 
     confirmPWforEdit({commit}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
@@ -384,10 +402,18 @@ const actions= {
     //스터디룸 정보 얻어오기
     getStudyRoom({commit}) {
       console.log("스터디룸가져오기야야 안녕?")
-      axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
-        method:'get',
-      })
+      axios.get( 
+        'http://' + location.hostname + ':8081' + '/api/v1/studyroom',  //나중에 api/v1으로 고치기
+        {
+          params:{
+            FullYN: '',
+            order: '',
+            privateYN: '',
+            type: ''            
+          }
+        }
+      
+      )
       .then(res => {
         commit('SET_STUDYROOM_LIST', res.data)
         alert('스터디룸정보를 가져왔습니다.')
@@ -398,16 +424,28 @@ const actions= {
         alert('실패.')
       })
     },
+    // getStudyRoom({commit}, credentialsToGet){
+    //   axios.get('http://' + location.hostname + ':8081' + '/api/v1/studyroom', credentialsToGet.params)
+    //   .then(res =>{
+    //     commit('SET_STUDYROOM_LIST', res.data)
+    //     alert('스터디룸정보를 가져왔습니다.')
+    //   })
+    //   .catch(err =>{
+    //     console.error(err.response)
+    //     alert('실패.')
+    //   })
+    // },
     // 스터디룸 생성
-    createStudyroom({dispatch},credentials) {
+    createStudyroom({dispatch, getters},credentials) {
       console.log("스터디룸만들기야 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
         method:'post',
         data: credentials,
+        headers: {Authorization: getters.authHeader }
       })
       .then(() => {
-        dispatch('getstudyroom')
+        dispatch('getStudyRoom')
         alert('스터디룸이 생성되었습니다.')
       })
       .catch(err => {
@@ -432,19 +470,41 @@ const actions= {
       })
     },
     // 영상 가져오기
-    getReplay({commit, getters}) {
-      console.log("리플레이가져오기야야 안녕?")
-      axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/video', // 비번수정 api 
-        method:'get',
-        headers: {Authorization: getters.authHeader },
-      })
+    // getReplay({commit, getters}, credentialsTogetReplay) {
+    //   console.log("리플레이가져오기야야 안녕?")
+    //   axios({
+    //     url:'http://' + location.hostname + ':8081' + '/api/v1/video', // 비번수정 api 
+    //     method:'get',
+    //     headers: {Authorization: getters.authHeader },
+    //     params: {order:credentialsTogetReplay.order}
+    //   })
+    //   .then(res => {
+    //     commit('SET_REPLAY_LIST', res.data)
+    //     alert('리플레이정보를 가져왔습니다.')
+    //   }
+    //   )
+    //   .catch(err => {
+    //     console.error(err.response)
+    //     alert('실패.')
+    //   })
+    // },
+    getReplay({commit,getters}){
+      axios.get( 
+        'http://' + location.hostname + ':8081' + '/api/v1/video',
+        {
+          headers: {Authorization: getters.authHeader }
+        },
+        {
+          params:{
+            order:''
+          }
+        },
+      )
       .then(res => {
         commit('SET_REPLAY_LIST', res.data)
         alert('리플레이정보를 가져왔습니다.')
-      }
-      )
-      .catch(err => {
+      })
+      .catch(err =>{
         console.error(err.response)
         alert('실패.')
       })

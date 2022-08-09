@@ -32,6 +32,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 유저 관련 API 요청 처리를 위한 컨트롤러 정의.
@@ -96,7 +97,7 @@ public class UserController {
 		User user = userService.getUserByUserEmail(emailInfo.getEmail());
 
 		try {
-			if (user != null && user.getUserDelYN() == "N"){
+			if (user != null && Objects.equals(user.getUserDelYN(), "N")){
 				throw new AlreadyExistEmailException();
 			}
 		}
@@ -246,14 +247,25 @@ public class UserController {
 	@ApiOperation(value = "회원 가입시 이메일로 인증번호 보내기", notes = "사용가능한 이메일이면 인증 보내기 버튼 만들어주면 될거같아용")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 400, message = "이미 존재하는 이메일입니다."),
 			@ApiResponse(code = 401, message = "인증 실패"),
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
 	public ResponseEntity<? extends BaseResponseBody> emailConfirm(@RequestBody UserEmailReq emailInfo) throws Exception {
-		System.out.println(emailInfo.getEmail());
-		String confirm = emailService.sendSimpleMessage(emailInfo.getEmail());
 
+		User user = userService.getUserByUserEmail(emailInfo.getEmail());
+
+		try {
+			if (user != null && Objects.equals(user.getUserDelYN(), "N")){
+				throw new AlreadyExistEmailException();
+			}
+		}
+		catch (AlreadyExistEmailException e) {
+			return ResponseEntity.status(e.getStatus()).body(BaseResponseBody.of(e.getStatus(), e.getMessage()));
+		}
+
+		String confirm = emailService.sendSimpleMessage(emailInfo.getEmail());
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, confirm));
 	}
 

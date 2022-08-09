@@ -8,6 +8,11 @@ const routes = [
     component: () => import("@/views/Account/AccountView.vue"),
   },
   {
+    path: "/googlesignup",
+    name: "GoogleSignup",
+    component: () => import("@/components/Account/GoogleSignup.vue"),
+  },
+  {
     path: "/signup",
     name: "Signup",
     component: () =>

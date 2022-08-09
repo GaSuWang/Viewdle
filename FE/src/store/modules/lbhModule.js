@@ -1,21 +1,24 @@
 // import axios from "axios";
 
 const state = {
+  //방장권한
   superUser: {},
   superUserOut: false,
   APMOpen: false,
-  APMDestination: undefined,
-  currentUserList: [],
+  currentUserList: [], //방장 권한 위임을 위해서만 존재
+  // APMDestination: undefined, //아마 vue3 teleport 모달 쓰지 않으면 이것도 안쓸 듯
   
   //SettingRoom
-  CameraList: {}, // 영상 디바이스 리스트
+  CameraList: [], // 영상 디바이스 리스트
+  MicList: [], // 오디오 디바이스 리스트
+  CLList: [{'coverLetterSeq': '1', 'coverLetterTitle': 'first cl'}, {'coverLetterSeq': '2', 'coverLetterTitle': 'second cl'},{'coverLetterSeq': '3', 'coverLetterTitle': 'third cl'}], // 유저의 자소서 리스트
   CameraSelected: {}, // 선택된 영상 디바이스
-  CameraStatus: false,
-  MicList: {}, // 오디오 디바이스 리스트
   MicSelected: {}, // 선택된 오디오 디바이스
-  MicStatus: false,
-  CLSelected: {},
-  // UserCLList: {}, // 유저의 자소서 리스트
+  CLSelected: {}, //선택된 자소서 
+  //근데 카메라나 마이크를 선택했다는 것 자체가 이미 해당 기기를 키겠다는 거 아닌가? 
+  CameraStatus: false, //카메라 온오프
+  MicStatus: false, //마이크 온오프
+  CLStatus: false, //자소서 온오프
 
   //WaitingRoom
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
@@ -27,6 +30,7 @@ const state = {
   subscribers: [],
   OV: undefined,
   session: undefined,
+  // inWR: true,
 
 
   //EEView, ERView
@@ -51,34 +55,25 @@ const getters = {
   APMOpen(state){return state.APMOpen},
   APMDestination(state){return state.APMDestination},
   //SettingRoom
-  UserCLList(state) {return state.userCLList},
+  CLList(state) {return state.CLList},
   CameraList(state) {return state.CameraList},
   CameraSelected(state){return state.CameraSelected},
   CameraStatus(state){return state.CameraStatus},
   MicSelected(state){return state.MicSelected},
   MicList(state) {return state.MicList},
   MicStatus(state){return state.MicStatus},
+  CLStatus(state){return state.CLStatus},
   CLSelected(state){return state.CLSelected},
 
   //openvidu
   OV(state) {return state.OV},
   session(state) {return state.session},
-  mainStreamManager(state) {
-    return state.mainStreamManager;
-  },
-  publisher(state) {
-    return state.publisher;
-  },
-  subscribers(state) {
-    return state.subscribers;
-  },
-  mySessionId(state) {
-    return state.mySessionId;
-  },
-  myUserName(state) {
-    return state.myUserName;
-  },
+  publisher(state) {return state.publisher},
+  subscribers(state) {return state.subscribers},
+  mySessionId(state) {return state.mySessionId},
+  myUserName(state) {return state.myUserName},
   SessionToken(state){ return state.SessionToken},
+  // inWR(state){return state.inWR},
 
   //WaitingRoom
   //AuthorityPassModal
@@ -86,6 +81,7 @@ const getters = {
     return state.userType
   },
   WRParticipantList(state) {
+    console.log('wrparticipantlist에서 에러가 나나?')
     return JSON.parse(JSON.stringify(state.WRParticipantList));
   },
   StartInterview(state) {
@@ -122,50 +118,42 @@ const mutations = {
   SET_OV(state, ov){state.OV = ov},
   SET_SESSION(state, session){state.session = session},
   SET_PUBLISHER(state, publisher) {
-    state.publisher = publisher;
+    console.log('setpublisher mutations start', state.publisher)
+    state.publisher = publisher
+    console.log('setpublisher mutations end', state.publisher)
   },
-  SET_SUBSCRIBERS(state, subscriber) {
-    state.subscribers = subscriber;
-  },
-  ADD_SUBSCRIBERS(state, subscriber) {
-    state.subscribers.push(subscriber);
-  },
-  DELETE_SUBSCRIBERS(state, index) {
-    state.subscribers.splice(index, 1);
-  },
-  SET_MYSESSIONID(state, mySessionId) {
-    state.mySessionId = mySessionId;
-  },
-  SET_MYUSERNAME(state, myUserName) {
-    state.myUserName = myUserName;
-  },
-  SET_SESSION_TOKEN(state, token){
-    state.SessionToken = token
-    console.log('SET_SESSION_TOKEN',state.SessionToken)
-  },
+  SET_SUBSCRIBERS(state, subscriber) {state.subscribers = subscriber},
+  ADD_SUBSCRIBERS(state, subscriber) {state.subscribers.push(subscriber)},
+  DELETE_SUBSCRIBERS(state, index) {state.subscribers.splice(index, 1)},
+  SET_MYSESSIONID(state, mySessionId) {state.mySessionId = mySessionId},
+  SET_MYUSERNAME(state, myUserName) {state.myUserName = myUserName},
+  // SET_INWR(state){state.inWR = !state.inWR},
+  // SET_SESSION_TOKEN(state, token){
+  //   state.SessionToken = token
+  //   console.log('SET_SESSION_TOKEN',state.SessionToken)
+  // },
   EMPTY_WR_PARTICIPANT_LIST(state) {
-    state.WRParticipantList = {};
+    state.WRParticipantList = [];
     console.log('WRParticipantList 비웠다', state.WRParticipantList)
   },
-  SET_WR_PARTICIPANT_LIST({state}, inputList) {
-    console.log('SET_WR_PARTICIPANT_LIST',inputList)
+  SET_WR_PARTICIPANT_LIST(state, inputList) {
+    console.log('SET_WR_PARTICIPANT_LIST 시작',inputList)
     state.WRParticipantList = inputList;
-    console.log('WRParticipantList 바꿈', state.WRParticipantList)
+    console.log('SET_WR_PARTICIPANT_LIST 끝',state.WRParticipantList)
   },
   ADD_WR_PARTICIPANT_LIST(state, user) {
-    console.log("ADD_WR_PARTICIPANT_LIST", state.WRParticipantList);
+    console.log("ADD_WR_PARTICIPANT_LIST 시작", state.WRParticipantList, user);
     if (!state.WRParticipantList.includes(user)) {
-      console.log(state.WRParticipantList)
       state.WRParticipantList.push({ id: Date.now(), name: user });
-      console.log(state.WRParticipantList)
     }
+    console.log("ADD_WR_PARTICIPANT_LIST 끝", state.WRParticipantList, user);
   },
   DELETE_WR_PARTICIPANT_LIST(state, subscriberName) {
     //이렇게 지우는 게 맞는 지 모르겠다...
-    console.log('wrlist 지워지고 있기는 한가', state.WRParticipantList)
+    console.log("DELETE_WR_PARTICIPANT_LIST 시작", state.WRParticipantList);
     const idx = state.WRParticipantList.findIndex(function(item) {return item.name === subscriberName})
     if (idx>-1) state.WRParticipantList.splice(idx, 1)  
-    console.log('지워진 결과물', state.WRParticipantLis)
+    console.log("DELETE_WR_PARTICIPANT_LIST 끝", state.WRParticipantList);
     // const delArray = [...state.WRParticipantList]
     // console.log(delArray)
     // delArray.forEach(e=>{
@@ -182,7 +170,6 @@ const mutations = {
     console.log('currentUserList 비웠다', state.currentUserList)
   },
   SET_CURRENT_USER_LIST({state}, inputList) {
-    console.log('SET_WR_PARTICIPANT_LIST',inputList)
     state.currentUserList = inputList;
     console.log('currentUserList 바꿈', state.currentUserList)
   },
@@ -218,18 +205,16 @@ const mutations = {
   SWITCH_USER_TYPE(state){ //아마 진짜로 쓰일 방장 권한 위임 기능
     state.userType = 'superUser'
   },
-  GET_CAMERA_LIST(state, cameraList) {
-    state.CameraList = JSON.parse(JSON.stringify(cameraList));
-    console.log(state.CameraList);
+  SET_CAMERA_LIST(state, cameraList) {
+    state.CameraList = cameraList;
   },
   SET_CAMERA(state, camera) { state.CameraSelected = camera },
   SWITCH_CAMERA_STATUS(state, status){ 
     state.CameraStatus = status 
     console.log('카메라 온오프',state.CameraStatus)
   },
-  GET_MIC_LIST(state, micList) {
-    state.MicList = JSON.parse(JSON.stringify(micList));
-    console.log(state.MicList);
+  SET_MIC_LIST(state, micList) {
+    state.MicList = micList;
   },
   SET_MIC(state, mic) { state.MicSelected = mic },
   SWITCH_MIC_STATUS(state, status){ 
@@ -237,7 +222,14 @@ const mutations = {
     console.log('마이크 온오프',state.MicStatus)
 
   },
-  SET_CL_SELECTED(state, cl){state.CLSelected = cl}, //대기실에서 자신이 이번 면접에서 쓸 자소서
+  SWITCH_CL_STATUS(state, status){ 
+    state.CLStatus = status 
+    console.log('자소서 온오프',state.CLStatus)
+
+  },
+  SET_CL(state, cl){state.CLSelected = cl
+  console.log(cl, state.CLSelected)
+  }, //대기실에서 자신이 이번 면접에서 쓸 자소서
   
   //WaitingRoom
   GET_PARTICIPANT_LIST(state, participants) {
@@ -291,12 +283,20 @@ const mutations = {
   },
 };
 const actions = {
-  //openvidu
-  setOV({ commit }, ov) {
-    commit("SET_OV", ov);
-  },
-  setSession({ commit }, session) {
-    commit("SET_SESSION", session);
+  StudyDestroy(){
+    if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
+      state.session.signal({
+      data: 'true',  
+      to: [],
+      type: 'endInterview'
+      })
+      .then(() => {
+        console.log('erview send signal test')
+      })
+      .catch(error => {
+          console.error(error);
+      });
+    }
   },
   setMySessionId({ commit }, mySessionId) {
     commit("SET_MYSESSIONID", mySessionId);
@@ -306,14 +306,14 @@ const actions = {
   },
 
   //SettingRoom
-  getCameraList({ commit }, cameraList) {
-    commit("GET_CAMERA_LIST", cameraList);
+  setCameraList({ commit }, cameraList) {
+    commit("SET_CAMERA_LIST", cameraList);
   },
   setCamera({ commit }, camera) {
     commit("SET_CAMERA", camera);
   },
-  getMicList({ commit }, micList) {
-    commit("GET_MIC_LIST", micList);
+  setMicList({ commit }, micList) {
+    commit("SET_MIC_LIST", micList);
   },
   setMic({ commit }, mic) {
     commit("SET_MIC", mic);
