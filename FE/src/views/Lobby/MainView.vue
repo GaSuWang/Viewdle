@@ -95,7 +95,7 @@
             <input type="Text" v-model="credentialsToenter.roomSeq" class="form-control form-control-lg" placeholder="Room code" /> 
           </div> 
           <div class="modal-footer">
-            <button class="btn btn-secondary">입장</button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">입장</button>
           </div>
           </form>
           <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

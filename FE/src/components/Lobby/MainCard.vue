@@ -13,6 +13,7 @@
       <p></p>
       <p><small class="text-muted">{{item.roomRegTime}}</small></p>
       <p><small class="text-muted">{{item.roomType}}</small></p>
+      <p><small class="text-muted">{{item.roomSeq}}</small></p>
     </div>
   </div>
   <div class="enterbutton">
