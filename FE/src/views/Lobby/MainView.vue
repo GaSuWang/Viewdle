@@ -25,8 +25,8 @@
             </button>
             
             <ul class="dropdown-menu">
-              <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="N">공개방</li>
-              <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="Y">비공개방</li>
+              <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="Y">공개방</li>
+              <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="N">비공개방</li>
             </ul>
           </div>
           </div>
@@ -37,8 +37,8 @@
               정렬
             </button>
             <ul class="dropdown-menu">
-              <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="DESC">최신순</li> 
-              <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="ASC">오래된순</li>
+              <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="ASC">최신순</li> 
+              <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="DESC">오래된순</li>
             </ul>
           </div>
           </div>
@@ -95,7 +95,7 @@
             <input type="Text" v-model="credentialsToenter.roomSeq" class="form-control form-control-lg" placeholder="Room code" /> 
           </div> 
           <div class="modal-footer">
-            <button class="btn btn-secondary">입장</button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">입장</button>
           </div>
           </form>
           <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

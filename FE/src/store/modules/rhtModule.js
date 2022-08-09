@@ -1,11 +1,12 @@
+import { router } from "@/router";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
 const state= {
     // 회원가입
     token: localStorage.getItem('token') || '',
-    UserList:{"userEmail":"seoktak123@gmail.com", "userMainBadge":"https://w7.pngwing.com/pngs/445/743/png-transparent-badge-gold-badge-label-rectangle-pin-thumbnail.png", "userName":"연딱콩", "userProfileImage":"https://lh3.googleusercontent.com/a/AItbvmncW_yp0Hpoha3SrYuE1ElnJU6SX91-tnBZpQco=s96-c", "userSeq":1, "userTotaltime": "13", "userTotalVideo": 5},
-    HistoryList:{"userTotalTime":"13", "userTotalVideo":5, "usingDates":["2022:08:27","2022:08:26","2022:08:25"]},
+    UserList:{},
+    HistoryList:{},
     isLoggedIn: true,
     emailcode:{},
     pwcode: false,
@@ -17,21 +18,10 @@ const state= {
     // 뱃지 관리
     BadgeList:[],
     // 자소서관리
-    CoverLetterList:[
-      {"title":"삼성", "content":"합격하고싶다", "coverLetterSeq": 1, "date":"20200221"},
-      {"title":"현대", "content":"보내줘요", "coverLetterSeq": 2, "date":"20200221"},
-      {"title":"LG", "content":"제바리야~", "coverLetterSeq": 3, "date":"20200221"},
-      {"title":"SK", "content":"화이팅", "coverLetterSeq": 4, "date":"20200221"}
-    ],
+    CoverLetterList:[],
     CoverLetterDetail:{},
     // 방 만들기, 
-    StudyroomList:[
-      {"roomSeq":1, "roomType":1, "roomTitle": "얍", "roomPrivateYN": "Y", "roomCnt":"3", "roomLimit": "5", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "N", "thumbnailUrl":"abc.abc.abc"},
-      {"roomSeq":2, "roomType":1, "roomTitle": "얍얍", "roomPrivateYN": "Y", "roomCnt":"4", "roomLimit": "4", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "Y", "thumbnailUrl":"abc.abc.abc"},
-      {"roomSeq":3, "roomType":2, "roomTitle": "얍얍얍", "roomPrivateYN": "N", "roomCnt":"3", "roomLimit": "5", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "N", "thumbnailUrl":"abc.abc.abc"},
-      {"roomSeq":4, "roomType":1, "roomTitle": "얍얍얍얍", "roomPrivateYN": "Y", "roomCnt":"2", "roomLimit": "3", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "N", "thumbnailUrl":"abc.abc.abc"},
-      {"roomSeq":5, "roomType":2, "roomTitle": "얍얍얍얍얍", "roomPrivateYN": "N", "roomCnt":"5", "roomLimit": "5", "roomRegTime":"2022:09:03:06:22:58", "roomActiveYN":"Y", "roomFullYN" : "Y", "thumbnailUrl":"abc.abc.abc"},
-    ],
+    StudyroomList:[],
     // 녹화된 영상과 피드백 보기위함
     ReplayList:[
       {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17"},
@@ -196,12 +186,13 @@ const actions= {
     },
 
     // 회원삭제를 위한 비번 확인
-    confirmPW({commit}, confirmPW) {
+    confirmPW({commit, getters}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
-        data: confirmPW
+        data: {"password":confirmPW.password},
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('진심 탈퇴 할거여?.')
@@ -209,7 +200,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE', true)
+        commit('SET_PW_CODE', false)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -234,12 +225,13 @@ const actions= {
     },
 
     //비번수정을 위한 비번확인 
-    confirmPWforEdit({commit}, confirmPW) {
+    confirmPWforEdit({commit, getters}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
-        data: confirmPW
+        data: {"password":confirmPW.password},
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('비밀번호를 확인되었습니다.')
@@ -247,7 +239,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE_FOR_EDIT', true)
+        commit('SET_PW_CODE_FOR_EDIT', false)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -258,12 +250,12 @@ const actions= {
       console.log("회원탈퇴야 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users', // 회원탈퇴 api 
-        method:'delete',
+        method:'put',
         headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('정상적으로 회원탈퇴 되었습니다.')
-        useRouter.push({ name: 'Account' })
+        router.push('/')
       })
       .catch(err => {
         console.error(err.response)
@@ -272,16 +264,20 @@ const actions= {
     },
 
     // 비밀번호 수정
-    changePW(changepassword) {
+    changePW({getters}, changepassword) {
       console.log("비번수정아 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users/password', // 비번수정 api 
         method:'put',
-        data: changepassword
+        data: {
+          password:changepassword.password,
+          password2:changepassword.password2
+        },
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('정상적으로 비밀번호가 바뀌었습니다.')
-        useRouter.push({ name: 'Account' })
+        router.push('/')
       })
       .catch(err => {
         console.error(err.response)
@@ -402,18 +398,10 @@ const actions= {
     //스터디룸 정보 얻어오기
     getStudyRoom({commit}) {
       console.log("스터디룸가져오기야야 안녕?")
-      axios.get( 
-        'http://' + location.hostname + ':8081' + '/api/v1/studyroom',  //나중에 api/v1으로 고치기
-        {
-          params:{
-            FullYN: '',
-            order: '',
-            privateYN: '',
-            type: ''            
-          }
-        }
-      
-      )
+      axios({
+        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        method:'get',
+      })
       .then(res => {
         commit('SET_STUDYROOM_LIST', res.data)
         alert('스터디룸정보를 가져왔습니다.')
@@ -424,18 +412,7 @@ const actions= {
         alert('실패.')
       })
     },
-    // getStudyRoom({commit}, credentialsToGet){
-    //   axios.get('http://' + location.hostname + ':8081' + '/api/v1/studyroom', credentialsToGet.params)
-    //   .then(res =>{
-    //     commit('SET_STUDYROOM_LIST', res.data)
-    //     alert('스터디룸정보를 가져왔습니다.')
-    //   })
-    //   .catch(err =>{
-    //     console.error(err.response)
-    //     alert('실패.')
-    //   })
-    // },
-    // 스터디룸 생성
+
     createStudyroom({dispatch, getters},credentials) {
       console.log("스터디룸만들기야 안녕?")
       axios({
@@ -444,9 +421,18 @@ const actions= {
         data: credentials,
         headers: {Authorization: getters.authHeader }
       })
-      .then(() => {
-        dispatch('getstudyroom')
+      .then((res) => {
+        console.log(res.data.roomSeq)
+        dispatch('getStudyRoom')
         alert('스터디룸이 생성되었습니다.')
+        router.push({
+          name: 'setting-room', 
+          query: {
+            roomSeq : res.data.roomSeq,
+            studyRoomMode : credentials.type,
+            moderator : true
+          }
+        })
       })
       .catch(err => {
         console.error(err.response)
@@ -454,15 +440,27 @@ const actions= {
       })
     },
     // 스터디룸 입장
-    enterStudyroom(credentials) {
+    enterStudyroom({getters}, credentials) {
       console.log("스터디룸입장 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom/enter', // 비번수정 api 
         method:'post',
-        data: credentials,
+        data: {
+          "roomPassword" : credentials.roomPassword,
+          "roomSeq" : credentials.roomSeq
+        },
+        headers: {Authorization: getters.authHeader }
       })
-      .then(() => {
+      .then((res) => {
+        console.log(res)
         alert('스터디룸에 입장되었습니다.')
+        router.push({
+          name: 'setting-room', 
+          query: {
+            roomSeq : credentials.roomSeq,
+            moderator : false
+          }
+        })
       })
       .catch(err => {
         console.error(err.response)
@@ -594,6 +592,7 @@ const actions= {
         }
       })
       .then(res => {
+        console.log("너냐?")
         commit('SET_STUDYROOM_LIST', res.data)
         alert('스터디룸정보를 가져왔습니다.')
       }
