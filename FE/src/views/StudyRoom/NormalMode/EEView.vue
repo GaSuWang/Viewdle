@@ -91,7 +91,10 @@ export default {
 
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e) => {
-      if(this.myUserName === e.data){
+      const pastSuperUserName = e.data.split(' ')[0]
+      const currentSuperUserName = e.data.split(' ')[1]
+      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
+      if(this.myUserName === currentSuperUserName){
         alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
         this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
         if(this.currentUserList.lenght === 1){
@@ -105,7 +108,7 @@ export default {
     EELeaveSession(){
       if (confirm("정말 면접 도중에 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 로비로 이동합니다.")) {
         this.session.signal({
-          data:'',
+          data:`${this.myUserName}`,
           to:[],
           type:'EELeaveSession'
         })

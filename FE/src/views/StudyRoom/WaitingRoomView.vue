@@ -61,7 +61,7 @@
         <!-- <button @click.prevent="ERleaveSession">
           <i class="bi bi-x-lg"></i>
         </button> -->
-        <button type="button" class="btn btn-primary" @click="ERleaveSession" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
         </button>
       </div>
@@ -204,6 +204,11 @@ export default {
     //일반 유저 기능
     userOutClick(){
       if(confirm('정말 이 방에서 나가시겠습니까?')){
+        this.session.signal({
+          data: `${this.myUserName}`,
+          to: [],
+          type: 'WRleaveSession'
+        })
         this.WRleaveSession()
         this.$router.push('/main')
         // axios
@@ -314,6 +319,17 @@ export default {
             console.log("There was an error connecting to the session:", error.code, error.message);
           });
       });
+
+      //방장이 대기실에서 나감
+      this.session.on('signal:superLeaveSessionWR', (e) => {
+        const pastSuperUserName = e.data.split(' ')[0]
+        const currentSuperUserName = e.data.split(' ')[1]
+        this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
+        if(this.myUserName === currentSuperUserName){
+          alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
+          this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        }
+      })
 
       // 면접 시작
       this.session.on('signal:startInterview', (e) => { 

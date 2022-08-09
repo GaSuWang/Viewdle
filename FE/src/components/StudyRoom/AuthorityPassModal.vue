@@ -72,19 +72,23 @@ methods:{
   superLeaveSession(){
     //방장이 현재 면접자
     if(this.$router.currentRoute.value.name === 'ee-room' || this.$router.currentRoute.value.name === 'ee-room-ez'){
-      console.log('면접자 방장 나감')
       this.session.signal({
-        data:`${this.nextSuperUser}`,
+        data:`${this.myUserName} ${this.nextSuperUser}`,
         to:[],
         type:'superEELeaveSession'
       })
     //방장이 현재 면접관
-    } else {
-      console.log('면접관 방장 나감')
+    } else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez' || this.$router.currentRoute.value.name === 'fb-room') {
       this.session.signal({
-        data: `${this.nextSuperUser}`,
+        data: `${this.myUserName} ${this.nextSuperUser}`,
         to: [],
         type: 'superERLeaveSession'
+      })
+    } else if(this.$router.currentRoute.value.name === 'waiting-room'){
+      this.session.signal({
+        data: `${this.myUserName} ${this.nextSuperUser}`,
+        to: [],
+        type: 'superLeaveSessionWR'
       })
     }
     if (this.session) this.session.disconnect();

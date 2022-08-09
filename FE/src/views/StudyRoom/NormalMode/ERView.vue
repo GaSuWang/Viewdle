@@ -42,7 +42,7 @@
         </div>
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div v-show="userType === 'user'" class="ERtoLBbtn user">
-          <button @click.prevent="ERleaveSession">
+          <button @click.prevent="ERLeaveSession">
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
@@ -113,7 +113,7 @@ export default {
     // .then(console.log('session connect success'))
     // .catch(err=>console.err(err.response))
     this.nextSuperUser = ''
-    window.addEventListener("beforeunload", this.ERleaveSession);
+    window.addEventListener("beforeunload", this.ERLeaveSession);
 
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
     this.session.on('signal:EECL', (e)=>{
@@ -128,7 +128,7 @@ export default {
     });
 
     //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
-    this.session.on('signal:ERleaveSession', (e)=>{
+    this.session.on('signal:ERLeaveSession', (e)=>{
       this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
     })
 
@@ -142,7 +142,10 @@ export default {
 
     //방장인 면접자가, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superEELeaveSession', (e)=>{
-      if(this.myUserName === e.data){
+      const pastSuperUserName = e.data.split(' ')[0]
+      const currentSuperUserName = e.data.split(' ')[1]
+      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
+      if(this.myUserName === currentSuperUserName){
         alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
         this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
         this.toWR()
@@ -153,9 +156,10 @@ export default {
     })
 
     //일반 유저인 면접자가, 면접을 보는 도중에 나갈 경우
-    this.session.on('signal:EELeaveSession', ()=>{
-      alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
+    this.session.on('signal:EELeaveSession', (e)=>{
+      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
       this.$store.commit('lbhModule/EMPTY_FB')
+      alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
       this.toWR()
     })
   },
@@ -165,11 +169,11 @@ export default {
     },
 
     //일반 유저가 면접관인데, 면접 도중에 나간 경우
-    ERleaveSession() {
+    ERLeaveSession() {
       this.session.signal({
         data:`${this.myUserName}`,
         to: [],
-        type: 'ERleaveSession'
+        type: 'ERLeaveSession'
       })
 
       if (this.session) this.session.disconnect();
@@ -180,7 +184,7 @@ export default {
       this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
       this.$store.commit('lbhModule/SET_SUPERUSER', {})
       
-      window.removeEventListener("beforeunload", this.ERleaveSession);
+      window.removeEventListener("beforeunload", this.ERLeaveSession);
     },
     async toFB() {
       await this.$router.push({name:'fb-room'})
