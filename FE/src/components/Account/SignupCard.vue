@@ -91,7 +91,7 @@ export default {
       axios({
         url: 'http://' + location.hostname + ':8081' + '/api/v1/users/check/duplicate',  // 이메일확인 api
         method: 'post',
-        data: {"email":credentials.userEmial}
+        data: {"email":credentials.userEmail}
       })
         .then(() => {
           alert('가입가능한 이메일입니다.')

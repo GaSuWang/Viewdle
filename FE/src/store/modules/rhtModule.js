@@ -1,3 +1,4 @@
+import { router } from "@/router";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
@@ -196,12 +197,13 @@ const actions= {
     },
 
     // 회원삭제를 위한 비번 확인
-    confirmPW({commit}, confirmPW) {
+    confirmPW({commit, getters}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
-        data: confirmPW
+        data: {"password":confirmPW.password},
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('진심 탈퇴 할거여?.')
@@ -209,7 +211,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE', true)
+        commit('SET_PW_CODE', false)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -234,12 +236,13 @@ const actions= {
     },
 
     //비번수정을 위한 비번확인 
-    confirmPWforEdit({commit}, confirmPW) {
+    confirmPWforEdit({commit, getters}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
-        data: confirmPW
+        data: {"password":confirmPW.password},
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('비밀번호를 확인되었습니다.')
@@ -247,7 +250,7 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE_FOR_EDIT', true)
+        commit('SET_PW_CODE_FOR_EDIT', false)
         alert('비밀번호를 확인하세요.')
         
       })
@@ -258,12 +261,12 @@ const actions= {
       console.log("회원탈퇴야 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users', // 회원탈퇴 api 
-        method:'delete',
+        method:'put',
         headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('정상적으로 회원탈퇴 되었습니다.')
-        useRouter.push({ name: 'Account' })
+        router.push('/')
       })
       .catch(err => {
         console.error(err.response)
@@ -272,16 +275,20 @@ const actions= {
     },
 
     // 비밀번호 수정
-    changePW(changepassword) {
+    changePW({getters}, changepassword) {
       console.log("비번수정아 안녕?")
       axios({
         url:'http://' + location.hostname + ':8081' + '/api/v1/users/password', // 비번수정 api 
         method:'put',
-        data: changepassword
+        data: {
+          password:changepassword.password,
+          password2:changepassword.password2
+        },
+        headers: {Authorization: getters.authHeader },
       })
       .then(() => {
         alert('정상적으로 비밀번호가 바뀌었습니다.')
-        useRouter.push({ name: 'Account' })
+        router.push('/')
       })
       .catch(err => {
         console.error(err.response)
