@@ -445,7 +445,7 @@ const actions= {
         headers: {Authorization: getters.authHeader }
       })
       .then(() => {
-        dispatch('getstudyroom')
+        dispatch('getStudyRoom')
         alert('스터디룸이 생성되었습니다.')
       })
       .catch(err => {
