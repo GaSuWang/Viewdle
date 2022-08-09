@@ -124,7 +124,7 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname+":8443";
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
