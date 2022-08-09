@@ -48,6 +48,10 @@
 </template>
 
 <script>
+
+
+
+
 import FeedbackBox from "@/components/StudyRoom/NormalMode/FeedbackBox.vue";
 // import { ref, computed } from "vue";
 import { mapGetters } from "vuex";

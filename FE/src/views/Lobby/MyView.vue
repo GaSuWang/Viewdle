@@ -59,7 +59,7 @@
                 <div class="modal-footer">
                   <form @submit.prevent="deleteID()">
                     <div v-if="pwcode != false">
-                      <button class="btn btn-primary">회원탈퇴하기</button>
+                      <button class="btn btn-primary" data-bs-dismiss="modal">회원탈퇴하기</button>
                     </div>
                   </form>
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -120,9 +120,9 @@
                       <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="New Password Confirm" />
                     </div>
                   </div>
-                  <button class="btn btn-primary">비번바꾸기</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button class="btn btn-primary" data-bs-dismiss="modal">비번바꾸기</button>
                 </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>  

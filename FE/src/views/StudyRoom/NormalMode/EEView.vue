@@ -1,6 +1,8 @@
 // 이병헌
 //면접실(일반 모드)에서 면접자가 보는 페이지 (Interviewee Room VIew => EEView)
 <template>
+  <AuthorityPassModal/>
+
   <div class="EEView">
     <!-- 영상 구역  -->
     <!-- 면접관 영상 구역 -->
@@ -21,19 +23,19 @@
     <div class="EERight">
       <!-- 면접에서 나가기 버튼(일반 유저) -->
       <div v-show="userType === 'user'" class="EEtoLBbtn user">
-        <button @click.prevent="EEtoLBConfirm(userType)">
+        <button @click.prevent="EELeaveSession">
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
       <!-- 면접에서 나가기 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EEtoLBbtn superUser">
-        <button @click.prevent="EEtoLBConfirm(userType)">
-          <i class="bi bi-x-lg"></i>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+            <i class="bi bi-x-lg"></i>
         </button>
       </div>
       <!-- 면접 완료 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EndStudyBtn superUser">
-        <button @click.prevent="StudyDestroy">
+        <button @click.prevent="finishInterview">
           <i class="bi bi-check-lg"></i>
         </button>
       </div>
@@ -42,10 +44,9 @@
 </template>
 
 <script>
+import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import UserVideo from "@/components/UserVideo.vue";
-import { ref } from "vue";
 import { mapGetters } from "vuex";
-import { useRouter } from "vue-router";
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -54,7 +55,7 @@ const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "EEView",
-  components:{UserVideo},
+  components:{UserVideo, AuthorityPassModal},
   computed:{
     ...mapGetters('lbhModule',[
       "EE",
@@ -64,16 +65,11 @@ export default {
       "userType",
       "publisher",
       "subscribers",
-      'SessionToken',
+      'sessionToken',
       "session",
+      "nextSuperUserList",
+      'currentUserList',
 
-      //기기
-      "CameraSelected",
-      "CameraStatus",
-      "CameraStatus",
-      "MicSelected",
-      "MicStatus",
-      "MicStatus",
     ])
   },
   data(){
@@ -81,25 +77,60 @@ export default {
     }
   },
   created(){
-    console.log('면접자 정보', this.publisher.stream.connection.data)
+    //방장이 면접을 완료할 경우
     this.session.on('signal:endInterview', () => {
-      console.log('signal endinterview 받음')
-      console.log('면접자가 면접자실에서 나감', JSON.parse(this.publisher.stream.connection.data).clientData)
+      alert('방장이 면접을 완료했습니다.\n이제 대기실로 이동합니다.')
       this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserName)
       this.toWR()
     });  
+
+    //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:ERleaveSession', (e)=>{
+      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
+    })
+
+    //방장인 면접관이, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:superERLeaveSession', (e) => {
+      const pastSuperUserName = e.data.split(' ')[0]
+      const currentSuperUserName = e.data.split(' ')[1]
+      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
+      if(this.myUserName === currentSuperUserName){
+        alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        if(this.currentUserList.lenght === 1){
+          alert('방에 혼자남으셨습니다.\n 면접을 종료하고 대기실로 이동합니다.')
+          this.toWR()
+        }
+      } else{'방장바뀜'}
+    })
   },
   methods:{
-    StudyDestroy(){
-      this.$store.dispatch('lbhModule/StudyDestroy')
+    EELeaveSession(){
+      if (confirm("정말 면접 도중에 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 로비로 이동합니다.")) {
+        this.session.signal({
+          data:`${this.myUserName}`,
+          to:[],
+          type:'EELeaveSession'
+        })
+        if (this.session) this.session.disconnect();
+
+        this.$store.commit('lbhModule/SET_SESSION', undefined)
+        this.$store.commit('lbhModule/SET_OV', undefined)
+        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+        this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
+
+        window.removeEventListener("beforeunload", this.WRleaveSession);
+        this.$router.push("/main");
+      }
+    },
+    finishInterview(){
+      this.$store.dispatch('lbhModule/finishInterview')
     },
     async toWR() {
       await this.$router.push({name:'waiting-room'})
       this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
       this.$store.commit('lbhModule/EMPTY_ERS')
-    },
-    switchUserType(){
-      this.$store.commit('lbhModule/SWITCH_USER_TYPE')
     },
     getToken(mySessionId) {
         console.log('getToken이 시작되긴 했음', mySessionId)
@@ -166,44 +197,7 @@ export default {
           .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
       });
     },
-  },
-  setup() {
-    const router = useRouter();
-    const userType = ref("superUser"); //유저가 일반유저인지, 방장유저인지를 담고 있는 데이터를 여기에 넣어야, 지금은 임시
-    function EEtoLBConfirm(userType) {
-      if (userType === "user") {
-        if (
-          confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다."
-          )
-        ) {
-          router.push("main");
-        }
-      } else if (userType === "superUser") {
-        if (
-          confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 대기실로 이동합니다."
-          )
-        ) {
-          // 권한위임 모달 실행
-        }
-      }
-    }
-    function EndStudyConfirm() {
-      if (
-        confirm(
-          "면접 과정을 종료하시겠습니까? 면접자는 대기실로, 면접관은 피드백 수정실로 이동합니다. "
-        )
-      ) {
-        router.push("waiting-room");
-      }
-    }
-    return {
-      userType,
-      EEtoLBConfirm,
-      EndStudyConfirm,
-    };
-  },
+  }
 };
 </script>
 

@@ -7,7 +7,7 @@ import com.ssafy.db.entity.CoverLetter;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.mapping.CoverLetterResMapping;
 import com.ssafy.db.repository.CoverLetterRepository;
-import jdk.nashorn.internal.runtime.options.Option;
+//import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

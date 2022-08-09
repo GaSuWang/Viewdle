@@ -5,7 +5,7 @@
   <div class="FeedbackView">
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
-    <saved-video></saved-video>
+    <div class="savedEEVid"></div>
     <!-- 우단 -->
     <div class="FBRightArea">
       <div class="FBButtonHeader">
@@ -46,7 +46,6 @@
 
 <script>
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
-import SavedVideo from "@/components/StudyRoom/SavedVideo.vue";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { mapGetters } from 'vuex';
@@ -57,7 +56,7 @@ const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
-  components: { FeedbackArea, SavedVideo },
+  components: { FeedbackArea },
   computed:{
     ...mapGetters('lbhModule', [
       'session',
@@ -75,42 +74,68 @@ export default {
       "MicStatus",
     ])
   },
+  created(){
+    window.addEventListener("close", this.ERLeaveSession);
+
+    //방장인 면접자가, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:superEELeaveSession', (e)=>{
+      if(this.myUserName === e.data){
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        alert('현재 방장이 스터디를 종료했으며, 다음 방장으로 선택되셨습니다.')
+      } 
+    })
+
+    //방장인 면접관이, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:superERLeaveSession', (e)=>{
+      const pastSuperUserName = e.data.split(' ')[0]
+      const currentSuperUserName = e.data.split(' ')[1]
+      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
+      if(this.myUserName === currentSuperUserName){
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        alert('현재 방장이 스터디를 종료했으며, 다음 방장으로 선택되셨습니다.')
+      } 
+    })
+
+    //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:ERLeaveSession', (e)=>{
+      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
+    })
+
+    //일반유저인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
+    this.session.on('signal:WRleaveSession', (e)=>{
+      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
+    })
+  },
   methods: {
+    ERLeaveSession() {
+      this.session.signal({
+        data:`${this.myUserName}`,
+        to: [],
+        type: 'ERLeaveSession'
+      })
+
+      if (this.session) this.session.disconnect();
+
+      this.$store.commit('lbhModule/SET_SESSION', undefined)
+      this.$store.commit('lbhModule/SET_OV', undefined)
+      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+      this.$store.commit('lbhModule/SET_SUPERUSER', {})
+      
+      window.removeEventListener("beforeunload", this.ERLeaveSession);
+    },
+    async toWR() {
+      await this.$router.push({name:'waiting-room'})
+      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      this.$store.commit('lbhModule/EMPTY_ERS')
+    },
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
       window.open(route.href);
     },
     FBComplete() {
       if (confirm("피드백을 이대로 제출하시겠습니까? 이후에 대기실로 이동합니다.")) {
-        this.getToken(this.mySessionId).then((token) => {
-          this.session
-            .connect(token, { clientData: this.myUserName })
-            .then(() => {
-              this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", this.myUserName);
-
-              // let publisher = this.OV.initPublisher(undefined, {
-              //   audioSource: this.MicSelected, 
-              //   videoSource: this.CameraSelected, 
-              //   publishAudio: this.MicStatus, 
-              //   publishVideo: this.CameraStatus,
-              //   resolution: "320x180", 
-              //   frameRate: 30,
-              //   insertMode: "APPEND",
-              //   mirror: false, 
-              // });
-
-              // this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
-
-              this.session.publish(this.publisher);
-            })
-            .catch((error) => {
-              console.log(
-                "There was an error connecting to the session:",
-                error.code,
-                error.message
-              );
-            });
-        });
+        this.toWR();
       }
     },
     getToken(mySessionId) {

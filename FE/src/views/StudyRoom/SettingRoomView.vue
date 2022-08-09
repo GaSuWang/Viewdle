@@ -7,9 +7,10 @@
     </div>
     <!-- 우단   -->
     <div class="SRRightArea">
-      <div class="sr-dropdown-area">
-        <!-- 마이크 선택 모달 버튼 -->
-        <p class="mic-dropdown-title">마이크 선택</p>
+      <!-- 드롭다운 메뉴 -->
+      <div class="SRDropdownARea">
+        <!-- 마이크 선택 드롭다운-->
+        <p class="MicTitle">마이크 선택</p>
         <div class="mic dropdown">
           <button id="micLeft" class="btn" type="button" @click="micStatusSwitch">
             <span v-if="micOn">마이크 ON</span>
@@ -19,14 +20,14 @@
           </button>
           <ul class="dropdown-menu">
             <li v-for="mic in MicList" :key="mic.deviceId">
-              <span @click="selectMic(mic)">{{mic.label}}</span> 
+              <p :class="[MicSelected===mic ? 'deviceSelected' : '']" @click="selectMic(mic)">{{mic.label}}</p> 
             </li>
           </ul>
         </div>
 
-        <!-- 카메라 선택 모달 버튼 -->
+        <!-- 카메라 선택 드롭다운 -->
         <div class="camera dropdown">
-          <p class="camera-dropdown-title">카메라 선택</p>
+          <p class="CameraTitle">카메라 선택</p>
           <button id="cameraLeft" class="btn" @click="cameraStatusSwitch">
             <span v-if="cameraOn">카메라 ON</span>
             <span v-else>카메라 OFF</span>
@@ -39,36 +40,40 @@
           </button>
           <ul class="dropdown-menu">
             <li v-for="camera in CameraList" :key="camera.deviceId">
-              <span @click="selectCamera(camera)">{{camera.label}}</span>
+              <p :class="[CameraSelected===camera ? 'deviceSelected' : '']" @click="selectCamera(camera)">{{camera.label}}</p>
             </li>
           </ul>
         </div>
 
-        <!-- 자소서 선택 모달 버튼 -->
-        <p class="cl-dropdown-title">자소서 선택</p>
-        <div class="dropdown">
+        <!-- 자소서 선택 드롭다운 -->
+        <div class="cl dropdown">
+          <p class="cl-dropdown-title">자소서 선택</p>
+          <button id="CLLeft" class="btn" @click="CLStatusSwitch">
+            <span v-if="CLOn">자소서 ON</span>
+            <span v-else>자소서 OFF</span>
+          </button>
           <button
+            id="CLRight"
             class="btn dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            자소서 선택
           </button>
           <ul class="dropdown-menu">
-            <li v-for="cl in CoverLetterList" :key="cl.coverLetterSeq">
-              <span @clicked="selectCL(cl)">{{cl.coverLetterTitle}}</span>
+            <li v-for="cl in CLList" :key="cl.coverLetterSeq">
+              <p :class="[CLSelected.coverLetterTitle===cl.coverLetterTitle ? 'deviceSelected' : '']" @click="selectCL(cl)">{{cl.coverLetterTitle}}</p>
             </li>
           </ul>
         </div>
       </div>
 
       <!-- 하단 -->
-      <div class="SettingRoomFooter">
+      <div class="SRNavBtnArea">
         <!-- 로비 되돌아가기 버튼 -->
         <div class="toLBBtnDiv" @click="SRtoLB">
           <button class="toLBBtn">
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-backspace"></i>
           </button>
         </div>
 
@@ -113,6 +118,7 @@ export default {
     return{
       micOn: false,
       cameraOn : false,
+      CLOn: false,
     }
   },
   computed:{
@@ -123,30 +129,35 @@ export default {
       "MicList",
       "MicSelected",
       "MicStatus",
+      "CLList",
+      "CLSelected",
+      'CLStatus',
     ]),
-    ...mapGetters('rhtModule',[
-      "CoverLetterList"
-    ])
+    // ...mapGetters('rhtModule',[
+    //   "CoverLetterList"
+    // ])
   },
   methods:{
     micStatusSwitch() {
       this.micOn = !this.micOn;
-      console.log(this.micOn)
       this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)
     },
     cameraStatusSwitch() {
       this.cameraOn = !this.cameraOn;
-      console.log(this.cameraOn)
       this.$store.commit('lbhModule/SWITCH_CAMERA_STATUS', this.cameraOn)
     },
+    CLStatusSwitch() {
+      this.CLOn = !this.CLOn;
+      this.$store.commit('lbhModule/SWITCH_CL_STATUS', this.CLOn)
+    },
     selectCL(cl){
-      this.$store.commit('lbhModule/SET_CL_SELECTED', cl)
+      this.$store.commit('lbhModule/SELECT_CL', cl)
     },
     selectCamera(camera){
-      this.$store.commit('lbhModule/SET_CAMERA', camera)
+      this.$store.commit('lbhModule/SELECT_CAMERA', camera)
     },
     selectMic(mic){
-      this.$store.commit('lbhModule/SET_MIC', mic)
+      this.$store.commit('lbhModule/SELECT_MIC', mic)
     },
     SRtoLB() {
       if (confirm("로비로 되돌아가시겠습니까?")) {
@@ -154,7 +165,14 @@ export default {
       }
     },
     SRtoWR() {
-      if (confirm("대기실로 이동하시겠습니까?")) {
+      // if(Object.keys(this.CameraSelected).length === 0 || 
+      // Object.keys(this.MicSelected).length === 0 || 
+      // Object.keys(this.CLSelected).length === 0){
+      if(this.CameraSelected.length === 0 || 
+      this.MicSelected.length === 0 || 
+      this.CLSelected.length === 0){
+        alert('마이크와 카메라, 자소서를 모두 선택해주셨나요?\n빠진 것은 없는 지 다시 한 번 확인해 주세요!')
+      } else if (confirm("대기실로 이동하시겠습니까?")) {
         this.$router.push("waiting-room");
       }
     }
@@ -167,8 +185,10 @@ export default {
     function findDevices(){
       OV.getDevices().then(devices => {
       var videoDevices = devices.filter(device => device.kind === 'videoinput');
+      console.log('videoDevices는 이거', videoDevices)
       store.dispatch('lbhModule/getCameraList', videoDevices)
       var audioDevices = devices.filter(device => device.kind === 'audioinput');
+      console.log('audioDevices는 이거', audioDevices)
       store.dispatch('lbhModule/getMicList', audioDevices)
     });
     } 
@@ -181,6 +201,8 @@ export default {
 .SettingRoomView {
   position: absolute;
   width: 90vw;
+  /* 화면 구성을 위해서 min-width나 min-height를 주는 게 맞는 거 같은데*/
+  min-width: 1000px;
   aspect-ratio: 16/9;
   top: 50%;
   left: 50%;
@@ -209,7 +231,7 @@ export default {
   background-color: #edf0f6;
 }
 
-.sr-dropdown-area{
+.SRDropdownARea{
   align-self: center;
   width: 80%;
 }
@@ -218,30 +240,38 @@ export default {
   margin-bottom: 10%;
 }
 
-.SettingRoomHeader {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+.dropdown-menu{
+  padding: 0
 }
 
-.SettingRoomHeader > li {
-  padding: 0;
-  border-bottom: 5px rgb(210, 210, 210) solid;
+.dropdown-menu > li > p{
+  padding: 1px;
+  margin: 5px;
 }
 
+#micLeft, #cameraLeft, #CLLeft{
+  border-radius: 30px 0 0 30px;
+}
+#micRight, #cameraRight, #CLRight{
+  border-radius: 0 30px 30px 0;
+}
 
-.SettingRoomFooter {
+.deviceSelected{
+  background-color: blue;
+  color: white;
+}
+
+.SRNavBtnArea {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-evenly;
 }
 
 .btn {
   border-radius: 30px;
 }
 
-/* .SettingRoomHeader > button, */
-.SettingRoomFooter > button,
+.SRNavBtnArea > button,
 .toLBBtn,
 .toWRBtn {
   border: none;
@@ -257,8 +287,8 @@ export default {
   border-radius: 50%;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
-/* .SettingRoomHeader > button:before, */
-.SettingRoomFooter > button:before,
+
+.SRNavBtnArea > button:before,
 .toLBBtn:before,
 .toWRBtn:before {
   content: "";
@@ -271,8 +301,8 @@ export default {
   top: 50%;
   z-index: -1;
 }
-/* .SettingRoomHeader > button:after, */
-.SettingRoomFooter > button:after,
+
+.SRNavBtnArea > button:after,
 .toLBBtn:after,
 .toWRBtn:after {
   content: "";
@@ -288,8 +318,8 @@ export default {
   border-radius: 50%;
   box-shadow: inset 0px 4px 24px #ddd;
 }
-/* .SettingRoomHeader > button:hover, */
-.SettingRoomFooter > button:hover,
+
+.SRNavBtnArea > button:hover,
 .toLBBtn:hover,
 .toWRBtn:hover {
   text-decoration: none;
