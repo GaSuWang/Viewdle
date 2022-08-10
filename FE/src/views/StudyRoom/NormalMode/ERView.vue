@@ -61,7 +61,7 @@
       <!-- 하단 -->
       <div class="ERButtonFooter">
         <!-- 면접 완료 버튼(방장 유저) -->
-        <div class="StudyDestroyBtn" @click="StudyDestroy" v-show="userType === 'superUser'">
+        <div class="finishInterviewBtn" @click="finishInterview" v-show="userType === 'superUser'">
           <button>
             <i class="bi bi-check-lg"></i>
           </button>
@@ -102,9 +102,6 @@ export default {
       "currentUserList",
       "nextSuperUserList",
     ]),
-  //   nextSuperUserList(){
-  //   return this.currentUserList.filter(p => p.name !== this.myUserName)
-  // }
   },
   created(){
     // this.OV = new OpenVidu();
@@ -117,8 +114,9 @@ export default {
 
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
     this.session.on('signal:EECL', (e)=>{
-        const cl = JSON.parse(e.data)
-        this.$store.commit('SET_STUDYROOM_CL', cl)
+      const cl = JSON.parse(e.data)
+      console.log('면접관이 받은 유저의 자소서', cl)
+      this.$store.commit('SET_STUDYROOM_CL', cl)
     });
 
     //방장이 면접을 완료할 경우
@@ -212,7 +210,7 @@ export default {
         position: "top-end",
       });
     },
-    StudyDestroy(){
+    finishInterview(){
       if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
         this.session.signal({
         data: 'true',  
@@ -309,7 +307,7 @@ export default {
 /* 굿/뱃 버튼은 FeedbackArea에 있음 */
 .CLOpen > button,
 .QTip > button,
-.StudyDestroyBtn > button,
+.finishInterviewBtn > button,
 .ERtoLBbtn > button {
   border: none;
   display: block;
@@ -327,7 +325,7 @@ export default {
 
 .CLOpen > button:before ,
 .QTip > button:before ,
-.StudyDestroyBtn > button:before ,
+.finishInterviewBtn > button:before ,
 .ERtoLBbtn > button:before {
   content: "";
   display: block;
@@ -342,7 +340,7 @@ export default {
 
 .CLOpen > button:after ,
 .QTip > button:after ,
-.StudyDestroyBtn > button:after,
+.finishInterviewBtn > button:after,
 .ERtoLBbtn > button:after {
   content: "";
   display: block;
@@ -361,7 +359,7 @@ export default {
 
 .CLOpen > button:hover,
 .QTip > button:hover,
-.StudyDestroyBtn > button:hover,
+.finishInterviewBtn > button:hover,
 .ERtoLBbtn > button:hover {
   text-decoration: none;
   color: #555;

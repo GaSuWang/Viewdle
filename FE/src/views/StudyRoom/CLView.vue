@@ -22,13 +22,32 @@
 </template>
 
 <script>
+import { OpenVidu } from "openvidu-browser";
 import { mapGetters } from 'vuex'
 export default {
   name: 'CLView',
   computed:{
     ...mapGetters('lbhModule',[
-      'StudyRoomCL'
+      'StudyRoomCL',
+      // 'session',
+      'sessionToken',
     ])
+  },
+  data(){
+    return{
+      OV: undefined,
+      session: undefined,
+    }
+  },
+  created(){
+    this.OV = new OpenVidu()
+    this.session = this.OV.initSession()
+    this.session.connect(this.sessionToken)
+    this.session.on('signal:EECL', (e)=>{
+      const cl = JSON.parse(e.data)
+      console.log('면접관이 받은 유저의 자소서', cl)
+      this.$store.commit('SET_STUDYROOM_CL', cl)
+    });
   },
   setup(){
     function CloseTab () {
