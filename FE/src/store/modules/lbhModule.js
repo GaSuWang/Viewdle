@@ -32,6 +32,8 @@ const state = {
   sessionToken: undefined,
 
   //EEView, ERView
+  isEE: false,
+  isER: false,
   EE: [], //면접자
   ERS: [], //면접관들
   InterviewTipList: {}, // 면접 팁
@@ -70,6 +72,8 @@ const getters = {
   sessionToken(state){return state.sessionToken},
   
   //EEView, ERView
+  isEE(state){return state.isEE},
+  isER(state){return state.isER},
   EE(state) {return state.EE}, //면접자
   ERS(state) {return state.ERS}, //면접관들
   EEName(state) {
@@ -183,6 +187,8 @@ const mutations = {
   SET_STARTINTERVIEW(state, tf) {state.StartInterview = tf},
 
   //EEView, ERView
+  SET_ISEE(state, tf){state.isEE = tf},
+  SET_ISER(state, tf){state.isER = tf},
   SET_STUDYROOM_CL(state,cl){state.studyRoomCL = cl},
   SET_EE(state, EE) {state.EE = EE},
   SET_ERS(state, ERS) {state.ERS.push(ERS)},

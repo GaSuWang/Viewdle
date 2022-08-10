@@ -75,15 +75,7 @@ export default {
     ])
   },
   created(){
-    window.addEventListener("close", this.ERLeaveSession);
-
-    //방장인 면접자가, 면접을 보는 도중에 나갈 경우
-    this.session.on('signal:superEELeaveSession', (e)=>{
-      if(this.myUserName === e.data){
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
-        alert('현재 방장이 스터디를 종료했으며, 다음 방장으로 선택되셨습니다.')
-      } 
-    })
+    window.addEventListener("close", this.ERLeaveSessionFromFB);
 
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e)=>{
@@ -97,21 +89,33 @@ export default {
     })
 
     //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
-    this.session.on('signal:ERLeaveSession', (e)=>{
+    this.session.on('signal:ERLeaveSessionFromFB', (e)=>{
       this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
     })
 
+    //방장인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
+    this.session.on('signal:superLeaveSessionWR', (e)=>{
+      const pastSuperUserName = e.data.split(' ')[0]
+      const currentSuperUserName = e.data.split(' ')[1]
+      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
+      if(this.myUserName === currentSuperUserName){
+        alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+      }
+    })
+
     //일반유저인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
-    this.session.on('signal:WRleaveSession', (e)=>{
+    this.session.on('signal:userLeaveSessionfromWR', (e)=>{
       this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
     })
+
   },
   methods: {
-    ERLeaveSession() {
+    ERLeaveSessionFromFB() {
       this.session.signal({
         data:`${this.myUserName}`,
         to: [],
-        type: 'ERLeaveSession'
+        type: 'ERLeaveSessionFromFB'
       })
 
       if (this.session) this.session.disconnect();
@@ -122,7 +126,7 @@ export default {
       this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
       this.$store.commit('lbhModule/SET_SUPERUSER', {})
       
-      window.removeEventListener("beforeunload", this.ERLeaveSession);
+      window.removeEventListener("beforeunload", this.ERLeaveSessionFromFB);
     },
     async toWR() {
       await this.$router.push({name:'waiting-room'})

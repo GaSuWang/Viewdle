@@ -55,8 +55,6 @@ data(){
 computed: {
   ...mapGetters('lbhModule', [
     'myUserName',
-    'APMOpen',
-    'APMDestination',
     'subscribers',
     'publisher',
     'currentUserList',
@@ -77,33 +75,37 @@ methods:{
         to:[],
         type:'superEELeaveSession'
       })
+      if (this.session) this.session.disconnect();
+    } 
     //방장이 현재 면접관
-    } else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez' || this.$router.currentRoute.value.name === 'fb-room') {
+    else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez' || this.$router.currentRoute.value.name === 'fb-room') {
       this.session.signal({
         data: `${this.myUserName} ${this.nextSuperUser}`,
         to: [],
         type: 'superERLeaveSession'
       })
-    } else if(this.$router.currentRoute.value.name === 'waiting-room'){
+    } 
+    
+    else if(this.$router.currentRoute.value.name === 'waiting-room'){
       this.session.signal({
         data: `${this.myUserName} ${this.nextSuperUser}`,
         to: [],
         type: 'superLeaveSessionWR'
       })
+      if (this.session) this.session.disconnect();
     }
-    if (this.session) this.session.disconnect();
 
+    // window.removeEventListener("beforeunload", this.ERleaveSession);
+    // document.body.remove('.modal-open')
+    // $('.modal-backdrop').remove();
+    alert('면접에서 성공적으로 나가셨습니다.')
     this.$store.commit('lbhModule/SET_SESSION', undefined)
     this.$store.commit('lbhModule/SET_OV', undefined)
     this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
     this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
     this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
-    
-    // window.removeEventListener("beforeunload", this.ERleaveSession);
-    // document.body.remove('.modal-open')
-    // $('.modal-backdrop').remove();
-    alert('면접에서 성공적으로 나가셨습니다.')
     this.$router.push('/main')
+    this.nextSuperUser = ''
 
   },
   closeAPM(){

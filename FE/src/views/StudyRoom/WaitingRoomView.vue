@@ -21,18 +21,8 @@
     <div class="WRRightArea">
       <!-- 일반 유저 기능-->
       <!-- 대기실 나가기 -->
-      <!-- <div id="session-controller" v-if="userType==='user'">
-        <input
-          class="btn btn-large btn-danger"
-          type="button"
-          id="buttonLeaveSession"
-          @click="WRleaveSession"
-          value="방 나가기"
-        />
-      </div> -->
-
       <div class="user-out" v-if="userType === 'user'">
-        <button @click="userOutClick(userType)">
+        <button @click="userLeaveSessionFromWR(userType)">
           방나가기
           <i class="bi bi-x-lg"></i>
         </button>
@@ -58,9 +48,6 @@
       </div>
       <!-- 스터디 종료 -->
       <div v-if="userType === 'superUser'" class="ERtoLBbtn superUser">
-        <!-- <button @click.prevent="ERleaveSession">
-          <i class="bi bi-x-lg"></i>
-        </button> -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
         </button>
@@ -202,12 +189,12 @@ export default {
     },
 
     //일반 유저 기능
-    userOutClick(){
+    userLeaveSessionfromWR(){
       if(confirm('정말 이 방에서 나가시겠습니까?')){
         this.session.signal({
           data: `${this.myUserName}`,
           to: [],
-          type: 'WRleaveSession'
+          type: 'userLeaveSessionfromWR'
         })
         this.WRleaveSession()
         this.$router.push('/main')
@@ -392,7 +379,7 @@ export default {
         if (this.EECnd === this.myUserName) {
           //만약에 내가 면접자라면
           console.log("startEZInterview as EE");
-
+          this.$store.commit('SET_ISEE', true)
           this.session
             .signal({
               // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
@@ -417,7 +404,7 @@ export default {
         } else {
           //만약 내가 면접관이라면
           console.log("startEZInterview as ER");
-
+          this.$store.commit('SET_ISER', true)
           this.$store.commit("lbhModule/SET_ERS", this.publisher); //나(publisher)를 ERS에 넣음
 
           this.subscribers.forEach((s) => {
