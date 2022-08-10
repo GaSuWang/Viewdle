@@ -66,14 +66,14 @@
                 <input type="Text" class="form-control form-control-lg" v-model="credentials.title" placeholder="Title" /> 
                 <div>
                   <p>Play Mode : 1  /  Study Mode : 2</p>
-                  <input type="number" min='1' max='2' v-model.number="credentials.type">
+                  <input type="number" class="form-control form-control-lg" min='1' max='2' v-model.number="credentials.type">
                 </div>
                 <div>
                   <p>최소 : 2   /   최대 : 5</p>
-                <input type="number" min='2' max='5' v-model.number="credentials.limit">
+                <input type="number" class="form-control form-control-lg" min='2' max='5' v-model.number="credentials.limit">
                 </div>
                 비밀방생성<input type="checkbox" v-model="credentials.privateYN" true-value="Y" false-value="N"/>
-                <input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /> 
+                <div v-if="credentials.privateYN == 'Y'"><input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /></div>
               </div> 
               <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">생성</button>

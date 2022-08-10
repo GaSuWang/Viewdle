@@ -54,7 +54,8 @@ name: "GoogleLoginView",
       // console.log('Email: ' + profile.getEmail());
 
       axios({
-        url: 'https://' + location.hostname + `/api/v1/users/check/duplicate`,  // 이메일확인 api
+        // url: 'https://' + location.hostname + `/api/v1/users/check/duplicate`,  // 이메일확인 api
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/check/duplicate',
         method: 'post',
         data: {'email' : profile.getEmail()},
         
@@ -71,7 +72,8 @@ name: "GoogleLoginView",
         .catch(err => {
           if (err.response && err.response.status === 400 ){
             axios({
-              url: 'https://' + location.hostname + '/api/v1/social/google/login',
+              // url: 'https://' + location.hostname + '/api/v1/social/google/login',
+              url: 'http://' + location.hostname + ':8081' + '/api/v1/social/google/login',
               method:'post',
               data: {'idToken':googleUser.getAuthResponse().id_token}           
             }).then(tq => {
