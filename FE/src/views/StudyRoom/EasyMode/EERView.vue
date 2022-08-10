@@ -52,7 +52,7 @@
           </button>
         </div>
         <div class="SuddenAttackBtn">
-          <button @click="sendWarningSignal">
+          <button :disabled="SuddenBtnState" @click="sendSuddenQASignal">
             <i class="bi bi-exclamation-triangle-fill"></i>
           </button>
         </div>
@@ -80,6 +80,8 @@ export default {
     return {
       warningCount: 0,
       isFiltered: false,
+      SuddenBtnState: false,
+      OXBtnState: false,
     };
   },
   computed: {
@@ -163,6 +165,7 @@ export default {
       // <- 테스트용, 모든 참여자 warningCoutn 올림
       //this.addWarn();
     });
+
     //change filter 신호 받기
     this.session.on("signal:setFilter", (event) => {
       var data = event.data;
@@ -173,11 +176,11 @@ export default {
       } else if (data === "2") {
         filter = "optv";
       }
-
       if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
         for (var ER of this.ERS) {
           var name = JSON.parse(ER.stream.connection.data).clientData;
           if (name === this.myUserName) {
+            //이미 설정된 필터가 있으면
             if (this.isFiltered) {
               this.removeFilter();
               setTimeout(() => {
@@ -193,7 +196,7 @@ export default {
                     console.log(error);
                   });
               }, 1000);
-            } else {
+            } else { //설정된 필터가 없으면
               ER.stream
                 .applyFilter("GStreamerFilter", { command: filter })
                 .then(() => {
@@ -210,7 +213,21 @@ export default {
         }
       }
     });
+    this.session.on("signal:suddenQA",(from)=>{
+      console.log("receive suddenQA signal");
+      //돌발상황, 돌발질문 버튼 비활성화 시키기
+      this.disabledSuddenBtn();
+      console.log(from); //확인해서 보낸사람 확인하기
+      //면접자 화면에 카운트다운 3,2,1 ->  ui 사이렌 효과주기
+      //3초뒤 신호 발생시킨 면접관에게만 다시 신호 보내기
+      //o,x 버튼 보이게 하기 (면접관)
 
+      //x 버튼 누를시 경고 누적되게 신호 보내기
+      //o 버튼 누를시 아무일도 없음,
+      //버튼 누르면 o,x버튼 사라지게함
+      //다시 돌발상황, 돌발질문 버튼 활성화
+      this.activeSuddenBtn();
+    })
     this.session.on("signal:EndInterviewByWarning", (event) => {
       console.log(event.data);
       this.returnWaitingRoom();
@@ -247,7 +264,7 @@ export default {
     };
   },
   methods: {
-    userLeaveSessionFromEER(){
+        userLeaveSessionFromEER(){
       if(confirm('정말 면접 도중에 나가시겠습니까?')){
         if(this.isEE){
           this.session.signal({
@@ -342,6 +359,45 @@ export default {
         });
     },
     //---------------------send warning singal end---------------------------
+    //---------------------돌발 질문,상황 관련 함수 -----------------------------
+    //돌발 질문 신호보내기
+      sendSuddenQASignal(){
+        this.session.signal({
+          data: "suddenQA",
+          to: [],
+          type:"suddenQA"
+        }).then(()=>{
+          console.log("success send sudden QA");
+        }).catch((e)=>{
+          console.log("fail send sudden QA error: ",e);
+        })
+      },
+
+      //돌발상황, 돌발질문 버튼 비활성화
+      disabledSuddenBtn(){
+        this.SuddenBtnState = false;
+      },
+      
+      //면접자 화면에 카운트다운 3,2,1 ->  ui 사이렌 효과주기
+
+      //신호 발생시킨 면접관에게만 다시 신호 보내기
+
+      //o,x 버튼 보이게 하기 (면접관)
+      showOXBtn(){
+        this.OXBtnState = true;
+      },
+
+      //버튼 누르면 o,x버튼 사라지게함
+      hideOXBtn(){
+        this.OXBtnState = false;
+      },
+      //다시 돌발상황, 돌발질문 버튼 활성화
+      activeSuddenBtn(){
+        this.SuddenBtnState = true;
+      },
+
+
+    //---------------------돌발 질문 관련 함수 끝-----------------------------
     //면접관실에서 나갈 때
     EERleaveSession() {
       if (this.userType === "superUser") {
