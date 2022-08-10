@@ -73,7 +73,7 @@ export default {
       */
       console.log("회원가입아 안녕?")
       axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users', //회원가입 api로
+        url: 'https://' + location.hostname + '/api/v1/users', //회원가입 api로
         method: 'post',
         data: credentials
       })
@@ -89,7 +89,7 @@ export default {
     function checkEmail(credentials) {
     console.log("중복확인아 안녕?")
       axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/check/duplicate',  // 이메일확인 api
+        url: 'https://' + location.hostname + '/api/v1/users/check/duplicate',  // 이메일확인 api
         method: 'post',
         data: {"email":credentials.userEmail}
       })

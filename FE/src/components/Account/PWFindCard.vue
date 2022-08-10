@@ -44,7 +44,7 @@ export default {
     function getEmailCode(credentials) {
         console.log("코드보내기야 안녕?")
         axios({
-          url: 'http://' + location.hostname + ':8081' + '/api/v1/users/password',  // 비밀번호찾기 api
+          url: 'https://' + location.hostname + '/api/v1/users/password',  // 비밀번호찾기 api
           method: 'post',
           data: {"email":credentials.userEmail}
         })
