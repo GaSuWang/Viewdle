@@ -13,13 +13,18 @@
   <div class="MyViewBoss">
     <NavBar class="NavView"/>
     <div class="MyView">
-      <SendImg/>
       <p class="pagetitle">My Page</p>
       <div class="MyBody">
         <div class="card-top">
-          <img :src="userLists.userProfileImage">
-          <p class="card-text">이름 : {{userLists.userName}}</p>
-          <p class="card-text">email :{{userLists.userEmail}}</p>
+          <div class="card-topitem1">
+            <!-- <img :src="userLists.userProfileImage"> -->
+            <img class="profileimg" src="@/assets/images/anyimgs.png">
+            <SendImg/>
+          </div>
+          <div class="card-topitem2">
+            <p class="card-text">이름 : {{userLists.userName}}</p>
+            <p class="card-text">email :{{userLists.userEmail}}</p>
+          </div>
         </div>
         <div class="Mycard-body">
           <UsageTrend/>
@@ -215,18 +220,18 @@ export default {
 }
 .Mycard-body{
   width:95%;
-  height: 45%;
+  height: 48%;
   display: flex;
   flex-flow: row;
   justify-content: space-between;
   align-items: space-around;
-  margin: 20px;
+  margin: 0 20px;
 }
 .card-body2{
   width: 98%;
-  height: 30%;
+  height: 18%;
   display: flex;
-  margin: 20px;
+  margin: 0 20px;
 }
 .card{
   width: 98%;
@@ -235,21 +240,40 @@ export default {
 .card-footer{
   display: flex;
   justify-content: end;
+  height: 6%;
 }
 .card-footer button{
   margin: 0 20px;
 }
 .MyBody{
   width: 98%;
-  height: 80%;
+  height: 90%;
   background: white;
   border-radius: 20px;
   padding: 20px;
 }
-.MyTop{
-  background: white;
-  border-radius: 20px;
-  width:98%;
+.card-top{
+  width:90%;
+  height:25%; 
+  display: flex;
+  flex-flow: row;
+  justify-content: space-around;
+  align-items: space-around;
+  margin-left: 5%;
+}
+.card-topitem1{
+  width: 50%;
+  height: 100%;
+  display:flex;
+  flex-flow:row;
+}
+.card-topitem2{
+  width: 50%;
+  height: 100%;
+}
+.profileimg{
+  width: 150px;
+  height: 150px;
 }
 </style>
 

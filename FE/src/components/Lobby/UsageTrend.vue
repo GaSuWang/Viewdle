@@ -1,6 +1,5 @@
 <template>
 <div class="usageTrend">
-  <h2>이용추이</h2>
   <Pie
     :chart-options="chartOptions"
     :chart-data="chartData"
@@ -75,7 +74,7 @@ export default {
 .usageTrend{
   width:45%;
   height:95%; 
-  margin:20px;
+  margin:0 20px;
   border-radius: 20px;
   box-shadow: 1px 1px 1px 1px gray;
   display: flex;

@@ -1,11 +1,10 @@
 // 임현탁
 <template>
-  <div class="GrassShow">  
-    <h2>캘린더</h2>  
+  <div class="GrassShow"> 
     <div>
       <section class="calendertop">
         <i class="fas fa-angle-left"  @click="controlMonth('prev')" ></i>
-        <h2>{{year}}.{{month}}</h2>
+        <div class="calendertoptext">{{year}}.{{month}}</div>
         <i class="fas fa-angle-right" @click="controlMonth('next')"></i>
       </section>
     </div>
@@ -182,7 +181,7 @@ export default {
 .GrassShow{
   width:45%;
   height:95%; 
-  margin:20px;
+  margin: 0 20px;
   border-radius: 20px;
   box-shadow: 1px 1px 1px 1px gray;
   display: flex;
@@ -221,5 +220,8 @@ th {
     background-color: aqua;
     border-radius: 70%;
     overflow: hidden;
+}
+.calendertoptext{
+  font-size: 20px;
 }
 </style>
