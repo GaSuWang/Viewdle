@@ -52,7 +52,8 @@ export default {
       */
       console.log("회원가입아 안녕?")
       axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/social/google/signup', //회원가입 api로
+        // url: 'https://' + location.hostname + '/api/v1/social/google/signup', //회원가입 api로
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/social/google/signup',
         method: 'post',
         data: credentials
       })

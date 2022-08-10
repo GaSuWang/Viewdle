@@ -6,7 +6,7 @@
     <div class="sidebarbody">
     <MiniProfile class="SidebarMiniProfile"/>
     <ul>
-        <li><router-link to="/main"><i class="fas fa-qrcode"></i>Main</router-link></li>
+        <li><router-link to="/main"><i :class="{'클래스이름': '조건식'}" class="fas fa-qrcode"></i>Main</router-link></li>
         <li><router-link to="/mypage"><i class="fas fa-user"></i>MyPage</router-link></li>
         <li><router-link to="/cl"><i class="fas fa-envelope-open-text"></i>CoverLetter</router-link></li>
         <li><router-link to="/replay"><i class="fas fa-video"></i>Replay</router-link></li>

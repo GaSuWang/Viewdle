@@ -229,6 +229,11 @@ export default {
         ("방장바뀜");
       }
     });
+
+    // 면접자일때만 음성인식 시작
+    if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
+      this.startRecognition();
+    }
   },
   setup() {
     const router = useRouter();
@@ -337,6 +342,97 @@ export default {
         });
     },
     //---------------------send warning singal end---------------------------
+    //면접관실에서 나갈 때
+    EERleaveSession() {
+      if (this.userType === "superUser") {
+        this.$store.commit("lbhModule/SET_APM_DESTINATION", "ERView");
+        this.$store.commit("lbhModule/SET_APM_OPEN", true);
+      } else {
+        if (this.session) this.session.disconnect();
+
+        this.$store.commit("lbhModule/SET_SESSION", undefined);
+        this.$store.commit("lbhModule/SET_OV", undefined);
+        this.$store.commit("lbhModule/SET_PUBLISHER", undefined);
+        this.$store.commit("lbhModule/SET_SUBSCRIBERS", []);
+        this.$store.commit("lbhModule/SET_SUPERUSER", {});
+
+        window.removeEventListener("beforeunload", this.EERleaveSession);
+      }
+    },
+    EERtoLBConfirm() {
+      if (this.userType === "user") {
+        if (
+          confirm(
+            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
+          )
+        ) {
+          this.$router.push({ name: "main" });
+        }
+      } else if (this.userType === "superUser") {
+        if (
+          confirm(
+            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
+          )
+        ) {
+          console.log("권한 위임 모달 실행");
+        }
+      }
+    },
+    StudyDestroy() {
+      if (
+        confirm(
+          "정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다."
+        )
+      ) {
+        this.session
+          .signal({
+            data: "true",
+            to: [],
+            type: "endInterview",
+          })
+          .then(() => {
+            console.log("erview send signal test");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    },
+    
+    // Speech API
+    startRecognition() {
+      let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      let recognition = SpeechRecognition? new SpeechRecognition() : false
+      recognition.interimResults = true;
+      recognition.lang = 'ko-KR';
+      recognition.continuous = false;
+    
+      recognition.start(); // 음성 인식 시작
+      console.log("start speech recognition");
+
+      recognition.onresult = function(e){ // 음성 인식 결과 반환
+        for(let i = e.resultIndex; i < e.results.length; ++i){
+          if(e.results[i].isFinal){ 
+            let script = e.results[i][0].transcript;
+            // console.log(script);
+            if(script.includes("빵")){
+              alert("빵!");
+            }else if(script.includes("감자")){
+              alert("감자!");
+            }
+          }
+        }
+      }
+
+      recognition.onend = function(){ // 음성 인식이 끊겼을 때 
+        //recognition.stop();
+        recognition.start(); 
+      }     
+
+      recognition.onerror = function(e) {
+        console.log(e);
+      }
+    }
   },
 };
 </script>

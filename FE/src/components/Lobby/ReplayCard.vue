@@ -10,12 +10,11 @@
     <div class="Replaycard-body">
       <h5>{{item.videoTitle}}</h5>
       <p><small class="text-muted">{{item.videoRegTime}}</small></p>
-   
+      <p><small>{{item.videoSeq}}</small></p>
     </div>
   </div>
   <div class="Replaycard-button">
-    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enterReplay">열람하기</button>
-    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteReplay">삭제하기</button>
+    <button class="btn btn-secondary Replaycard-buttonitem" data-bs-toggle="modal" data-bs-target="#enterReplay">열람</button>
   </div>
     <!-- 왼쪽 -->
     <!-- 썸네일 -->
@@ -62,13 +61,14 @@ export default {
 }
 .ReplayTop{
   width:100%;
-  height: 30px;
+  height: 10%;
   display:flex;
   justify-content: end;
   margin-right: 30px
 }
 .ReplayBottom{
   width: 100%;
+  height: 80%;
   display:flex;
   flex-flow:row;
 }
@@ -85,8 +85,13 @@ export default {
 }
 .Replaycard-button{
   width:100%;
+  height:10%;
   display:flex;
   justify-content: end;
   margin-right: 20%;
+}
+.Replaycard-buttonitem{
+  margin : 3px;
+  font-size: 3px;
 }
 </style>

@@ -14,6 +14,9 @@
           <li><input type="checkbox" @click="filterReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="DESC">최신순</li>
         </ul>
       </div>
+      <button class="btn btn-secondary ReplayTopitem" data-bs-toggle="modal" data-bs-target="#deleteReplay">
+        삭제하기
+      </button>
     </div>
       <hr>
       <div class="ReplayBody">
@@ -26,8 +29,8 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <form @submit.prevent="deleteReplay(credentialsTodelete)">
-              <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
-              <input type="number" v-model="credentialsTodelete.replaySeq">
+              <h5 class="modal-title" id="staticBackdropLabel">몇번 삭제할래?</h5>
+              <input type="number" class="form-control form-control-lg" v-model="credentialsTodelete.replaySeq">
               <button class="btn btn-secondary">Yes</button>
             </form>
             <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
@@ -203,6 +206,7 @@ export default {
 }
 .ReplayTopitem{
   margin:0 20px;
+  margin-left: 20px;
 }
 .pagetitle{
   margin-top: 20px;
