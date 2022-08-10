@@ -3,7 +3,7 @@
   <AuthorityPassModal/>
   <div class="EERView">
     <!-- 영상 구역 -->
-    <div class="EERContent">
+    <div :style="cssVariable" class="EERContent">
       <!-- 면접자 영상 구역  -->
       <div class="EEVidContainer">
         <div class="EEVid">
@@ -35,6 +35,13 @@
           </button>
         </div>
       </div>
+      <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
+      <div v-if="OXBtnState">
+        <button @click="selectOBtn">O</button>
+        <button @click="selectXBtn">X</button>
+      </div>
+      <div v-if="isCountDownOn">countdown: {{ countDown }}</div>
+      <!-- 돌발질문 카운트 다운 및 OX버튼 끝-->
       <div class="EERButtonFooter">
         <div class="CLViewBtn">
           <button @click="openCL">
@@ -52,7 +59,7 @@
           </button>
         </div>
         <div class="SuddenAttackBtn">
-          <button :disabled="SuddenBtnState" @click="sendSuddenQASignal">
+          <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
             <i class="bi bi-exclamation-triangle-fill"></i>
           </button>
         </div>
@@ -78,29 +85,36 @@ export default {
   components: { UserVideo, AuthorityPassModal }, // warningStackBar //경고게이지 주석
   data() {
     return {
-      warningCount: 0,
-      isFiltered: false,
-      SuddenBtnState: false,
-      OXBtnState: false,
+       warningCount: 0, //현재 쌓인 경고수
+      isFiltered: false, //비디오 필터 걸렸는지 확인
+      suddenBtnState: false, //돌발질문 버튼 활성화 여부, :disabled활용, false일때 활성화
+      OXBtnState: false, // 면접관 돌발질문 OX 버튼 활성화 여부 v-if활용 true일때 활성화
+      isQASender: false, // 돌발질문 발생시킨 면접관인지 확인용
+      isCountDownOn: false, // 카운트다운 활성화 여부 v-if활용 true일때 활성화
+      countDown: 3, // 실제 화면에 표시되는 카운트다운
+      bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
     };
   },
-  computed: {
+   computed: {
     ...mapGetters("lbhModule", [
       "EE",
       "ERS",
-      "isEE",
-      "isER",
       "myUserName",
       "mySessionId",
       "userType",
       "publisher",
       "subscribers",
-      "sessionToken",
+      "SessionToken",
       "session",
       "currentUserList",
     ]),
     nextSuperUserList() {
       return this.currentUserList.filter((p) => p.name !== this.myUserName);
+    },
+    cssVariable() {
+      return {
+        "--bgcolor": this.bgIsWhite ? "white" : "tomato",
+      };
     },
   },
   created() {
@@ -213,21 +227,37 @@ export default {
         }
       }
     });
-    this.session.on("signal:suddenQA",(from)=>{
+    //----------------돌발 질문 시작-----------------------
+    this.session.on("signal:suddenQA", () => {
       console.log("receive suddenQA signal");
-      //돌발상황, 돌발질문 버튼 비활성화 시키기
-      this.disabledSuddenBtn();
-      console.log(from); //확인해서 보낸사람 확인하기
-      //면접자 화면에 카운트다운 3,2,1 ->  ui 사이렌 효과주기
-      //3초뒤 신호 발생시킨 면접관에게만 다시 신호 보내기
-      //o,x 버튼 보이게 하기 (면접관)
-
-      //x 버튼 누를시 경고 누적되게 신호 보내기
-      //o 버튼 누를시 아무일도 없음,
-      //버튼 누르면 o,x버튼 사라지게함
-      //다시 돌발상황, 돌발질문 버튼 활성화
-      this.activeSuddenBtn();
-    })
+      var name = JSON.parse(this.EE.stream.connection.data).clientData;
+      if (name === this.myUserName) {
+        //면접자 화면에 카운트다운 3,2,1 ->  ui 사이렌 효과주기
+        this.startSirenEffect();
+        this.showCountDown();
+        //3초뒤 신호 발생시킨 면접관에게만 다시 신호 보내기
+        setTimeout(this.sendShowOXSignal, 3000);
+      } else {
+        //돌발상황, 돌발질문 버튼 비활성화 시키기
+        this.disabledSuddenBtn();
+      }
+    });
+    this.session.on("signal:ShowOXBtn", () => {
+      //OX버튼 보여주기
+      if (this.isQASender) {
+        console.log("버튼 보여줘~");
+        this.showOXBtn();
+        this.isQASender = false;
+      }
+    });
+    this.session.on("signal:activeSuddenBtn", () => {
+      console.log("돌발질문 버튼 활성화시키기");
+      var name = JSON.parse(this.EE.stream.connection.data).clientData;
+      if (name !== this.myUserName) {
+        this.suddenBtnState = false;
+      }
+    });
+    //----------------돌발 질문 끝-----------------------
     this.session.on("signal:EndInterviewByWarning", (event) => {
       console.log(event.data);
       this.returnWaitingRoom();
@@ -256,6 +286,9 @@ export default {
     const router = useRouter();
     //--------------------return waitingRoom ---------------------------
     function returnWaitingRoom() {
+      if(this.isFiltered){
+        this.removeFilter();
+      }
       router.push({ name: "waiting-room" });
     }
     //--------------------return waitingRoom end---------------------------
@@ -348,7 +381,7 @@ export default {
       this.session
         .signal({
           data: "stacked warning count",
-          to: [], //<- 면접자만 어떻게 골라서 보내지...
+          to: [],
           type: "warning",
         })
         .then(() => {
@@ -361,41 +394,88 @@ export default {
     //---------------------send warning singal end---------------------------
     //---------------------돌발 질문,상황 관련 함수 -----------------------------
     //돌발 질문 신호보내기
-      sendSuddenQASignal(){
-        this.session.signal({
+    sendSuddenQASignal() {
+      this.isQASender = true;
+      this.session
+        .signal({
           data: "suddenQA",
           to: [],
-          type:"suddenQA"
-        }).then(()=>{
-          console.log("success send sudden QA");
-        }).catch((e)=>{
-          console.log("fail send sudden QA error: ",e);
+          type: "suddenQA",
         })
-      },
+        .then(() => {
+          console.log("success send sudden QA");
+        })
+        .catch((e) => {
+          console.log("fail send sudden QA error: ", e);
+        });
+    },
 
-      //돌발상황, 돌발질문 버튼 비활성화
-      disabledSuddenBtn(){
-        this.SuddenBtnState = false;
-      },
-      
-      //면접자 화면에 카운트다운 3,2,1 ->  ui 사이렌 효과주기
+    //돌발상황, 돌발질문 버튼 비활성화
+    disabledSuddenBtn() {
+      console.log("돌발질문 비활성화");
+      this.suddenBtnState = true;
+    },
 
-      //신호 발생시킨 면접관에게만 다시 신호 보내기
+    //todo 면접자 화면에 카운트다운 3,2,1
+    showCountDown() {
+      this.isCountDownOn = true;
+      var timer = setInterval(() => {
+        this.countDown--;
+      }, 1000);
+      setTimeout(() => {
+        clearInterval(timer);
+        this.isCountDownOn = false;
+        this.countDown = 3;
+      }, 2800);
+    },
 
-      //o,x 버튼 보이게 하기 (면접관)
-      showOXBtn(){
-        this.OXBtnState = true;
-      },
+    //o,x 버튼 보이게 하기 (면접관)
+    showOXBtn() {
+      this.OXBtnState = true;
+    },
 
-      //버튼 누르면 o,x버튼 사라지게함
-      hideOXBtn(){
-        this.OXBtnState = false;
-      },
-      //다시 돌발상황, 돌발질문 버튼 활성화
-      activeSuddenBtn(){
-        this.SuddenBtnState = true;
-      },
+    //버튼 누르면 o,x버튼 사라지게함
+    hideOXBtn() {
+      this.OXBtnState = false;
+    },
+    //다시 돌발상황, 돌발질문 버튼 활성화
+    activeSuddenBtn() {
+      this.session.signal({
+        data: "active sudden btn",
+        to: [],
+        type: "activeSuddenBtn",
+      });
+    },
+    //신호 발생시킨 면접관에게만 다시 신호 보내기
+    sendShowOXSignal() {
+      this.session.signal({
+        data: "show ox btn",
+        to: [], //
+        type: "ShowOXBtn",
+      });
+    },
+    //배경 빨강->하양 반복 사이렌효과
+    startSirenEffect() {
+      console.log("웨에에에에에에에엥");
+      var interval = setInterval(() => {
+        this.bgIsWhite = !this.bgIsWhite;
+      }, 200);
+      setTimeout(() => {
+        clearInterval(interval);
+         this.bgIsWhite = true;
+      }, 3000);
+     
+    },
 
+    selectXBtn() {
+      this.OXBtnState = false;
+      this.sendWarningSignal();
+      this.activeSuddenBtn();
+    },
+    selectOBtn() {
+      this.OXBtnState = false;
+      this.activeSuddenBtn();
+    },
 
     //---------------------돌발 질문 관련 함수 끝-----------------------------
     //면접관실에서 나갈 때
@@ -511,6 +591,7 @@ export default {
 }
 
 .EERContent {
+  --bgcolor: white;
   width: 80%;
   height: 100%;
   /* opacity: 50%; */
@@ -519,6 +600,8 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transition-duration: 0.2s;
+  background-color: var(--bgcolor);
 }
 
 .EEVidContainer {
