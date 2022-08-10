@@ -73,7 +73,7 @@ public class SocialController {
 			String name = (String) payload.get("name");
 			String pictureUrl = (String) payload.get("picture");
 
-			if(userService.getUserByUserEmail(email) == null || userService.getUserByUserEmail(email).getUserDelYN().equals("Y")){
+			if(userService.getUserByUserEmail(email) == null){
 				//이메일이 없으면 회원가입하고 로그인하고 토큰발급
 				try {
 					User user = userService.createUser(email, name, password1, password2);
