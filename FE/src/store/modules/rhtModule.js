@@ -109,7 +109,7 @@ const actions= {
 
     //   console.log("로그인아 안녕?")
     //   axios({
-    //     url: 'http://' + location.hostname + ':8081' + '/api/v1/users/login',  
+    //     url: 'https://' + location.hostname + ':8081' + '/api/v1/users/login',  
     //     method: 'post',
     //     data: credentials
     //   })
@@ -135,7 +135,7 @@ const actions= {
     logout({ getters, dispatch }) {
       console.log("로그아웃아 안녕?")
       axios({
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/detail', //logout api로 
+        url: 'https://' + location.hostname + '/api/v1/users/detail', //logout api로 
         method: 'post',
         headers: {Authorization: getters.authHeader },
       })
@@ -153,7 +153,7 @@ const actions= {
     fetchCurrentUser({ commit, getters, dispatch }) {
       if (getters.isLoggedIn) {
         axios({
-          url: 'http://' + location.hostname + ':8081' + '/api/v1/users/detail', //정보 가져오는 api
+          url: 'https://' + location.hostname + '/api/v1/users/detail', //정보 가져오는 api
           method: 'get',
           headers: {Authorization: getters.authHeader },
         })
@@ -170,7 +170,7 @@ const actions= {
     fetchHistories({ commit, getters, dispatch }) {
       if (getters.isLoggedIn) {
         axios({
-          url: 'http://' + location.hostname + ':8081' + '/api/v1/users/histories', //정보 가져오는 api
+          url: 'https://' + location.hostname + '/api/v1/users/histories', //정보 가져오는 api
           method: 'get',
           headers: {Authorization: getters.authHeader },
         })
@@ -189,7 +189,7 @@ const actions= {
     confirmPW({commit, getters}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
+        url:'https://' + location.hostname + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
         data: {"password":confirmPW.password},
         headers: {Authorization: getters.authHeader },
@@ -210,7 +210,7 @@ const actions= {
     confirmEmail({commit}, Email) {
       console.log("비밀번호 확인아 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + `/api/v1/users/check/${Email}`, // 비밀번호 컨펌 api 
+        url:'https://' + location.hostname + `/api/v1/users/check/${Email}`, // 비밀번호 컨펌 api 
         method:'get',
       })
       .then(() => {
@@ -228,7 +228,7 @@ const actions= {
     confirmPWforEdit({commit, getters}, confirmPW) {
       console.log("비밀번호 확인아 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
+        url:'https://' + location.hostname + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         method:'post',
         data: {"password":confirmPW.password},
         headers: {Authorization: getters.authHeader },
@@ -249,7 +249,7 @@ const actions= {
     deleteID({getters}) {
       console.log("회원탈퇴야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/users', // 회원탈퇴 api 
+        url:'https://' + location.hostname + '/api/v1/users', // 회원탈퇴 api 
         method:'put',
         headers: {Authorization: getters.authHeader },
       })
@@ -267,7 +267,7 @@ const actions= {
     changePW({getters}, changepassword) {
       console.log("비번수정아 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/users/password', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/users/password', // 비번수정 api 
         method:'put',
         data: {
           password:changepassword.password,
@@ -289,7 +289,7 @@ const actions= {
     createCoverLetter({dispatch, getters}, credentials) {
       console.log("자소서만들기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/coverletters', // 비번수정 api 
         method:'post',
         headers: {Authorization: getters.authHeader },
         data: credentials,
@@ -308,7 +308,7 @@ const actions= {
     getCoverLetter({commit, getters}) {
       console.log("자소서가져오기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/coverletters', // 비번수정 api 
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -327,7 +327,7 @@ const actions= {
     detailCoverLetter({commit, getters}, credentialsTodelete) {
       console.log("자소서상세보기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + `/api/v1/coverletters/${credentialsTodelete.coverLetterSeq}`, // 비번수정 api 
+        url:'https://' + location.hostname + `/api/v1/coverletters/${credentialsTodelete.coverLetterSeq}`, // 비번수정 api 
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -344,7 +344,7 @@ const actions= {
         // detailCoverLetter({commit, getters}, credentialsTodelete) {
         //   console.log("자소서상세보기야 안녕?")
         //   axios({
-        //     url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
+        //     url:'https://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
         //     method:'get',
         //     headers: {Authorization: getters.authHeader },
         //     data: credentialsTodelete
@@ -363,7 +363,7 @@ const actions= {
     deleteCoverLetter({dispatch, getters}, credentialsTodelete) {
       console.log("자소서 삭제하기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/coverletters', // 비번수정 api 
         method:'delete',
         data: credentialsTodelete,
         headers: {Authorization: getters.authHeader },
@@ -381,7 +381,7 @@ const actions= {
     updateCoverLetter({dispatch, getters}, credentialsToedit) {
       console.log("자소서수정하기야 안녕? 여기까진 괜찮네?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/coverletters', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/coverletters', // 비번수정 api 
         method:'put',
         data: credentialsToedit,
         headers: {Authorization: getters.authHeader },
@@ -399,7 +399,7 @@ const actions= {
     getStudyRoom({commit}) {
       console.log("스터디룸가져오기야야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/studyroom', // 비번수정 api 
         method:'get',
       })
       .then(res => {
@@ -416,7 +416,7 @@ const actions= {
     createStudyroom({dispatch, getters},credentials) {
       console.log("스터디룸만들기야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/studyroom', // 비번수정 api 
         method:'post',
         data: credentials,
         headers: {Authorization: getters.authHeader }
@@ -443,7 +443,7 @@ const actions= {
     enterStudyroom({getters}, credentials) {
       console.log("스터디룸입장 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom/enter', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/studyroom/enter', // 비번수정 api 
         method:'post',
         data: {
           "roomPassword" : credentials.roomPassword,
@@ -471,7 +471,7 @@ const actions= {
     // getReplay({commit, getters}, credentialsTogetReplay) {
     //   console.log("리플레이가져오기야야 안녕?")
     //   axios({
-    //     url:'http://' + location.hostname + ':8081' + '/api/v1/video', // 비번수정 api 
+    //     url:'https://' + location.hostname + ':8081' + '/api/v1/video', // 비번수정 api 
     //     method:'get',
     //     headers: {Authorization: getters.authHeader },
     //     params: {order:credentialsTogetReplay.order}
@@ -488,7 +488,7 @@ const actions= {
     // },
     getReplay({commit,getters}){
       axios.get( 
-        'http://' + location.hostname + ':8081' + '/api/v1/video',
+        'https://' + location.hostname + '/api/v1/video',
         {
           headers: {Authorization: getters.authHeader }
         },
@@ -512,7 +512,7 @@ const actions= {
       console.log("리플레이지우기야 안녕?")
       console.log(credentialsTodelete)
       axios({
-        url:'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodelete.replaySeq}`, // 비번수정 api 
+        url:'https://' + location.hostname + `/api/v1/video/${credentialsTodelete.replaySeq}`, // 비번수정 api 
         method:'delete',
         headers: {Authorization: getters.authHeader },
       })
@@ -530,7 +530,7 @@ const actions= {
       console.log("리플레이상세보기야 안녕?")
       console.log(credentialsTodetail)
       axios({
-        url:'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodetail.replaySeq}`, // 비번수정 api 
+        url:'https://' + location.hostname + `/api/v1/video/${credentialsTodetail.replaySeq}`, // 비번수정 api 
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -549,7 +549,7 @@ const actions= {
     getBadge({commit, getters}) {
       console.log("뱃지가져오기야야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/users/badges', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/users/badges', // 비번수정 api 
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -567,7 +567,7 @@ const actions= {
     searchStudyroom({commit}, credentialsTosearch) {
       console.log("서치기능아 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom/search', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/studyroom/search', // 비번수정 api 
         method:'get',
         params: { keyword: credentialsTosearch.keyword },
       })
@@ -585,7 +585,7 @@ const actions= {
     filterStudyRoom({commit}, credentialsToFilter) {
       console.log("스터디룸가져오기야야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/studyroom', // 비번수정 api 
         method:'get',
         params:{ 
           privateYN: credentialsToFilter.privateYN,
@@ -606,7 +606,7 @@ const actions= {
     sortStudyRoom({commit}, credentialsToFilter) {
       console.log("스터디룸가져오기야야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/studyroom', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/studyroom', // 비번수정 api 
         method:'get',
         params:{ 
           order: credentialsToFilter.order,
@@ -627,7 +627,7 @@ const actions= {
     ({commit}, credentialsToFilterReplay) {
       console.log("리플레이필터가져오기야야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/video', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/video', // 비번수정 api 
         method:'get',
         params:{ 
           order: credentialsToFilterReplay.order,
@@ -648,7 +648,7 @@ const actions= {
     ({dispatch, getters}, credentialsToset) {
       console.log("메인뱃지설정아 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/users/badge', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/users/badge', // 비번수정 api 
         method:'put',
         data: credentialsToset,
         headers: {Authorization: getters.authHeader },
@@ -666,7 +666,7 @@ const actions= {
     profileImg ({ getters}, formdata) {
       console.log("프로필 이미지야 안녕?")
       axios({
-        url:'http://' + location.hostname + ':8081' + '/api/v1/users/profile', // 비번수정 api 
+        url:'https://' + location.hostname + '/api/v1/users/profile', // 비번수정 api 
         method:'put',
         data: formdata,
         headers: {
