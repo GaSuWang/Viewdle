@@ -154,6 +154,11 @@ export default {
         ("방장바뀜");
       }
     });
+
+    // 면접자일때만 음성인식 시작
+    if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
+      this.startRecognition();
+    }
   },
   setup() {
     const router = useRouter();
@@ -313,6 +318,41 @@ export default {
           });
       }
     },
+    
+    // Speech API
+    startRecognition() {
+      let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      let recognition = SpeechRecognition? new SpeechRecognition() : false
+      recognition.interimResults = true;
+      recognition.lang = 'ko-KR';
+      recognition.continuous = false;
+    
+      recognition.start(); // 음성 인식 시작
+      console.log("start speech recognition");
+
+      recognition.onresult = function(e){ // 음성 인식 결과 반환
+        for(let i = e.resultIndex; i < e.results.length; ++i){
+          if(e.results[i].isFinal){ 
+            let script = e.results[i][0].transcript;
+            // console.log(script);
+            if(script.includes("빵")){
+              alert("빵!");
+            }else if(script.includes("감자")){
+              alert("감자!");
+            }
+          }
+        }
+      }
+
+      recognition.onend = function(){ // 음성 인식이 끊겼을 때 
+        //recognition.stop();
+        recognition.start(); 
+      }     
+
+      recognition.onerror = function(e) {
+        console.log(e);
+      }
+    }
   },
 };
 </script>
