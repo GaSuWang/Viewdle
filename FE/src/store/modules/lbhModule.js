@@ -191,7 +191,10 @@ const mutations = {
   SET_ISER(state, tf){state.isER = tf},
   SET_STUDYROOM_CL(state,cl){state.studyRoomCL = cl},
   SET_EE(state, EE) {state.EE = EE},
-  SET_ERS(state, ERS) {state.ERS.push(ERS)},
+  SET_ERS(state, ERS) {
+    state.ERS.push(ERS)
+    console.log('면접관이 추가되었습니다.')
+  },
   EMPTY_ERS(state){state.ERS = []},
 
   //FeedbackRoom
@@ -206,6 +209,9 @@ const mutations = {
   },
   EMPTY_FB(state){state.FBList = []},
 };
+
+const BASE_URL = 'https://' + location.hostname
+
 const actions = {
   finishInterview(){
     if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
@@ -241,7 +247,7 @@ const actions = {
   },
   startInterview({state}, ee){
     axios({
-      url: 'http://' + location.hostname + ':8081' + `/studyroom/interview/${state.roomSeq}`,
+      url: BASE_URL + `/studyroom/interview/${state.roomSeq}`,
       method: 'post',
       headers: {Authorization: getters.rhtModule.authHeader },
     })

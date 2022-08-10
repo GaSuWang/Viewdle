@@ -320,15 +320,15 @@ export default {
 
       // 면접 시작
       this.session.on('signal:startInterview', (e) => { 
-        console.log('면접시작할 때 나의 유저 타입', this.userType)
         //대기실에서 내 이름 지우기
         this.$store.commit("lbhModule/SET_WR_PARTICIPANT_LIST", []);
-
         this.EECnd = e.data
-        if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
-          console.log('startInterview as EE', this.userType)
 
-          this.session.signal({ // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+        //만약에 내가 면접자라면
+        if(this.EECnd === this.myUserName){ 
+          console.log('startinterview as ee')
+          // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+          this.session.signal({ 
           data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`, 
           to: [], 
           type: 'EECL' 
@@ -341,17 +341,12 @@ export default {
             this.$store.commit('lbhModule/SET_ERS', s)
           })
 
-          this.$store.commit("lbhModule/SET_EE", this.publisher); //나(publisher)를 EE에 넣음
-          this.subscribers.forEach((s) => {
-            //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
-            this.$store.commit("lbhModule/SET_ERS", s);
-          });
-
           this.$router.push({ name: "ee-room" });
-        } else {
-          //만약 내가 면접관이라면
-          console.log("startInterview as ER");
+        } 
 
+        //만약 내가 면접관이라면
+        else {
+          console.log('startinterview as er')
           this.$store.commit("lbhModule/SET_ERS", this.publisher); //나(publisher)를 ERS에 넣음
 
           this.subscribers.forEach((s) => {
@@ -359,9 +354,11 @@ export default {
             const subscriberName = JSON.parse(s.stream.connection.data).clientData;
             if (this.EECnd === subscriberName) {
               //면접자 포지션인 참여자(s)는 EE에 넣음
+              console.log('set_ee')
               this.$store.commit("lbhModule/SET_EE", s);
             } else {
               //그 외의 참여자(s)는 ERS에 넣음
+              console.log('set_er')
               this.$store.commit("lbhModule/SET_ERS", s);
             }
           })
