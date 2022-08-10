@@ -7,31 +7,39 @@ const state = {
   APMOpen: false,
   currentUserList: [], //방장 권한 위임을 위해서만 존재
   
+  //유저 정보
+  myUserName: "Participant" + Math.floor(Math.random() * 100), //undefined,
+  myUserEmail: undefined,
+  //방 정보  
+  roomSeq: undefined,
+  roomTitle: undefined,
+
+  //비디오 정보
+  videoSeq: undefined,
+
   //SettingRoom
   CameraList: [], // 영상 디바이스 리스트
+  CameraSelected: {}, // 선택된 영상 디바이스
+  CameraStatus: false, //카메라 온오프
   MicList: [], // 오디오 디바이스 리스트
+  MicSelected: {}, // 선택된 오디오 디바이스
+  MicStatus: false, //마이크 온오프
   CLList: [{'coverLetterSeq': '1', 'coverLetterTitle': 'first cl', 'coverLetterContent': 'first cl content'}, 
   {'coverLetterSeq': '2', 'coverLetterTitle': 'second cl', 'coverLetterContent': 'second cl content'},
   {'coverLetterSeq': '3', 'coverLetterTitle': 'third cl', 'coverLetterContent': 'third cl content'}], // 유저의 자소서 리스트
-  CameraSelected: {}, // 선택된 영상 디바이스
-  MicSelected: {}, // 선택된 오디오 디바이스
   CLSelected: {}, //선택된 자소서 
-  CameraStatus: false, //카메라 온오프
-  MicStatus: false, //마이크 온오프
   CLStatus: false, //자소서 온오프
 
   //WaitingRoom
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
-  StartInterview: false, // 대기실에서 면접자를 정하고 면접을 시작할 때 true로 바뀜, 방장이 면접 종료 버튼을 누르면 false로 다시 바뀌어야 됨
   userType: 'user', //일반 유저는 user, 방장 유저는 suuperUser
-  mySessionId: "SessionA",
-  myUserName: "Participant" + Math.floor(Math.random() * 100),
+  mySessionId: "SessionA", //undefined
   publisher: undefined,
   subscribers: [],
+  sessionToken: undefined,
+  // StartInterview: false, // 대기실에서 면접자를 정하고 면접을 시작할 때 true로 바뀜, 방장이 면접 종료 버튼을 누르면 false로 다시 바뀌어야 됨
   // OV: undefined,
   // session: undefined,
-  roomSeq: undefined,
-  sessionToken: undefined,
 
   //EEView, ERView
   isEE: false,
@@ -275,8 +283,8 @@ const actions = {
       method: 'post',
       headers: {Authorization: getters.authHeader},
       data: {
-        userEmail: state.userEmail, //userEmail 추가해야됨
-        videoTitle: state.roomTitle, //roomTitle 포함한 room data 추가해야됨
+        userEmail: state.myUserEmail,
+        videoTitle: state.roomTitle,
         videoUrl: state.videoUrl, //videoUrl 추가해야됨
       }
     })

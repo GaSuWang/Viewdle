@@ -11,6 +11,7 @@ export default {
 name: TipModal,
 data(){
     return {
+// 출처: https://www.jobkorea.co.kr/goodjob/tip/view?News_No=11119
 //         tipList: [
 // "1. 1분 자기소개를 해보아라.", 
 // "2. 재학시절 O년 간의 공백이 있는데 이 기간 동안 무엇을 하였나?",

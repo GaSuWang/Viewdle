@@ -323,7 +323,8 @@ export default {
         //대기실에서 내 이름 지우기
         this.$store.commit("lbhModule/SET_WR_PARTICIPANT_LIST", []);
         this.EECnd = e.data
-
+        this.session.unpublish(this.publisher);
+        this.subscribers.foreEach(s=>this.session.unsubscribe(s))
         //만약에 내가 면접자라면
         if(this.EECnd === this.myUserName){ 
           console.log('startinterview as ee')
