@@ -61,8 +61,8 @@ const state = {
 };
 const getters = {
   //유저 정보
-  myUserEmail(state){return state.userEmail},
-  myUserName(state){return state.userName},
+  myUserEmail(state){return state.myUserEmail},
+  myUserName(state){return state.myUserName},
   myUserInfo(state){
     return {
       myUserEmail: state.myUserEmail,
