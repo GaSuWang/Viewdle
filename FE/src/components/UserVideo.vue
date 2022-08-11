@@ -1,5 +1,5 @@
 <template>
-<div class="userVideo" v-if="streamManager && showVid">
+<div class="userVideo" v-if="streamManager">
 	<ov-video :stream-manager="streamManager"/>
 	<div class="userInfo">{{ clientData }}</div>
 </div>
@@ -33,6 +33,7 @@ export default {
 		},
 	},
 	mounted(){
+		console.log()
 		this.inWR()
 		// this.session.on('signal:publisherOn',()=>{
 		// })

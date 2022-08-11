@@ -120,6 +120,27 @@ export default {
     NavBar,
     MainCard
   },
+///이병헌 시작
+  created(){
+    this.$store.commit('lbhModule/GET_ROOM_INFO', {roomSeq: undefined, roomTitle: undefined, roomType: 'study', userType:'user'})
+    this.$store.commit('lbhModule/SET_OV', undefined)
+    this.$store.commit('lbhModule/SET_SESSION', undefined)
+    this.$store.commit('lbhModule/SET_SESSION_TOKEN', undefined)
+    this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+    this.$store.commit('lbhModule/SET_SUBSCRIBERS', undefined)
+    // this.$store.commit('lbhModule/SET_MYSESSIONID', undefined)
+    this.$store.commit('lbhModule/SELECT_CAMERA', {})
+    this.$store.commit('lbhModule/SELECT_MIC', {})
+    this.$store.commit('lbhModule/SELECT_CL', {})
+    this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
+    this.$store.commit('lbhModule/EMPTY_CURRENT_USER_LIST')
+    this.$store.commit('lbhModule/SET_ISEE', false)
+    this.$store.commit('lbhModule/SET_ISER', false)
+    this.$store.commit('lbhModule/SET_EE', [])
+    this.$store.commit('lbhModule/SET_ERS', [])
+    this.$store.commit('lbhModule/EMPTY_FB')
+  },
+///이병헌 끝
    setup() {
     const credentials = reactive({
       "type":'',

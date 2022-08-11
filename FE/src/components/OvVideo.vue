@@ -11,6 +11,7 @@ export default {
 	},
 
 	mounted () {
+		console.log('sadfasdfasdfasdfasdfsdfaasdf')
 		this.streamManager.addVideoElement(this.$el);
 	},
 };
