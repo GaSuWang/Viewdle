@@ -14,10 +14,22 @@
       <p><small class="text-muted">{{item.roomRegTime}}</small></p>
       <p><small class="text-muted">{{item.roomType}}</small></p>
       <p><small class="text-muted">{{item.roomSeq}}</small></p>
+      <p><small class="text-muted">{{item.roomPrivateYN}}</small></p>
     </div>
   </div>
   <div class="enterbutton">
-      <button class="btn btn-secondary enterbuttonitem" data-bs-toggle="modal" data-bs-target="#enterroom">입장</button>
+    <div v-if="item.roomPrivateYN === 'Y'">
+      <form @submit.prevent="enterSecretStudyroom(item.roomSeq)">
+        <button class="btn btn-secondary enterbuttonitem" data-bs-toggle="modal" data-bs-target="#enterroom">비번방</button>
+      </form>
+    </div>
+    <div v-else-if="item.roomPrivateYN === 'N'">
+      <form @submit.prevent="enterNormalStudyroom(item.roomSeq)">
+        <button class="btn btn-secondary enterbuttonitem">
+          일반방
+        </button>
+      </form>
+    </div>
   </div>
   </div>
     <!-- 왼쪽 -->
@@ -36,14 +48,25 @@
 <script>
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import { reactive } from "vue";
 export default {
   setup(){
     const store = useStore()
     const StudyroomList = computed(
       () => store.state.rhtModule.StudyroomList
     );
+    const credentialsToenter = reactive({
+      "roomPassword" : "",
+      "roomSeq": '',
+    })
+    function enterNormalStudyroom(enterItem){
+      store.dispatch('rhtModule/enterNormalStudyroom', enterItem)
+    }
+    function enterSecretStudyroom(enterItem){
+      store.dispatch('rhtModule/enterSecretStudyroom', enterItem)
+    }
     return {
-      StudyroomList
+      StudyroomList, credentialsToenter, enterNormalStudyroom, enterSecretStudyroom
     }
   }
 }

@@ -63,7 +63,7 @@
                 </form>
                 <div class="modal-footer">
                   <form @submit.prevent="deleteID()">
-                    <div v-if="pwcode != false">
+                    <div v-if="pwcode == true">
                       <button class="btn btn-primary" data-bs-dismiss="modal">회원탈퇴하기</button>
                     </div>
                   </form>
@@ -94,8 +94,9 @@
                   </div>
                   <button class="btn btn-primary">비번확인하기</button>
                 </form>
+                {{pwcodeforedit}}
                 <div class="modal-footer">
-                    <div v-if="pwcodeforedit != false">
+                    <div v-if="pwcodeforedit == true">
                       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editmodal">비번수정모달</button>
                     </div>
                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

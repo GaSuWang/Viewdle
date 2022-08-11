@@ -83,6 +83,7 @@
             </div>
           </div>
         </div> 
+        
     <div class="modal fade" id="enterroom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -92,7 +93,6 @@
           </div>
           <div class="modal-body">
             <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control form-control-lg" placeholder="Password" />
-            <input type="Text" v-model="credentialsToenter.roomSeq" class="form-control form-control-lg" placeholder="Room code" /> 
           </div> 
           <div class="modal-footer">
             <button class="btn btn-secondary" data-bs-dismiss="modal">입장</button>
@@ -131,7 +131,6 @@ export default {
     })
     const credentialsToenter = reactive({
       "roomPassword" : "",
-      "roomSeq": "",
     })
     const credentialsTosearch = reactive({
       keyword:""
