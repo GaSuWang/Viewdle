@@ -21,7 +21,7 @@
     <div class="WRRightArea">
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
       <div class="user-out" v-if="userType === 'user'">
-        <button @click="userLeaveSessionFromWR">
+        <button @click.prevent="userLeaveSessionFromWR">
           방나가기
           <i class="bi bi-x-lg"></i>
         </button>
@@ -120,13 +120,6 @@ export default {
     // console.log('내가 현재 대기실에 들어왔는데, 대기실 유저 목록에 내가 있나?', inWR)
     // if(inWR.length === 0){this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserName)}
 
-    //대기실에서 joinSession
-    this.joinSession()
-    //방장이 방을 폭파시킬 때
-    this.session.on('signal:studyDestroy', ()=> {
-      this.$store.dispatch('studyDestroyAxios')
-    })
-
     //새로고침 막기
     // const onConfirmRefresh = function (event) {
     //   event.preventDefault();
@@ -134,6 +127,27 @@ export default {
     // }
 
     // window.addEventListener("beforeunload", onConfirmRefresh, { capture: true });
+
+
+    window.addEventListener("beforeunload", this.forceLeaveSession,);
+  },
+  mounted(){
+    //대기실에서 joinSession
+    if(!this.currentUserList.filter((e)=>e.myUserEmail===this.myUserEmail).length){
+      this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", this.myUserInfo);
+      console.log('만약에 내가 지금 스터디에 참여하고 있지 않다면, joinSession해라 제발...')
+      this.joinSession()
+    }
+    //방장이 방을 폭파시킬 때
+    this.session.on('signal:studyDestroy', ()=> {
+      this.$store.dispatch('studyDestroyAxios')
+    })
+      console.log('대기실들어옴',this.currentUserList)
+      console.log('대기실들어옴',this.myUserInfo)
+      console.log('대기실들어옴',this.roomSeq)
+  },
+  unmounted(){
+    window.removeEventListener("beforeunload", this.forceLeaveSession,);
   },
   data() {
     return {
@@ -167,8 +181,9 @@ export default {
       "MicSelected",
       "MicStatus",
 
-      //유저 권한
+      //유저 정보
       "userType",
+      "myUserInfo",
       // "superUserOut",
       // "superUser",
 
@@ -193,6 +208,16 @@ export default {
         this.$router.push('/main')
       }
     },
+    async forceLeaveSession() {
+      if(this.userType === 'user'){
+        console.log('유저 바로 out')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      } else {
+        console.log('방장 바로 out')
+        await this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
+        this.$store.dispatch('lbhModule/studyDestorySecondAxios')
+      }
+    },
     //마이크, 카메라 기능
     switchMicStatus() {
       this.$store.commit('lbhModule/SWITCH_MIC_STATUS')
@@ -213,6 +238,7 @@ export default {
 
     //일반 유저 기능
     userLeaveSessionfromWR(){
+      console.log('userLeaveSessionfromWR 클릭이 안되는 거야?')
       if(confirm('정말 이 방에서 나가시겠습니까?')){
         this.$store.disaptch('lbhModule/userLeaveSessionAxios')
         //다른 참가자들 currentUserList, WRParticipantList에서 나의 이름과 이메일 지우기
@@ -325,7 +351,7 @@ export default {
             }
             this.$store.dispatch('lbhModule/startInterviewAxios', this.roomSeq)
             this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", publisherInfo);
-            this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", publisherInfo);
+            // this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", publisherInfo);
 
             let publisher = this.OV.initPublisher(undefined, {
               audioSource: this.MicSelected, 
