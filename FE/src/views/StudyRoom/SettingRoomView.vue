@@ -95,24 +95,8 @@ import { OpenVidu } from 'openvidu-browser';
 export default {
   name: "SettingRoomView",
   created(){
-    // this.$store.dispatch('rhtModule/getCoverLetter')
-    // let publisher = this.OV.initPublisher(undefined, {
-    //   audioSource: this.MicSelected, 
-    //   videoSource: this.CameraSelected, 
-    //   publishAudio: this.MicStatus,
-    //   publishVideo: this.CameraStatus,
-    //   resolution: "640x480", 
-    //   frameRate: 30, 
-    //   insertMode: "APPEND", 
-    //   mirror: false,
-    // });
-
-    // this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
-
-    // // --- Publish your stream ---
-
-    // this.session.publish(this.publisher);
-    // console.log('오디오 비디오 어떻게 들어왔나',this.publisher.stream)
+    this.$store.dispatch('lbhModule/getCoverLetterList')
+    console.log('my authHeader',this.$store.getters['rhtModule/authHeader'])
   },
   data(){
     return{
@@ -133,9 +117,6 @@ export default {
       "CLSelected",
       'CLStatus',
     ]),
-    // ...mapGetters('rhtModule',[
-    //   "CoverLetterList"
-    // ])
   },
   methods:{
     micStatusSwitch() {

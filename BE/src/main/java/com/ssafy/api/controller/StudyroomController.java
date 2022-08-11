@@ -66,7 +66,7 @@ public class StudyroomController {
         ParticipantResMapping participant = participantService.findRecentByUserSeq(user);
         if(participant != null && participant.getParticipantEnterYN().equals("Y")){
             System.out.println(user.getUserEmail() + " 현재 참여중인 스터디 룸이 있습니다.");
-            return ResponseEntity.status(921).body(BaseResponseBody.of(921, "현재 참여 중인 스터디 룸이 있습니다."));
+            return ResponseEntity.status(911).body(BaseResponseBody.of(921, "현재 참여 중인 스터디 룸이 있습니다."));
         }
 
         // 썸네일 정보 얻기

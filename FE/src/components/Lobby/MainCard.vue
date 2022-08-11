@@ -17,7 +17,7 @@
     </div>
   </div>
   <div class="enterbutton">
-      <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enterroom">입장하기</button>
+      <button class="btn btn-secondary enterbuttonitem" data-bs-toggle="modal" data-bs-target="#enterroom">입장</button>
   </div>
   </div>
     <!-- 왼쪽 -->
@@ -68,13 +68,14 @@ export default {
 }
 .MainCardTop{
   width:100%;
-  height: 30px;
+  height: 10%;
   display:flex;
   justify-content: end;
   margin-right: 30px
 }
 .MainCardBottom{
   width: 100%;
+  height:80%;
   display:flex;
 }
 .MainCardthumnail{
@@ -88,8 +89,13 @@ export default {
 }
 .enterbutton{
   width:100%;
+  height: 10%;
   display: flex;
   justify-content: end;
   margin-right: 20%;
+  margin-bottom: 5px;
+}
+.enterbuttonitem{
+  font-size: 5px;
 }
 </style>

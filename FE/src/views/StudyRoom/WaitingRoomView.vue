@@ -21,18 +21,8 @@
     <div class="WRRightArea">
       <!-- 일반 유저 기능-->
       <!-- 대기실 나가기 -->
-      <!-- <div id="session-controller" v-if="userType==='user'">
-        <input
-          class="btn btn-large btn-danger"
-          type="button"
-          id="buttonLeaveSession"
-          @click="WRleaveSession"
-          value="방 나가기"
-        />
-      </div> -->
-
       <div class="user-out" v-if="userType === 'user'">
-        <button @click="userOutClick(userType)">
+        <button @click="userLeaveSessionFromWR(userType)">
           방나가기
           <i class="bi bi-x-lg"></i>
         </button>
@@ -58,9 +48,6 @@
       </div>
       <!-- 스터디 종료 -->
       <div v-if="userType === 'superUser'" class="ERtoLBbtn superUser">
-        <!-- <button @click.prevent="ERleaveSession">
-          <i class="bi bi-x-lg"></i>
-        </button> -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
         </button>
@@ -202,12 +189,12 @@ export default {
     },
 
     //일반 유저 기능
-    userOutClick(){
+    userLeaveSessionfromWR(){
       if(confirm('정말 이 방에서 나가시겠습니까?')){
         this.session.signal({
           data: `${this.myUserName}`,
           to: [],
-          type: 'WRleaveSession'
+          type: 'userLeaveSessionfromWR'
         })
         this.WRleaveSession()
         this.$router.push('/main')
@@ -333,15 +320,16 @@ export default {
 
       // 면접 시작
       this.session.on('signal:startInterview', (e) => { 
-        console.log('면접시작할 때 나의 유저 타입', this.userType)
         //대기실에서 내 이름 지우기
         this.$store.commit("lbhModule/SET_WR_PARTICIPANT_LIST", []);
-
         this.EECnd = e.data
-        if(this.EECnd === this.myUserName){ //만약에 내가 면접자라면
-          console.log('startInterview as EE', this.userType)
-
-          this.session.signal({ // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+        // this.session.unpublish(this.publisher);
+        // this.subscribers.foreEach(s=>this.session.unsubscribe(s))
+        //만약에 내가 면접자라면
+        if(this.EECnd === this.myUserName){ 
+          console.log('startinterview as ee')
+          // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+          this.session.signal({ 
           data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`, 
           to: [], 
           type: 'EECL' 
@@ -354,17 +342,12 @@ export default {
             this.$store.commit('lbhModule/SET_ERS', s)
           })
 
-          this.$store.commit("lbhModule/SET_EE", this.publisher); //나(publisher)를 EE에 넣음
-          this.subscribers.forEach((s) => {
-            //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
-            this.$store.commit("lbhModule/SET_ERS", s);
-          });
-
           this.$router.push({ name: "ee-room" });
-        } else {
-          //만약 내가 면접관이라면
-          console.log("startInterview as ER");
+        } 
 
+        //만약 내가 면접관이라면
+        else {
+          console.log('startinterview as er')
           this.$store.commit("lbhModule/SET_ERS", this.publisher); //나(publisher)를 ERS에 넣음
 
           this.subscribers.forEach((s) => {
@@ -372,9 +355,11 @@ export default {
             const subscriberName = JSON.parse(s.stream.connection.data).clientData;
             if (this.EECnd === subscriberName) {
               //면접자 포지션인 참여자(s)는 EE에 넣음
+              console.log('set_ee')
               this.$store.commit("lbhModule/SET_EE", s);
             } else {
               //그 외의 참여자(s)는 ERS에 넣음
+              console.log('set_er')
               this.$store.commit("lbhModule/SET_ERS", s);
             }
           })
@@ -392,7 +377,7 @@ export default {
         if (this.EECnd === this.myUserName) {
           //만약에 내가 면접자라면
           console.log("startEZInterview as EE");
-
+          this.$store.commit('SET_ISEE', true)
           this.session
             .signal({
               // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
@@ -417,7 +402,7 @@ export default {
         } else {
           //만약 내가 면접관이라면
           console.log("startEZInterview as ER");
-
+          this.$store.commit('SET_ISER', true)
           this.$store.commit("lbhModule/SET_ERS", this.publisher); //나(publisher)를 ERS에 넣음
 
           this.subscribers.forEach((s) => {

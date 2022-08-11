@@ -57,13 +57,14 @@ export default {
 }
 .CLMCardTop{
   width:100%;
-  height: 30px;
+  height: 10%;
   display:flex;
   justify-content: end;
   margin-right: 30px
 }
 .CLMCardBottom{
   width: 100%;
+  height: 80%;
   display:flex;
 }
 .CLMthumnail{
@@ -79,6 +80,7 @@ export default {
 }
 .CLMcard-button{
   width:100%;
+  height: 10%;
   display: flex;
   justify-content: end;
   align-content: end;

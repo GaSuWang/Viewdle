@@ -101,7 +101,7 @@ export default {
           alert('방에 혼자남으셨습니다.\n 면접을 종료하고 대기실로 이동합니다.')
           this.toWR()
         }
-      } else{'방장바뀜'}
+      }
     })
   },
   methods:{

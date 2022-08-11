@@ -7,31 +7,43 @@ const state = {
   APMOpen: false,
   currentUserList: [], //방장 권한 위임을 위해서만 존재
   
+  //유저 정보
+  myUserName: "Participant" + Math.floor(Math.random() * 100), //undefined,
+  myUserEmail: undefined,
+  //방 정보  
+  roomSeq: undefined,
+  roomTitle: undefined,
+
+  //비디오 정보
+  videoSeq: undefined,
+
   //SettingRoom
   CameraList: [], // 영상 디바이스 리스트
-  MicList: [], // 오디오 디바이스 리스트
-  CLList: [{'coverLetterSeq': '1', 'coverLetterTitle': 'first cl'}, {'coverLetterSeq': '2', 'coverLetterTitle': 'second cl'},{'coverLetterSeq': '3', 'coverLetterTitle': 'third cl'}], // 유저의 자소서 리스트
   CameraSelected: {}, // 선택된 영상 디바이스
-  MicSelected: {}, // 선택된 오디오 디바이스
-  CLSelected: {}, //선택된 자소서 
   CameraStatus: false, //카메라 온오프
+  MicList: [], // 오디오 디바이스 리스트
+  MicSelected: {}, // 선택된 오디오 디바이스
   MicStatus: false, //마이크 온오프
+  CLList: [{'coverLetterSeq': '1', 'coverLetterTitle': 'first cl', 'coverLetterContent': 'first cl content'}, 
+  {'coverLetterSeq': '2', 'coverLetterTitle': 'second cl', 'coverLetterContent': 'second cl content'},
+  {'coverLetterSeq': '3', 'coverLetterTitle': 'third cl', 'coverLetterContent': 'third cl content'}], // 유저의 자소서 리스트
+  CLSelected: {}, //선택된 자소서 
   CLStatus: false, //자소서 온오프
 
   //WaitingRoom
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
-  StartInterview: false, // 대기실에서 면접자를 정하고 면접을 시작할 때 true로 바뀜, 방장이 면접 종료 버튼을 누르면 false로 다시 바뀌어야 됨
   userType: 'user', //일반 유저는 user, 방장 유저는 suuperUser
-  mySessionId: "SessionA",
-  myUserName: "Participant" + Math.floor(Math.random() * 100),
+  mySessionId: "SessionA", //undefined
   publisher: undefined,
   subscribers: [],
+  sessionToken: undefined,
+  // StartInterview: false, // 대기실에서 면접자를 정하고 면접을 시작할 때 true로 바뀜, 방장이 면접 종료 버튼을 누르면 false로 다시 바뀌어야 됨
   // OV: undefined,
   // session: undefined,
-  roomSeq: undefined,
-  sessionToken: undefined,
 
   //EEView, ERView
+  isEE: false,
+  isER: false,
   EE: [], //면접자
   ERS: [], //면접관들
   InterviewTipList: {}, // 면접 팁
@@ -39,6 +51,7 @@ const state = {
 
   //FeedbackRoom
   FBList: [], // 피드백 리스트, 리스트로 하는 게 맞나?
+  replayFBList: [],
 };
 const getters = {
   //방장권한
@@ -70,6 +83,8 @@ const getters = {
   sessionToken(state){return state.sessionToken},
   
   //EEView, ERView
+  isEE(state){return state.isEE},
+  isER(state){return state.isER},
   EE(state) {return state.EE}, //면접자
   ERS(state) {return state.ERS}, //면접관들
   EEName(state) {
@@ -87,6 +102,7 @@ const getters = {
 
   //ErView, FeedbackRoom, ReplayView
   FBList(state) {return state.FBList},
+
 };
 const mutations = {
   SWITCH_USER_TYPE_TEMP(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
@@ -127,7 +143,7 @@ const mutations = {
   SELECT_MIC(state, mic) { state.MicSelected = mic },
   SWITCH_MIC_STATUS(state){state.MicStatus = !state.MicStatus},
 
-  // GET_CL_LIST(state){axios 통해 불러오기},
+  SET_COVERLETTER_LIST(state, CLList){state.CLList = CLList},
   SELECT_CL(state, cl){state.CLSelected = cl}, 
   SWITCH_CL_STATUS(state, status){state.CLStatus = status},
 
@@ -183,12 +199,18 @@ const mutations = {
   SET_STARTINTERVIEW(state, tf) {state.StartInterview = tf},
 
   //EEView, ERView
+  SET_ISEE(state, tf){state.isEE = tf},
+  SET_ISER(state, tf){state.isER = tf},
   SET_STUDYROOM_CL(state,cl){state.studyRoomCL = cl},
   SET_EE(state, EE) {state.EE = EE},
-  SET_ERS(state, ERS) {state.ERS.push(ERS)},
+  SET_ERS(state, ERS) {
+    state.ERS.push(ERS)
+    console.log('면접관이 추가되었습니다.')
+  },
   EMPTY_ERS(state){state.ERS = []},
 
   //FeedbackRoom
+  SET_FB(state, fbList){state.FBList = fbList},
   ADD_FB(state,fb){state.FBList.push(fb)},
   DELETE_FB(state, id) {
     const idx = state.FBList.findIndex(function(item) {return item.reg_dt === id})
@@ -200,7 +222,113 @@ const mutations = {
   },
   EMPTY_FB(state){state.FBList = []},
 };
+
+const BASE_URL = 'https://' + location.hostname + '/api/v1/'
+
 const actions = {
+  //Axios 모음
+  userLeaveSessionAxios({state, getters}){
+    axios({
+      url: BASE_URL + 'studyroom/exit',
+      method: 'patch',
+      headers: {Authorization: getters.authHeader},
+      data: {
+        nextOwnerEmail: "",
+        roomSeq: state.roomSeq,
+      }
+    })
+    .then(console.log('일반 유저 정상적으로 세션 나감'))
+    .catch(err=>console.error(err.response))
+  },
+  superUserLeaveSessionAxios({state, getters},nextSuperUser){
+    axios({
+      url: BASE_URL + 'studyroom/exit',
+      method: 'patch',
+      headers: {Authorization: getters.authHeader},
+      data: {
+        nextOwnerEmail: nextSuperUser,
+        roomSeq: state.roomSeq,
+      }
+    })
+    .then(console.log('방장 유저 정상적으로 세션 나감'))
+    .catch(err=>console.error(err.response))
+  },
+
+  studyDestroyAxios({state, getters}){
+    axios({
+      url: BASE_URL + 'studyroom/exit',
+      method: 'patch',
+      headers: {Authorization: getters.authHeader},
+      data: {
+        nextOwnerEmail: "",
+        roomSeq: state.roomSeq,
+      }
+    })
+    .then(
+      axios({
+        url: BASE_URL + `studyroom/exit/${state.roomSeq}`,
+        method: 'patch',
+        headers: {Authorization: getters.authHeader},
+        data: {roomSeq: state.roomSeq},
+      })
+      .then(console.log('방이 성공적으로 폭파됨'))
+      .catch(err=>console.error(err.response))
+    )
+    .catch(err=>console.error(err.response))
+  },
+
+  finishInterviewAxios({state, getters, commit}){
+    axios({
+      url: BASE_URL + 'video',
+      method: 'post',
+      headers: {Authorization: getters.authHeader},
+      data: {
+        userEmail: state.myUserEmail,
+        videoTitle: state.roomTitle,
+        videoUrl: state.videoUrl, //videoUrl 추가해야됨
+      }
+    })
+    .then(res=>{
+      console.log('성공적으로 면접 완료')
+      commit('SET_VIDEOSEQ', res.data) //vdieoSeq 추가해야됨
+    }) 
+    .catch(err=>console.error(err.response))
+  },
+
+  FBCompleteAxios({state,getters}){
+    axios({
+      url: BASE_URL + 'studyroom/interview',
+      method: 'post',
+      headers: {Authorization: getters.authHeader},
+      data: {
+        feedbackList: state.FBList,
+        roomSeq: state.roomSeq,
+        videoSeq: state.videoSeq,
+      }
+    })
+    .then(console.log('성공적으로 피드백까지 완료'))
+    .catch(err=>console.error(err.response))
+  },
+
+  getReplayAxios({state, getters, commit}){
+    axios({
+      url: BASE_URL + `video/${state.videoSeq}`,
+      method: 'post',
+      headers: {Authorization: getters.authHeader},
+      data: {
+        videoSeq: state.videoSeq
+      }
+    })
+    .then( res => {
+      commit('SET_REPLAY_FBLIST', res.data.feedbackList)
+      commit('SET_VIDEO_TITLE', res.data.videoTitle)
+      commit('SET_VIDEO_URL', res.data.videoUrl)
+    })
+    .catch(err=>console.error(err.response))
+  },
+
+
+
   finishInterview(){
     if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
       state.session.signal({
@@ -228,16 +356,28 @@ const actions = {
   selectCamera({ commit }, camera) {commit("SELECT_CAMERA", camera)},
   getMicList({ commit }, micList) {commit("GET_MIC_LIST", micList)},
   selectMic({ commit }, mic) {commit("SELECT_MIC", mic)},
-
+  getCoverLetterList({commit, getters}){
+    axios({
+      url: BASE_URL + 'coverletters',
+      method: 'get',
+      headers: {Authorization: getters.authHeader},
+    })
+    .then(res=>{
+      commit('SET_COVERLETTER_LIST', res.data)
+    })
+    .catch(err=>{
+      console.error(err.response)
+    })
+  },
   //WaitingRoom
   setStartInterview({ commit }, tf) {
     commit("SET_STARTINTERVIEW", tf);
   },
-  startInterview({state}, ee){
+  startInterview({state, getters}, ee){
     axios({
-      url: 'http://' + location.hostname + ':8081' + `/studyroom/interview/${state.roomSeq}`,
+      url: BASE_URL + `/studyroom/interview/${state.roomSeq}`,
       method: 'post',
-      headers: {Authorization: getters.rhtModule.authHeader },
+      headers: {Authorization: getters.authHeader },
     })
     .then(()=>{
       state.session.signal({
@@ -260,6 +400,28 @@ const actions = {
   //FeedbackRoom
   deleteFB({ commit }, FBid) {
     commit("DELETE_FB", FBid);
+  },
+  getFB({commit, getters}){
+    axios({
+      url: BASE_URL + `video/${state.roomSeq}`,
+      method: 'get',
+      headers: {Authorization: getters.authHeader},
+    })
+    .then(res=>{
+      commit('SET_FB', res.data)
+    })
+    .catch(err=>console.error(err.response))
+  },
+  postFB({getters}){
+    axios({
+      url: BASE_URL + `video/${state.roomSeq}`,
+      method: 'post',
+      headers: {Authorization: getters.authHeader},
+    })
+    .then(()=>{
+      console.log('성공적으로 피드백 저장함')
+    })
+    .catch(err=>console.error(err.response))
   },
 };
 
