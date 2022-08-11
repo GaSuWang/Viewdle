@@ -81,7 +81,7 @@ export default {
     //방장이 면접을 완료할 경우
     this.session.on('signal:endInterview', () => {
       //녹화 종료(서버단 포기)
-      // this.stopRecording();
+      this.stopRecording();
       alert('방장이 면접을 완료했습니다.\n이제 대기실로 이동합니다.')
       this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserName)
       this.toWR()

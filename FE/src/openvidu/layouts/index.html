@@ -32,7 +32,7 @@
         var now = JSON.parse(event.stream.connection.data).clientData
         console.log(recorder)
         console.log(now)
-        if(now === recorder || JSON.parse(stream.connection.data).isEE === "Y"){
+        if(now === recorder || JSON.parse(event.stream.connection.data).isEE === "Y"){
             session.subscribe(event.stream, 'big-video-div')
         } else {
             session.subscribe(event.stream, 'smaill-video-div')
