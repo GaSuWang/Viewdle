@@ -1,7 +1,10 @@
 // 이병헌
 <template>
   <AuthorityPassModal/>
-  <selectCircle class="suddenAttack"></selectCircle>
+  <AttackSpaceBar v-if="suddenAttackFlag==0" class="suddenAttack" @endSuddenAttack="endSuddenAttack"/>
+  <OneToNine v-else-if="suddenAttackFlag==2" class="suddenAttack" @endSuddenAttack="endSuddenAttack"/>
+  <ArrowDirection class="suddenAttack" @endSuddenAttack="endSuddenAttack" />
+  
   <div class="EERView">
     <!-- 영상 구역 -->
     <div :style="cssVariable" class="EERContent">
@@ -79,12 +82,14 @@ import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
 // import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
-import selectCircle from "@/components/StudyRoom/EasyMode/Game/SelectCircle.vue";
+import AttackSpaceBar from "@/components/StudyRoom/EasyMode/Game/AttackSpaceBar.vue"
+import OneToNine from "@/components/StudyRoom/EasyMode/Game/OneToNine.vue";
+import ArrowDirection from "@/components/StudyRoom/EasyMode/Game/ArrowDirection.vue";
 import { useRouter } from "vue-router";
 
 export default {
   name: "EERView",
-  components: { UserVideo, AuthorityPassModal, selectCircle }, // warningStackBar //경고게이지 주석
+  components: { UserVideo, AuthorityPassModal,AttackSpaceBar,OneToNine,ArrowDirection }, // warningStackBar //경고게이지 주석
   data() {
     return {
        warningCount: 0, //현재 쌓인 경고수
@@ -95,7 +100,7 @@ export default {
       isCountDownOn: false, // 카운트다운 활성화 여부 v-if활용 true일때 활성화
       countDown: 3, // 실제 화면에 표시되는 카운트다운
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
-      suddenAttackFlag: 0,//돌발 상황 분기
+      suddenAttackFlag: -1,//돌발 상황 분기
     };
   },
    computed: {
@@ -236,12 +241,18 @@ export default {
       if(name === this.myUserName){
         console.log("receive suddenAttack signal");
         //면접자 돌발상황 발생시키기
-        //startSuddenAttack();
+        this.startSuddenAttack();
       }
       else{
         this.disabledSuddenBtn();
       }
       
+    })
+    this.session.on("siganl:endSuddenAttack",()=>{
+      var name = JSON.parse(this.EE.stream.connection.data).clientData;
+      if(name !== this.myUserName){
+        this.suddenBtnState = false;
+      }
     })
     //----------------돌발 상황 끝 ----------------------
     //----------------돌발 질문 시작-----------------------
@@ -348,7 +359,6 @@ export default {
       window.open(route.href);
     },
     changeVoice() {},
-    suddenAttack() {},
     capture() {},
     addWarn() {
       //경고 누적용
@@ -505,9 +515,16 @@ export default {
       this.activeSuddenBtn();
     },
     startSuddenAttack(){
-      //여기서 랜덤하게? 발생? 발아아아아아알생?
       //분기 나눔
-
+      this.suddenAttackFlag =  Math.floor(Math.random() * 3);
+    },
+    endSuddenAttack(){
+      this.suddenAttackFlag = -1;
+      this.session.signal({
+        data:"endSuddenAttack",
+        to:[],
+        type:"endSuddenAttack"
+      })
     },
 
     //---------------------돌발 질문,상황 관련 함수 끝-----------------------------
