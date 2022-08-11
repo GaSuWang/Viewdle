@@ -1,6 +1,6 @@
 <template>
   <div class="background" tabindex="0" @keyup="checkKey" ref="div">
-    <GameTimer @TimeOut="failSuddenAttack"/>
+    <GameTimer class="timer" @TimeOut="failSuddenAttack"/>
     <span v-for="(i, index) in icons" :key="index">
       <i :class="i.name" :id="index"></i>
     </span>
@@ -57,6 +57,9 @@ export default {
 </script>
 
 <style scoped>
+.timer{
+  color: white;
+}
 i {
   --color: red;
   font-size: 8em;

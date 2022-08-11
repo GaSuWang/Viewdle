@@ -2,8 +2,8 @@
 <template>
   <AuthorityPassModal/>
   <AttackSpaceBar v-if="suddenAttackFlag==0" class="suddenAttack" @endSuddenAttack="endSuddenAttack"/>
-  <OneToNine v-else-if="suddenAttackFlag==2" class="suddenAttack" @endSuddenAttack="endSuddenAttack"/>
-  <ArrowDirection class="suddenAttack" @endSuddenAttack="endSuddenAttack" />
+  <ArrowDirection v-else-if="suddenAttackFlag==1" class="suddenAttack" @endSuddenAttack="endSuddenAttack" />
+  <OneToNine class="suddenAttack" @endSuddenAttack="endSuddenAttack"/>
   
   <div class="EERView">
     <!-- 영상 구역 -->
