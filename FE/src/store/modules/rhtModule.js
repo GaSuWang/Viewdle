@@ -25,11 +25,10 @@ const state= {
     StudyroomList:[],
     // 녹화된 영상과 피드백 보기위함
     ReplayList:[
-      "asdfasdf", 'asdfjb;asdfk'
-      // {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17"},
-      // {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
-      // {"videoSeq":13, "videoTitle":"220802 SSAFY 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:08:09:56:57"},
-      // {"videoSeq":14, "videoTitle":"220802 HYUN DAI 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:09:19:17:17"},
+      {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17"},
+      {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
+      {"videoSeq":13, "videoTitle":"220802 SSAFY 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:08:09:56:57"},
+      {"videoSeq":14, "videoTitle":"220802 HYUN DAI 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:09:19:17:17"},
        ],
     ReplayDetail:{
       "videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17", "feedbackList": [{"timeline":1000, "feedbackType":"B", "feadbackContent":"못생김"}, {"timeline":1490, "feedbackType":"G", "feadbackContent":"잘생김"}],
