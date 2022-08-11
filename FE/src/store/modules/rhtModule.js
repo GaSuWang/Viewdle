@@ -18,29 +18,19 @@ const state= {
     // 뱃지 관리
     BadgeList:[],
     // 자소서관리
-    CoverLetterList:[
-      {"coverLetterContent":"삼성보내줘", "coverLetterRegTime":"2022/06/19", "coverLetterSeq":1, "coverLetterTitle":"삼성"},
-      {"coverLetterContent":"LG보내줘", "coverLetterRegTime":"2022/06/19", "coverLetterSeq":2, "coverLetterTitle":"LG"},
-      {"coverLetterContent":"애플보내줘", "coverLetterRegTime":"2022/06/19", "coverLetterSeq":3, "coverLetterTitle":"애플"},
-      {"coverLetterContent":"SK보내줘", "coverLetterRegTime":"2022/06/19", "coverLetterSeq":4, "coverLetterTitle":"SK"},
-    ],
+    CoverLetterList:[],
     
       CoverLetterDetail:{},
     // 방 만들기, 
-    StudyroomList:[
-      {"roomSeq":23, "roomType":1, "roomTitle":"ㅎ2ㅎ2", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-      {"roomSeq":24, "roomType":1, "roomTitle":"ㅎ3ㅎ3", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-      {"roomSeq":25, "roomType":1, "roomTitle":"ㅎ4ㅎ4", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-      {"roomSeq":26, "roomType":1, "roomTitle":"ㅎ5ㅎ5", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-      {"roomSeq":27, "roomType":1, "roomTitle":"ㅎ6ㅎ6", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-    ],
+    StudyroomList:[],
     // 녹화된 영상과 피드백 보기위함
     ReplayList:[
-      {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17"},
-      {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
-      {"videoSeq":13, "videoTitle":"220802 SSAFY 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:08:09:56:57"},
-      {"videoSeq":14, "videoTitle":"220802 HYUN DAI 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:09:19:17:17"},
-    ],
+      "asdfasdf", 'asdfjb;asdfk'
+      // {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17"},
+      // {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
+      // {"videoSeq":13, "videoTitle":"220802 SSAFY 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:08:09:56:57"},
+      // {"videoSeq":14, "videoTitle":"220802 HYUN DAI 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:09:19:17:17"},
+       ],
     ReplayDetail:{
       "videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17", "feedbackList": [{"timeline":1000, "feedbackType":"B", "feadbackContent":"못생김"}, {"timeline":1490, "feedbackType":"G", "feadbackContent":"잘생김"}],
     },
@@ -148,22 +138,12 @@ const actions= {
     // },
 
     // 로그아웃
-    logout({ getters, dispatch }) {
+    logout({ dispatch }) {
       console.log("로그아웃아 안녕?")
-      axios({
-        // url: 'https://' + location.hostname + '/api/v1/users/detail', //logout api로 
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/detail',
-        method: 'post',
-        headers: {Authorization: getters.authHeader },
-      })
-        .then(() => {
-          dispatch('removeToken')
-          alert('성공적으로 logout!')
-          useRouter.push({ name: 'Account' })
-        })
-        .catch(err => {
-          console.error(err.response)
-        })
+      dispatch('removeToken')
+      router.push('/main')
+      alert('성공적으로 logout!')
+      router.push({ name: 'Account' })
     },
 
     // 사용자 정보 가져오기
@@ -563,18 +543,31 @@ const actions= {
     //   })
     // },
     getReplay({commit,getters}){
-      axios.get( 
+      axios({
         // 'https://' + location.hostname + '/api/v1/video',
-        'http://' + location.hostname + ':8081' + '/api/v1/video',
-        {
-          headers: {Authorization: getters.authHeader }
-        },
-        {
-          params:{
-            order:''
-          }
-        },
-      )
+        url : 'http://' + location.hostname + ':8081' + '/api/v1/video',
+        method: 'get',
+        headers: {Authorization: getters.authHeader },
+      })
+      .then(res => {
+        commit('SET_REPLAY_LIST', res.data)
+        alert('리플레이정보를 가져왔습니다.')
+      })
+      .catch(err =>{
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    sortReplay({commit,getters}, credentials){
+      axios({
+        // 'https://' + location.hostname + '/api/v1/video',
+        url : 'http://' + location.hostname + ':8081' + '/api/v1/video',
+        method: 'get',
+        headers: {Authorization: getters.authHeader },
+        params:{
+          'order': credentials.order
+        }
+      })
       .then(res => {
         commit('SET_REPLAY_LIST', res.data)
         alert('리플레이정보를 가져왔습니다.')
@@ -589,8 +582,8 @@ const actions= {
       console.log("리플레이지우기야 안녕?")
       console.log(credentialsTodelete)
       axios({
-        // url:'https://' + location.hostname + `/api/v1/video/${credentialsTodelete.replaySeq}`, // 비번수정 api 
-        url: 'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodelete.replaySeq}`,
+        // url:'https://' + location.hostname + `/api/v1/video/${credentialsTodelete}`, // 비번수정 api 
+        url: 'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodelete}`,
         method:'delete',
         headers: {Authorization: getters.authHeader },
       })
@@ -609,7 +602,7 @@ const actions= {
       console.log(credentialsTodetail)
       axios({
         // url:'https://' + location.hostname + `/api/v1/video/${credentialsTodetail.replaySeq}`, // 비번수정 api 
-        url: 'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodetail.replaySeq}`,
+        url: 'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodetail}`,
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -698,28 +691,6 @@ const actions= {
       .then(res => {
         commit('SET_STUDYROOM_LIST', res.data)
         alert('스터디룸정보를 가져왔습니다.')
-      }
-      )
-      .catch(err => {
-        console.error(err.response)
-        alert('실패.')
-      })
-    },
-    //영상다시보기 필터
-    filterReplay
-    ({commit}, credentialsToFilterReplay) {
-      console.log("리플레이필터가져오기야야 안녕?")
-      axios({
-        // url:'https://' + location.hostname + '/api/v1/video', // 비번수정 api 
-        url: 'http://' + location.hostname + ':8081' + `/api/v1/video`, 
-        method:'get',
-        params:{ 
-          order: credentialsToFilterReplay.order,
-        }
-      })
-      .then(res => {
-        commit('SET_REPLAY_LIST', res.data)
-        alert('리플레이를 가져왔습니다.')
       }
       )
       .catch(err => {

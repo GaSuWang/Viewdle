@@ -10,7 +10,7 @@
         <li><router-link to="/mypage"><i class="fas fa-user"></i>MyPage</router-link></li>
         <li><router-link to="/cl"><i class="fas fa-envelope-open-text"></i>CoverLetter</router-link></li>
         <li><router-link to="/replay"><i class="fas fa-video"></i>Replay</router-link></li>
-        <li><router-link to="/"><i class="fas fa-sign-out-alt"></i>Logout</router-link></li>
+        <li><div @click="logout()"><i class="fas fa-sign-out-alt"></i>Logout</div></li>
     </ul>
     </div>
     </div>
