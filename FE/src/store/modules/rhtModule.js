@@ -492,15 +492,6 @@ const actions= {
       })
       .then((res) => {
         console.log(res)
-        console.log(state.StudyroomList)
-        console.log(credentials)
-        console.log(state.StudyroomList.find((e)=>{
-          return e.roomSeq === parseInt(credentials.roomSeq)
-        }))
-        const ans = state.StudyroomList.find((e)=>{
-          return e.roomSeq ===  parseInt(credentials.roomSeq)
-        })
-        console.log(ans.roomTitle, ans.roomType)
         alert('스터디룸에 입장되었습니다.')
         /// 이병헌 시작
         router.push({
@@ -510,14 +501,6 @@ const actions= {
         //     moderator : false
         //   }
         // })
-        // const object = [
-        //   {name: 'a', weight: 'heavy'},
-        //   {name: 'b', weight: 'not heavy'}
-        // ]
-        // const ans = object.find((e)=>{
-        //   return e.name === 'a'
-        // })
-        // console.log(ans)
         })
         function findRoom(e){
           return e.roomSeq ===  parseInt(credentials.roomSeq)
@@ -529,7 +512,8 @@ const actions= {
           roomType : roomType,
           roomTitle: roomTitle,
           isSuperUser: false,
-        } 
+        }
+        console.log('room data from rhtModule', data)
         commit("lbhModule/GET_ROOM_INFO", data, {root:true})
         /// 이병헌 끝 
       })
@@ -539,7 +523,8 @@ const actions= {
       })
     },
     // 비번방스터디룸 입장
-    enterStudyroom({getters}, credentials) {
+    //이병헌 시작
+    enterStudyroom({state, commit, getters}, credentials) {
       console.log("스터디룸입장 안녕?")
       console.log(getters.SecretCode)
       axios({
@@ -557,11 +542,26 @@ const actions= {
         alert('스터디룸에 입장되었습니다.')
         router.push({
           name: 'setting-room', 
-          query: {
-            roomSeq : credentials.roomSeq,
-            moderator : false
-          }
+          // query: {
+          //   roomSeq : credentials.roomSeq,
+          //   moderator : false
+          // }
         })
+        console.log('roomSeq',getters.SecretCode, credentials.roomSeq, parseInt(credentials.roomSeq) )
+        function findRoom(e){
+          return e.roomSeq ===  getters.SecretCode
+        }
+        const roomTitle = state.StudyroomList.find(findRoom).roomTitle
+        const roomType = state.StudyroomList.find(findRoom).roomType
+        const data = {
+          roomSeq: getters.SecretCode,
+          roomType : roomType,
+          roomTitle: roomTitle,
+          isSuperUser: false,
+        }
+        console.log('room data from rhtModule', data)
+        commit("lbhModule/GET_ROOM_INFO", data, {root:true})
+        //이병헌 끝
       })
       .catch(err => {
         console.error(err.response)
