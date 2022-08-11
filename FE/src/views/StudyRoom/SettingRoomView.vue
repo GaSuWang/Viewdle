@@ -60,8 +60,8 @@
             aria-expanded="false"
           >
           </button>
-          <ul class="dropdown-menu">
-            <li v-for="cl in CLList" :key="cl.coverLetterSeq">
+          <ul class="dropdown-menu" v-if="CoverLetterList">
+            <li v-for="cl in CoverLetterList" :key="cl.coverLetterSeq">
               <p :class="[CLSelected.coverLetterTitle===cl.coverLetterTitle ? 'deviceSelected' : '']" @click="selectCL(cl)">{{cl.coverLetterTitle}}</p>
             </li>
           </ul>
@@ -95,8 +95,12 @@ import { OpenVidu } from 'openvidu-browser';
 export default {
   name: "SettingRoomView",
   created(){
-    this.$store.dispatch('lbhModule/getCoverLetterList')
-    console.log('my authHeader',this.$store.getters['rhtModule/authHeader'])
+    console.log(this.CLList)
+    console.log('userinfo', this.$store.getters['rhtModule/UserList'])
+    this.$store.dispatch('rhtModule/getCoverLetter')
+
+    window.addEventListener('beforeunload', this.forceLeaveSession)
+
   },
   data(){
     return{
@@ -117,8 +121,19 @@ export default {
       "CLSelected",
       'CLStatus',
     ]),
+    ...mapGetters('rhtModule',[
+      'CoverLetterList',
+    ])
   },
   methods:{
+    async forceLeaveSession() {
+      if(this.userType === 'user'){
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      } else {
+        await this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
+        this.$store.dispatch('lbhModule/studyDestorySecondAxios')
+      }
+    },
     micStatusSwitch() {
       this.micOn = !this.micOn;
       this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)
