@@ -18,29 +18,19 @@ const state= {
     // 뱃지 관리
     BadgeList:[],
     // 자소서관리
-    CoverLetterList:[
-      {"coverLetterContent":"삼성보내줘", "coverLetterRegTime":"2022/06/19", "coverLetterSeq":1, "coverLetterTitle":"삼성"},
-      {"coverLetterContent":"LG보내줘", "coverLetterRegTime":"2022/06/19", "coverLetterSeq":2, "coverLetterTitle":"LG"},
-      {"coverLetterContent":"애플보내줘", "coverLetterRegTime":"2022/06/19", "coverLetterSeq":3, "coverLetterTitle":"애플"},
-      {"coverLetterContent":"SK보내줘", "coverLetterRegTime":"2022/06/19", "coverLetterSeq":4, "coverLetterTitle":"SK"},
-    ],
+    CoverLetterList:[],
     
       CoverLetterDetail:{},
     // 방 만들기, 
-    StudyroomList:[
-      {"roomSeq":23, "roomType":1, "roomTitle":"ㅎ2ㅎ2", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-      {"roomSeq":24, "roomType":1, "roomTitle":"ㅎ3ㅎ3", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-      {"roomSeq":25, "roomType":1, "roomTitle":"ㅎ4ㅎ4", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-      {"roomSeq":26, "roomType":1, "roomTitle":"ㅎ5ㅎ5", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-      {"roomSeq":27, "roomType":1, "roomTitle":"ㅎ6ㅎ6", "roomprivateYN":"N", "roomCnt":1, "roomLimit":2, "roomRegTime":"2022:08:03:03:05:57", "roomActiveYN": "N", "roomFullYN":"N", "thumnailUrl":"abc.abc.abc"},
-    ],
+    StudyroomList:[],
     // 녹화된 영상과 피드백 보기위함
     ReplayList:[
-      {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17"},
-      {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
-      {"videoSeq":13, "videoTitle":"220802 SSAFY 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:08:09:56:57"},
-      {"videoSeq":14, "videoTitle":"220802 HYUN DAI 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:09:19:17:17"},
-    ],
+      "asdfasdf", 'asdfjb;asdfk'
+      // {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17"},
+      // {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
+      // {"videoSeq":13, "videoTitle":"220802 SSAFY 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:08:09:56:57"},
+      // {"videoSeq":14, "videoTitle":"220802 HYUN DAI 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:09:19:17:17"},
+       ],
     ReplayDetail:{
       "videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17", "feedbackList": [{"timeline":1000, "feedbackType":"B", "feadbackContent":"못생김"}, {"timeline":1490, "feedbackType":"G", "feadbackContent":"잘생김"}],
     },
@@ -48,6 +38,7 @@ const state= {
 
 
 const getters = {
+    SecretCode(state){return state.SecretCode},
     isLoggedIn(state){return !!state.isLoggedIn},
     UserList(state){return state.UserList},
     HistoryList(state){return state.History},
@@ -67,6 +58,9 @@ const getters = {
 
 
 const mutations= {
+    SET_SECRETCODE(state, SecretCode){
+      state.SecretCode = SecretCode
+    },
     SET_TOKEN(state, token){
       state.token = token
     },
@@ -144,22 +138,12 @@ const actions= {
     // },
 
     // 로그아웃
-    logout({ getters, dispatch }) {
+    logout({ dispatch }) {
       console.log("로그아웃아 안녕?")
-      axios({
-        // url: 'https://' + location.hostname + '/api/v1/users/detail', //logout api로 
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/detail',
-        method: 'post',
-        headers: {Authorization: getters.authHeader },
-      })
-        .then(() => {
-          dispatch('removeToken')
-          alert('성공적으로 logout!')
-          useRouter.push({ name: 'Account' })
-        })
-        .catch(err => {
-          console.error(err.response)
-        })
+      dispatch('removeToken')
+      router.push('/main')
+      alert('성공적으로 logout!')
+      router.push({ name: 'Account' })
     },
 
     // 사용자 정보 가져오기
@@ -229,7 +213,7 @@ const actions= {
     },
 
     // 회원삭제를 위한 비번 확인
-    confirmEmail({commit}, Email) {
+    confirmEmail(Email) {
       console.log("비밀번호 확인아 안녕?")
       axios({
         // url:'https://' + location.hostname + `/api/v1/users/check/${Email}`, // 비밀번호 컨펌 api 
@@ -241,7 +225,6 @@ const actions= {
       })
       .catch(err => {
         console.error(err.response)
-        commit('SET_PW_CODE', true)
         alert('비밀번호를 확인하세요.')
             
       })
@@ -270,7 +253,7 @@ const actions= {
     },
 
     // 회원탈퇴
-    deleteID({getters}) {
+    deleteID({getters, commit}) {
       console.log("회원탈퇴야 안녕?")
       axios({
         // url:'https://' + location.hostname + '/api/v1/users', // 회원탈퇴 api 
@@ -280,16 +263,20 @@ const actions= {
       })
       .then(() => {
         alert('정상적으로 회원탈퇴 되었습니다.')
+        commit('SET_PW_CODE_FOR_EDIT', false)
+        commit('SET_PW_CODE', false)
         router.push('/')
       })
       .catch(err => {
         console.error(err.response)
+        commit('SET_PW_CODE_FOR_EDIT', false)
+        commit('SET_PW_CODE', false)
         alert('실패.')
       })
     },
 
     // 비밀번호 수정
-    changePW({getters}, changepassword) {
+    changePW({commit, getters}, changepassword) {
       console.log("비번수정아 안녕?")
       axios({
         // url:'https://' + location.hostname + '/api/v1/users/password', // 비번수정 api 
@@ -303,10 +290,14 @@ const actions= {
       })
       .then(() => {
         alert('정상적으로 비밀번호가 바뀌었습니다.')
+        commit('SET_PW_CODE_FOR_EDIT', false)
+        commit('SET_PW_CODE', false)
         router.push('/')
       })
       .catch(err => {
         console.error(err.response)
+        commit('SET_PW_CODE_FOR_EDIT', false)
+        commit('SET_PW_CODE', false)
         alert('실패.')
       })
     },
@@ -356,7 +347,7 @@ const actions= {
       console.log("자소서상세보기야 안녕?")
       axios({
         // url:'https://' + location.hostname + `/api/v1/coverletters/${credentialsTodelete.coverLetterSeq}`, // 비번수정 api 
-        url: 'http://' + location.hostname + ':8081' + `/api/v1/coverletters/${credentialsTodelete.coverLetterSeq}`,
+        url: 'http://' + location.hostname + ':8081' + `/api/v1/coverletters/${credentialsTodelete}`,
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -395,7 +386,7 @@ const actions= {
         // url:'https://' + location.hostname + '/api/v1/coverletters', // 비번수정 api 
         url: 'http://' + location.hostname + ':8081' + '/api/v1/coverletters',
         method:'delete',
-        data: credentialsTodelete,
+        data: { "coverLetterSeq" :credentialsTodelete},
         headers: {Authorization: getters.authHeader },
       })
       .then(() => {
@@ -408,13 +399,17 @@ const actions= {
       })
     },
     //자소서 수정하기
-    updateCoverLetter({dispatch, getters}, credentialsToedit) {
+    updateCoverLetter({dispatch, getters}, CoverLetterDetail) {
       console.log("자소서수정하기야 안녕? 여기까진 괜찮네?")
       axios({
         // url:'https://' + location.hostname + '/api/v1/coverletters', // 비번수정 api 
         url: 'http://' + location.hostname + ':8081' + '/api/v1/coverletters',
         method:'put',
-        data: credentialsToedit,
+        data: {
+          "coverLetterContent":CoverLetterDetail.value.coverLetterContent,
+          "coverLetterTitle":CoverLetterDetail.value.coverLetterTitle,
+          "coverLetterSeq":CoverLetterDetail.value.coverLetterSeq,
+        },
         headers: {Authorization: getters.authHeader },
       })
       .then(() => {
@@ -481,17 +476,17 @@ const actions= {
         alert('실패.')
       })
     },
-    // 스터디룸 입장
+
+    // 일반방스터디룸 입장
     /// 이병헌 시작(바로 아래 줄에는 commit, state넣어줌)
-    enterStudyroom({commit, state, getters}, credentials) {
+    enterNormalStudyroom({commit, state, getters}, credentials) {
       console.log("스터디룸입장 안녕?")
       axios({
         // url:'https://' + location.hostname + '/api/v1/studyroom/enter', // 비번수정 api 
         url: 'http://' + location.hostname + ':8081' + '/api/v1/studyroom/enter',
         method:'post',
         data: {
-          "roomPassword" : credentials.roomPassword,
-          "roomSeq" : credentials.roomSeq
+          "roomSeq" : credentials
         },
         headers: {Authorization: getters.authHeader }
       })
@@ -543,6 +538,40 @@ const actions= {
         alert('실패.')
       })
     },
+    // 비번방스터디룸 입장
+    enterStudyroom({getters}, credentials) {
+      console.log("스터디룸입장 안녕?")
+      console.log(getters.SecretCode)
+      axios({
+        // url:'https://' + location.hostname + '/api/v1/studyroom/enter', // 비번수정 api 
+        url: 'http://' + location.hostname + ':8081' + '/api/v1/studyroom/enter',
+        method:'post',
+        data: {
+          "roomPassword" : credentials.roomPassword,
+          "roomSeq" : getters.SecretCode
+        },
+        headers: {Authorization: getters.authHeader }
+      })
+      .then((res) => {
+        console.log(res)
+        alert('스터디룸에 입장되었습니다.')
+        router.push({
+          name: 'setting-room', 
+          query: {
+            roomSeq : credentials.roomSeq,
+            moderator : false
+          }
+        })
+      })
+      .catch(err => {
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+
+    enterSecretStudyroom({commit}, credentials) {
+      commit('SET_SECRETCODE', credentials)
+    },
     // 영상 가져오기
     // getReplay({commit, getters}, credentialsTogetReplay) {
     //   console.log("리플레이가져오기야야 안녕?")
@@ -563,18 +592,31 @@ const actions= {
     //   })
     // },
     getReplay({commit,getters}){
-      axios.get( 
+      axios({
         // 'https://' + location.hostname + '/api/v1/video',
-        'http://' + location.hostname + ':8081' + '/api/v1/video',
-        {
-          headers: {Authorization: getters.authHeader }
-        },
-        {
-          params:{
-            order:''
-          }
-        },
-      )
+        url : 'http://' + location.hostname + ':8081' + '/api/v1/video',
+        method: 'get',
+        headers: {Authorization: getters.authHeader },
+      })
+      .then(res => {
+        commit('SET_REPLAY_LIST', res.data)
+        alert('리플레이정보를 가져왔습니다.')
+      })
+      .catch(err =>{
+        console.error(err.response)
+        alert('실패.')
+      })
+    },
+    sortReplay({commit,getters}, credentials){
+      axios({
+        // 'https://' + location.hostname + '/api/v1/video',
+        url : 'http://' + location.hostname + ':8081' + '/api/v1/video',
+        method: 'get',
+        headers: {Authorization: getters.authHeader },
+        params:{
+          'order': credentials.order
+        }
+      })
       .then(res => {
         commit('SET_REPLAY_LIST', res.data)
         alert('리플레이정보를 가져왔습니다.')
@@ -589,8 +631,8 @@ const actions= {
       console.log("리플레이지우기야 안녕?")
       console.log(credentialsTodelete)
       axios({
-        // url:'https://' + location.hostname + `/api/v1/video/${credentialsTodelete.replaySeq}`, // 비번수정 api 
-        url: 'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodelete.replaySeq}`,
+        // url:'https://' + location.hostname + `/api/v1/video/${credentialsTodelete}`, // 비번수정 api 
+        url: 'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodelete}`,
         method:'delete',
         headers: {Authorization: getters.authHeader },
       })
@@ -609,7 +651,7 @@ const actions= {
       console.log(credentialsTodetail)
       axios({
         // url:'https://' + location.hostname + `/api/v1/video/${credentialsTodetail.replaySeq}`, // 비번수정 api 
-        url: 'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodetail.replaySeq}`,
+        url: 'http://' + location.hostname + ':8081' + `/api/v1/video/${credentialsTodetail}`,
         method:'get',
         headers: {Authorization: getters.authHeader },
       })
@@ -698,28 +740,6 @@ const actions= {
       .then(res => {
         commit('SET_STUDYROOM_LIST', res.data)
         alert('스터디룸정보를 가져왔습니다.')
-      }
-      )
-      .catch(err => {
-        console.error(err.response)
-        alert('실패.')
-      })
-    },
-    //영상다시보기 필터
-    filterReplay
-    ({commit}, credentialsToFilterReplay) {
-      console.log("리플레이필터가져오기야야 안녕?")
-      axios({
-        // url:'https://' + location.hostname + '/api/v1/video', // 비번수정 api 
-        url: 'http://' + location.hostname + ':8081' + `/api/v1/video`, 
-        method:'get',
-        params:{ 
-          order: credentialsToFilterReplay.order,
-        }
-      })
-      .then(res => {
-        commit('SET_REPLAY_LIST', res.data)
-        alert('리플레이를 가져왔습니다.')
       }
       )
       .catch(err => {

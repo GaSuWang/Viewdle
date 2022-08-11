@@ -10,33 +10,17 @@
           정렬
         </button>
         <ul class="dropdown-menu">
-          <li><input type="checkbox" @click="filterReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="ASC">오래된순</li>
-          <li><input type="checkbox" @click="filterReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="DESC">최신순</li>
+          <li><input type="checkbox" @click="sortReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="ASC">오래된순</li>
+          <li><input type="checkbox" @click="sortReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="DESC">최신순</li>
         </ul>
       </div>
-      <button class="btn btn-secondary ReplayTopitem" data-bs-toggle="modal" data-bs-target="#deleteReplay">
-        삭제하기
-      </button>
     </div>
       <hr>
-      <div class="ReplayBody">
-        <ReplayCard/>
-      </div>
+    <div class="ReplayBody">
+      <ReplayCard/>
+    </div>
     <!-- 오래된순, 최신순 정렬 -->
     <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
-    <!-- 영상 삭제모달  -->
-      <div class="modal fade" id="deleteReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <form @submit.prevent="deleteReplay(credentialsTodelete)">
-              <h5 class="modal-title" id="staticBackdropLabel">몇번 삭제할래?</h5>
-              <input type="number" class="form-control form-control-lg" v-model="credentialsTodelete.replaySeq">
-              <button class="btn btn-secondary">Yes</button>
-            </form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          </div>
-        </div>
-      </div>
 
     <!-- 영상 다시보기 -->
     <div class="modal fade" id="enterReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -50,7 +34,7 @@
 
           <!-- 동영상 삽입 및 AI 평가 입력 -->
           <video id="video" ref="video" crossOrigin='anonymous' width="300" height="200" controls="" autoplay="" name="media" >
-              <source src="https://localhost:4443/openvidu/recordings/SessionA~2/SessionA~2.mp4" type="video/mp4">
+              <!-- <source src="https://localhost:4443/openvidu/recordings/SessionA~2/SessionA~2.mp4" type="video/mp4"> -->
               <!-- <source src = "file://C:/Users/multicampus/Desktop/test.mp4"> -->
           </video>
           <div>
@@ -81,13 +65,10 @@ import * as tmPose from '@teachablemachine/pose';
 export default {
   components:{
     NavBar,
-    ReplayCard 
+    ReplayCard,
   },
 
   setup(){
-    const credentialsTodelete= reactive({
-      'replaySeq':0,
-    })
     const credentialsToFilterReplay= reactive({
       order:"",
     })
@@ -95,14 +76,11 @@ export default {
     const replayDetail = computed(
       () => store.state.rhtModule.ReplayDetail
     );
-    function deleteReplay(){
-      store.dispatch('rhtModule/deleteReplay', credentialsTodelete)
-    }
-    function filterReplay(){
-      store.dispatch('rhtModule/filterReplay', credentialsToFilterReplay)
+    function sortReplay(){
+      store.dispatch('rhtModule/sortReplay', credentialsToFilterReplay)
     }
     return {
-      deleteReplay, credentialsTodelete, replayDetail,filterReplay, credentialsToFilterReplay
+      replayDetail,sortReplay, credentialsToFilterReplay
     }
   },
 

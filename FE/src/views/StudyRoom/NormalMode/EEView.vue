@@ -47,6 +47,9 @@
 import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
+import axios from "axios";
+axios.defaults.headers.post["Content-Type"] = "application/json";
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 
 export default {
   name: "EEView",
@@ -65,7 +68,7 @@ export default {
       "nextSuperUserList",
       'currentUserList',
       'myUserInfo',
-
+      'recordingObject'
     ])
   },
   data(){
@@ -79,6 +82,12 @@ export default {
       alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
       this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserInfo)
       this.toWR()
+    //녹화 종료 시그널 보내기
+      this.session.signal({
+      data: this.myUserName,
+      to: [],
+      type: 'stopRecording'
+      })      
     });  
 
     //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
@@ -97,6 +106,36 @@ export default {
         this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
       }
     })
+  
+    // 녹화 중지 stop레코딩 시그널을 받은 경우
+    this.session.on("signal:stopRecording", (e) => {
+      console.log(e.data)
+      console.log("스탑 레코딩에 입장했습니다")
+      console.log(this.recordingObject)
+
+      return new Promise(() => {
+        axios({
+          url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${this.recordingObject.id}`,
+          method: "post",
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
+          },
+        }).then((res) => {
+          console.log(`stop recording id ${res.data.id}`);
+
+          //레코딩 끝난 후 시그널링으로 URL 보내기
+          this.session.signal({
+          data: this.res.data.url,
+          to: [],
+          type: 'ReviewURL'          
+          })
+          this.$store.commit('lbhModule/SET_RECORDING_OBJECT', res.data)
+
+          //레코딩 끝나고 저장하기
+        });
+      });
+    })
+      
   },
   mounted(){
     this.interval = setInterval(this.interval++, 1000);
@@ -139,6 +178,13 @@ export default {
       this.$store.dispatch('lbhModule/finishInterview')
       const videoUrl = '' //await (videoUrl 받아오기)
       this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
+
+      // 종료하면 녹화 종료 보내기
+      this.session.signal({
+        data: this.myUserName,
+        to: [],
+        type: 'stopRecording'
+      })
     },
     async toWR() {
       await this.$router.push('/waiting-room')

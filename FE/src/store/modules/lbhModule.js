@@ -55,6 +55,9 @@ const state = {
   FBList: [],
   axiosFBList: [],
   replayFBList: [],
+
+  // 녹화 관련
+  recordingObject : null,
 };
 const getters = {
   //유저 정보
@@ -118,6 +121,8 @@ const getters = {
   //ErView, FeedbackRoom, ReplayView
   FBList(state) {return state.FBList},
 
+  //녹화 관련
+  recordingObject(state) {return state.recordingObject},
 };
 const mutations = {
   //유저 정보
@@ -255,6 +260,8 @@ const mutations = {
     state.FBList[idx] = fb;
   },
   EMPTY_FB(state){state.FBList = []},
+  //녹화 관련
+  SET_RECORDING_OBJECT(state, recordingObject){state.recordingObject = recordingObject},
 };
 
 const BASE_URL = 'https://' + location.hostname + '/api/v1/'
