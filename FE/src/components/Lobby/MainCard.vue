@@ -23,7 +23,10 @@
         <button class="btn btn-secondary enterbuttonitem" data-bs-toggle="modal" data-bs-target="#enterroom">비번방</button>
       </form>
     </div>
-    <div v-else-if="item.roomPrivateYN === 'N'">
+    <!-- 이병헌 시작 --> 
+    <!-- <div v-else-if="item.roomPrivateYN === 'N'"> -->
+    <div v-else>
+    <!-- 이병헌 끝 -->
       <form @submit.prevent="enterNormalStudyroom(item.roomSeq)">
         <button class="btn btn-secondary enterbuttonitem">
           일반방
