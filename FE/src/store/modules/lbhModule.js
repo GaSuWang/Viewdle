@@ -52,6 +52,9 @@ const state = {
   //FeedbackRoom
   FBList: [], // 피드백 리스트, 리스트로 하는 게 맞나?
   replayFBList: [],
+
+  // 녹화 관련
+  recordingObject : null,
 };
 const getters = {
   //방장권한
@@ -103,6 +106,8 @@ const getters = {
   //ErView, FeedbackRoom, ReplayView
   FBList(state) {return state.FBList},
 
+  //녹화 관련
+  recordingObject(state) {return state.recordingObject},
 };
 const mutations = {
   SWITCH_USER_TYPE_TEMP(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
@@ -221,6 +226,8 @@ const mutations = {
     state.FBList[idx] = fb;
   },
   EMPTY_FB(state){state.FBList = []},
+  //녹화 관련
+  SET_RECORDING_OBJECT(state, recordingObject){state.recordingObject = recordingObject},
 };
 
 const BASE_URL = 'https://' + location.hostname + '/api/v1/'
