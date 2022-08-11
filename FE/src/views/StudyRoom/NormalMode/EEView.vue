@@ -69,7 +69,8 @@ export default {
       "session",
       "nextSuperUserList",
       'currentUserList',
-
+      //녹화 관련
+      "recordingObject",
     ])
   },
   data(){
@@ -79,6 +80,8 @@ export default {
   created(){
     //방장이 면접을 완료할 경우
     this.session.on('signal:endInterview', () => {
+      //녹화 종료(서버단 포기)
+      // this.stopRecording();
       alert('방장이 면접을 완료했습니다.\n이제 대기실로 이동합니다.')
       this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserName)
       this.toWR()
@@ -195,6 +198,27 @@ export default {
           .then((response) => response.data)
           .then((data) => resolve(data.token))
           .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
+      });
+    },
+
+    //녹화 종료
+    stopRecording() {
+      return new Promise(() => {
+        axios({
+          url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${this.recordingObject.id}`,
+          method: "post",
+          data: {
+            session: this.session.sessionId,
+            outputMode: "COMPOSED",
+            hasAudio: true,
+            hasVideo: true,
+          },
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
+          },
+        }).then((res) => {
+          console.log(`stop recording id ${res.data.id}`);
+        });
       });
     },
   }

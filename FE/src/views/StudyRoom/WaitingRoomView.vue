@@ -80,6 +80,7 @@
         <button @click="switchUserType">{{ userType }}</button>
       </div>
 
+
       <!-- 녹화 테스트용 버튼 -->
       <!-- 백하고 연동하게 될거라서 API만 필요하지 버튼은 필요없습니다! 그냥 결과값 확인하는 용도로 사용하세요!
       아마 녹화 종료하고 필요한 값 들 전달하면 될 거 같습니다. -->
@@ -90,6 +91,13 @@
         <button @click="getRecording">녹화 하나</button>
         <button @click="getRecordings">녹화 여러개</button>
         <button @click="deleteRecording">녹화 삭제</button>
+
+        <button @click="previewRecording">프리뷰</button>
+        <button @click="downloadRecording">다운로드</button>
+        <button @click="uploadAsMultipartfile">업로드</button>
+        <button @click="getBlobRecording">블롭</button>
+
+
       </div>
     </div>
   </div>
@@ -108,6 +116,8 @@ import { mapGetters } from "vuex";
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/UserVideo.vue";
+import mime from "mime";
+
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
@@ -126,10 +136,11 @@ export default {
       EECnd: "", //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
       recordingId: "",
       LeaveWR: false,
-      recordingObject : null,
-      recordingObjects : null,
+      // recordingObject : null,
+      // recordingObjects : null,
       // OV: undefined,
       // session: undefined,
+      LocalRecorder : null,
     };
   },
   computed: {
@@ -158,6 +169,9 @@ export default {
       "currentUserList",
       "WRParticipantList",
       "CLSelected",
+
+      //레코딩
+      "recordingObject"
     ]),
 		showVid() {
 			if(this.$router.currentRoute.value.name === 'waiting-room'){
@@ -301,6 +315,9 @@ export default {
 
 
             this.session.publish(this.publisher);
+            this.LocalRecorder = this.OV.initLocalRecorder(this.publisher.stream);
+            console.log(this.LocalRecorder.state)
+            // this.LocalRecorder.startRecording();
           })
           .catch((error) => {
             console.log("There was an error connecting to the session:", error.code, error.message);
@@ -323,6 +340,10 @@ export default {
         //대기실에서 내 이름 지우기
         this.$store.commit("lbhModule/SET_WR_PARTICIPANT_LIST", []);
         this.EECnd = e.data
+
+        //면접자 다시 퍼블리쉬하고 레코딩하기(서버단 포기)
+        // this.outAndIn(this.EECnd)
+
         // this.session.unpublish(this.publisher);
         // this.subscribers.foreEach(s=>this.session.unsubscribe(s))
         //만약에 내가 면접자라면
@@ -427,6 +448,7 @@ export default {
 
     //대기실에서 나갈 때
     WRleaveSession() {
+      // this.LocalRecorder.stopRecording()
       if (this.session) this.session.disconnect();
 
       this.$store.commit('lbhModule/SET_SESSION', undefined)
@@ -514,102 +536,181 @@ export default {
       });
     },
 
+    //녹화 관련
+    outAndIn(interviewee){
+      if(this.myUserName == interviewee){
+        // 1. 언퍼블리쉬
+        // this.session.unpublish(this.publisher);
+        // this.session.publish(this.publisher); 
+        
+        // 2. 디스커넥트
+        this.session.disconnect()
+        this.session.connect(this.session.token, { clientData: this.myUserName, isEE : "Y" }).then(() => {
+          console.log("커넥션 완료")
+          this.publisher.subscribeToRemote(true);
+          this.session.publish(this.publisher);
+        })
+        setTimeout(this.startRecording(), 2000);
+      }
+    },
+
+    // 로컬 녹화 펑션
+    async startRecording(){
+      console.log(this.LocalRecorder)
+        if (this.LocalRecorder.state === 'READY') {
+          await this.LocalRecorder.record();
+          this.$forceUpdate();
+        } else {
+          this.LocalRecorder.clean();
+          this.LocalRecorder.record();
+          this.$forceUpdate();
+        }
+      },
+    async stopRecording(){
+      if (this.LocalRecorder.state === 'RECORDING') {
+        await this.LocalRecorder.stop();
+        this.$forceUpdate();
+      }
+      else {
+
+        this.$forceUpdate();
+      }
+    },
+    async downloadRecording(){
+      if (this.LocalRecorder.state === 'FINISHED') {
+      await  this.LocalRecorder.download();
+      await  this.LocalRecorder.clean();
+        this.$forceUpdate();
+      }
+    },
+    async previewRecording() {
+      if (this.LocalRecorder.state === 'FINISHED') {
+      await this.LocalRecorder.preview("teste");
+        this.$forceUpdate();
+      }
+    },
+
+    async uploadRecording() {
+      await this.LocalRecorder.uploadAsMultipartfile();
+    },
+
+    async getBlobRecording() {
+      var blob =  this.LocalRecorder.getBlob();
+      var newBlob = new Blob([blob], {type : "video/mp4"});
+
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      document
+          .body
+          .appendChild(a);
+
+      const url = window
+          .URL
+          .createObjectURL(newBlob);
+      a.href = url;
+      a.download = this.id + '.' + mime.getExtension(newBlob.type);
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      document.body.removeChild(a);
+    }
+
     // 녹화 funcion
-    startRecording() {
-      console.log(this.session);
+    // startRecording() {
+    //   return new Promise(() => {
+    //     axios({
+    //       url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/start`,
+    //       method: "post",
+    //       data: {
+    //         session: this.session.sessionId,
+    //         // outputMode: "INDIVIDUAL",
+    //         outputMode: "COMPOSED",
+    //         recordingLayout: "CUSTOM",
+    //         // recordingLayout: "BEST_FIT",
+    //         resolution: "1280x960",
+    //         hasAudio: true,
+    //         hasVideo: true,
+    //       },
+    //       headers: {
+    //         Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
+    //       },
+    //     }).then((res) => {
+    //       this.$store.commit('lbhModule/SET_RECORDING_OBJECT', res.data)
+    //     });
+    //   });
+    // },
 
-      return new Promise(() => {
-        axios({
-          url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/start`,
-          method: "post",
-          data: {
-            session: this.session.sessionId,
-            // outputMode: "INDIVIDUAL",
-            outputMode: "COMPOSED",
-            // recordingLayout: "CUSTOM",
-            recordingLayout: "BEST_FIT",
-            resolution: "1280x960",
-            hasAudio: true,
-            hasVideo: true,
-          },
-          headers: {
-            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
-          },
-        }).then((res) => {
-          this.recordingObject = res.data;
-        });
-      });
-    },
+    // stopRecording() {
+    //   return new Promise(() => {
+    //     axios({
+    //       url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${this.recordingObject.id}`,
+    //       method: "post",
+    //       data: {
+    //         session: this.session.sessionId,
+    //         outputMode: "COMPOSED",
+    //         hasAudio: true,
+    //         hasVideo: true,
+    //       },
+    //       headers: {
+    //         Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
+    //       },
+    //     }).then((res) => {
+    //       console.log(`stop recording id ${res.data.id}`);
 
-    stopRecording() {
-      return new Promise(() => {
-        axios({
-          url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${this.recordingObject.id}`,
-          method: "post",
-          data: {
-            session: this.session.sessionId,
-            outputMode: "COMPOSED",
-            hasAudio: true,
-            hasVideo: true,
-          },
-          headers: {
-            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
-          },
-        }).then((res) => {
-          console.log(`stop recording id ${res.data.id}`);
-        });
-      });
-    },
+          
+    //     });
+    //   });
+    // },
 
-    deleteRecording() {
-      return new Promise(() => {
-        axios({
-          url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
-          method: "delete",
-          headers: {
-            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
-          },
-        }).then((res) => {
-          if (res.status == "204") {
-            console.log(`success delete recording id ${this.recordingObject.id}`);
-          } else {
-            console.log(
-              `fail delete recording id ${this.recordingObject.id}, status code ${res.status}`
-            );
-          }
-        });
-      });
-    },
+    // deleteRecording() {
+    //   return new Promise(() => {
+    //     axios({
+    //       url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
+    //       method: "delete",
+    //       headers: {
+    //         Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
+    //       },
+    //     }).then((res) => {
+    //       if (res.status == "204") {
+    //         console.log(`success delete recording id ${this.recordingObject.id}`);
+    //       } else {
+    //         console.log(
+    //           `fail delete recording id ${this.recordingObject.id}, status code ${res.status}`
+    //         );
+    //       }
+    //     });
+    //   });
+    // },
 
-    getRecording() {
-      return new Promise(() => {
-        axios({
-          url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
-          method: "get",
-          headers: {
-            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
-          },
-        }).then((res) => {
-          console.log(`get recording id ${res.data.id}`);
-          this.recordingObject = res;
-        });
-      });
-    },
+    // getRecording() {
+    //   return new Promise(() => {
+    //     axios({
+    //       url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/${this.recordingObject.id}`,
+    //       method: "get",
+    //       headers: {
+    //         Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
+    //       },
+    //     }).then((res) => {
+    //       console.log(`get recording id ${res.data.id}`);
+    //       this.recordingObject = res;
+    //     });
+    //   });
+    // },
 
-    getRecordings() {
-      return new Promise(() => {
-        axios({
-          url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings`,
-          method: "get",
-          headers: {
-            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
-          },
-        }).then((res) => {
-          console.log(`get recordings ${JSON.stringify(res.data)}`);
-          this.recordingObjects = res.data;
-        });
-      });
-    },
+    // getRecordings() {
+    //   return new Promise(() => {
+    //     axios({
+    //       url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings`,
+    //       method: "get",
+    //       headers: {
+    //         Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
+    //       },
+    //     }).then((res) => {
+    //       console.log(`get recordings ${JSON.stringify(res.data)}`);
+    //       this.recordingObjects = res.data;
+    //     });
+    //   });
+    // },
   },
 };
 </script>
