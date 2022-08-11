@@ -1,6 +1,7 @@
 // 이병헌
 <template>
   <AuthorityPassModal/>
+  <selectCircle class="suddenAttack"></selectCircle>
   <div class="EERView">
     <!-- 영상 구역 -->
     <div :style="cssVariable" class="EERContent">
@@ -78,11 +79,12 @@ import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
 // import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
+import selectCircle from "@/components/StudyRoom/EasyMode/Game/SelectCircle.vue";
 import { useRouter } from "vue-router";
 
 export default {
   name: "EERView",
-  components: { UserVideo, AuthorityPassModal }, // warningStackBar //경고게이지 주석
+  components: { UserVideo, AuthorityPassModal, selectCircle }, // warningStackBar //경고게이지 주석
   data() {
     return {
        warningCount: 0, //현재 쌓인 경고수
@@ -93,6 +95,7 @@ export default {
       isCountDownOn: false, // 카운트다운 활성화 여부 v-if활용 true일때 활성화
       countDown: 3, // 실제 화면에 표시되는 카운트다운
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
+      suddenAttackFlag: 0,//돌발 상황 분기
     };
   },
    computed: {
@@ -227,6 +230,20 @@ export default {
         }
       }
     });
+    //----------------돌발 상황 시작 ----------------------
+    this.session.on("signal:suddenAttack",()=>{
+      var name = JSON.parse(this.EE.stream.connection.data).clientData;
+      if(name === this.myUserName){
+        console.log("receive suddenAttack signal");
+        //면접자 돌발상황 발생시키기
+        //startSuddenAttack();
+      }
+      else{
+        this.disabledSuddenBtn();
+      }
+      
+    })
+    //----------------돌발 상황 끝 ----------------------
     //----------------돌발 질문 시작-----------------------
     this.session.on("signal:suddenQA", () => {
       console.log("receive suddenQA signal");
@@ -410,9 +427,20 @@ export default {
         });
     },
 
+    sendSuddenAttackSignal(){
+      this.session.signal({
+        data:"suddenAttack",
+        to:[],
+        type:"suddenAttack",
+      }).then(()=>{
+        console.log("success send sudden attack");
+      }).catch((e)=>{
+        console.log("suddenAttackError:", e);
+      })
+    },
+
     //돌발상황, 돌발질문 버튼 비활성화
     disabledSuddenBtn() {
-      console.log("돌발질문 비활성화");
       this.suddenBtnState = true;
     },
 
@@ -476,8 +504,13 @@ export default {
       this.OXBtnState = false;
       this.activeSuddenBtn();
     },
+    startSuddenAttack(){
+      //여기서 랜덤하게? 발생? 발아아아아아알생?
+      //분기 나눔
 
-    //---------------------돌발 질문 관련 함수 끝-----------------------------
+    },
+
+    //---------------------돌발 질문,상황 관련 함수 끝-----------------------------
     //면접관실에서 나갈 때
     EERleaveSession() {
       if (this.userType === "superUser") {
@@ -692,5 +725,9 @@ export default {
 .EERButtonFooter > div > button > i {
   font-size: 150%;
   color: black;
+}
+
+.suddenAttack{
+  z-index: 1;
 }
 </style>
