@@ -6,7 +6,9 @@
   <div class="FeedbackView">
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
-    <div class="savedEEVid"></div>
+    <div class="savedEEVid">
+      <VideoPlayer src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"/>
+    </div>
     <!-- 우단 -->
     <div class="FBRightArea">
       <button type="button" class="btn btn-primary" :disabled="counting" @click="startCountdown">
@@ -50,6 +52,7 @@
 </template>
 
 <script>
+import { VideoPlayer } from '@videojs-player/vue'
 import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
 import { useRouter } from "vue-router";
@@ -62,7 +65,7 @@ const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
-  components: { FeedbackArea, AuthorityPassModal },
+  components: { FeedbackArea, AuthorityPassModal, VideoPlayer },
   data(){
     return {
       counting: false,

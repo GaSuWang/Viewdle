@@ -11,6 +11,7 @@
     "@chenfengyuan/vue-countdown": "^2.0.0",
     "@teachablemachine/pose": "^0.8.6",
     "@tensorflow/tfjs": "^3.19.0",
+    "@videojs-player/vue": "^1.0.0-beta.4",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.9.1",
@@ -34,7 +35,8 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "eslint-plugin-vue": "^8.0.3",
+    "video.js": "^7.20.2"
   },
   "eslintConfig": {
     "root": true,
