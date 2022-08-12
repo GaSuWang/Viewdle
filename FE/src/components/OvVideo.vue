@@ -1,5 +1,5 @@
 <template>
-	<video autoplay/>
+	<video class='input_video' autoplay/>
 </template>
 
 <script>
@@ -10,7 +10,13 @@ export default {
 		streamManager: Object,
 	},
 
-	mounted () {
+	data(){
+		return{
+			model : null,
+		}
+	},
+
+	async mounted () {
 		this.streamManager.addVideoElement(this.$el);
 	},
 };

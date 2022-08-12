@@ -1,6 +1,7 @@
 <template>
 <div class="userVideo" v-if="streamManager && showVid">
 	<ov-video :stream-manager="streamManager"/>
+	<canvas class="canvas"></canvas>
 	<div class="userInfo">{{ clientData }}</div>
 </div>
 </template>
@@ -69,6 +70,10 @@ export default {
 .userVideo{
 	display: flex;
 	flex-direction: column;
+}
+
+.canvas{
+	position: absolute;
 }
 
 .userInfo{

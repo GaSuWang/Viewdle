@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-
+    <video autoplay muted id="myvideo" width="600" height="480"></video>
     <div class="EERRightArea">
       <div class="EERButtonHeader">
         <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
@@ -79,6 +79,14 @@ import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
 // import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
 import { useRouter } from "vue-router";
+import '@mediapipe/face_mesh';
+import '@tensorflow/tfjs-core';
+import '@tensorflow/tfjs-backend-webgl';
+import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection';
+// import { FaceMesh } from '@mediapipe/face_mesh'
+// import * as Facemesh from '@mediapipe/face_mesh'
+// import * as cam from '@mediapipe/camera_utils'
+
 
 export default {
   name: "EERView",
@@ -93,6 +101,10 @@ export default {
       isCountDownOn: false, // 카운트다운 활성화 여부 v-if활용 true일때 활성화
       countDown: 3, // 실제 화면에 표시되는 카운트다운
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
+      video : null, 
+      canvas : null,
+      ctx : null,
+      model : null,
     };
   },
    computed: {
@@ -281,6 +293,38 @@ export default {
     if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
       this.startRecognition();
     }
+
+    // video filter
+    this.session.on("signal:videoFilterOn", () => {
+      // 면접관 각각에게 넘겨주는 코드 구현할 것
+      // if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+          // console.log("##### this is interviewer");
+          this.prediction();
+      // }
+    })
+
+  },
+  async mounted(){
+      // this.video = document.querySelectorAll(".input_video")[1];
+      // console.log(this.video);
+      // this.canvas = document.querySelectorAll(".canvas")[1];
+      // this.canvas.setAttribute("width", this.video.offsetWidth);
+      // this.canvas.setAttribute("height", this.video.offsetHeight);
+      // this.ctx = this.canvas.getContext('2d');
+
+      await this.setCamera();
+      this.video.play();
+      console.log(this.video);
+
+      const detector = faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh;
+      const detectorConfig = {
+        runtime: 'mediapipe',
+        solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh',
+      };
+
+      this.model = Object.freeze(await faceLandmarksDetection.createDetector(detector, detectorConfig));
+      console.log(this.model);
+
   },
   setup() {
     const router = useRouter();
@@ -534,6 +578,51 @@ export default {
           });
       }
     },
+
+    // send video filter signal
+    setVideoFilterOn() {
+      this.session
+        .signal({
+          data: "set video filter",
+          to: [],
+          type: "videoFilterOn",
+        })
+        .then(() => {
+          console.log("success");
+        })
+        .catch(() => {
+          console.log("failed");
+        });
+    },
+
+    async prediction(){
+      console.log("################# call prediction");
+      // const video = document.getElementById("myvideo");
+      console.log(this.model); // success
+      console.log(this.video);
+
+      const faces = await this.model.estimateFaces(this.video); // error
+      console.log(faces);
+    },
+
+    async setCamera(){
+      this.video = document.getElementById("myvideo");
+      const stream = await navigator.mediaDevices.getUserMedia({
+        'audio': false,
+        'video': {
+          facingMode: 'user',
+        },
+      });
+      // Assign our camera to the HTML's video element
+      this.video.srcObject = stream;
+
+      return new Promise((resolve) => {
+        this.video.onloadedmetadata = () => {
+          resolve(this.video);
+        };
+      });
+
+    },
     
     // Speech API
     startRecognition() {
@@ -546,7 +635,7 @@ export default {
       recognition.start(); // 음성 인식 시작
       console.log("start speech recognition");
 
-      recognition.onresult = function(e){ // 음성 인식 결과 반환
+      recognition.onresult = (e) => { // 음성 인식 결과 반환
         for(let i = e.resultIndex; i < e.results.length; ++i){
           if(e.results[i].isFinal){ 
             let script = e.results[i][0].transcript;
@@ -554,7 +643,8 @@ export default {
             if(script.includes("빵")){
               alert("빵!");
             }else if(script.includes("감자")){
-              alert("감자!");
+              console.log("감자");
+              this.setVideoFilterOn();
             }
           }
         }
@@ -692,5 +782,9 @@ export default {
 .EERButtonFooter > div > button > i {
   font-size: 150%;
   color: black;
+}
+
+.canvas{
+  position : absolute
 }
 </style>
