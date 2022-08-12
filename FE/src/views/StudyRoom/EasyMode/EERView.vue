@@ -120,6 +120,13 @@ export default {
     },
   },
   created() {
+    //면접자로 지정된 유저가 자소서를 보낸 것을 받음
+    this.session.on('signal:EECL', (e)=>{
+      const cl = JSON.parse(e.data)
+      console.log('면접관이 받은 유저의 자소서', cl)
+      this.$store.commit('SET_STUDYROOM_CL', cl)
+    });
+    
     //일반 유저인 면접자가, 면접 도중에 나간 경우
     this.session.on('signal:EELeaveSessionFromEER', (e)=>{
       alert('면접자가 면접 도중에 나갔습니다.\n남은 참가자들 모두 대기실로 이동합니다.')
