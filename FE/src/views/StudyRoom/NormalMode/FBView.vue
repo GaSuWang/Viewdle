@@ -7,8 +7,11 @@
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
     <div class="savedEEVid">
-      <VideoPlayer src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"/>
-    </div>
+      <VideoPlayer id="testVid" src="RecordingRes.data.url" 
+      controls
+      width="680"
+      height="340"
+      />    </div>
     <!-- 우단 -->
     <div class="FBRightArea">
       <button type="button" class="btn btn-primary" :disabled="counting" @click="startCountdown">
@@ -86,6 +89,9 @@ export default {
       "MicSelected",
       "MicStatus",
       "MicStatus",
+    ]),
+    ...mapGetters('rhtModule',[
+      'RecordingRes',
     ])
   },
   created(){
