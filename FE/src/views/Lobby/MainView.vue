@@ -146,7 +146,7 @@ export default {
       "type":'',
       "limit":'',
       "password":"",
-      "privateYN":"",
+      "privateYN":"N",
       "title":"",
       "commonSeq":2
     })

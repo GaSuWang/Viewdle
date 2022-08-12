@@ -109,7 +109,9 @@ export default {
   
     // 녹화 중지 stop레코딩 시그널을 받은 경우
     this.session.on("signal:stopRecording", (e) => {
+      console.log('이게')
       console.log(e.data)
+      console.log('맞음?')
       console.log("스탑 레코딩에 입장했습니다")
       console.log(this.recordingObject)
 
@@ -122,16 +124,17 @@ export default {
           },
         }).then((res) => {
           console.log(`stop recording id ${res.data.id}`);
-
-          //레코딩 끝난 후 시그널링으로 URL 보내기
-          this.session.signal({
-          data: this.res.data.url,
-          to: [],
-          type: 'ReviewURL'          
-          })
-          this.$store.commit('lbhModule/SET_RECORDING_OBJECT', res.data)
+          console.log(res.data)
+          // //레코딩 끝난 후 시그널링으로 URL 보내기
+          // this.session.signal({
+          // data: this.res.data.url,
+          // to: [],
+          // type: 'ReviewURL'          
+          // })
+          // this.$store.commit('lbhModule/SET_RECORDING_OBJECT', res.data)
 
           //레코딩 끝나고 저장하기
+          this.$store.commit('rhtModule/SET_RECORDING_RES', res.data)
         });
       });
     })
