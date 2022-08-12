@@ -280,7 +280,7 @@ const actions = {
         roomSeq: state.roomSeq,
       }
     })
-    .then(console.log('일반 유저 정상적으로 세션 나감', state.roomSeq))
+    .then(console.log('일반 유저 정상적으로 세션 나감', state.roomSeq, typeof(state.roomSeq)))
     .catch(err=>console.error(err.response))
   },
 
