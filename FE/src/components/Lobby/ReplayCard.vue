@@ -15,7 +15,7 @@
     </div>
     <div class="Replaycard-button">
       <form @submit.prevent="detailReplay(item.videoSeq)">
-        <button class="btn btn-secondary Replaycard-buttonitem" data-bs-toggle="modal" data-bs-target="enterReplay">열람</button>
+      <button class="btn btn-secondary Replaycard-buttonitem" data-bs-toggle="modal" data-bs-target="#enterReplay">열람</button>
       </form>
       <form @submit.prevent="deleteReplay(item.videoSeq)">
       <button class="btn btn-secondary Replaycard-buttonitem">삭제하기</button>
@@ -27,8 +27,7 @@
     <!-- 오른쪽 -->
     <!-- 방제 -->
   
-    <!-- 생성 시각 -->
-
+    <!-- 생성 시각 -->  
   </div>
 </template>
 

@@ -636,7 +636,7 @@ const actions= {
       })
     },
     // 영상 지우기
-    deleteReplay({getters}, credentialsTodelete) {
+    deleteReplay({getters, dispatch}, credentialsTodelete) {
       console.log("리플레이지우기야 안녕?")
       console.log(credentialsTodelete)
       axios({
@@ -647,6 +647,8 @@ const actions= {
       })
       .then(() => {
         alert('리플레이를 삭제했습니다.')
+        dispatch('getReplay')
+
       }
       )
       .catch(err => {
@@ -654,8 +656,9 @@ const actions= {
         alert('실패.')
       })
     },
-    // 영상 지우기
+    // 영상 가져오기
     detailReplay({commit, getters}, credentialsTodetail) {
+    // detailReplay({commit}, credentialsTodetail) {
       console.log("리플레이상세보기야 안녕?")
       console.log(credentialsTodetail)
       axios({
@@ -665,7 +668,7 @@ const actions= {
         headers: {Authorization: getters.authHeader },
       })
       .then(res => {
-        commit('SET_REPLAY_LIST', res.data)
+        commit('SET_REPLAY_DETAIL', res.data)
         alert('리플레이 상세보기.')
       }
       )

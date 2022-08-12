@@ -125,6 +125,7 @@ export default {
         }).then((res) => {
           console.log(`stop recording id ${res.data.id}`);
           console.log(res.data)
+          // 임현탁 여기 부터
           // //레코딩 끝난 후 시그널링으로 URL 보내기
           // this.session.signal({
           // data: this.res.data.url,
@@ -132,9 +133,31 @@ export default {
           // type: 'ReviewURL'          
           // })
           // this.$store.commit('lbhModule/SET_RECORDING_OBJECT', res.data)
+          // 임현탁 여기까지 주석처리함
+
 
           //레코딩 끝나고 저장하기
           this.$store.commit('rhtModule/SET_RECORDING_RES', res.data)
+          this.$store.dispatch('lbhModule/finishInterviewAxios', res.data)
+          // 잠시 참고용
+          //   finishInterviewAxios({state, getters, commit}){
+          //   axios({
+          //     url: BASE_URL + 'video',
+          //     method: 'post',
+          //     headers: {Authorization: getters.authHeader},
+          //     data: {
+          //       userEmail: state.myUserEmail,
+          //       videoTitle: state.roomTitle,
+          //       videoUrl: state.videoUrl, //videoUrl 추가해야됨
+          //     }
+          //   })
+          //   .then(res=>{
+          //     console.log('성공적으로 면접 완료')
+          //     commit('SET_VIDEOSEQ', res.data) //vdieoSeq 추가해야됨
+          //   }) 
+          //   .catch(err=>console.error(err.response))
+          // },
+          
         });
       });
     })
