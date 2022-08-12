@@ -379,9 +379,9 @@ const actions = {
       data: {roomSeq: state.roomSeq}
     })
     .then(res=>{
-      console.log('면접 시작!, res.response.data:', res.response.data)
+      console.log('면접 시작!, res.response.data:', res)
     })
-    .catch(err=>console.error('면접 시작 axios 에러남',err))
+    .catch(err=>console.error('면접 시작 axios 에러남',err.response))
   },
 
   // 임현탁 videourl credentials에 받아옴
