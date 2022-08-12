@@ -206,9 +206,9 @@ const mutations = {
     }
     console.log("ADD_WR_PARTICIPANT_LIST 끝", state.WRParticipantList, userInfo);
   },
-  DELETE_WR_PARTICIPANT_LIST(state, userInfo) {
+  DELETE_WR_PARTICIPANT_LIST(state, email) {
     console.log("DELETE_WR_PARTICIPANT_LIST 시작", state.WRParticipantList);
-    const idx = state.WRParticipantList.findIndex(function(item) {return item.myUserEmail === userInfo.myUserEmail})
+    const idx = state.WRParticipantList.findIndex(function(item) {return item.myUserEmail === email})
     if (idx>-1) state.WRParticipantList.splice(idx, 1)  
     console.log("DELETE_WR_PARTICIPANT_LIST 끝", state.WRParticipantList); 
   },
@@ -229,9 +229,9 @@ const mutations = {
     console.log("ADD_CURRENT_USER_LIST 끝", state.currentUserList, userInfo);
 
   },
-  DELETE_CURRENT_USER_LIST(state, userInfo) {
+  DELETE_CURRENT_USER_LIST(state, email) {
     console.log("DELETE_CURRENT_USER_LIST 시작", state.currentUserList);
-    const idx = state.currentUserList.findIndex(function(item) {return item.myUserEmail === userInfo.myUserEmail})
+    const idx = state.currentUserList.findIndex(function(item) {return item.myUserEmail === email})
     if (idx>-1) state.currentUserList.splice(idx, 1)  
     console.log("DELETE_CURRENT_USER_LIST 끝", state.currentUserList); 
     // const delArray = [...state.currentUserList]

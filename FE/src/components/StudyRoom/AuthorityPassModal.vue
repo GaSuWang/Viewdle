@@ -19,7 +19,7 @@
           <ul>
             <li v-for="user in nextSuperUserList" :key="user.myUserEmail">
               <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="selectNextSuperUser(user)">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="nextSuperUser=user">
                 <label class="form-check-label" for="flexRadioDefault1">
                   {{user.myUserName}}: {{user.myUserEmail}}
                 </label>
@@ -54,7 +54,7 @@ data(){
   return{
     // OV: undefined,
     // session: undefined,
-    // nextSuperUserInfo: {},
+    nextSuperUser:'',
   }
 },
 computed: {
@@ -84,9 +84,6 @@ computed: {
   }
 },
 methods:{
-  selectNextSuperUser(user){
-    this.$store.commit('lbhModule/SET_NEXT_SUPERUSER_INFO', user)
-  },
   //방장이 면접을 폭파시킴
   studyDestroy(){
     this.$store.commit('lbhModule/SET_STUDY_DESTOY', true)
@@ -99,10 +96,11 @@ methods:{
   },
   //방장이 면접을 나감
   superLeaveSession(){
+    this.$store.commit('lbhModule/SET_NEXT_SUPERUSER_INFO', this.nextSuperUser)
     const currentSuperUserName = this.myUserName
     const currentSuperUserEmail = this.myUserEmail
-    const nextSuperUserName = this.nextSuperUserInfo.myUserName
-    const nextSuperUserEmail = this.nextSuperUserInfo.myUserEmail
+    const nextSuperUserName = this.nextSuperUser.myUserName
+    const nextSuperUserEmail = this.nextSuperUser.myUserEmail
     //방장이 현재 면접자
     if(this.$router.currentRoute.value.name === 'ee-room' || this.$router.currentRoute.value.name === 'ee-room-ez'){
       this.session.signal({
