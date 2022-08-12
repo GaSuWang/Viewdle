@@ -1,5 +1,6 @@
 // import axios from "axios";
 
+import { router } from "@/router";
 import axios from "axios";
 
 const state = {
@@ -300,6 +301,78 @@ const actions = {
     commit('EMPTY_NEXT_SUPERUSER_INFO')
   },
   //유저가 방 나감(스터디룸 나가기)
+  // userLeaveSessionAxios({state,dispatch, rootGetters }){
+  //   console.log('유저 방에서 잘 나가....나?')   
+  //   axios({
+  //     url: BASE_URL + 'studyroom/exit',
+  //     method: 'patch',
+  //     headers: {Authorization: rootGetters['rhtModule/authHeader']},
+  //     data: {
+  //       nextOwnerEmail: "",
+  //       roomSeq: state.roomSeq,
+  //     }
+  //   })
+  //   .then(res =>{
+  //     console.log('유저 방에서 잘 나감')
+  //     console.log(res.response),
+  //     dispatch('deleteData')
+  //   }
+  //   )
+  //   .catch(err=>console.error(err.response.data))
+  // },
+
+  // //방장이 권한 위임하고 방 나감(스터디룸 나가기)
+  // superUserLeaveSessionAxios({state, dispatch, rootGetters},nextSuperUserEmail){
+  //   axios({
+  //     url: BASE_URL + 'studyroom/exit',
+  //     method: 'patch',
+  //     headers: {Authorization: rootGetters['rhtModule/authHeader']},
+  //     data: {
+  //       nextOwnerEmail: nextSuperUserEmail,
+  //       roomSeq: state.roomSeq,
+  //     }
+  //   })
+  //   .then(res=> {
+  //     dispatch('deleteData')
+  //     console.log('방장 유저 정상적으로 세션 나감', res.response)
+  //   })
+  //   .catch(err=>console.error(err.response))
+  // },
+
+  // //방장이 방 폭파시킴 첫 단계(스터디룸 나가기, 일반 유저 방 나가기와 동일하지만 구분 위해 다른 이름 부여)
+  // studyDestroyFirstAxios({state,rootGetters}){
+  //   axios({
+  //     url: BASE_URL + 'studyroom/exit',
+  //     method: 'patch',
+  //     headers: {Authorization: rootGetters['rhtModule/authHeader']},
+  //     data: {
+  //       nextOwnerEmail: "",
+  //       roomSeq: state.roomSeq,
+  //     }
+  //   })
+  //   .then(res=> {
+  //     console.log('일단 방을 나감', state.roomSeq, res.response)
+  //   })
+  //   .catch(err=>console.error(err.response))
+  // },
+
+  // //방장이 방 폭파시킴 두번째 단계(스터디 룸 삭제)
+  // studyDestorySecondAxios({state, dispatch, rootGetters}){
+  //   axios({
+  //     // url: BASE_URL + `studyroom/exit/${state.roomSeq}`, 이게 내가 기억하는 거
+  //     url: BASE_URL + `studyroom/${state.roomSeq}`,
+  //     method: 'patch',
+  //     headers: {Authorization: rootGetters['rhtModule/authHeader']},
+  //     data: {roomSeq: state.roomSeq},
+  //   })
+  //   .then(res => {
+  //     dispatch('deleteData')
+  //     console.log('방이 성공적으로 폭파됨', res.response) 
+  //   })
+  //   .catch(err=>console.error(err.response))
+  // },
+
+  // 임현탁 userLeaveSessionAxios수정위해 따로 뺴와서 수정중
   userLeaveSessionAxios({state,dispatch, rootGetters }){
     console.log('유저 방에서 잘 나가....나?')   
     axios({
@@ -315,6 +388,9 @@ const actions = {
       console.log('유저 방에서 잘 나감')
       console.log(res.response),
       dispatch('deleteData')
+      router.push('/main')
+      alert('방에서 나왔습니다.')
+      this.dispatch('rhtModule/getStudyRoom', {root:true})
     }
     )
     .catch(err=>console.error(err.response.data))
@@ -339,7 +415,7 @@ const actions = {
   },
 
   //방장이 방 폭파시킴 첫 단계(스터디룸 나가기, 일반 유저 방 나가기와 동일하지만 구분 위해 다른 이름 부여)
-  studyDestroyFirstAxios({state,rootGetters}){
+  studyDestroyFirstAxios({state, dispatch, rootGetters}){
     axios({
       url: BASE_URL + 'studyroom/exit',
       method: 'patch',
@@ -351,10 +427,12 @@ const actions = {
     })
     .then(res=> {
       console.log('일단 방을 나감', state.roomSeq, res.response)
+      router.push('/main')
+      dispatch('studyDestorySecondAxios')
+      this.dispatch('rhtModule/getStudyRoom', {root:true})
     })
     .catch(err=>console.error(err.response))
   },
-
   //방장이 방 폭파시킴 두번째 단계(스터디 룸 삭제)
   studyDestorySecondAxios({state, dispatch, rootGetters}){
     axios({
@@ -370,6 +448,8 @@ const actions = {
     })
     .catch(err=>console.error(err.response))
   },
+
+
   //면접 시작(스터디 룸 면접 시작)
   startInterviewAxios({state,rootGetters}){
     axios({

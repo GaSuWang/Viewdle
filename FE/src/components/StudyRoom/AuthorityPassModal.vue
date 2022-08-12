@@ -29,9 +29,12 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button>
-          <button type="button" class="btn btn-primary" @click="superLeaveSession">로비로 나가기</button>
-          <button v-if="isWR" type="button" class="btn btn-warning" @click="studyDestroy">스터디 폭파</button>
+          <!-- 현탁 페이지이동하면 페이지 어두워지는거 고침 -->
+          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button> -->
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">돌아가기</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="superLeaveSession">로비로 나가기</button>
+          <button v-if="isWR" type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="studyDestroy">스터디 폭파</button>
+          <!-- 현탁 끝  -->
         </div>
       </div>
     </div>
@@ -95,7 +98,10 @@ methods:{
       to: [],
       type: 'studyDestroy'
     })
-    this.$router.push('/main')
+    // 현탁
+    // this.$router.push('/main')
+    this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
+    // 현탁 끝
   },
   //방장이 면접을 나감
   superLeaveSession(){
@@ -142,9 +148,10 @@ methods:{
     }
 
     alert('면접에서 성공적으로 나가셨습니다.')
-
-    this.$router.push('/main')
-
+// 현탁
+    // this.$router.push('/main')
+    this.$store.dispatch('lbhModule/superUserLeaveSessionAxios', nextSuperUserEmail)
+// 현탁끝
   },
   closeAPM(){
     this.$store.commit('EMPTY_NEXT_SUPERUSER_INFO')

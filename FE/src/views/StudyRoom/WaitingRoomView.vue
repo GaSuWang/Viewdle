@@ -19,14 +19,12 @@
     </div>
 
     <div class="WRRightArea">
+      <!-- 현탁 -->
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
-      <div class="user-out" v-if="userType === 'user'"  
-      @click ="userLeaveSessionfromWR"
-      >
-        <button>
-          방나가기
-          <i class="bi bi-x-lg"></i>
-        </button>
+      <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
+          <button class="toLBBtn">
+            <i class="bi bi-backspace"></i>
+          </button>
       </div>
       <!-- 대기실에서 나가기 버튼(방장 유저) -->
       <div v-if="userType === 'superUser'" class="superUser">
@@ -34,7 +32,10 @@
             <i class="bi bi-x-lg"></i>
         </button>
       </div>
+      <!-- 현탁 끝 -->
 
+
+      
       <!-- 방장 유저 기능 -->
       <!-- 면접자 선택 -->
       <div class="dropdown" v-if="userType === 'superUser'">
@@ -190,6 +191,13 @@ export default {
 		// },
   },
   methods: {
+    // 현탁
+       userLeaveSessionAxios(){
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    },
+    // 현탁 끝
+
+
     //일반,방장 유저 공통 기능
     //새로고침 막기
     onConfirmRefresh(){
