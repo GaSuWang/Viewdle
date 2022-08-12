@@ -49,7 +49,7 @@
         </button>
         <ul class="dropdown-menu">
           <li v-for="user in WRParticipantList" :key="user.myUserEmail">
-            <span @click="selectEE(user)">{{ user.myUserName }}: {{myUserEmail}}</span>
+            <span @click="selectEE(user)">{{ user.myUserName }}: {{user.myUserEmail}}</span>
           </li>
         </ul>
       </div>
@@ -131,7 +131,7 @@ export default {
     }
     //방장이 방을 폭파시킬 때
     this.session.on('signal:studyDestroy', ()=> {
-      this.$store.dispatch('studyDestroyAxios')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
     })
       console.log('대기실들어옴',this.currentUserList)
       console.log('대기실들어옴',this.myUserInfo)
@@ -227,26 +227,22 @@ export default {
     },
 
     //일반 유저 기능
-    testMethod(){
-      console.log('왜 버튼이 안눌리지')
-    },
-
     userLeaveSessionfromWR(){
-      console.log('userLeaveSessionfromWR 클릭이 안되는 거야?')
       if(confirm('정말 이 방에서 나가시겠습니까?')){
-        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+        // this.$store.dispatch('lbhModule/userLeaveSessionAxios')
         //다른 참가자들 currentUserList, WRParticipantList에서 나의 이름과 이메일 지우기
+        const myUserEmail = this.myUserEmail
         this.session.signal({
-          data: `${this.myUserName}`,
+          data: `${myUserEmail}`,
           to: [],
           type: 'userLeaveSessionfromWR'
         })
-        this.$store.commit('lbhModule/SET_SESSION', undefined)
-        this.$store.commit('lbhModule/SET_OV', undefined)
-        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-        this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");        
-        this.$store.commit("lbhModule/EMPTY_CURRENT_USER_LIST");        
+        // this.$store.commit('lbhModule/SET_SESSION', undefined)
+        // this.$store.commit('lbhModule/SET_OV', undefined)
+        // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+        // this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");        
+        // this.$store.commit("lbhModule/EMPTY_CURRENT_USER_LIST");        
         this.$router.push('/main')
       }
     },
@@ -270,11 +266,13 @@ export default {
     },
     //스터디 모드 시작
     startInterview(){
+      const myUserName = this.EECnd.myUserName
+      const myUserEmail = this.EECnd.myUserEmail
       if(this.EECnd){
-        if(confirm(`면접자는 ${this.EECnd.myUserName}입니다.\n면접을 시작하시겠습니까?`)){
+        if(confirm(`면접자는 ${myUserName}입니다.\n면접을 시작하시겠습니까?`)){
           // this.$store.dispatch('lbhModule/startInterview', this.EECnd)
           this.session.signal({
-            data: `${this.EECnd.myUserEmail}`,
+            data: `${myUserEmail}`,
             to:[],
             type:'startInterview'})
           }
@@ -282,10 +280,12 @@ export default {
     },
     //플레이모드 시작
     startEZInterview(){
+      const myUserName = this.EECnd.myUserName
+      const myUserEmail = this.EECnd.myUserEmail
       if(this.EECnd){
-        if(confirm(`면접자는 ${this.EECnd.myUserName}입니다.\n면접을 시작하시겠습니까?`)){
+        if(confirm(`면접자는 ${myUserName}입니다.\n면접을 시작하시겠습니까?`)){
           this.session.signal({
-            data: `${this.EECnd.myUserEmail}`,
+            data: `${myUserEmail}`,
             to: [],
             type: "startEZInterview",
           });
@@ -345,7 +345,7 @@ export default {
               myUserName: this.myUserName,
               myUserEmail: this.myUserEmail
             }
-            this.$store.dispatch('lbhModule/startInterviewAxios', this.roomSeq)
+            // this.$store.dispatch('lbhModule/startInterviewAxios', this.roomSeq)
             this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", publisherInfo);
             // this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", publisherInfo);
 
@@ -401,8 +401,10 @@ export default {
           this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
 
           // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+          const coverLetterTitle = this.CLSelected.coverLetterTitle
+          const coverLetterContent = this.CLSelected.coverLetterContent
           this.session.signal({ 
-          data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`, 
+          data: `"title": ${coverLetterTitle}, "content": ${coverLetterContent}`, 
           to: [], 
           type: 'EECL' 
           })
@@ -447,10 +449,13 @@ export default {
           console.log("startEZInterview as EE");
           this.$store.commit('lbhModule/SET_ISEE', true)
           this.$store.commit("lbhModule/SET_EE", this.publisher); //나(publisher)를 EE에 넣음
+
+          const coverLetterTitle = this.CLSelected.coverLetterTitle
+          const coverLetterContent = this.CLSelected.coverLetterContent
           this.session
             .signal({
               // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
-              data: `"title": ${this.CLSelected.coverLetterTitle}, "content": ${this.CLSelected.coverLetterContent}`,
+              data: `"title": ${coverLetterTitle}, "content": ${coverLetterContent}`,
               to: [],
               type: "EECL",
             })

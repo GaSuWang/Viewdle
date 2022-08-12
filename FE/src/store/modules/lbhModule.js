@@ -6,7 +6,8 @@ const state = {
   //방장권한
   APMOpen: false,
   currentUserList: [], //방장 권한 위임을 위해서만 존재
-  
+  nextSuperUserInfo: {},
+  studyDestroy: false,
   //유저 정보
   //rhtModule UserList에서 userEmail, userName로 있어 getters를 통해 사용
 
@@ -34,7 +35,7 @@ const state = {
 
   //WaitingRoom
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
-  userType: 'user', //일반 유저는 user, 방장 유저는 suuperUser
+  userType: 'user', //일반 유저는 user, 방장 유저는 superUser
   // mySessionId: "Session" + roomSeq, //undefined
   publisher: undefined,
   subscribers: [],
@@ -79,8 +80,14 @@ const getters = {
   WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
   StartInterview(state) {return state.StartInterview},
   currentUserList(state) {return state.currentUserList},
-  nextSuperUserList(state){return state.currentUserList.filter(p => p.name !== state.myUserName)},
-
+  // nextSuperUserList(state){return state.currentUserList.filter(p => p.name !== state.myUserName)},
+  nextSuperUserList(state){
+    if(state.currentUserList.length) {
+      return state.currentUserList.filter(p => p.myUserEmail !== state.myUserEmail)
+    } else return []
+  },
+  nextSuperUserInfo(state) {return state.nextSuperUserInfo},
+  studyDestroy(state){return state.studyDestroy},
   //SettingRoom
   MicList(state) {return state.MicList},
   MicSelected(state){return state.MicSelected},
@@ -125,12 +132,17 @@ const getters = {
   recordingObject(state) {return state.recordingObject},
 };
 const mutations = {
+  //방장권한
+  SET_STUDY_DESTOY(state, tf){state.studyDestroy = tf},
+
   //유저 정보
   GET_USER_INFO(state, user){
     state.myUserName = user.userName
     state.myUserEmail = user.userEmail
     console.log('에휴 이렇게라도 불러와야지...',user, state.myUserName, state.myUserEmail)
   },
+  EMPTY_NEXT_SUPERUSER_INFO(state){state.nextSuperUserInfo = {}},
+  SET_NEXT_SUPERUSER_INFO(state, data){state.nextSuperUserInfo = data},
   // GET_MY_USER_EMAIL(state, data){state.myUserEmail = data},
   // GET_MY_USER_NAME(state, data){state.myUserName = data},
 
@@ -242,10 +254,8 @@ const mutations = {
   SET_ISER(state, tf){state.isER = tf},
   SET_STUDYROOM_CL(state,cl){state.studyRoomCL = cl},
   SET_EE(state, EE) {state.EE = EE},
-  SET_ERS(state, ERS) {
-    state.ERS.push(ERS)
-    console.log('면접관이 추가되었습니다.')
-  },
+  SET_ERS(state, ERS) {state.ERS.push(ERS)},
+  EMPTY_EE(state) {state.EE = []},
   EMPTY_ERS(state){state.ERS = []},
 
   //FeedbackRoom
@@ -264,77 +274,108 @@ const mutations = {
   SET_RECORDING_OBJECT(state, recordingObject){state.recordingObject = recordingObject},
 };
 
-const BASE_URL = 'https://' + location.hostname + '/api/v1/'
+const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'
+// const BASE_URL = 'https://' + location.hostname + '/api/v1/'
 
 const actions = {
   //Axios 모음
-
+  deleteData({commit}){
+    commit('GET_ROOM_INFO', {roomSeq: undefined, roomTitle: undefined, roomType: '1', isSuperUser:false})
+    commit('SET_OV', undefined)
+    commit('SET_SESSION', undefined)
+    commit('SET_SESSION_TOKEN', undefined)
+    commit('SET_PUBLISHER', undefined)
+    commit('SET_SUBSCRIBERS', [])
+    //commit('SET_MYSESSIONID', undefined)
+    commit('SELECT_CAMERA', {})
+    commit('SELECT_MIC', {})
+    commit('SELECT_CL', {})
+    commit('EMPTY_WR_PARTICIPANT_LIST')
+    commit('EMPTY_CURRENT_USER_LIST')
+    commit('SET_ISEE', false)
+    commit('SET_ISER', false)
+    commit('EMPTY_EE')
+    commit('EMPTY_ERS')
+    commit('EMPTY_FB')
+    commit('EMPTY_NEXT_SUPERUSER_INFO')
+  },
   //유저가 방 나감(스터디룸 나가기)
-  userLeaveSessionAxios({state, getters}){
+  userLeaveSessionAxios({state,dispatch, rootGetters }){
+    console.log('유저 방에서 잘 나가....나?')   
     axios({
       url: BASE_URL + 'studyroom/exit',
       method: 'patch',
-      headers: {Authorization: getters.authHeader},
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {
         nextOwnerEmail: "",
         roomSeq: state.roomSeq,
       }
     })
-    .then(console.log('일반 유저 정상적으로 세션 나감', state.roomSeq, typeof(state.roomSeq)))
-    .catch(err=>console.error(err.response))
+    .then(res =>{
+      console.log('유저 방에서 잘 나감')
+      console.log(res.response),
+      dispatch('deleteData')
+    }
+    )
+    .catch(err=>console.error(err.response.data))
   },
 
   //방장이 권한 위임하고 방 나감(스터디룸 나가기)
-  superUserLeaveSessionAxios({state, getters},nextSuperUserEmail){
+  superUserLeaveSessionAxios({state, dispatch, rootGetters},nextSuperUserEmail){
     axios({
       url: BASE_URL + 'studyroom/exit',
       method: 'patch',
-      headers: {Authorization: getters.authHeader},
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {
         nextOwnerEmail: nextSuperUserEmail,
         roomSeq: state.roomSeq,
       }
     })
-    .then(console.log('방장 유저 정상적으로 세션 나감'))
+    .then(res=> {
+      dispatch('deleteData')
+      console.log('방장 유저 정상적으로 세션 나감', res.response)
+    })
     .catch(err=>console.error(err.response))
   },
 
   //방장이 방 폭파시킴 첫 단계(스터디룸 나가기, 일반 유저 방 나가기와 동일하지만 구분 위해 다른 이름 부여)
-  studyDestroyFirstAxios({state, getters}){
+  studyDestroyFirstAxios({state,rootGetters}){
     axios({
       url: BASE_URL + 'studyroom/exit',
       method: 'patch',
-      headers: {Authorization: getters.authHeader},
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {
         nextOwnerEmail: "",
         roomSeq: state.roomSeq,
       }
     })
-    .then(console.log('일단 방을 나감', state.roomSeq))
+    .then(res=> {
+      console.log('일단 방을 나감', state.roomSeq, res.response)
+    })
     .catch(err=>console.error(err.response))
   },
 
   //방장이 방 폭파시킴 두번째 단계(스터디 룸 삭제)
-  studyDestorySecondAxios({state, getters}){
+  studyDestorySecondAxios({state, dispatch, rootGetters}){
     axios({
       // url: BASE_URL + `studyroom/exit/${state.roomSeq}`, 이게 내가 기억하는 거
       url: BASE_URL + `studyroom/${state.roomSeq}`,
       method: 'patch',
-      headers: {Authorization: getters.authHeader},
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {roomSeq: state.roomSeq},
     })
     .then(res => {
+      dispatch('deleteData')
       console.log('방이 성공적으로 폭파됨', res.response) 
     })
     .catch(err=>console.error(err.response))
   },
-
   //면접 시작(스터디 룸 면접 시작)
-  startInterviewAxios({state, getters}){
+  startInterviewAxios({state,rootGetters}){
     axios({
       url: BASE_URL + `studyroom/interview/${state.roomSeq}`,
       method:'patch',
-      headers: {Authorization: getters.authHeader},
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {roomSeq: state.roomSeq}
     })
     .then(res=>{
@@ -344,11 +385,11 @@ const actions = {
   },
 
   //면접 끝, 면접자는 대기실로, 면접관은 피드백실로 이동(내 영상 저장)
-  finishInterviewAxios({state, getters, commit}){
+  finishInterviewAxios({state, rootGetters, commit}){
     axios({
       url: BASE_URL + 'video',
       method: 'post',
-      headers: {Authorization: getters.authHeader},
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {
         userEmail: state.myUserEmail,
         videoTitle: state.roomTitle,
@@ -363,11 +404,11 @@ const actions = {
   },
 
   //면접관이 피드백 끝냄(스터디 룸 면접 종료)
-  FBCompleteAxios({state,getters}){
+  FBCompleteAxios({state,rootGetters}){
     axios({
       url: BASE_URL + 'studyroom/interview',
       method: 'post',
-      headers: {Authorization: getters.authHeader},
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {
         feedbackList: state.FBList,
         roomSeq: state.roomSeq,
@@ -379,11 +420,11 @@ const actions = {
   },
 
   // 다시보기 비디오 가져오기(영상 및 피드백 다시보기)
-  getReplayAxios({state, getters, commit}){
+  getReplayAxios({state, rootGetters, commit}){
     axios({
       url: BASE_URL + `video/${state.videoSeq}`,
       method: 'post',
-      headers: {Authorization: getters.authHeader},
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {
         videoSeq: state.videoSeq
       }

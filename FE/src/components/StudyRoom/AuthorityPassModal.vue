@@ -19,7 +19,7 @@
           <ul>
             <li v-for="user in nextSuperUserList" :key="user.myUserEmail">
               <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="nextSuperUser = user">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="selectNextSuperUser(user)">
                 <label class="form-check-label" for="flexRadioDefault1">
                   {{user.myUserName}}: {{user.myUserEmail}}
                 </label>
@@ -54,7 +54,7 @@ data(){
   return{
     // OV: undefined,
     // session: undefined,
-    nextSuperUserInfo: {},
+    // nextSuperUserInfo: {},
   }
 },
 computed: {
@@ -66,12 +66,10 @@ computed: {
     'sessionToken',
     'OV',
     'session',
+    'nextSuperUserList',
+    'nextSuperUserInfo',
   ]),
-  nextSuperUserList(){
-    if(this.currentUserList.length) {
-      return this.currentUserList.filter(p => p.myUserEmail !== this.myUserEmail)
-    } else return []
-  },
+
   isWR(){
     if(this.$router.currentRoute.value.name === 'waiting-room'){
       console.log('waiting-room')
@@ -86,26 +84,29 @@ computed: {
   }
 },
 methods:{
+  selectNextSuperUser(user){
+    this.$store.commit('lbhModule/SET_NEXT_SUPERUSER_INFO', user)
+  },
   //방장이 면접을 폭파시킴
-  async studyDestroy(){
-    this.$store.dispatch('lbhModule/studyDestroyAxios')
-    // this.OV = new OpenVidu()
-    // this.session = this.OV.initSession()
-    // this.session.connect(this.sesionToken)
+  studyDestroy(){
+    this.$store.commit('lbhModule/SET_STUDY_DESTOY', true)
     this.session.signal({
       data: '',
       to: [],
       type: 'studyDestroy'
     })
+    this.$router.push('/main')
   },
   //방장이 면접을 나감
   superLeaveSession(){
-    this.$store.dispatch('lbhModule/superUserLeaveSessionAxios', this.nextSuperUserInfo.myUserEmail)
-
+    const currentSuperUserName = this.myUserName
+    const currentSuperUserEmail = this.myUserEmail
+    const nextSuperUserName = this.nextSuperUserInfo.myUserName
+    const nextSuperUserEmail = this.nextSuperUserInfo.myUserEmail
     //방장이 현재 면접자
     if(this.$router.currentRoute.value.name === 'ee-room' || this.$router.currentRoute.value.name === 'ee-room-ez'){
       this.session.signal({
-        data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        data:`{myUserName:${currentSuperUserName},myUserEmail:${currentSuperUserEmail}} {myUserName:${nextSuperUserName},myUserEmail:${nextSuperUserEmail}}`,
         to:[],
         type:'superEELeaveSession'
       })
@@ -114,7 +115,8 @@ methods:{
     //방장이 현재 면접관
     else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez') {
       this.session.signal({
-        data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        data:`{myUserName:${currentSuperUserName},myUserEmail:${currentSuperUserEmail}} {myUserName:${nextSuperUserName},myUserEmail:${nextSuperUserEmail}}`,
         to: [],
         type: 'superERLeaveSession'
       })
@@ -122,7 +124,8 @@ methods:{
     } 
     else if(this.$router.currentRoute.value.name === 'fb-room') {
       this.session.signal({
-        data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        data:`{myUserName:${currentSuperUserName},myUserEmail:${currentSuperUserEmail}} {myUserName:${nextSuperUserName},myUserEmail:${nextSuperUserEmail}}`,
         to: [],
         type: 'superERLeaveSessionFromFB'
       })
@@ -130,7 +133,8 @@ methods:{
     } 
     else if(this.$router.currentRoute.value.name === 'waiting-room'){
       this.session.signal({
-        data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        data:`{myUserName:${currentSuperUserName},myUserEmail:${currentSuperUserEmail}} {myUserName:${nextSuperUserName},myUserEmail:${nextSuperUserEmail}}`,
         to: [],
         type: 'superLeaveSessionWR'
       })
@@ -138,18 +142,12 @@ methods:{
     }
 
     alert('면접에서 성공적으로 나가셨습니다.')
-    this.$store.commit('lbhModule/SET_SESSION', undefined)
-    this.$store.commit('lbhModule/SET_OV', undefined)
-    this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-    this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-    this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
-    this.$store.commit("lbhModule/EMPTY_CURRENT_USER_LIST");
+
     this.$router.push('/main')
-    this.nextSuperUserInfo = {}
 
   },
   closeAPM(){
-    this.nextSuperUser = {}
+    this.$store.commit('EMPTY_NEXT_SUPERUSER_INFO')
   },
 },
 };

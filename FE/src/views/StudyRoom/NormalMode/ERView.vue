@@ -188,14 +188,14 @@ export default {
 
       if (this.session) this.session.disconnect();
 
-      this.$store.commit('lbhModule/SET_SESSION', undefined)
-      this.$store.commit('lbhModule/SET_OV', undefined)
-      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-      this.$store.commit('lbhModule/SET_SUPERUSER', {})
-      this.$store.commit('lbhModule/EMPTY_FB')
+      // this.$store.commit('lbhModule/SET_SESSION', undefined)
+      // this.$store.commit('lbhModule/SET_OV', undefined)
+      // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+      // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+      // this.$store.commit('lbhModule/SET_SUPERUSER', {})
+      // this.$store.commit('lbhModule/EMPTY_FB')
       
-      window.removeEventListener("beforeunload", this.ERLeaveSession);
+      // window.removeEventListener("beforeunload", this.ERLeaveSession);
       this.$router.push('/main')
       }
     },

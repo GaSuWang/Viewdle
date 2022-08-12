@@ -4,6 +4,14 @@
     <!-- 좌단 -->
     <!-- 유저 화면 나오는 곳 -->
     <div class="SRLeftArea">
+      <VideoPlayer id="testVid" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
+      controls
+      width="680"
+      height="340"
+      />
+      <div @click="moveTo()">1:00</div>
+      <div @click="moveTo()">2:00</div>
+      <div @click="moveTo()">3:00</div>
     </div>
     <!-- 우단   -->
     <div class="SRRightArea">
@@ -91,9 +99,14 @@
 <script>
 import {mapGetters, useStore} from 'vuex';
 import { OpenVidu } from 'openvidu-browser';
+import { VideoPlayer } from '@videojs-player/vue'
+var vid = document.getElementById('testVid')
 
 export default {
   name: "SettingRoomView",
+  components:{
+    VideoPlayer
+  },
   created(){
     console.log(this.CLList)
     console.log('userinfo', this.$store.getters['rhtModule/UserList'])
@@ -126,6 +139,10 @@ export default {
     ])
   },
   methods:{
+    moveTo(){
+      // vid.ontimeupdate = 
+      console.log(vid.currentTime)
+    },
     async forceLeaveSession() {
       if(this.userType === 'user'){
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')

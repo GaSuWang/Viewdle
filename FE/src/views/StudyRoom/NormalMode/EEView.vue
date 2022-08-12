@@ -165,14 +165,14 @@ export default {
           to:[],
           type:'EELeaveSession'
         })
-        this.$store.dispatch('lbhModule/userLeaveSession')
+        // this.$store.dispatch('lbhModule/userLeaveSession')
         if (this.session) this.session.disconnect();
 
-        this.$store.commit('lbhModule/SET_SESSION', undefined)
-        this.$store.commit('lbhModule/SET_OV', undefined)
-        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-        this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
+        // this.$store.commit('lbhModule/SET_SESSION', undefined)
+        // this.$store.commit('lbhModule/SET_OV', undefined)
+        // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+        // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+        // this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
 
         this.$router.push("/main");
       }

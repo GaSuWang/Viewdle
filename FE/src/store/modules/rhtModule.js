@@ -115,31 +115,32 @@ const actions= {
     },
     
   // 로그인 
-    // login({ dispatch, getters }, credentials) {
+    login({ dispatch, getters }, credentials) {
 
-    //   console.log("로그인아 안녕?")
-    //   axios({
-    //     url: 'https://' + location.hostname + ':8081' + '/api/v1/users/login',  
-    //     method: 'post',
-    //     data: credentials
-    //   })
-    //     .then(res => {
-    //       console.log("해윙")
-    //       console.log(res)
-    //       const token = res.data.accessToken
-    //       dispatch('saveToken', token)
-    //       console.log(getters.authHeader)
-    //       dispatch('fetchCurrentUser')
-    //       console.log(getters.UserList)
-    //       dispatch('fetchHistories')
-    //       dispatch('getBadge')
-    //       router.push('/main')
-    //     })
-    //     .catch(err => {
-    //       console.error(err)
-    //       alert("이메일 및 비밀번호를 확인하세요")
-    //     })
-    // },
+      console.log("로그인아 안녕?")
+      axios({
+        // url: 'https://' + location.hostname + ':8081' + '/api/v1/users/login',  
+        url: 'http://' + location.hostname + '/api/v1/users/login',  
+        method: 'post',
+        data: credentials
+      })
+        .then(res => {
+          console.log("해윙")
+          console.log(res)
+          const token = res.data.accessToken
+          dispatch('saveToken', token)
+          console.log(getters.authHeader)
+          dispatch('fetchCurrentUser')
+          console.log(getters.UserList)
+          dispatch('fetchHistories')
+          dispatch('getBadge')
+          router.push('/main')
+        })
+        .catch(err => {
+          console.error(err)
+          alert("이메일 및 비밀번호를 확인하세요")
+        })
+    },
 
     // 로그아웃
     logout({ dispatch }) {
