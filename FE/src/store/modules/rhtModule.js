@@ -486,12 +486,15 @@ const actions= {
         url: 'http://' + location.hostname + ':8081' + '/api/v1/studyroom/enter',
         method:'post',
         data: {
+          //roomPassword로 빈 string 보내줘야 함
+          "roomPassword": "",
           "roomSeq" : credentials
         },
         headers: {Authorization: getters.authHeader }
       })
       .then((res) => {
         console.log(res)
+        console.log(credentials)
         alert('스터디룸에 입장되었습니다.')
         /// 이병헌 시작
         router.push({
@@ -503,12 +506,12 @@ const actions= {
         // })
         })
         function findRoom(e){
-          return e.roomSeq ===  parseInt(credentials.roomSeq)
+          return e.roomSeq ===  credentials
         }
         const roomTitle = state.StudyroomList.find(findRoom).roomTitle
         const roomType = state.StudyroomList.find(findRoom).roomType
         const data = {
-          roomSeq: parseInt(credentials.roomSeq),
+          roomSeq: credentials,
           roomType : roomType,
           roomTitle: roomTitle,
           isSuperUser: false,
