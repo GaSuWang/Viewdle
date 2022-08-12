@@ -104,7 +104,7 @@ methods:{
     //방장이 현재 면접자
     if(this.$router.currentRoute.value.name === 'ee-room' || this.$router.currentRoute.value.name === 'ee-room-ez'){
       this.session.signal({
-        data:`{myUserName:${currentSuperUserName},myUserEmail:${currentSuperUserEmail}} {myUserName:${nextSuperUserName},myUserEmail:${nextSuperUserEmail}}`,
+        data:`'{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}'`,
         to:[],
         type:'superEELeaveSession'
       })
@@ -114,7 +114,7 @@ methods:{
     else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez') {
       this.session.signal({
         // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        data:`{myUserName:${currentSuperUserName},myUserEmail:${currentSuperUserEmail}} {myUserName:${nextSuperUserName},myUserEmail:${nextSuperUserEmail}}`,
+        data:`'{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}'`,
         to: [],
         type: 'superERLeaveSession'
       })
@@ -123,7 +123,7 @@ methods:{
     else if(this.$router.currentRoute.value.name === 'fb-room') {
       this.session.signal({
         // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        data:`{myUserName:${currentSuperUserName},myUserEmail:${currentSuperUserEmail}} {myUserName:${nextSuperUserName},myUserEmail:${nextSuperUserEmail}}`,
+        data:`'{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}'`,
         to: [],
         type: 'superERLeaveSessionFromFB'
       })
@@ -132,7 +132,7 @@ methods:{
     else if(this.$router.currentRoute.value.name === 'waiting-room'){
       this.session.signal({
         // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        data:`{myUserName:${currentSuperUserName},myUserEmail:${currentSuperUserEmail}} {myUserName:${nextSuperUserName},myUserEmail:${nextSuperUserEmail}}`,
+        data:`'{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}'`,
         to: [],
         type: 'superLeaveSessionWR'
       })
