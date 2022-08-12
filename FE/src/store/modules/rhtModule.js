@@ -635,7 +635,7 @@ const actions= {
       })
     },
     // 영상 지우기
-    deleteReplay({getters}, credentialsTodelete) {
+    deleteReplay({getters, dispatch}, credentialsTodelete) {
       console.log("리플레이지우기야 안녕?")
       console.log(credentialsTodelete)
       axios({
@@ -646,6 +646,8 @@ const actions= {
       })
       .then(() => {
         alert('리플레이를 삭제했습니다.')
+        dispatch('getReplay')
+
       }
       )
       .catch(err => {

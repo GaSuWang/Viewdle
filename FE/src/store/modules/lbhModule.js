@@ -344,7 +344,8 @@ const actions = {
   },
 
   //면접 끝, 면접자는 대기실로, 면접관은 피드백실로 이동(내 영상 저장)
-  finishInterviewAxios({state, getters, commit}){
+  // 임현탁 videourl credentials에 받아옴
+  finishInterviewAxios({state, getters, commit}, credentials){
     axios({
       url: BASE_URL + 'video',
       method: 'post',
@@ -352,7 +353,7 @@ const actions = {
       data: {
         userEmail: state.myUserEmail,
         videoTitle: state.roomTitle,
-        videoUrl: state.videoUrl, //videoUrl 추가해야됨
+        videoUrl: credentials.url, //videoUrl 추가해야됨
       }
     })
     .then(res=>{
