@@ -20,14 +20,16 @@
 
     <div class="WRRightArea">
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
-      <div class="user-out" v-if="userType === 'user'">
-        <button @click.prevent="userLeaveSessionFromWR">
+      <div class="user-out" v-if="userType === 'user'"  
+      @click ="userLeaveSessionfromWR"
+      >
+        <button>
           방나가기
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
       <!-- 대기실에서 나가기 버튼(방장 유저) -->
-      <div v-if="userType === 'superUser'" class="ERtoLBbtn superUser">
+      <div v-if="userType === 'superUser'" class="superUser">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
         </button>
@@ -52,12 +54,12 @@
         </ul>
       </div>
 
-      <!-- <div class="start-interview" v-if="userType === 'superUser'">
+      <div class="start-interview" v-if="userType === 'superUser'">
         <button @click="startInterview">
           <i class="bi bi-check-lg"></i>
         </button>
         <button @click="startEZInterview">EZ<i class="bi bi-check-lg"></i></button>
-      </div> -->
+      </div>
 
       <div class="mic-status">
         <button @click="switchMicStatus" v-if="session">
@@ -122,6 +124,7 @@ export default {
   mounted(){
     //대기실에서 joinSession
     if(!this.currentUserList.filter((e)=>e.myUserEmail===this.myUserEmail).length){
+      console.log('현재 스터디 참여 유저 목록',this.currentUserList)
       this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", this.myUserInfo);
       console.log('만약에 내가 지금 스터디에 참여하고 있지 않다면, joinSession해라 제발...')
       this.joinSession()
@@ -224,10 +227,14 @@ export default {
     },
 
     //일반 유저 기능
+    testMethod(){
+      console.log('왜 버튼이 안눌리지')
+    },
+
     userLeaveSessionfromWR(){
       console.log('userLeaveSessionfromWR 클릭이 안되는 거야?')
       if(confirm('정말 이 방에서 나가시겠습니까?')){
-        this.$store.disaptch('lbhModule/userLeaveSessionAxios')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
         //다른 참가자들 currentUserList, WRParticipantList에서 나의 이름과 이메일 지우기
         this.session.signal({
           data: `${this.myUserName}`,
@@ -301,6 +308,7 @@ export default {
       this.session.on("streamCreated", ({ stream }) => {
         console.log('streamCreated')
         const subscriber = this.session.subscribe(stream) ;
+        console.log('subscriber',subscriber)
         this.$store.commit("lbhModule/ADD_SUBSCRIBERS", subscriber);
 
         const subscriberInfo = {
@@ -332,6 +340,7 @@ export default {
         this.session
           .connect(token, { clientName: this.myUserName, clientEmail: this.myUserEmail })
           .then(() => {
+            console.log('session Connection Info token?', token)
             const publisherInfo = {
               myUserName: this.myUserName,
               myUserEmail: this.myUserEmail
@@ -350,7 +359,7 @@ export default {
               insertMode: "APPEND", 
               mirror: false, 
             });
-            
+            console.log('joinSession해서 만들어진 publisher', publisher)
             this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
 
             this.publisher.subscribeToRemote(true);
@@ -372,7 +381,7 @@ export default {
       this.session.on('signal:superLeaveSessionWR', (e) => {
         const pastSuperUser = JSON.parse(e.data.split(' ')[0])
         const currentSuperUser = JSON.parse(e.data.split(' ')[1])
-        this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUser)
+        this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUser)
         if(this.myUserEmail === currentSuperUser.myUserEmail){
           alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
           this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
@@ -388,7 +397,7 @@ export default {
         //만약에 내가 면접자라면
         if(this.EECnd.myUserEmail === this.myUserEmail){ 
           console.log('startinterview as ee')
-          this.$store.commit('SET_ISEE', true)
+          this.$store.commit('lbhModule/SET_ISEE', true)
           this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
 
           // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
@@ -412,7 +421,7 @@ export default {
         //만약 내가 면접관이라면
         else {
           console.log('startinterview as er')
-          this.$store.commit('SET_ISER', true)
+          this.$store.commit('lbhModule/SET_ISER', true)
           this.$store.commit("lbhModule/SET_ERS", this.publisher); //나(publisher)를 ERS에 넣음
 
           this.subscribers.forEach((s) => {
@@ -436,7 +445,7 @@ export default {
         //만약에 내가 면접자라면
         if (this.EECnd.myUserEmail === this.myUserEmail) {
           console.log("startEZInterview as EE");
-          this.$store.commit('SET_ISEE', true)
+          this.$store.commit('lbhModule/SET_ISEE', true)
           this.$store.commit("lbhModule/SET_EE", this.publisher); //나(publisher)를 EE에 넣음
           this.session
             .signal({
@@ -462,7 +471,7 @@ export default {
         else {
           //만약 내가 면접관이라면
           console.log("startEZInterview as ER");
-          this.$store.commit('SET_ISER', true)
+          this.$store.commit('lbhModule/SET_ISER', true)
           this.$store.commit("lbhModule/SET_ERS", this.publisher); //나(publisher)를 ERS에 넣음
 
           this.subscribers.forEach((s) => {
