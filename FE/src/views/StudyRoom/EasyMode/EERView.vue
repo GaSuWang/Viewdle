@@ -1,13 +1,19 @@
 // 이병헌
 <template>
   <AuthorityPassModal/>
-  <AttackSpaceBar v-if="suddenAttackFlag==0" class="suddenAttack" @endSuddenAttack="endSuddenAttack"/>
+  <!-- 돌발상황 영역 -->
+  <div v-if="suddenAttackFlag==0">
+    <div class = "guard"></div>
+     <AttackSpaceBar  class="sufddenAttack" @endSuddenAttack="endSuddenAttack"/>
+  </div>
   <ArrowDirection v-else-if="suddenAttackFlag==1" class="suddenAttack" @endSuddenAttack="endSuddenAttack" />
-  <OneToNine class="suddenAttack" @endSuddenAttack="endSuddenAttack"/>
-  
+  <OneToNine v-else-if="suddenAttackFlag==2" class="suddenAttack" @endSuddenAttack="endSuddenAttack"/>
+  <!-- 돌발상황 영역 끝 -->
+  <div :style="cssVariable" class="siren"></div>
   <div class="EERView">
     <!-- 영상 구역 -->
-    <div :style="cssVariable" class="EERContent">
+    <!-- style cssVariable 삭제 -->
+    <div class="EERContent">   
       <!-- 면접자 영상 구역  -->
       <div class="EEVidContainer">
         <div class="EEVid">
@@ -68,7 +74,7 @@
           </button>
         </div>
         <div class="CaptureBtn">
-          <button>
+          <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
             <i class="bi bi-camera"></i>
           </button>
         </div>
@@ -254,7 +260,7 @@ export default {
         this.suddenBtnState = false;
       }
     })
-    //----------------돌발 상황 끝 ----------------------
+    //----------------돌발 상황 끝 -----------------------
     //----------------돌발 질문 시작-----------------------
     this.session.on("signal:suddenQA", () => {
       console.log("receive suddenQA signal");
@@ -520,11 +526,7 @@ export default {
     },
     endSuddenAttack(){
       this.suddenAttackFlag = -1;
-      this.session.signal({
-        data:"endSuddenAttack",
-        to:[],
-        type:"endSuddenAttack"
-      })
+      this.activeSuddenBtn();
     },
 
     //---------------------돌발 질문,상황 관련 함수 끝-----------------------------
@@ -641,7 +643,7 @@ export default {
 }
 
 .EERContent {
-  --bgcolor: white;
+  
   width: 80%;
   height: 100%;
   /* opacity: 50%; */
@@ -651,7 +653,7 @@ export default {
   justify-content: center;
   align-items: center;
   transition-duration: 0.2s;
-  background-color: var(--bgcolor);
+  background-color: white;
 }
 
 .EEVidContainer {
@@ -746,5 +748,25 @@ export default {
 
 .suddenAttack{
   z-index: 1;
+}
+.guard{
+   position:absolute;
+   top:0%;
+   left: 0%;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    opacity: 0;
+}
+.siren{
+   --bgcolor: white;
+  position:absolute;
+   top:0%;
+   left: 0%;
+    z-index: -1;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bgcolor);
 }
 </style>

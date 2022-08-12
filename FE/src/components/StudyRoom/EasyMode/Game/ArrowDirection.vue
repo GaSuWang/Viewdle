@@ -1,6 +1,6 @@
 <template>
   <div class="background" tabindex="0" @keyup="checkKey" ref="div">
-    <GameTimer class="timer" @TimeOut="failSuddenAttack"/>
+    <GameTimer class="timer" @TimeOut="failSuddenAttack" />
     <span v-for="(i, index) in icons" :key="index">
       <i :class="i.name" :id="index"></i>
     </span>
@@ -18,7 +18,7 @@ export default {
     };
   },
   created() {
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 10; i++) {
       var flag = Math.floor(Math.random() * 4);
       console.log(flag);
       if (flag == 0) {
@@ -33,9 +33,9 @@ export default {
     }
   },
   mounted() {
-    console.log("mount");
-    this.$refs.div.focus();
-    console.log(this.$refs.div);
+    setTimeout(() => {
+      this.$refs.div.focus();
+    }, 1500);
   },
   methods: {
     checkKey(e) {
@@ -57,7 +57,7 @@ export default {
 </script>
 
 <style scoped>
-.timer{
+.timer {
   color: white;
 }
 i {

@@ -2,7 +2,7 @@
   <div class="background">
     <GameTimer class="timer" @TimeOut="failSuddenAttack" />
     <div v-for="(row,index) in number2D" :key="index">
-        <div class="cell" v-for="(cell,index2) in row" :key="index2" @click="clickCell(cell.num,index,index2)"  :style="{visibility: cell.flag}">{{cell.num}}{{cell.flag}}</div>
+        <div class="cell" v-for="(cell,index2) in row" :key="index2" @click="clickCell(cell.num,index,index2)"  :style="{visibility: cell.flag}">{{cell.num}}</div>
     </div>
   </div>
 </template>
@@ -59,13 +59,26 @@ export default {
   height: 100vh;
 }
 .cell{
+    cursor: pointer;
     margin: 2vw;
     font-size: 50px;
     display: inline-block;
     width: 20vw;
     height: 20vh;
-    background: rgba(255, 192, 166, 1);
+    background: rgb(240, 90, 25);
     border-radius: 5%;
     text-align: center;
+    animation: bounce-in 1.5s;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>
