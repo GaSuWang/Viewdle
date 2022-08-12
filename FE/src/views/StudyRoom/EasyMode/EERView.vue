@@ -24,11 +24,13 @@
 
     <div class="EERRightArea">
       <div class="EERButtonHeader">
+        <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
           <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
               <i class="bi bi-x-lg"></i>
           </button>
         </div>
+        <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
           <button type="button">
               <i class="bi bi-x-lg"></i>
@@ -297,7 +299,7 @@ export default {
     };
   },
   methods: {
-        userLeaveSessionFromEER(){
+    userLeaveSessionFromEER(){
       if(confirm('정말 면접 도중에 나가시겠습니까?')){
         if(this.isEE){
           this.session.signal({

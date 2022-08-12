@@ -159,7 +159,13 @@ const actions= {
           method: 'get',
           headers: {Authorization: getters.authHeader },
         })
-          .then(res => commit('SET_USER_LIST', res.data))
+          .then(res => {
+            commit('SET_USER_LIST', res.data)
+            //이병헌 시작
+            console.log('모듈....', res.data)
+            commit("lbhModule/GET_USER_INFO", res.data, {root:true})
+            //이병헌 끝
+            })
           .catch(err => {
             if (err.response.status === 401) {
               dispatch('removeToken')
@@ -438,7 +444,8 @@ const actions= {
       })
     },
 
-    createStudyroom({dispatch, getters},credentials) {
+    /// 이병헌 시작(바로 아래 줄에는 commit넣어줌)
+    createStudyroom({commit, dispatch, getters},credentials) {
       console.log("스터디룸만들기야 안녕?")
       axios({
         // url:'https://' + location.hostname + '/api/v1/studyroom', // 비번수정 api 
@@ -454,20 +461,30 @@ const actions= {
         alert('스터디룸이 생성되었습니다.')
         router.push({
           name: 'setting-room', 
-          query: {
-            roomSeq : res.data.roomSeq,
-            studyRoomMode : credentials.type,
-            moderator : true
-          }
+          // query: {
+          //   roomSeq : res.data.roomSeq,
+          //   studyRoomMode : credentials.type,
+          //   moderator : true
+          // }
         })
+        const data = {
+          roomSeq: res.data.roomSeq,
+          roomType : credentials.type,
+          roomTitle: credentials.title,
+          isSuperUser: true,
+        } 
+        commit("lbhModule/GET_ROOM_INFO", data, {root:true})
+        /// 이병헌 끝 
       })
       .catch(err => {
         console.error(err.response)
         alert('실패.')
       })
     },
+
     // 일반방스터디룸 입장
-    enterNormalStudyroom({getters}, credentials) {
+    /// 이병헌 시작(바로 아래 줄에는 commit, state넣어줌)
+    enterNormalStudyroom({commit, state, getters}, credentials) {
       console.log("스터디룸입장 안녕?")
       axios({
         // url:'https://' + location.hostname + '/api/v1/studyroom/enter', // 비번수정 api 
@@ -480,14 +497,46 @@ const actions= {
       })
       .then((res) => {
         console.log(res)
+        console.log(state.StudyroomList)
+        console.log(credentials)
+        console.log(state.StudyroomList.find((e)=>{
+          return e.roomSeq === parseInt(credentials.roomSeq)
+        }))
+        const ans = state.StudyroomList.find((e)=>{
+          return e.roomSeq ===  parseInt(credentials.roomSeq)
+        })
+        console.log(ans.roomTitle, ans.roomType)
         alert('스터디룸에 입장되었습니다.')
+        /// 이병헌 시작
         router.push({
           name: 'setting-room', 
-          query: {
-            roomSeq : credentials.roomSeq,
-            moderator : false
-          }
+        //   query: {
+        //     roomSeq : credentials.roomSeq,
+        //     moderator : false
+        //   }
+        // })
+        // const object = [
+        //   {name: 'a', weight: 'heavy'},
+        //   {name: 'b', weight: 'not heavy'}
+        // ]
+        // const ans = object.find((e)=>{
+        //   return e.name === 'a'
+        // })
+        // console.log(ans)
         })
+        function findRoom(e){
+          return e.roomSeq ===  parseInt(credentials.roomSeq)
+        }
+        const roomTitle = state.StudyroomList.find(findRoom).roomTitle
+        const roomType = state.StudyroomList.find(findRoom).roomType
+        const data = {
+          roomSeq: parseInt(credentials.roomSeq),
+          roomType : roomType,
+          roomTitle: roomTitle,
+          isSuperUser: false,
+        } 
+        commit("lbhModule/GET_ROOM_INFO", data, {root:true})
+        /// 이병헌 끝 
       })
       .catch(err => {
         console.error(err.response)

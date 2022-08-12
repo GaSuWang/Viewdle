@@ -4,7 +4,6 @@
 <template>
   <AuthorityPassModal/>
   <div class="ERView" id="ERView">
-    <!-- <AuthorityPassModal/> -->
     <!-- 영상 구역  -->
     <div class="ERLeftArea">
       <!-- 면접자 영상 구역 -->
@@ -85,7 +84,7 @@ export default {
   components: { FeedbackArea, UserVideo, AuthorityPassModal},
   data(){
     return{
-      nextSuperUser: '',
+      // nextSuperUser: '',
     }
   },
   computed:{
@@ -109,8 +108,8 @@ export default {
     // this.session.connect(this.sessionToken)
     // .then(console.log('session connect success'))
     // .catch(err=>console.err(err.response))
-    this.nextSuperUser = ''
-    window.addEventListener("beforeunload", this.ERLeaveSession);
+
+// this.nextSuperUser = ''
 
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
     this.session.on('signal:EECL', (e)=>{
@@ -165,14 +164,24 @@ export default {
     })
   },
   methods: {
+    // isAlone(){
+    //   if(this.currentUserList.length === 1){
+    //     console.log('얘 혼자 남아서 대기실로 보냄')
+    //     alert('현재 방에 혼자 남으셨습니다.\n대기실로 이동합니다.')
+    //     this.$store.commit('lbhModule/SET_EE', [])
+    //     this.$store.commit('lbhModule/EMPTY_ERS')
+    //     this.$router.push('/waiting-room')
+    //   }
+    // },
     closeAPM(){
       this.nextSuperUser = ''
     },
 
-    //일반 유저가 면접관인데, 면접 도중에 나간 경우
+    //나는 일반 유저 + 면접관, 면접 도중에 나가려고 함
     ERLeaveSession() {
+      if(confirm('정말 면접 도중에 나가시겠습니까?\n작성한 피드백이 모두 삭제되고 로비로 이동합니다.')){
       this.session.signal({
-        data:`${this.myUserName}`,
+        data:`${this.myUserInfo}`,
         to: [],
         type: 'ERLeaveSession'
       })
@@ -184,8 +193,11 @@ export default {
       this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
       this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
       this.$store.commit('lbhModule/SET_SUPERUSER', {})
+      this.$store.commit('lbhModule/EMPTY_FB')
       
       window.removeEventListener("beforeunload", this.ERLeaveSession);
+      this.$router.push('/main')
+      }
     },
     async toFB() {
       await this.$router.push({name:'fb-room'})
@@ -210,20 +222,10 @@ export default {
         position: "top-end",
       });
     },
-    finishInterview(){
-      if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
-        this.session.signal({
-        data: 'true',  
-        to: [],
-        type: 'endInterview'
-        })
-        .then(() => {
-          console.log('erview send signal test')
-        })
-        .catch(error => {
-            console.error(error);
-        });
-      }
+    async finishInterview(){
+      this.$store.dispatch('lbhModule/finishInterview')
+      const videoUrl = '' //await (videoUrl 받아오기)
+      this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
     },
   }
 };

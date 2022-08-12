@@ -9,6 +9,10 @@
     <div class="savedEEVid"></div>
     <!-- 우단 -->
     <div class="FBRightArea">
+      <button type="button" class="btn btn-primary" :disabled="counting" @click="startCountdown">
+        <vue-countdown v-if="counting" :time="60000" @end="onCountdownEnd" v-slot="{ totalSeconds }">Fetch again {{ totalSeconds }} seconds later</vue-countdown>
+        <span v-else>Fetch Verification Code</span>
+      </button>
       <div class="FBButtonHeader">
         <!-- 면접자 자소서 페이지 열기 버튼 -->
         <div class="CLOpen">
@@ -59,6 +63,11 @@ const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
   components: { FeedbackArea, AuthorityPassModal },
+  data(){
+    return {
+      counting: false,
+    }
+  },
   computed:{
     ...mapGetters('lbhModule', [
       'session',
@@ -111,6 +120,15 @@ export default {
 
   },
   methods: {
+    //vue-countdown
+    startCountdown() {
+      this.counting = true;
+    },
+    onCountdownEnd() {
+      this.counting = false;
+    },
+
+
     ERLeaveSessionFromFB() {
       this.session.signal({
         data:`${this.myUserName}`,

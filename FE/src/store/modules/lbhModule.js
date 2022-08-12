@@ -8,11 +8,13 @@ const state = {
   currentUserList: [], //방장 권한 위임을 위해서만 존재
   
   //유저 정보
-  myUserName: "Participant" + Math.floor(Math.random() * 100), //undefined,
-  myUserEmail: undefined,
+  //rhtModule UserList에서 userEmail, userName로 있어 getters를 통해 사용
+
+
   //방 정보  
   roomSeq: undefined,
   roomTitle: undefined,
+  roomType: 'study', //2가 스터디모드, 1이 플레이모드
 
   //비디오 정보
   videoSeq: undefined,
@@ -33,13 +35,13 @@ const state = {
   //WaitingRoom
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
   userType: 'user', //일반 유저는 user, 방장 유저는 suuperUser
-  mySessionId: "SessionA", //undefined
+  // mySessionId: "Session" + roomSeq, //undefined
   publisher: undefined,
   subscribers: [],
   sessionToken: undefined,
   // StartInterview: false, // 대기실에서 면접자를 정하고 면접을 시작할 때 true로 바뀜, 방장이 면접 종료 버튼을 누르면 false로 다시 바뀌어야 됨
-  // OV: undefined,
-  // session: undefined,
+  OV: undefined,
+  session: undefined,
 
   //EEView, ERView
   isEE: false,
@@ -50,13 +52,28 @@ const state = {
   StudyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
 
   //FeedbackRoom
-  FBList: [], // 피드백 리스트, 리스트로 하는 게 맞나?
+  FBList: [],
+  axiosFBList: [],
   replayFBList: [],
 
   // 녹화 관련
   recordingObject : null,
 };
 const getters = {
+  //유저 정보
+  myUserEmail(state){return state.userEmail},
+  myUserName(state){return state.userName},
+  myUserInfo(state){
+    return {
+      myUserEmail: state.myUserEmail,
+      myUserName: state.myUserName
+    }
+  },
+  //방 정보
+  roomSeq(state){return state.roomSeq},
+  roomTitle(state){return state.roomTitle},
+  roomType(state){return state.roomType},
+
   //방장권한
   userType(state){return state.userType},
   WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
@@ -80,9 +97,7 @@ const getters = {
   session(state) {return state.session},
   publisher(state) {return state.publisher},
   subscribers(state) {return state.subscribers},
-  mySessionId(state) {return state.mySessionId},
-  myUserName(state) {return state.myUserName},
-  roomSeq(state){return state.roomSeq},
+  mySessionId(state) {return 'Session' + state.roomSeq},
   sessionToken(state){return state.sessionToken},
   
   //EEView, ERView
@@ -110,17 +125,33 @@ const getters = {
   recordingObject(state) {return state.recordingObject},
 };
 const mutations = {
-  SWITCH_USER_TYPE_TEMP(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
-    console.log('지금 유저타입 변경됨')
-    if(state.userType==='user'){
-      state.userType='superUser'
-    } else {
-      state.userType='user'
-    }
+  //유저 정보
+  GET_USER_INFO(state, user){
+    state.myUserName = user.userName
+    state.myUserEmail = user.userEmail
+    console.log('에휴 이렇게라도 불러와야지...',user, state.myUserName, state.myUserEmail)
   },
-  SWITCH_USER_TYPE(state){ //아마 진짜로 쓰일 방장 권한 위임 기능
-    state.userType = 'superUser'
+  // GET_MY_USER_EMAIL(state, data){state.myUserEmail = data},
+  // GET_MY_USER_NAME(state, data){state.myUserName = data},
+
+  //방 정보
+  GET_ROOM_INFO(state, data){
+    state.roomSeq = data.roomSeq,
+    state.roomTitle = data.roomTitle,
+    state.roomType = data.roomType === '1'? 'play' : 'study',
+    state.userType = data.isSuperUser === true ? 'superUser' : 'user'
+    console.log("방정보",state.roomSeq, state.roomTitle ,state.roomType,state.userType )
   },
+  
+  // START_INTERVIEW_TIME(state){
+  //   setInterval(() => {
+  //     state.interviewTime++
+  //   }, 1000);
+  // },
+  // STOP_INTERVIEW_TIME(state){
+  //   clearInterval()
+  // },
+  SWITCH_USER_TYPE(state, userType){state.userType = userType},
 
   //openvidu
   SET_OV(state, ov){state.OV = ov},
@@ -132,12 +163,10 @@ const mutations = {
   SET_PUBLISHER(state, publisher) {state.publisher = publisher},
 
   SET_SUBSCRIBERS(state, subscriber) {state.subscribers = subscriber},
-  ADD_SUBSCRIBERS(state, subscriber) {state.subscribers.push(subscriber) 
-    console.log('아니',subscriber,'가 들어왔는데 왜 localstorage에는 안들어가있는데?')},
+  ADD_SUBSCRIBERS(state, subscriber) {state.subscribers.push(subscriber)},
   DELETE_SUBSCRIBERS(state, index) {state.subscribers.splice(index, 1)},
 
-  SET_MYSESSIONID(state, mySessionId) {state.mySessionId = mySessionId},
-  SET_MYUSERNAME(state, myUserName) {state.myUserName = myUserName},
+  // SET_MYSESSIONID(state, mySessionId) {state.mySessionId = mySessionId},
 
   //SettingRoom
   GET_CAMERA_LIST(state, cameraList) {state.CameraList = cameraList},
@@ -158,16 +187,16 @@ const mutations = {
     state.WRParticipantList = inputList;
     console.log('SET_WR_PARTICIPANT_LIST 끝',state.WRParticipantList)
   },
-  ADD_WR_PARTICIPANT_LIST(state, user) {
-    console.log("ADD_WR_PARTICIPANT_LIST 시작", state.WRParticipantList, user);
-    if (!state.WRParticipantList.includes(user)) {
-      state.WRParticipantList.push({ id: Date.now(), name: user });
+  ADD_WR_PARTICIPANT_LIST(state, userInfo) {
+    console.log("ADD_WR_PARTICIPANT_LIST 시작", state.WRParticipantList, userInfo);
+    if (!state.WRParticipantList.includes(userInfo)) {
+      state.WRParticipantList.push(userInfo);
     }
-    console.log("ADD_WR_PARTICIPANT_LIST 끝", state.WRParticipantList, user);
+    console.log("ADD_WR_PARTICIPANT_LIST 끝", state.WRParticipantList, userInfo);
   },
-  DELETE_WR_PARTICIPANT_LIST(state, subscriberName) {
+  DELETE_WR_PARTICIPANT_LIST(state, userInfo) {
     console.log("DELETE_WR_PARTICIPANT_LIST 시작", state.WRParticipantList);
-    const idx = state.WRParticipantList.findIndex(function(item) {return item.name === subscriberName})
+    const idx = state.WRParticipantList.findIndex(function(item) {return item.myUserEmail === userInfo.myUserEmail})
     if (idx>-1) state.WRParticipantList.splice(idx, 1)  
     console.log("DELETE_WR_PARTICIPANT_LIST 끝", state.WRParticipantList); 
   },
@@ -180,27 +209,32 @@ const mutations = {
     state.currentUserList = inputList;
     console.log('currentUserList 바꿈', state.currentUserList)
   },
-  ADD_CURRENT_USER_LIST(state, user) {
-    console.log("ADD_CURRENT_USER_LIST", state.currentUserList);
-    if (!state.currentUserList.includes(user)) {
-      state.currentUserList.push({ id: Date.now(), name: user });
+  ADD_CURRENT_USER_LIST(state, userInfo) {
+    console.log("ADD_CURRENT_USER_LIST 시작", state.currentUserList, userInfo);
+    if (!state.currentUserList.includes(userInfo)) {
+      state.currentUserList.push(userInfo);
     }
+    console.log("ADD_CURRENT_USER_LIST 끝", state.currentUserList, userInfo);
+
   },
-  DELETE_CURRENT_USER_LIST(state, subscriberName) {
-    const delArray = [...state.currentUserList]
-    console.log(delArray)
-    delArray.forEach(e=>{
-      if(e.name === subscriberName){
-        const i = state.currentUserList.indexOf(e)
-        state.currentUserList.splice(i,1)
-      }
-    })    
+  DELETE_CURRENT_USER_LIST(state, userInfo) {
+    console.log("DELETE_CURRENT_USER_LIST 시작", state.currentUserList);
+    const idx = state.currentUserList.findIndex(function(item) {return item.myUserEmail === userInfo.myUserEmail})
+    if (idx>-1) state.currentUserList.splice(idx, 1)  
+    console.log("DELETE_CURRENT_USER_LIST 끝", state.currentUserList); 
+    // const delArray = [...state.currentUserList]
+    // delArray.forEach(e=>{
+    //   if(e.name === subscriberName){
+    //     const i = state.currentUserList.indexOf(e)
+    //     state.currentUserList.splice(i,1)
+    //   }
+    // })    
   },
   EMPTY_CURRENT_USER_LIST(state) {
-    state.currentUserList = {};
+    state.currentUserList = [];
     console.log('currentUserList 비웠다', state.currentUserList)
   },
-  GET_ROOMSEQ(state, data){state.roomSeq = data},
+  // GET_ROOMSEQ(state, data){state.roomSeq = data},
   SET_STARTINTERVIEW(state, tf) {state.StartInterview = tf},
 
   //EEView, ERView
@@ -234,6 +268,8 @@ const BASE_URL = 'https://' + location.hostname + '/api/v1/'
 
 const actions = {
   //Axios 모음
+
+  //유저가 방 나감(스터디룸 나가기)
   userLeaveSessionAxios({state, getters}){
     axios({
       url: BASE_URL + 'studyroom/exit',
@@ -244,16 +280,18 @@ const actions = {
         roomSeq: state.roomSeq,
       }
     })
-    .then(console.log('일반 유저 정상적으로 세션 나감'))
+    .then(console.log('일반 유저 정상적으로 세션 나감', state.roomSeq))
     .catch(err=>console.error(err.response))
   },
-  superUserLeaveSessionAxios({state, getters},nextSuperUser){
+
+  //방장이 권한 위임하고 방 나감(스터디룸 나가기)
+  superUserLeaveSessionAxios({state, getters},nextSuperUserEmail){
     axios({
       url: BASE_URL + 'studyroom/exit',
       method: 'patch',
       headers: {Authorization: getters.authHeader},
       data: {
-        nextOwnerEmail: nextSuperUser,
+        nextOwnerEmail: nextSuperUserEmail,
         roomSeq: state.roomSeq,
       }
     })
@@ -261,7 +299,8 @@ const actions = {
     .catch(err=>console.error(err.response))
   },
 
-  studyDestroyAxios({state, getters}){
+  //방장이 방 폭파시킴 첫 단계(스터디룸 나가기, 일반 유저 방 나가기와 동일하지만 구분 위해 다른 이름 부여)
+  studyDestroyFirstAxios({state, getters}){
     axios({
       url: BASE_URL + 'studyroom/exit',
       method: 'patch',
@@ -271,19 +310,40 @@ const actions = {
         roomSeq: state.roomSeq,
       }
     })
-    .then(
-      axios({
-        url: BASE_URL + `studyroom/exit/${state.roomSeq}`,
-        method: 'patch',
-        headers: {Authorization: getters.authHeader},
-        data: {roomSeq: state.roomSeq},
-      })
-      .then(console.log('방이 성공적으로 폭파됨'))
-      .catch(err=>console.error(err.response))
-    )
+    .then(console.log('일단 방을 나감', state.roomSeq))
     .catch(err=>console.error(err.response))
   },
 
+  //방장이 방 폭파시킴 두번째 단계(스터디 룸 삭제)
+  studyDestorySecondAxios({state, getters}){
+    axios({
+      // url: BASE_URL + `studyroom/exit/${state.roomSeq}`, 이게 내가 기억하는 거
+      url: BASE_URL + `studyroom/${state.roomSeq}`,
+      method: 'patch',
+      headers: {Authorization: getters.authHeader},
+      data: {roomSeq: state.roomSeq},
+    })
+    .then(res => {
+      console.log('방이 성공적으로 폭파됨', res.response) 
+    })
+    .catch(err=>console.error(err.response))
+  },
+
+  //면접 시작(스터디 룸 면접 시작)
+  startInterviewAxios({state, getters}){
+    axios({
+      url: BASE_URL + `studyroom/interview/${state.roomSeq}`,
+      method:'patch',
+      headers: {Authorization: getters.authHeader},
+      data: {roomSeq: state.roomSeq}
+    })
+    .then(res=>{
+      console.log('면접 시작!, res.response.data:', res.response.data)
+    })
+    .catch(err=>console.error('면접 시작 axios 에러남',err))
+  },
+
+  //면접 끝, 면접자는 대기실로, 면접관은 피드백실로 이동(내 영상 저장)
   finishInterviewAxios({state, getters, commit}){
     axios({
       url: BASE_URL + 'video',
@@ -302,6 +362,7 @@ const actions = {
     .catch(err=>console.error(err.response))
   },
 
+  //면접관이 피드백 끝냄(스터디 룸 면접 종료)
   FBCompleteAxios({state,getters}){
     axios({
       url: BASE_URL + 'studyroom/interview',
@@ -317,6 +378,7 @@ const actions = {
     .catch(err=>console.error(err.response))
   },
 
+  // 다시보기 비디오 가져오기(영상 및 피드백 다시보기)
   getReplayAxios({state, getters, commit}){
     axios({
       url: BASE_URL + `video/${state.videoSeq}`,
@@ -334,8 +396,6 @@ const actions = {
     .catch(err=>console.error(err.response))
   },
 
-
-
   finishInterview(){
     if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
       state.session.signal({
@@ -351,31 +411,19 @@ const actions = {
       });
     }
   },
-  setMySessionId({ commit }, mySessionId) {
-    commit("SET_MYSESSIONID", mySessionId);
-  },
-  setMyUserName({ commit }, myUserName) {
-    commit("SET_MYUSERNAME", myUserName);
-  },
+  // setMySessionId({ commit }, mySessionId) {
+  //   commit("SET_MYSESSIONID", mySessionId);
+  // },
+  // setMyUserName({ commit }, myUserName) {
+  //   commit("SET_MYUSERNAME", myUserName);
+  // },
 
   //SettingRoom
   getCameraList({ commit }, cameraList) {commit("GET_CAMERA_LIST", cameraList)},
   selectCamera({ commit }, camera) {commit("SELECT_CAMERA", camera)},
   getMicList({ commit }, micList) {commit("GET_MIC_LIST", micList)},
   selectMic({ commit }, mic) {commit("SELECT_MIC", mic)},
-  getCoverLetterList({commit, getters}){
-    axios({
-      url: BASE_URL + 'coverletters',
-      method: 'get',
-      headers: {Authorization: getters.authHeader},
-    })
-    .then(res=>{
-      commit('SET_COVERLETTER_LIST', res.data)
-    })
-    .catch(err=>{
-      console.error(err.response)
-    })
-  },
+
   //WaitingRoom
   setStartInterview({ commit }, tf) {
     commit("SET_STARTINTERVIEW", tf);
