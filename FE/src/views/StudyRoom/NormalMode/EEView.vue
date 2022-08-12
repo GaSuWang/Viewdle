@@ -125,6 +125,7 @@ export default {
         }).then((res) => {
           console.log(`stop recording id ${res.data.id}`);
           console.log(res.data)
+          // 임현탁 여기 부터
           // //레코딩 끝난 후 시그널링으로 URL 보내기
           // this.session.signal({
           // data: this.res.data.url,
@@ -132,9 +133,27 @@ export default {
           // type: 'ReviewURL'          
           // })
           // this.$store.commit('lbhModule/SET_RECORDING_OBJECT', res.data)
+          // 임현탁 여기까지 주석처리함
+
 
           //레코딩 끝나고 저장하기
           this.$store.commit('rhtModule/SET_RECORDING_RES', res.data)
+          
+          
+          // 데이터베이스에도 저장하기
+          axios({
+            // url:'https://' + location.hostname + '/api/v1/video', // 비번수정 api 
+            url: 'http://' + location.hostname + ':8081' + '/api/v1/video',
+            method: "post",
+            data: {
+              "userEmail":"",
+              "videoTilte":"",
+              "videoUrl":res.data.url
+            },
+          }).then((res)=>{
+            console.log(res)
+            alert("데이터베이스 저장 완료")
+          })
         });
       });
     })
