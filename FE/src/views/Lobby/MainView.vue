@@ -127,7 +127,7 @@ export default {
     this.$store.commit('lbhModule/SET_SESSION', undefined)
     this.$store.commit('lbhModule/SET_SESSION_TOKEN', undefined)
     this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-    this.$store.commit('lbhModule/SET_SUBSCRIBERS', undefined)
+    this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
     // this.$store.commit('lbhModule/SET_MYSESSIONID', undefined)
     this.$store.commit('lbhModule/SELECT_CAMERA', {})
     this.$store.commit('lbhModule/SELECT_MIC', {})
