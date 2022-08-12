@@ -281,6 +281,36 @@ export default {
     if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
       this.startRecognition();
     }
+
+    // potato filter
+    this.session.on("signal:imgFilterOn", (event) => {
+      let data = event.data;
+      let img = ""; 
+      console.log(data);
+      if(data == "potato"){
+        img = "https://cdn.pixabay.com/photo/2013/07/12/14/14/derby-148046_960_720.png"
+      }
+      if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+        for (let ER of this.ERS) {
+          let name = JSON.parse(ER.stream.connection.data).clientData;
+            if (name === this.myUserName) {
+              ER.stream.applyFilter("FaceOverlayFilter")
+                .then(filter => {
+                  filter.execMethod(
+                    "setOverlayedImage",
+                  {
+                    "uri": img,
+                    "offsetXPercent":"-0.2F",
+                    "offsetYPercent":"-0.8F",
+                    "widthPercent":"1.3F",
+                    "heightPercent":"1.0F"
+                  });
+                });
+            }
+        }
+      }
+    })
+
   },
   setup() {
     const router = useRouter();
@@ -534,6 +564,23 @@ export default {
           });
       }
     },
+
+    // send img filter : potato or bread
+    setImgFilterOn(filter) {
+      this.session
+        .signal({
+          data: filter,
+          to: [],
+          type: "imgFilterOn",
+        })
+        .then(() => {
+          console.log("success");
+        })
+        .catch(() => {
+          console.log("failed");
+        });
+    },
+
     
     // Speech API
     startRecognition() {
@@ -546,7 +593,7 @@ export default {
       recognition.start(); // 음성 인식 시작
       console.log("start speech recognition");
 
-      recognition.onresult = function(e){ // 음성 인식 결과 반환
+      recognition.onresult = (e) => { // 음성 인식 결과 반환
         for(let i = e.resultIndex; i < e.results.length; ++i){
           if(e.results[i].isFinal){ 
             let script = e.results[i][0].transcript;
@@ -554,7 +601,8 @@ export default {
             if(script.includes("빵")){
               alert("빵!");
             }else if(script.includes("감자")){
-              alert("감자!");
+              console.log("감자");
+              this.setImgFilterOn("potato");
             }
           }
         }
