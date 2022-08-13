@@ -24,7 +24,7 @@
 
     <!-- 영상 다시보기 -->
     <div class="modal fade" id="enterReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-dialog modal-xl">
           <div class="modal-content">
           {{replayDetail.videoSeq}}
           {{replayDetail.Title}}
@@ -33,19 +33,26 @@
           {{replayDetail.feedbackList}}
 
           <!-- 동영상 삽입 및 AI 평가 입력 -->
-          <video id="video" ref="video" crossOrigin='anonymous' width="300" height="200" controls="" autoplay="" name="media" >
-              <!-- <source src="https://localhost:4443/openvidu/recordings/SessionA~2/SessionA~2.mp4" type="video/mp4"> -->
-              <!-- <source src = "file://C:/Users/multicampus/Desktop/test.mp4"> -->
-          </video>
-          <div>
-            <!-- style="display: none" -->
-            <canvas id="canvas" ref="canvas" style="display: none" ></canvas>
+          <div style="position:relative;height:200px">
+            <div style="position:absolute;">
+              <video id="video" ref="video" crossOrigin='anonymous' width="640" height="480" controls="" autoplay="" name="media" >
+                <source src="https://localhost:4443/openvidu/recordings/SessionA/SessionA.mp4" type="video/mp4">
+                  <!-- <source src = "file://C:/Users/multicampus/Desktop/test.mp4"> -->
+              </video>
+            </div>
+            <div id="selectAreaBox" ref="selectAreaBox" style="position:absolute;opacity:0" class="selectAreaBox" v-on:mousedown = "mousedown" v-on:mouseup = "mouseup" v-on:mousemove = "mousemove" ></div>        
+            <div id="positionBox" ref="positionBox" :style="{ backgroundColor : positionColor }" style="position:absolute;opacity:1" class="positionBox" v-on:mousedown = "mousedown" v-on:mouseup = "mouseup" v-on:mousemove = "mousemove" >
+              <div>
+                {{ nowPosition }}
+              </div >
+
+            </div>        
+            <div class="focus"></div>
           </div>
           <div>
-            {{ maxClassName }}
+            <!--  style="position:absolute"-->
+            <canvas id="canvas" ref="canvas" ></canvas>
           </div>
-
-
           </div>
         </div>
     </div>  
@@ -99,6 +106,20 @@ export default {
 
       video : null,
       canvas : null,
+
+      x : 0,
+      y : 0,
+      a : 640,
+      b : 480,
+
+      focusWidth : null,
+      focusHeight : null,
+
+      temp : null,
+      isClick : null,
+
+      positionColor : '#89B2E8',
+      nowPosition : " "
     }
   },
 
@@ -110,8 +131,8 @@ export default {
     this.context = this.$refs.canvas.getContext('2d');
 
   
-    this.canvas.setAttribute("width", this.video.width/2);
-    this.canvas.setAttribute("height", this.video.height);
+    this.canvas.setAttribute("width", 1280);
+    this.canvas.setAttribute("height", 960);
 
     const modelURL = `https://teachablemachine.withgoogle.com/models/Td01sX2R5/model.json`
     const metadataURL = `https://teachablemachine.withgoogle.com/models/Td01sX2R5/metadata.json`
@@ -125,8 +146,32 @@ export default {
   },
 
   methods : { 
+      mousedown: function (event) {
+      this.x = event.offsetX, 
+      this.y = event.offsetY
+    },
+
+    mousemove: function(event) {
+      if(this.isClick == "Y"){
+        this.a = event.offsetX, 
+        this.b = event.offsetY
+      }
+    },
+
+    mouseup: function (event) {
+      this.a = event.offsetX, 
+      this.b = event.offsetY
+      
+      // 드래그 역방향 고려
+      if(this.a < this.x){
+        this.temp = this.a;
+        this.a = this.x;
+        this.x = this.temp;
+      }
+      this.isClick == "N"
+    },
    async predict() {
-      this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+      this.context.drawImage(this.video, this.x*2, this.y*2, this.a*2, this.b*2, 0, 0, 1280, 960);
       const {pose, posenetOutput}= await this.model.estimatePose(this.canvas);
 
       this.maxProbability = 0;
@@ -142,18 +187,60 @@ export default {
         }        
       }
 
-      // console.log(this.maxClassName)
-          
+      if(this.maxClassName === "middle"){
+        this.positionColor = '#89B2E8'
+        this.nowPosition = "Good!"
+      } else {
+        this.positionColor = 'ffcc74'
+        this.nowPosition = "Bad!"
+
+        // if(this.maxClassName === "close"){
+        //   this.nowPosition = "너무 가까워요!"
+        // } else if (this.maxClassName === "far"){
+        //   this.nowPosition = "너무 멀어요!"
+        // } else if (this.maxClassName === "left"){
+        //   this.nowPosition = "오른쪽으로 기울었어요!"
+        // } else if (this.maxClassName === "right"){
+        //   this.nowPosition = "왼쪽으로 기울었어요!"
+        // }
+      }
+                
       setTimeout(() => {
         this.predict();
       }, 100);         
-    }
+    },
   }
 
 }
 </script>
 
 <style>
+.selectAreaBox{
+    width: 640px;
+    height: 400px;
+    background-color: red;
+}
+.positionBox{
+    /* width: 100px;
+    height: 50px;
+    background-color: #FEA713; */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    justify-self: center;
+    align-items: center;
+    width: 100px;
+    height: 30px;
+    padding: 3%;
+    border-radius: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+    overflow-wrap: break-word;
+    background-color: white;
+    box-shadow: 1px 1px 1px 1px gray;
+}
 .ReplayViewBoss{
   width: 90%;
   height: 90%;
