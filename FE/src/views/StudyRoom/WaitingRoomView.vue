@@ -106,6 +106,7 @@ export default {
   name: "WaitingRoomView",
   components: { UserVideo,  AuthorityPassModal },
   created(){
+    console.log('방관련 정보', this.roomType, this.roomTitle)
     window.addEventListener("beforeunload", this.forceLeaveSession,);
   },
   mounted(){
@@ -258,7 +259,7 @@ export default {
       if(this.roomType === 'study'){
         //스터디 모드 시작
         // startStudyInterview(){
-          console.log('startinterview가 눌리기는 했어 ㅋㅋ')
+          console.log('스터디 모드 시작', this.roomType)
           const myUserName = this.EECnd.myUserName
           const myUserEmail = this.EECnd.myUserEmail
           if(this.EECnd){
@@ -274,6 +275,7 @@ export default {
       // }
       } else {
         //플레이모드 시작
+          console.log('플레이 모드 시작', this.roomType)
         // startPlayInterview(){
           const myUserName = this.EECnd.myUserName
           const myUserEmail = this.EECnd.myUserEmail

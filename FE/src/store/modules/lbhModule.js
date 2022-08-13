@@ -150,7 +150,7 @@ const mutations = {
   GET_ROOM_INFO(state, data){
     state.roomSeq = data.roomSeq,
     state.roomTitle = data.roomTitle,
-    state.roomType = data.roomType === '1'? 'play' : 'study',
+    state.roomType = data.roomType === 1? 'play' : 'study',
     state.userType = data.isSuperUser === true ? 'superUser' : 'user'
     console.log("방정보",state.roomSeq, state.roomTitle ,state.roomType,state.userType )
   },
@@ -252,7 +252,10 @@ const mutations = {
   //EEView, ERView
   SET_ISEE(state, tf){state.isEE = tf},
   SET_ISER(state, tf){state.isER = tf},
-  SET_STUDYROOM_CL(state,cl){state.studyRoomCL = cl},
+  SET_STUDYROOM_CL(state,cl){
+    state.studyRoomCL = cl
+    console.log('자소서 받아옴',state.studyRoomCL)
+  },
   SET_EE(state, EE) {state.EE = EE},
   SET_ERS(state, ERS) {state.ERS.push(ERS)},
   EMPTY_EE(state) {state.EE = []},
