@@ -207,7 +207,7 @@ export default {
       if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail) {
         console.log("EE: ", this.EE);
         this.addWarn(); //경고 누적
-        this.setFilter(); //필터 걸기
+        //this.setFilter(); //필터 걸기
       }
 
       // <- 테스트용, 모든 참여자 warningCoutn 올림
@@ -215,54 +215,54 @@ export default {
     });
 
     //change filter 신호 받기
-    this.session.on("signal:setFilter", (event) => {
-      var data = event.data;
-      var filter = "";
-      //data를 이용해서 분기,
-      if (data === "1") {
-        filter = "dicetv";
-      } else if (data === "2") {
-        filter = "optv";
-      }
-      // if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
-      if (JSON.parse(this.EE.stream.connection.data).clientEmail !== this.myUserEmail) {
-        for (var ER of this.ERS) {
-          // var name = JSON.parse(ER.stream.connection.data).clientData;
-          var email = JSON.parse(ER.stream.connection.data).clientEmail;
-          if (email === this.myUserEmail) {
-            //이미 설정된 필터가 있으면
-            if (this.isFiltered) {
-              this.removeFilter();
-              setTimeout(() => {
-                ER.stream
-                  .applyFilter("GStreamerFilter", { command: filter })
-                  .then(() => {
-                    this.isFiltered = true;
-                    console.log("success set filter");
-                    setTimeout(this.removeFilter, 10000);
-                    //일정 시간 이후 필터 해제하기
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              }, 1000);
-            } else { //설정된 필터가 없으면
-              ER.stream
-                .applyFilter("GStreamerFilter", { command: filter })
-                .then(() => {
-                  this.isFiltered = true;
-                  console.log("success set filter");
-                  setTimeout(this.removeFilter, 10000);
-                  //일정 시간 이후 필터 해제하기
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            }
-          }
-        }
-      }
-    });
+    // this.session.on("signal:setFilter", (event) => {
+    //   var data = event.data;
+    //   var filter = "";
+    //   //data를 이용해서 분기,
+    //   if (data === "1") {
+    //     filter = "dicetv";
+    //   } else if (data === "2") {
+    //     filter = "optv";
+    //   }
+    //   // if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+    //   if (JSON.parse(this.EE.stream.connection.data).clientEmail !== this.myUserEmail) {
+    //     for (var ER of this.ERS) {
+    //       // var name = JSON.parse(ER.stream.connection.data).clientData;
+    //       var email = JSON.parse(ER.stream.connection.data).clientEmail;
+    //       if (email === this.myUserEmail) {
+    //         //이미 설정된 필터가 있으면
+    //         if (this.isFiltered) {
+    //           this.removeFilter();
+    //           setTimeout(() => {
+    //             ER.stream
+    //               .applyFilter("GStreamerFilter", { command: filter })
+    //               .then(() => {
+    //                 this.isFiltered = true;
+    //                 console.log("success set filter");
+    //                 setTimeout(this.removeFilter, 10000);
+    //                 //일정 시간 이후 필터 해제하기
+    //               })
+    //               .catch((error) => {
+    //                 console.log(error);
+    //               });
+    //           }, 1000);
+    //         } else { //설정된 필터가 없으면
+    //           ER.stream
+    //             .applyFilter("GStreamerFilter", { command: filter })
+    //             .then(() => {
+    //               this.isFiltered = true;
+    //               console.log("success set filter");
+    //               setTimeout(this.removeFilter, 10000);
+    //               //일정 시간 이후 필터 해제하기
+    //             })
+    //             .catch((error) => {
+    //               console.log(error);
+    //             });
+    //         }
+    //       }
+    //     }
+    //   }
+    // });
     //----------------돌발 상황 시작 ----------------------
     this.session.on("signal:suddenAttack",()=>{
       // var name = JSON.parse(this.EE.stream.connection.data).clientData;
@@ -414,20 +414,20 @@ export default {
       }
     },
     //--------------------경고 누적시 캠 효과 넣기 ----------------------
-    setFilter() {
-      this.session
-        .signal({
-          data: this.warningCount + "",
-          to: [],
-          type: "setFilter",
-        })
-        .then(() => {
-          console.log("set filter");
-        })
-        .catch(() => {
-          console.log("fail get setFilter signal");
-        });
-    },
+    // setFilter() {
+    //   this.session
+    //     .signal({
+    //       data: this.warningCount + "",
+    //       to: [],
+    //       type: "setFilter",
+    //     })
+    //     .then(() => {
+    //       console.log("set filter");
+    //     })
+    //     .catch(() => {
+    //       console.log("fail get setFilter signal");
+    //     });
+    // },
     removeFilter() {
       if (this.isFiltered) {
         for (var ER of this.ERS) {
