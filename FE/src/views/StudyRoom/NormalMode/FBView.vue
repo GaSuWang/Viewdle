@@ -8,8 +8,8 @@
     <!-- 면접자 영상 -->
     <div class="savedEEVid">
       <!-- [김이랑] 비디오 관련 -->
-      <video ref="video" width="" height="" controls>
-          <source :src="VideoSrc" type="video/mp4">
+      <video ref="video" width="640" height="280" controls :src="videoSrc">
+          <!-- <source  type="video/mp4"> -->
       </video>
       <button @click="timeCheck">
             <p>비디오 시간</p>
@@ -78,7 +78,7 @@ export default {
     return {
       counting: false,
       // [김이랑] 비디오 관련 - 테스트 위해 data에 저장
-      VideoSrc: 'https://localhost:4443/openvidu/recordings/SessionA~2/SessionA~2.mp4'
+      // VideoSrc: ''
     }
   },
   computed:{
@@ -88,6 +88,9 @@ export default {
       'mySessionId',
       'publisher',
       'subscribers',
+      'myUserEmail',
+      'myUserName',
+      'myUserInfo',
 
       //기기
       "CameraSelected",
@@ -97,8 +100,8 @@ export default {
       "MicStatus",
       "MicStatus",
       // [김이랑] 비디오 관련
-      // "VideoSrc"
-      "videoTime"
+      "videoSrc",
+      "videoTime",
     ]),
     checkVideoTime(){
       return this.$store.getters['lbhModule/videoTime']
@@ -115,7 +118,7 @@ export default {
   },
   // [김이랑] 비디오 관련
   created(){
-    window.addEventListener("close", this.ERLeaveSessionFromFB);
+    // window.addEventListener("close", this.ERLeaveSessionFromFB);
 
       //방장인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
       this.session.on('signal:superLeaveSessionWR', (e)=>{
@@ -148,6 +151,9 @@ export default {
     })
 
   },
+  unmounted(){
+    this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
+  },
   methods: {
     //vue-countdown
     startCountdown() {
@@ -165,15 +171,9 @@ export default {
         type: 'ERLeaveSessionFromFB'
       })
 
-      if (this.session) this.session.disconnect();
-
-      this.$store.commit('lbhModule/SET_SESSION', undefined)
-      this.$store.commit('lbhModule/SET_OV', undefined)
-      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-      this.$store.commit('lbhModule/SET_SUPERUSER', {})
+      // if (this.session) this.session.disconnect();
       
-      window.removeEventListener("beforeunload", this.ERLeaveSessionFromFB);
+      // window.removeEventListener("beforeunload", this.ERLeaveSessionFromFB);
     },
 
     // async toWR() {
@@ -188,9 +188,16 @@ export default {
     },
     FBComplete() {
       if (confirm("피드백을 이대로 제출하시겠습니까? 이후에 대기실로 이동합니다.")) {
-        // this.toWR();
-        this.$store.commit('lbhModule/SET_EE', [])
+        //면접관이 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+        const data = JSON.stringify(this.myUserInfo)
+        this.session.signal({
+          data: `${data}`,
+          to: [],
+          type: 'WRParticipantListUpdate'
+        })
+        this.$store.commit('lbhModule/EMPTY_EE')
         this.$store.commit('lbhModule/EMPTY_ERS')
+        console.log('피드백실에서 이제 나감')
         this.$router.push({name:'waiting-room'})
       }
     },

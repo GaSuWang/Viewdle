@@ -22,8 +22,10 @@
       <!-- 현탁 -->
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
       <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
+      <!-- <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionfromWR"> -->
           <button class="toLBBtn">
-            <i class="bi bi-backspace"></i>
+            <!-- <i class="bi bi-backspace"></i> -->
+            <i class="bi bi-x-lg"></i>
           </button>
       </div>
       <!-- 대기실에서 나가기 버튼(방장 유저) -->
@@ -46,7 +48,7 @@
           aria-expanded="false"
         >
           <span v-if="!EECnd">면접자 선택</span>
-          <span v-else-if="EECnd">면접자: {{ EECnd }}</span>
+          <span v-else-if="EECnd">면접자: {{ EECnd.myUserName }}</span>
         </button>
         <ul class="dropdown-menu">
           <li v-for="user in WRParticipantList" :key="user.myUserEmail">
@@ -118,6 +120,14 @@ export default {
       console.log('만약에 내가 지금 스터디에 참여하고 있지 않다면, joinSession해라 제발...')
       this.joinSession()
     }
+    //대기실로 유저가 돌아올 때
+    this.session.on('signal:WRParticipantListUpdate', (e)=>{
+      const data = JSON.parse(e.data)
+      if(!this.WRParticipantList.includes(data)){
+        console.log('유저가 대기실로 들어와서 대기실 유저 목록에 넣어줌', data)
+        this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', data)
+      }
+    })
 
     //대기실에서 다른 유저가 나갔을 때
     this.session.on('signal:userLeaveSessionfromWR', (e)=>{
@@ -196,6 +206,13 @@ export default {
     // 현탁
        userLeaveSessionAxios(){
       this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      const myUserEmail = this.myUserEmail
+      this.session.signal({
+        data: `${myUserEmail}`,
+        to: [],
+        type: 'userLeaveSessionfromWR'
+      })
+      if(this.session) this.session.disconnect()   
     },
     // 현탁 끝
 

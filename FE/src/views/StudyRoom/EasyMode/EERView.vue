@@ -109,6 +109,7 @@ export default {
       countDown: 3, // 실제 화면에 표시되는 카운트다운
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
       suddenAttackFlag: -1,//돌발 상황 분기
+            timeout: null,//타임아웃 저장용
     };
   },
    computed: {
