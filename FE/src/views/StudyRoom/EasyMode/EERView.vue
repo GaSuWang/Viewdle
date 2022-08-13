@@ -419,6 +419,7 @@ export default {
         });
     },
     removeFilter() {
+      console.log(isFiltered);
       if (this.isFiltered) {
         for (var ER of this.ERS) {
           var name = JSON.parse(ER.stream.connection.data).clientData;
