@@ -169,18 +169,7 @@ export default {
   unmounted(){
     clearInterval(this.interval)
   },
-  // updated(){
-  //   this.isAlone()
-  // },
   methods:{
-    // isAlone(){
-    //   if(this.currentUserList.length === 1){
-    //     alert('현재 방에 혼자 남으셨습니다.\n대기실로 이동합니다.')
-    //     this.$store.commit('lbhModule/SET_EE', [])
-    //     this.$store.commit('lbhModule/EMPTY_ERS')
-    //     this.$router.push('/waiting-room')
-    //   }
-    // },
     EELeaveSession(){
       if (confirm("정말 면접 도중에 나가시겠습니까?\n지금까지의 면접영상이 저장되지 않고 로비로 이동합니다.")) {
         this.session.signal({
@@ -194,16 +183,16 @@ export default {
       }
     },
     async finishInterview(){
-      this.$store.dispatch('lbhModule/finishInterview')
-      const videoUrl = '' //await (videoUrl 받아오기)
-      this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
-
+      
       // 종료하면 녹화 종료 보내기
       this.session.signal({
         data: this.myUserName,
         to: [],
         type: 'stopRecording'
       })
+      this.$store.dispatch('lbhModule/finishInterview')
+      const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
+      this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
     },
     async toWR() {
       await this.$router.push('/waiting-room')
