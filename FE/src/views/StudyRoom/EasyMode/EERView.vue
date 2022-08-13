@@ -332,6 +332,7 @@ export default {
                 widthPercent: width,
                 heightPercent: height,
               });
+              this.isFiltered=true;
               console.log("img filter success");
             });
           }
@@ -419,7 +420,7 @@ export default {
         });
     },
     removeFilter() {
-      console.log(isFiltered);
+      console.log(this.isFiltered);
       if (this.isFiltered) {
         for (var ER of this.ERS) {
           var name = JSON.parse(ER.stream.connection.data).clientData;
