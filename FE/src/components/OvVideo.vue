@@ -1,5 +1,6 @@
 <template>
-	<video autoplay/>
+	<!-- <video autoplay/> -->
+	<video autoplay ref="video"/> 
 </template>
 
 <script>
@@ -12,6 +13,9 @@ export default {
 
 	mounted () {
 		this.streamManager.addVideoElement(this.$el);
+		if(!this.streamManager.remote){
+            this.$refs.video.muted = true;
+        }
 	},
 };
 </script>
