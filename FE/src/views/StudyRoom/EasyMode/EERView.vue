@@ -419,7 +419,11 @@ export default {
         for (var ER of this.ERS) {
           var name = JSON.parse(ER.stream.connection.data).clientData;
           if (name === this.myUserName) {
-            ER.stream.removeFilter();
+            ER.stream.removeFilter().then(()=>{
+              console.log("remove filter");
+            }).catch((e)=>{
+              console.log("remove filter error",e);
+            });
             this.isFiltered = false;
           }
         }
