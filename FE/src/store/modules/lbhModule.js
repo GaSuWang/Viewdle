@@ -58,6 +58,7 @@ const state = {
   FBList: [],
   axiosFBList: [],
   replayFBList: [],
+  FBUserCount: 0,
 
   // 녹화 관련
   recordingObject : null,
@@ -140,7 +141,8 @@ const getters = {
 
   //ErView, FeedbackRoom, ReplayView
   FBList(state) {return state.FBList},
-
+  axiosFBList(state) {return state.axiosFBList},
+  FBUserCount(state){return state.FBUserCount},
   //녹화 관련
   recordingObject(state) {return state.recordingObject},
 
@@ -288,21 +290,42 @@ const mutations = {
   //FeedbackRoom
   SET_FB(state, fbList){state.FBList = fbList},
   ADD_FB(state,fb){state.FBList.push(fb)},
-  DELETE_FB(state, id) {
-    const idx = state.FBList.findIndex(function(item) {return item.reg_dt === id})
+  DELETE_FB(state, timeline) {
+    const idx = state.FBList.findIndex(function(item) {return item.timeline === timeline})
     if (idx > -1) state.FBList.splice(idx, 1);
   },
   UPDATE_FB(state, fb) {
-    const idx = state.FBList.findIndex(function(item) {return item.reg_dt === fb.reg_dt})
+    const idx = state.FBList.findIndex(function(item) {return item.timeline === fb.timeline})
     state.FBList[idx] = fb;
   },
   EMPTY_FB(state){state.FBList = []},
+  ADD_AXIOS_FBLIST(state, data){
+    const fblist = JSON.parse(data)
+    state.axiosFBList = [state.axiosFBList, ...fblist]
+    console.log('axiosfblist add',data, fblist, state.axiosFBList)
+  },
+  EMPTY_AXIOS_FBLIST(state){state.axiosFBList = []},
+  SET_FB_USER_COUNT(state){
+    state.FBUserCount = state.currentUserList.length - 1
+    console.log('set_fb_user_count',state.FBUserCount, state.currentUserList.length)  
+  },
+  MINUS_FB_USER_COUNT(state){
+    console.log('MINUS_FB_USER_COUNT', state.FBUserCount)
+    state.FBUserCount -= 1
+    console.log('MINUS_FB_USER_COUNT', state.FBUserCount)
+  },
+  EMPTY_FB_USER_COUNT(state){state.FBUserCount = 0},
   //녹화 관련
   SET_RECORDING_OBJECT(state, recordingObject){state.recordingObject = recordingObject},
 
   //[김이랑] 비디오 관련
   SET_VIDEO_TIME(state, videoTime){state.videoTime = videoTime},
   SET_START_VIDEO_TIME(state, startVideoTime){state.startVideoTime = startVideoTime},
+  SET_VIDEOSEQ(state, data){
+    state.videoSeq = parseInt(data)
+    console.log('videoSEq 설정됨', state.videoSeq, data)
+  }
+
 };
 
 const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'
@@ -330,6 +353,7 @@ const actions = {
     commit('EMPTY_FB')
     commit('EMPTY_NEXT_SUPERUSER_INFO')
     commit('SWITCH_USER_TYPE', 'user')
+    commit('EMPTY_AXIOS_FBLIST')
   },
   //유저가 방 나감(스터디룸 나가기)
   // userLeaveSessionAxios({state,dispatch, rootGetters }){
@@ -421,7 +445,7 @@ const actions = {
       dispatch('deleteData')
       router.push('/main')
       alert('방에서 나왔습니다.')
-      this.dispatch('rhtModule/getStudyRoom', {root:true})
+      dispatch('rhtModule/getStudyRoom', {root:true})
     }
     )
     .catch(err=>console.error(err.response.data))
@@ -442,7 +466,7 @@ const actions = {
       dispatch('deleteData')
       console.log('방장 유저 정상적으로 세션 나감', res.response)
       router.push('/main')
-      this.dispatch('rhtModule/getStudyRoom', {root:true})
+      dispatch('rhtModule/getStudyRoom', {root:true})
     })
     .catch(err=>console.error(err.response))
   },
@@ -477,7 +501,7 @@ const actions = {
       dispatch('deleteData')
       console.log('방이 성공적으로 폭파됨', res)
       router.push('/main') 
-      this.dispatch('rhtModule/getStudyRoom', {root:true})
+      dispatch('rhtModule/getStudyRoom', {root:true})
     })
     .catch(err=>console.error(err.response))
   },
@@ -514,7 +538,12 @@ const actions = {
     })
     .then(res=>{
       console.log('성공적으로 면접 완료', state.myUserEmail, state.roomTitle,credentials, res.data)
-      commit('SET_VIDEOSEQ', res.data) //vdieoSeq 추가해야됨
+      commit('SET_VIDEOSEQ', res.data.videoSeq) //vdieoSeq 추가해야됨
+      state.session.signal({
+        data: res.data.videoSeq,
+        to: [],
+        type: 'sendVideoSeq',
+      })
     }) 
     .catch(err=>{
       console.log( state.myUserEmail, state.roomTitle,credentials)
@@ -522,8 +551,11 @@ const actions = {
     })
   },
 
+
+
   //면접관이 피드백 끝냄(스터디 룸 면접 종료)
   FBCompleteAxios({state,rootGetters}){
+    console.log('fbcompleteAxios 실행됨', state.FBUserCount, state.axiosFBList)
     axios({
       url: BASE_URL + 'studyroom/interview',
       method: 'post',
