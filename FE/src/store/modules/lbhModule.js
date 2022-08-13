@@ -77,7 +77,8 @@ const getters = {
 
   //방장권한
   userType(state){return state.userType},
-  WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
+  // WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
+  WRParticipantList(state) {return state.WRParticipantList},
   StartInterview(state) {return state.StartInterview},
   currentUserList(state) {return state.currentUserList},
   // nextSuperUserList(state){return state.currentUserList.filter(p => p.name !== state.myUserName)},
@@ -301,6 +302,7 @@ const actions = {
     commit('EMPTY_ERS')
     commit('EMPTY_FB')
     commit('EMPTY_NEXT_SUPERUSER_INFO')
+    commit('SWITCH_USER_TYPE', 'user')
   },
   //유저가 방 나감(스터디룸 나가기)
   userLeaveSessionAxios({state,dispatch, rootGetters }){

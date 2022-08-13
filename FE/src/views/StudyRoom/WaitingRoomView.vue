@@ -127,6 +127,8 @@ export default {
     //방장이 방을 폭파시킬 때
     this.session.on('signal:studyDestroy', ()=> {
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+        alert('방장이 스터디를 폭파했습니다.\n로비로 돌아갑니다.')
+        this.$router.push('/main')
     })
     console.log('대기실들어옴',this.currentUserList,this.myUserInfo,this.roomSeq)
   },

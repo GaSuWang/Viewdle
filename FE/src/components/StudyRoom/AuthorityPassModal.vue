@@ -14,12 +14,11 @@
             정말 나가시겠습니까? <br>
             방장 권한 위임 후 로비로 이동합니다.
           </p>
-
           <!-- 다음 방장 목록 -->
           <ul>
             <li v-for="user in nextSuperUserList" :key="user.myUserEmail">
               <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="nextSuperUser=user">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" @click="setNextSuperUser(user)">
                 <label class="form-check-label" for="flexRadioDefault1">
                   {{user.myUserName}}: {{user.myUserEmail}}
                 </label>
@@ -54,12 +53,13 @@ data(){
   return{
     // OV: undefined,
     // session: undefined,
-    nextSuperUser:'',
+    nextSuperUser:{},
   }
 },
 computed: {
   ...mapGetters('lbhModule', [
     'myUserName',
+    'myUserEmail',
     'subscribers',
     'publisher',
     'currentUserList',
@@ -69,7 +69,6 @@ computed: {
     'nextSuperUserList',
     'nextSuperUserInfo',
   ]),
-
   isWR(){
     if(this.$router.currentRoute.value.name === 'waiting-room'){
       console.log('waiting-room')
@@ -84,6 +83,9 @@ computed: {
   }
 },
 methods:{
+  setNextSuperUser(user){
+    this.nextSuperUser = user
+  },
   //방장이 면접을 폭파시킴
   studyDestroy(){
     this.$store.commit('lbhModule/SET_STUDY_DESTOY', true)
@@ -97,14 +99,16 @@ methods:{
   //방장이 면접을 나감
   superLeaveSession(){
     this.$store.commit('lbhModule/SET_NEXT_SUPERUSER_INFO', this.nextSuperUser)
-    const currentSuperUserName = this.myUserName
+    // const currentSuperUserName = this.myUserName
     const currentSuperUserEmail = this.myUserEmail
-    const nextSuperUserName = this.nextSuperUser.myUserName
+    // const nextSuperUserName = this.nextSuperUser.myUserName
     const nextSuperUserEmail = this.nextSuperUser.myUserEmail
     //방장이 현재 면접자
     if(this.$router.currentRoute.value.name === 'ee-room' || this.$router.currentRoute.value.name === 'ee-room-ez'){
       this.session.signal({
-        data:`'{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}'`,
+        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
+        data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to:[],
         type:'superEELeaveSession'
       })
@@ -114,7 +118,8 @@ methods:{
     else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez') {
       this.session.signal({
         // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        data:`'{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}'`,
+        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
+        data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to: [],
         type: 'superERLeaveSession'
       })
@@ -123,7 +128,8 @@ methods:{
     else if(this.$router.currentRoute.value.name === 'fb-room') {
       this.session.signal({
         // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        data:`'{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}'`,
+        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
+        data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to: [],
         type: 'superERLeaveSessionFromFB'
       })
@@ -132,7 +138,8 @@ methods:{
     else if(this.$router.currentRoute.value.name === 'waiting-room'){
       this.session.signal({
         // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        data:`'{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}'`,
+        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
+        data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to: [],
         type: 'superLeaveSessionWR'
       })
@@ -145,7 +152,7 @@ methods:{
 
   },
   closeAPM(){
-    this.$store.commit('EMPTY_NEXT_SUPERUSER_INFO')
+    this.$store.commit('lbhModule/EMPTY_NEXT_SUPERUSER_INFO')
   },
 },
 };

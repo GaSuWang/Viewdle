@@ -56,7 +56,7 @@
       <!-- 돌발질문 카운트 다운 및 OX버튼 끝-->
       <div class="EERButtonFooter">
         <div class="CLViewBtn">
-          <button @click="openCL">
+          <button @click="openEECL">
             <i class="bi bi-file-earmark-text"></i>
           </button>
         </div>
@@ -116,6 +116,8 @@ export default {
       "EE",
       "ERS",
       "myUserName",
+      "myUserEmail",
+      "myUserInfo",
       "mySessionId",
       "userType",
       "publisher",
@@ -123,6 +125,7 @@ export default {
       "SessionToken",
       "session",
       "currentUserList",
+      'WRParticipantList',
     ]),
     // nextSuperUserList() {
     //   return this.currentUserList.filter((p) => p.name !== this.myUserName);
@@ -136,6 +139,7 @@ export default {
   created() {
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
     this.session.on('signal:EECL', (e)=>{
+      console.log('EECL signal로 받은 데이터', e.data)
       const cl = JSON.parse(e.data)
       console.log('면접관이 받은 유저의 자소서', cl)
       this.$store.commit('SET_STUDYROOM_CL', cl)
@@ -147,6 +151,7 @@ export default {
       this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', e.data)
       this.$store.commit('lbhModule/SET_EE', [])
       this.$store.commit('lbhModule/EMPTY_ERS')
+      this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserInfo)
       this.$router.push({name:'waiting-room'})
     })
 
@@ -161,15 +166,17 @@ export default {
       const currentSuperUserEmail = e.data.split(' ')[1]
       this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
       if(this.myUserEmail === currentSuperUserEmail){
-        alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
+        alert('방장이 면접 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
         this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
-        this.$store.commit('lbhModule/SET_EE', [])
+        this.$store.commit('lbhModule/EMPTY_EE')
         this.$store.commit('lbhModule/EMPTY_ERS')
+      this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserInfo)
         this.$router.push({name:'waiting-room'})
-      } else {
+      } else if(this.myUserEmail !== pastSuperUserEmail) {
         alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
-        this.$store.commit('lbhModule/SET_EE', [])
+        this.$store.commit('lbhModule/EMPTY_EE')
         this.$store.commit('lbhModule/EMPTY_ERS')
+        this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserInfo)
         this.$router.push({name:'waiting-room'})
       }        
     })
@@ -181,9 +188,9 @@ export default {
       console.log('방장이 면접 도중에 나감', pastSuperUserEmail, currentSuperUserEmail)
       this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
       if(this.myUserEmail === currentSuperUserEmail){
-        alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
+        alert('방장이 면접 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
         this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
-      }
+      } else {console.log(`내 이메일은 ${this.myUserEmail}, 전 방장 이메일은 ${pastSuperUserEmail}, 현 방장 이메일은 ${currentSuperUserEmail}`)}
     })
 
     // this.nextSuperUser = "";
@@ -194,9 +201,9 @@ export default {
     this.session.on("signal:warning", (event) => {
       console.log(event.data);
       //신호를 받고, 내가 면접자인 경우에만 warningCount++
-      // if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
       // 이병헌: 이제는 connection.data에 { clientName: this.myUserName, clientEmail: this.myUserEmail } 이런식으로 정보가 넘어가서,
       // clientData가 아닌, clientEmail로 확인해야 될 거 같아. 그래서 아래도 일단 다 수정해뒀어.
+      // if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
       if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail) {
         console.log("EE: ", this.EE);
         this.addWarn(); //경고 누적
@@ -321,11 +328,11 @@ export default {
       //대기실로 돌아가는 메소드 구현
     });
 
-    this.session.on("signal:EECL", (e) => {
-      // 면접자의 자소서를 받아옴
-      const cl = JSON.parse(e.data);
-      this.$store.commit("SET_STUDYROOM_CL", cl);
-    });
+    // this.session.on("signal:EECL", (e) => {
+    //   // 면접자의 자소서를 받아옴
+    //   const cl = JSON.parse(e.data);
+    //   this.$store.commit("SET_STUDYROOM_CL", cl);
+    // });
     // this.session.on("signal:superUserOut", (e) => {
     //   if (this.myUserName === e.data) {
     //     this.$store.commit("lbhModule/SWITCH_USER_TYPE");
@@ -363,15 +370,23 @@ export default {
             to: [],
             type: 'EELeaveSessionFromEER'
           })
-          
+          if (this.session) {
+            console.log('플레이모드에서, 일반 면접자가 방을 나감', this.session)
+            this.session.disconnect()
+            console.log('this.session.disconnect가 실행됐나?', this.session)
+          } else{console.log('뭔소리 하는거야? 세션?')}
         } else if(this.isER) {
           this.session.signal({
             data:`${this.myUserName}`,
             to: [],
             type: 'ERLeaveSessionFromEER'
           })        
+          if (this.session) {
+            console.log('플레이모드에서, 일반 면접자가 방을 나감', this.session)
+            this.session.disconnect()
+            console.log('this.session.disconnect가 실행됐나?', this.session)
+          } else{console.log('뭔소리 하는거야? 세션?')}
         }
-        if (this.session) this.session.disconnect();
 
         window.removeEventListener("beforeunload", this.EERleaveSession);
 
