@@ -5,54 +5,62 @@
       type="text"
       class="form-control"
       v-if="updateClick"
-      v-model="FBContent"
+      v-model="feedbackContent"
       @keypress.enter="updateFB"/>
-    <span v-if="!updateClick" @click="openUpdateFB">{{ fb.content }}</span>
-    <button :class="[fb.gb === 'good' ? 'good' : 'bad']" class="FBBoxBtn" @click="deleteFB">
-      <i class="bi bi-trash3"></i>
-    </button>
-    <!-- [김이랑] 비디오 시간 이동 / 임시로 버튼 삽입 -->
-    <button :class="[fb.gb === 'good' ? 'good' : 'bad']" class="FBBoxBtn" @click="moveTo">
-      <i class="fa-solid fa-circle-play"></i>
-    </button>
+    <span v-if="!updateClick" @click="openUpdateFB">{{ fb.feedbackContent }}</span>
+    <div class="FBBtnContainer">
+      <button :class="[fb.feedbackType === 'good' ? 'good' : 'bad']" class="FBBoxBtn" @click="deleteFB">
+        <i class="bi bi-trash3"></i>
+      </button>
+      <!-- [김이랑] 비디오 시간 이동 / 임시로 버튼 삽입 -->
+      <button :class="[fb.feedbackType === 'good' ? 'good' : 'bad']" class="FBBoxBtn" @click="moveTo">
+        <i class="fa-solid fa-circle-play"></i>
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   name: "FeedbackBox",
   props: {
     fb: Object,
   },
+  computed:{
+    ...mapGetters('lbhModule', [
+      'myUserEmail',
+    ])
+  },
   created(){
-    console.log('이 피드백의 생성일시', this.fb.reg_dt)
+    console.log('이 피드백의 생성일시', this.fb.timeline)
   },
   data() {
     return {
-      id: this.fb.reg_dt,
-      FBContent: this.fb.content,
+      id: this.fb.timeline,
+      feedbackContent: this.fb.feedbackContent,
       updateClick: false,
     };
   },
   methods: {
     deleteFB() {
-      this.$store.commit("lbhModule/DELETE_FB", this.fb.reg_dt); //store action에 추가
+      this.$store.commit("lbhModule/DELETE_FB", this.fb.timeline); //store action에 추가
     },
     openUpdateFB(){
       this.updateClick = true
     },
     updateFB(){
       const data = {
-        gb: this.fb.gb,
-        content: this.FBContent,
-        reg_dt: this.fb.reg_dt,
+        feedbackType: this.fb.feedbackType,
+        feedbackContent: this.feedbackContent,
+        timeline: this.fb.timeline,
       }
       this.$store.commit('lbhModule/UPDATE_FB', data)
       this.updateClick = false 
     },
     // [김이랑] 비디오 시간 이동
     moveTo(){
-      this.$store.commit('lbhModule/SET_VIDEO_TIME', this.fb.reg_dt)
+      this.$store.commit('lbhModule/SET_VIDEO_TIME', this.fb.timeline)
     }
   },
 };
@@ -74,6 +82,11 @@ export default {
   margin-right: 0;
   overflow-wrap: break-word;
   background-color: white;
+}
+
+.FBBtnContainer{
+  display: flex;
+  width: 30%;
 }
 
 .good {

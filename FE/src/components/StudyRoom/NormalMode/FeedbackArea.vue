@@ -5,27 +5,27 @@
     <ul class="FBList">
       <!-- 피드백 입력란 -->
       <!-- 피드백 목록 -->
-      <li v-for="fb in FBList" :key="fb.reg_dt">
+      <li v-for="fb in FBList" :key="fb.timeline">
         <feedback-box :fb="fb"></feedback-box>
       </li>
     </ul>
     <!-- 피드백 없을 때 보여줄 문구 -->
-    <span v-if="FBList === []">아직 피드백이 존재하지 않습니다.</span>
+    <span v-if="FBList == []">아직 피드백이 존재하지 않습니다.</span>
 
     <!-- 피드백 굿/뱃 버튼 -->
-    <div class="FBBtncontainer inputOn" v-if="FBInputType">
+    <div class="FBBtncontainer inputOn" v-if="feedbackType">
       <textarea
         type="text"
         class="form-control"
-        v-model="FBContent"
+        v-model="feedbackContent"
         @keypress.enter="saveFB"
         placeholder="피드백을 등록하려면 엔터를 누르세요."/>
-      <div class="FBGoodBtn" v-if="FBInputType==='good'">
+      <div class="FBGoodBtn" v-if="feedbackType==='good'">
         <button @click="createFB('good')">
           <i class="bi bi-hand-thumbs-up-fill"></i>
         </button>
       </div>
-      <div class="FBBadBtn" v-else-if="FBInputType==='bad'">
+      <div class="FBBadBtn" v-else-if="feedbackType==='bad'">
         <button @click="createFB('bad')">
           <i class="bi bi-hand-thumbs-down-fill"></i>
         </button>
@@ -63,8 +63,8 @@ export default {
   },
   data(){
     return{
-      FBInputType: undefined,
-      FBContent: "",
+      feedbackType: undefined,
+      feedbackContent: "",
     }
   },
   computed:{
@@ -75,35 +75,35 @@ export default {
   },
   methods:{
     createFB(gb){
-      if (!this.FBInputType) {
+      if (!this.feedbackType) {
         //만약 굿/뱃 버튼 둘 다 눌리지 않은 상태에서 굿/뱃 버튼이 눌린다면
         if (gb === "good") {
-          this.FBInputType = "good";
+          this.feedbackType = "good";
         } else {
-          this.FBInputType = "bad";
+          this.feedbackType = "bad";
         }
       } else {
         //만약 굿/뱃 버튼 둘 중 하나가 눌린 상태에서 또 다시 굿/뱃 버튼이 눌린다면
         if (gb === "good") {
-          this.FBInputType= "good";
+          this.feedbackType= "good";
         } else {
-          this.FBInputType = "bad";
+          this.feedbackType = "bad";
         }
       }
     },
     saveFB(){
       const data = {
-        gb: this.FBInputType,
-        content: this.FBContent,
-        reg_dt: (Date.now() - this.startVideoTime)/1000,
+        feedbackType: this.feedbackType,
+        feedbackContent: this.feedbackContent,
+        timeline: (Date.now() - this.startVideoTime)/1000,
       }
       this.$store.commit('lbhModule/ADD_FB', data)
-      this.FBContent = "";
-      this.FBInputType= undefined;
+      this.feedbackContent = "";
+      this.feedbackType= undefined;
     },
     closeFBInput(){
-      this.FBContent = "";
-      this.FBInputType= undefined;
+      this.feedbackContent = "";
+      this.feedbackType= undefined;
     },
 
   },

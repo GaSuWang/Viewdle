@@ -14,6 +14,8 @@
       <button @click="timeCheck">
             <p>비디오 시간</p>
       </button>
+      {{axiosFBList}}
+      {{FBUserCount}}
     </div>
     <!-- 우단 -->
     <div class="FBRightArea">
@@ -102,10 +104,14 @@ export default {
       // [김이랑] 비디오 관련
       "videoSrc",
       "videoTime",
+
+      "FBList",
+      "FBUserCount",
+      "axiosFBList",
     ]),
     checkVideoTime(){
       return this.$store.getters['lbhModule/videoTime']
-    }
+    },
   },
   watch:{
     checkVideoTime(time){
@@ -118,6 +124,12 @@ export default {
   },
   // [김이랑] 비디오 관련
   created(){
+      //현재 피드백실에 있는 인원 설정
+      this.$store.commit('lbhModule/SET_FB_USER_COUNT')
+
+      this.session.on('signal:sendVideoSeq', (e)=>{
+        this.$store.commit('lbhModule/SET_VIDEOSEQ', e.data)
+      })
     // window.addEventListener("close", this.ERLeaveSessionFromFB);
 
       //방장인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
@@ -150,9 +162,24 @@ export default {
       this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
     })
 
+    //다른 면접관이 피드백 완료하면, 해당 면접관의 피드백을 받아 axiosFBList에 더하기
+    this.session.on('signal:addAllFBList', (e)=>{
+      console.log('addAllFbList',e)
+      this.$store.commit('lbhModule/MINUS_FB_USER_COUNT')
+      this.$store.commit('lbhModule/ADD_AXIOS_FBLIST', e.data)
+      //만약 피드백실에서 모두 나가면, 피드백까지 면접 종료
+      if(this.FBUserCount === 1){
+        console.log('fbcompleteAxios실행')
+        this.$store.dispatch('lbhModule/FBCompleteAxios')
+      }
+    })
+
   },
   unmounted(){
     this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
+    this.$store.commit('lbhModule/EMPTY_FB')
+    this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
+    
   },
   methods: {
     //vue-countdown
@@ -188,6 +215,13 @@ export default {
     },
     FBComplete() {
       if (confirm("피드백을 이대로 제출하시겠습니까? 이후에 대기실로 이동합니다.")) {
+        //전체 피드백 리스트에 피드백 넣기
+        const myFBList = JSON.stringify(this.FBList)
+        this.session.signal({
+          data: myFBList,
+          to: [],
+          type: 'addAllFBList'
+        })
         //면접관이 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
         const data = JSON.stringify(this.myUserInfo)
         this.session.signal({
