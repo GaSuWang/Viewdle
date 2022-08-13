@@ -20,6 +20,7 @@ const state = {
 
   //비디오 정보
   videoSeq: undefined,
+  videoSrc: '',
 
   //SettingRoom
   CameraList: [], // 영상 디바이스 리스트
@@ -79,6 +80,7 @@ const getters = {
   roomSeq(state){return state.roomSeq},
   roomTitle(state){return state.roomTitle},
   roomType(state){return state.roomType},
+  videoSrc(state){return state.videoSrc},
 
   //방장권한
   userType(state){return state.userType},
@@ -162,6 +164,12 @@ const mutations = {
   // GET_MY_USER_NAME(state, data){state.myUserName = data},
 
   //방 정보
+  GET_VIDEO_SRC(state, data) { 
+    state.videoSrc = data
+    console.log(`${data}를 받아왔고 이제 videoSrc도 ${state.videoSrc}'로 동일함`)
+  },
+  EMPTY_VIDEO_SRC(state) { state.videoSrc = ''},
+
   GET_ROOM_INFO(state, data){
     state.roomSeq = data.roomSeq,
     state.roomTitle = data.roomTitle,
@@ -492,7 +500,7 @@ const actions = {
   // 임현탁 videourl credentials에 받아옴
   //면접 끝, 면접자는 대기실로, 면접관은 피드백실로 이동(내 영상 저장)
   finishInterviewAxios({state, rootGetters, commit}, credentials){
-    console.log(credentials)
+    console.log('면접이 끝남. 비디오 url을 가지고 있는 면접자가 axios 요청을 보냄',credentials)
     axios({
       url: BASE_URL + 'video',
       method: 'post',
@@ -500,15 +508,18 @@ const actions = {
       data: {
         userEmail: state.myUserEmail,
         videoTitle: state.roomTitle,
-        videoUrl: credentials, //videoUrl 추가해야됨
+        videoUrl: credentials.url, //videoUrl 추가해야됨
         // videoUrl: credentials.url, //videoUrl 추가해야됨
       }
     })
     .then(res=>{
-      console.log('성공적으로 면접 완료', state.myUserEmail, state.roomTitle,credentials)
+      console.log('성공적으로 면접 완료', state.myUserEmail, state.roomTitle,credentials, res.data)
       commit('SET_VIDEOSEQ', res.data) //vdieoSeq 추가해야됨
     }) 
-    .catch(err=>console.error(err.response))
+    .catch(err=>{
+      console.log( state.myUserEmail, state.roomTitle,credentials)
+      console.error(err.response)
+    })
   },
 
   //면접관이 피드백 끝냄(스터디 룸 면접 종료)

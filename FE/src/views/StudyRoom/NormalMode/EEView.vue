@@ -69,7 +69,8 @@ export default {
       "session",
       "nextSuperUserList",
       'currentUserList',
-      'recordingObject'
+      'recordingObject',
+      'roomTitle',
     ])
   },
   data(){
@@ -135,12 +136,12 @@ export default {
           console.log(res.data)
           // 임현탁 여기 부터
           // //레코딩 끝난 후 시그널링으로 URL 보내기
-          // this.session.signal({
-          // data: this.res.data.url,
-          // to: [],
-          // type: 'ReviewURL'          
-          // })
-          // this.$store.commit('lbhModule/SET_RECORDING_OBJECT', res.data)
+          this.session.signal({
+            data: res.data.url,
+            to: [],
+            type: 'ReviewURL'          
+          })
+          this.$store.commit('lbhModule/GET_VIDEO_SRC', res.data.url)
           // 임현탁 여기까지 주석처리함
 
 
@@ -200,8 +201,8 @@ export default {
           to: [],
           type: 'stopRecording'
         })
-        const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
-        this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
+        // const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
+        // this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
         this.session.signal({
           data: '',
           to: [],

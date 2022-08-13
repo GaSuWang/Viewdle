@@ -168,6 +168,11 @@ export default {
       alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
       this.toWR()
     })
+
+    //면접자가 보내준 저장된 영상 url
+    this.session.on('signal:ReviewURL', (e)=>{
+      this.$store.commit('lbhModule/GET_VIDEO_SRC', e.data)
+    })
   },
   methods: {
     // isAlone(){
@@ -232,8 +237,8 @@ export default {
     async finishInterview(){
       console.log('면접 완료 버튼 눌렸는데?')
       if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
-        const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
-        this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
+        // const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
+        // this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
         this.session.signal({
           data: '',
           to: [],
