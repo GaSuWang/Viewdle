@@ -124,9 +124,9 @@ export default {
       "session",
       "currentUserList",
     ]),
-    nextSuperUserList() {
-      return this.currentUserList.filter((p) => p.name !== this.myUserName);
-    },
+    // nextSuperUserList() {
+    //   return this.currentUserList.filter((p) => p.name !== this.myUserName);
+    // },
     cssVariable() {
       return {
         "--bgcolor": this.bgIsWhite ? "white" : "tomato",
@@ -157,16 +157,16 @@ export default {
 
     //방장인 면접자가, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superEELeaveSession', (e)=>{
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
+      const pastSuperUserEmail = e.data.split(' ')[0]
+      const currentSuperUserEmail = e.data.split(' ')[1]
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+      if(this.myUserEmail === currentSuperUserEmail){
         alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
         this.$store.commit('lbhModule/SET_EE', [])
         this.$store.commit('lbhModule/EMPTY_ERS')
         this.$router.push({name:'waiting-room'})
-      } else if(this.session){
+      } else {
         alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
         this.$store.commit('lbhModule/SET_EE', [])
         this.$store.commit('lbhModule/EMPTY_ERS')
@@ -176,16 +176,17 @@ export default {
 
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e) => {
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
+      const pastSuperUserEmail = e.data.split(' ')[0]
+      const currentSuperUserEmail = e.data.split(' ')[1]
+      console.log('방장이 면접 도중에 나감', pastSuperUserEmail, currentSuperUserEmail)
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+      if(this.myUserEmail === currentSuperUserEmail){
         alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
       }
     })
 
-    this.nextSuperUser = "";
+    // this.nextSuperUser = "";
     window.addEventListener("beforeunload", this.EERleaveSession);
     console.log("eerview cretaed", this.EE);
     console.log("eerview cretaed", this.ERS);
@@ -193,7 +194,10 @@ export default {
     this.session.on("signal:warning", (event) => {
       console.log(event.data);
       //신호를 받고, 내가 면접자인 경우에만 warningCount++
-      if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
+      // if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
+      // 이병헌: 이제는 connection.data에 { clientName: this.myUserName, clientEmail: this.myUserEmail } 이런식으로 정보가 넘어가서,
+      // clientData가 아닌, clientEmail로 확인해야 될 거 같아. 그래서 아래도 일단 다 수정해뒀어.
+      if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail) {
         console.log("EE: ", this.EE);
         this.addWarn(); //경고 누적
         this.setFilter(); //필터 걸기
@@ -213,10 +217,12 @@ export default {
       } else if (data === "2") {
         filter = "optv";
       }
-      if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+      // if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+      if (JSON.parse(this.EE.stream.connection.data).clientEmail !== this.myUserEmail) {
         for (var ER of this.ERS) {
-          var name = JSON.parse(ER.stream.connection.data).clientData;
-          if (name === this.myUserName) {
+          // var name = JSON.parse(ER.stream.connection.data).clientData;
+          var email = JSON.parse(ER.stream.connection.data).clientEmail;
+          if (email === this.myUserEmail) {
             //이미 설정된 필터가 있으면
             if (this.isFiltered) {
               this.removeFilter();
@@ -252,8 +258,10 @@ export default {
     });
     //----------------돌발 상황 시작 ----------------------
     this.session.on("signal:suddenAttack",()=>{
-      var name = JSON.parse(this.EE.stream.connection.data).clientData;
-      if(name === this.myUserName){
+      // var name = JSON.parse(this.EE.stream.connection.data).clientData;
+      var email = JSON.parse(this.EE.stream.connection.data).clientEmail;
+      // if(name === this.myUserName){
+      if(email === this.myUserEmail){
         console.log("receive suddenAttack signal");
         //면접자 돌발상황 발생시키기
         this.startSuddenAttack();
@@ -264,8 +272,10 @@ export default {
       
     })
     this.session.on("siganl:endSuddenAttack",()=>{
-      var name = JSON.parse(this.EE.stream.connection.data).clientData;
-      if(name !== this.myUserName){
+      // var name = JSON.parse(this.EE.stream.connection.data).clientData;
+      var email = JSON.parse(this.EE.stream.connection.data).clientEmail;
+      // if(name !== this.myUserName){
+      if(email !== this.myUserEmail){
         this.suddenBtnState = false;
       }
     })
@@ -273,8 +283,10 @@ export default {
     //----------------돌발 질문 시작-----------------------
     this.session.on("signal:suddenQA", () => {
       console.log("receive suddenQA signal");
-      var name = JSON.parse(this.EE.stream.connection.data).clientData;
-      if (name === this.myUserName) {
+      // var name = JSON.parse(this.EE.stream.connection.data).clientData;
+      var email = JSON.parse(this.EE.stream.connection.data).clientEmail;
+      // if (name === this.myUserName) {
+      if (email === this.myUserEmail) {
         //면접자 화면에 카운트다운 3,2,1 ->  ui 사이렌 효과주기
         this.startSirenEffect();
         this.showCountDown();
@@ -295,8 +307,10 @@ export default {
     });
     this.session.on("signal:activeSuddenBtn", () => {
       console.log("돌발질문 버튼 활성화시키기");
-      var name = JSON.parse(this.EE.stream.connection.data).clientData;
-      if (name !== this.myUserName) {
+      // var name = JSON.parse(this.EE.stream.connection.data).clientData;
+      var email = JSON.parse(this.EE.stream.connection.data).clientEmail;
+      // if (name !== this.myUserName) {
+      if (email !== this.myUserEmail) {
         this.suddenBtnState = false;
       }
     });
@@ -312,16 +326,17 @@ export default {
       const cl = JSON.parse(e.data);
       this.$store.commit("SET_STUDYROOM_CL", cl);
     });
-    this.session.on("signal:superUserOut", (e) => {
-      if (this.myUserName === e.data) {
-        this.$store.commit("lbhModule/SWITCH_USER_TYPE");
-      } else {
-        ("방장바뀜");
-      }
-    });
+    // this.session.on("signal:superUserOut", (e) => {
+    //   if (this.myUserName === e.data) {
+    //     this.$store.commit("lbhModule/SWITCH_USER_TYPE");
+    //   } else {
+    //     ("방장바뀜");
+    //   }
+    // });
 
     // 면접자일때만 음성인식 시작
-    if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
+    // if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
+    if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail) {
       this.startRecognition();
     }
   },
@@ -357,12 +372,6 @@ export default {
           })        
         }
         if (this.session) this.session.disconnect();
-
-        this.$store.commit("lbhModule/SET_SESSION", undefined);
-        this.$store.commit("lbhModule/SET_OV", undefined);
-        this.$store.commit("lbhModule/SET_PUBLISHER", undefined);
-        this.$store.commit("lbhModule/SET_SUBSCRIBERS", []);
-        this.$store.commit("lbhModule/SET_SUPERUSER", {});
 
         window.removeEventListener("beforeunload", this.EERleaveSession);
 
@@ -407,8 +416,10 @@ export default {
     removeFilter() {
       if (this.isFiltered) {
         for (var ER of this.ERS) {
-          var name = JSON.parse(ER.stream.connection.data).clientData;
-          if (name === this.myUserName) {
+          // var name = JSON.parse(ER.stream.connection.data).clientData;
+          var email = JSON.parse(ER.stream.connection.data).clientEmail;
+          // if (name === this.myUserName) {
+          if (email === this.myUserEmail) {
             ER.stream.removeFilter();
             this.isFiltered = false;
           }
