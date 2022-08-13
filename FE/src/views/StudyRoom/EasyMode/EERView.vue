@@ -284,6 +284,7 @@ export default {
 
     // potato filter
     this.session.on("signal:imgFilterOn", (event) => {
+      console.log(this.publisher);
       let data = event.data;
       let img = ""; 
       console.log(data);

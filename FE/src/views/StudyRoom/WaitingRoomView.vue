@@ -484,7 +484,7 @@ export default {
               type: "WEBRTC",
               role: "PUBLISHER",
               kurentoOptions: {
-                allowedFilters: ["GStreamerFilter"],
+                allowedFilters: ["GStreamerFilter", "FaceOverlayFilter"],
               },
             },
             {
