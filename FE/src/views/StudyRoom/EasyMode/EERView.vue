@@ -1,6 +1,6 @@
 // 이병헌
 <template>
-  <AuthorityPassModal/>
+  <AuthorityPassModal />
   <div class="EERView">
     <!-- 영상 구역 -->
     <div :style="cssVariable" class="EERContent">
@@ -25,13 +25,18 @@
     <div class="EERRightArea">
       <div class="EERButtonHeader">
         <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
-          <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
-              <i class="bi bi-x-lg"></i>
+          <button
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+            data-bs-backdrop="false"
+          >
+            <i class="bi bi-x-lg"></i>
           </button>
         </div>
         <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
           <button type="button">
-              <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg"></i>
           </button>
         </div>
       </div>
@@ -74,7 +79,7 @@
 </template>
 
 <script>
-import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
+import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue";
 import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
 // import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
@@ -85,7 +90,7 @@ export default {
   components: { UserVideo, AuthorityPassModal }, // warningStackBar //경고게이지 주석
   data() {
     return {
-       warningCount: 0, //현재 쌓인 경고수
+      warningCount: 0, //현재 쌓인 경고수
       isFiltered: false, //비디오 필터 걸렸는지 확인
       suddenBtnState: false, //돌발질문 버튼 활성화 여부, :disabled활용, false일때 활성화
       OXBtnState: false, // 면접관 돌발질문 OX 버튼 활성화 여부 v-if활용 true일때 활성화
@@ -95,7 +100,7 @@ export default {
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
     };
   },
-   computed: {
+  computed: {
     ...mapGetters("lbhModule", [
       "EE",
       "ERS",
@@ -119,48 +124,48 @@ export default {
   },
   created() {
     //일반 유저인 면접자가, 면접 도중에 나간 경우
-    this.session.on('signal:EELeaveSessionFromEER', (e)=>{
-      alert('면접자가 면접 도중에 나갔습니다.\n남은 참가자들 모두 대기실로 이동합니다.')
-      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', e.data)
-      this.$store.commit('lbhModule/SET_EE', [])
-      this.$store.commit('lbhModule/EMPTY_ERS')
-      this.$router.push({name:'waiting-room'})
-    })
+    this.session.on("signal:EELeaveSessionFromEER", (e) => {
+      alert("면접자가 면접 도중에 나갔습니다.\n남은 참가자들 모두 대기실로 이동합니다.");
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);
+      this.$store.commit("lbhModule/SET_EE", []);
+      this.$store.commit("lbhModule/EMPTY_ERS");
+      this.$router.push({ name: "waiting-room" });
+    });
 
     //일반 유저인 면접관이, 면접 도중에 나간 경우
-    this.session.on('signal:ERLeaveSession', (e)=>{
-      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', e.data)
-    })
+    this.session.on("signal:ERLeaveSession", (e) => {
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);
+    });
 
     //방장인 면접자가, 면접을 보는 도중에 나갈 경우
-    this.session.on('signal:superEELeaveSession', (e)=>{
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
-        alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
-        this.$store.commit('lbhModule/SET_EE', [])
-        this.$store.commit('lbhModule/EMPTY_ERS')
-        this.$router.push({name:'waiting-room'})
-      } else if(this.session){
-        alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
-        this.$store.commit('lbhModule/SET_EE', [])
-        this.$store.commit('lbhModule/EMPTY_ERS')
-        this.$router.push({name:'waiting-room'})
-      }        
-    })
+    this.session.on("signal:superEELeaveSession", (e) => {
+      const pastSuperUserName = e.data.split(" ")[0];
+      const currentSuperUserName = e.data.split(" ")[1];
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", pastSuperUserName);
+      if (this.myUserName === currentSuperUserName) {
+        alert("방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.");
+        this.$store.commit("lbhModule/SWITCH_USER_TYPE_TEMP");
+        this.$store.commit("lbhModule/SET_EE", []);
+        this.$store.commit("lbhModule/EMPTY_ERS");
+        this.$router.push({ name: "waiting-room" });
+      } else if (this.session) {
+        alert("면접자가 방에서 나갔습니다. 대기실로 이동합니다.");
+        this.$store.commit("lbhModule/SET_EE", []);
+        this.$store.commit("lbhModule/EMPTY_ERS");
+        this.$router.push({ name: "waiting-room" });
+      }
+    });
 
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
-    this.session.on('signal:superERLeaveSession', (e) => {
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
-        alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+    this.session.on("signal:superERLeaveSession", (e) => {
+      const pastSuperUserName = e.data.split(" ")[0];
+      const currentSuperUserName = e.data.split(" ")[1];
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", pastSuperUserName);
+      if (this.myUserName === currentSuperUserName) {
+        alert("방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.");
+        this.$store.commit("lbhModule/SWITCH_USER_TYPE_TEMP");
       }
-    })
+    });
 
     this.nextSuperUser = "";
     window.addEventListener("beforeunload", this.EERleaveSession);
@@ -210,7 +215,8 @@ export default {
                     console.log(error);
                   });
               }, 1000);
-            } else { //설정된 필터가 없으면
+            } else {
+              //설정된 필터가 없으면
               ER.stream
                 .applyFilter("GStreamerFilter", { command: filter })
                 .then(() => {
@@ -289,56 +295,55 @@ export default {
       let offsetX = "";
       let offsetY = "";
       let width = "";
-      let height = ""; 
+      let height = "";
       console.log(data);
 
-      if(data == "potato"){
-        img = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fpotato_shape.png?alt=media&token=2426c722-cdb2-48af-8982-f17a16bd9e5e" // potato img => 지금은 모자임
-        offsetX = "-0.2F"
+      if (data == "potato") {
+        img =
+          "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fpotato_shape.png?alt=media&token=2426c722-cdb2-48af-8982-f17a16bd9e5e"; // potato img => 지금은 모자임
+        offsetX = "-0.2F";
         offsetY = "-0.45F";
         width = "1.4F";
-        height = "1.9"; 
-      }else if (data == "bread"){
-        img = 'https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbread_shape.png?alt=media&token=5fe3699b-17e1-4086-9cd1-53fa59cce6c9'; // bread img
-        offsetX = "-0.35F"
+        height = "1.9";
+      } else if (data == "bread") {
+        img =
+          "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbread_shape.png?alt=media&token=5fe3699b-17e1-4086-9cd1-53fa59cce6c9"; // bread img
+        offsetX = "-0.35F";
         offsetY = "-0.55F";
         width = "1.7F";
-        height = "2.0F"; 
-      }else if(data == "bald"){
-        img = 'https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbald_remove.png?alt=media&token=5b340aed-24b0-4f9a-93aa-3abfa2b1b736'; // bald img
-        offsetX = "-0.05F"
+        height = "2.0F";
+      } else if (data == "bald") {
+        img =
+          "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbald_remove.png?alt=media&token=5b340aed-24b0-4f9a-93aa-3abfa2b1b736"; // bald img
+        offsetX = "-0.05F";
         offsetY = "-0.7F";
         width = "1.15F";
-        height = "0.9F"; 
+        height = "0.9F";
       }
       if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
         for (let ER of this.ERS) {
           let name = JSON.parse(ER.stream.connection.data).clientData;
-            if (name === this.myUserName) {
-              ER.stream.applyFilter("FaceOverlayFilter")
-                .then(filter => {
-                  filter.execMethod(
-                    "setOverlayedImage",
-                  {
-                    "uri": img,
-                    "offsetXPercent": offsetX,
-                    "offsetYPercent": offsetY,
-                    "widthPercent": width,
-                    "heightPercent": height
-                  });
-                  console.log("img filter success");
-                });
-            }
+          if (name === this.myUserName) {
+            ER.stream.applyFilter("FaceOverlayFilter").then((filter) => {
+              filter.execMethod("setOverlayedImage", {
+                uri: img,
+                offsetXPercent: offsetX,
+                offsetYPercent: offsetY,
+                widthPercent: width,
+                heightPercent: height,
+              });
+              console.log("img filter success");
+            });
+          }
         }
       }
-    })
-
+    });
   },
   setup() {
     const router = useRouter();
     //--------------------return waitingRoom ---------------------------
     function returnWaitingRoom() {
-      if(this.isFiltered){
+      if (this.isFiltered) {
         this.removeFilter();
       }
       router.push({ name: "waiting-room" });
@@ -349,21 +354,20 @@ export default {
     };
   },
   methods: {
-        userLeaveSessionFromEER(){
-      if(confirm('정말 면접 도중에 나가시겠습니까?')){
-        if(this.isEE){
+    userLeaveSessionFromEER() {
+      if (confirm("정말 면접 도중에 나가시겠습니까?")) {
+        if (this.isEE) {
           this.session.signal({
-            data:`${this.myUserName}`,
+            data: `${this.myUserName}`,
             to: [],
-            type: 'EELeaveSessionFromEER'
-          })
-          
-        } else if(this.isER) {
+            type: "EELeaveSessionFromEER",
+          });
+        } else if (this.isER) {
           this.session.signal({
-            data:`${this.myUserName}`,
+            data: `${this.myUserName}`,
             to: [],
-            type: 'ERLeaveSessionFromEER'
-          })        
+            type: "ERLeaveSessionFromEER",
+          });
         }
         if (this.session) this.session.disconnect();
 
@@ -375,7 +379,7 @@ export default {
 
         window.removeEventListener("beforeunload", this.EERleaveSession);
 
-        this.$router.push('/main')
+        this.$router.push("/main");
       }
     },
     openEECL() {
@@ -418,12 +422,17 @@ export default {
       if (this.isFiltered) {
         for (var ER of this.ERS) {
           var name = JSON.parse(ER.stream.connection.data).clientData;
+          console.log("1번관문");
           if (name === this.myUserName) {
-            ER.stream.removeFilter().then(()=>{
-              console.log("remove filter");
-            }).catch((e)=>{
-              console.log("remove filter error",e);
-            });
+            console.log("2번관문");
+            ER.stream
+              .removeFilter()
+              .then(() => {
+                console.log("remove filter");
+              })
+              .catch((e) => {
+                console.log("remove filter error", e);
+              });
             this.isFiltered = false;
           }
         }
@@ -518,9 +527,8 @@ export default {
       }, 200);
       setTimeout(() => {
         clearInterval(interval);
-         this.bgIsWhite = true;
+        this.bgIsWhite = true;
       }, 3000);
-     
     },
 
     selectXBtn() {
@@ -609,64 +617,61 @@ export default {
 
     removeImgFilter() {
       // if (this.isFiltered) {
-        for (let ER of this.ERS) {
-          let name = JSON.parse(ER.stream.connection.data).clientData;
-          if (name === this.myUserName) {
-            ER.stream.applyFilter("FaceOverlayFilter")
-                .then(filter => {
-                  filter.execMethod(
-                    "unsetOverlayedImage");
-                  console.log("img filter remove");
-                });
-          }
+      for (let ER of this.ERS) {
+        let name = JSON.parse(ER.stream.connection.data).clientData;
+        if (name === this.myUserName) {
+          ER.stream.applyFilter("FaceOverlayFilter").then((filter) => {
+            filter.execMethod("unsetOverlayedImage");
+            console.log("img filter remove");
+          });
         }
+      }
       // }
     },
 
-    
     // Speech API
     startRecognition() {
-      let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      let recognition = SpeechRecognition? new SpeechRecognition() : false
+      let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      let recognition = SpeechRecognition ? new SpeechRecognition() : false;
       recognition.interimResults = true;
-      recognition.lang = 'ko-KR';
+      recognition.lang = "ko-KR";
       recognition.continuous = false;
-    
+
       recognition.start(); // 음성 인식 시작
       console.log("start speech recognition");
 
-      recognition.onresult = (e) => { // 음성 인식 결과 반환
-        for(let i = e.resultIndex; i < e.results.length; ++i){
-          if(e.results[i].isFinal){ 
+      recognition.onresult = (e) => {
+        // 음성 인식 결과 반환
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+          if (e.results[i].isFinal) {
             let script = e.results[i][0].transcript;
             // console.log(script);
-            if(script.includes("빵")){
+            if (script.includes("빵")) {
               console.log("빵");
               this.setImgFilterOn("bread");
-            }else if(script.includes("감자")){
+            } else if (script.includes("감자")) {
               console.log("감자");
               this.setImgFilterOn("potato");
-            }else if(script.includes("나 안 해")){
+            } else if (script.includes("나 안 해")) {
               console.log("대머리");
               this.setImgFilterOn("bald");
             }
           }
         }
-      }
+      };
 
-      recognition.onend = function(){ // 음성 인식이 끊겼을 때 
+      recognition.onend = function () {
+        // 음성 인식이 끊겼을 때
         //recognition.stop();
-        recognition.start(); 
-      }     
+        recognition.start();
+      };
 
-      recognition.onerror = function(e) {
+      recognition.onerror = function (e) {
         console.log(e);
-      }
+      };
     },
 
-    timer(){
-
-    }
+    timer() {},
   },
 };
 </script>
