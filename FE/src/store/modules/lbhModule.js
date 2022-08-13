@@ -60,6 +60,10 @@ const state = {
 
   // 녹화 관련
   recordingObject : null,
+
+  // [김이랑] 비디오 관련
+  videoTime : null,
+  startVideoTime : null,
 };
 const getters = {
   //유저 정보
@@ -131,6 +135,10 @@ const getters = {
 
   //녹화 관련
   recordingObject(state) {return state.recordingObject},
+
+  //[김이랑] 비디오 관련
+  videoTime(state) {return state.videoTime},
+  startVideoTime(state) {return state.startVideoTime},
 };
 const mutations = {
   //방장권한
@@ -273,6 +281,10 @@ const mutations = {
   EMPTY_FB(state){state.FBList = []},
   //녹화 관련
   SET_RECORDING_OBJECT(state, recordingObject){state.recordingObject = recordingObject},
+
+  //[김이랑] 비디오 관련
+  SET_VIDEO_TIME(state, videoTime){state.videoTime = videoTime},
+  SET_START_VIDEO_TIME(state, startVideoTime){state.startVideoTime = startVideoTime},
 };
 
 const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'

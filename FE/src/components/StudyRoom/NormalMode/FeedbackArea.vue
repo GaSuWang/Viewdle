@@ -70,6 +70,7 @@ export default {
   computed:{
     ...mapGetters('lbhModule',[
       'FBList',
+      'startVideoTime',
     ])
   },
   methods:{
@@ -94,7 +95,7 @@ export default {
       const data = {
         gb: this.FBInputType,
         content: this.FBContent,
-        reg_dt: Date.now(),
+        reg_dt: (Date.now() - this.startVideoTime)/1000,
       }
       this.$store.commit('lbhModule/ADD_FB', data)
       this.FBContent = "";

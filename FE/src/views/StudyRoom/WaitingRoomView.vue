@@ -142,6 +142,10 @@ export default {
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
     })
     console.log('대기실들어옴',this.currentUserList,this.myUserInfo,this.roomSeq)
+
+    this.session.on('signal:startVideoTime', (e)=>{
+      this.$store.commit('lbhModule/SET_START_VIDEO_TIME', e.data)
+    })
   },
   unmounted(){
     window.removeEventListener("beforeunload", this.forceLeaveSession,);
@@ -186,7 +190,10 @@ export default {
       "CLSelected",
 
       //녹화 관련
-      "recordingObject"
+      "recordingObject",
+
+      //[김이랑] 피드백 영상 관련
+      "startVideoTime",
     ]),
 		// showVid() {
 		// 	if(this.$router.currentRoute.value.name === 'waiting-room'){
@@ -426,7 +433,7 @@ export default {
           })
 
           this.startRecording();
-
+          this.setRecordingtime();
           this.$router.push({ name: "ee-room" });
         } 
 
@@ -577,6 +584,18 @@ export default {
           })
           .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
       });
+    },
+
+    // 피드백 관련
+    setRecordingtime(){
+      var date = Date.now();
+      this.session.signal({
+        data: date,
+        to: [],
+        type: 'startVideoTime'
+      })
+
+      this.$store.commit('lbhModule/SET_START_VIDEO_TIME', Date.now())
     },
 
     // 녹화 funcion
