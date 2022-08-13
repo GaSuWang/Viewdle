@@ -109,6 +109,7 @@ export default {
       countDown: 3, // 실제 화면에 표시되는 카운트다운
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
       suddenAttackFlag: -1,//돌발 상황 분기
+            timeout: null,//타임아웃 저장용
     };
   },
    computed: {
@@ -232,6 +233,7 @@ export default {
           if (email === this.myUserEmail) {
             //이미 설정된 필터가 있으면
             if (this.isFiltered) {
+                            clearTimeout(this.timeout);
               this.removeFilter();
               setTimeout(() => {
                 ER.stream
@@ -239,7 +241,7 @@ export default {
                   .then(() => {
                     this.isFiltered = true;
                     console.log("success set filter");
-                    setTimeout(this.removeFilter, 10000);
+                    this.timeout=setTimeout(this.removeFilter, 10000);
                     //일정 시간 이후 필터 해제하기
                   })
                   .catch((error) => {
@@ -252,7 +254,7 @@ export default {
                 .then(() => {
                   this.isFiltered = true;
                   console.log("success set filter");
-                  setTimeout(this.removeFilter, 10000);
+                  this.timeout=setTimeout(this.removeFilter, 10000);
                   //일정 시간 이후 필터 해제하기
                 })
                 .catch((error) => {
