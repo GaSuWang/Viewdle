@@ -1,9 +1,14 @@
 <template>
   <div class="background" tabindex="0" @keyup="checkKey" ref="div">
     <GameTimer class="timer" @TimeOut="failSuddenAttack" />
-    <span v-for="(i, index) in icons" :key="index">
-      <i :class="i.name" :id="index"></i>
-    </span>
+
+    <div class="container" style="width : 40vw">
+      <div class="row row-cols-4">
+        <div class="arrowSpan" v-for="(i, index) in icons" :key="index">
+          <i :class="i.name" :id="index"></i>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -18,7 +23,7 @@ export default {
     };
   },
   created() {
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 12; i++) {
       var flag = Math.floor(Math.random() * 4);
       console.log(flag);
       if (flag == 0) {
@@ -60,24 +65,59 @@ export default {
 .timer {
   color: white;
 }
+
+.arrowSpan{
+  margin : 0;
+  padding : 0;
+}
 i {
-  --color: red;
-  font-size: 8em;
+  --color: #da3b22;
+  font-size: 8vw;
   color: var(--color);
+  margin : 0;
+  padding : 1vw 0vw 0vw 0vw;
+  text-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  animation: fade .25s infinite alternate;
 }
 .background {
   width: 100vw;
   height: 100vh;
-  background-color: black;
-  animation: blackout 1.5s;
+  /* background-color: black; */
+  background-color: rgba(0,0,0,0.9);
+  animation: blackout 1.25s;
   text-align: center;
 }
+
+@keyframes fade {
+  0%, 7% {
+    transform: rotateZ(0);
+  }
+  15% {
+    transform: rotateZ(-15deg);
+  }
+  20% {
+    transform: rotateZ(10deg);
+  }
+  25% {
+    transform: rotateZ(-10deg);
+  }
+  30% {
+    transform: rotateZ(6deg);
+  }
+  35% {
+    transform: rotateZ(-4deg);
+  }
+  40%, 100% {
+    transform: rotateZ(0);
+  }
+}
+
 @keyframes blackout {
   from {
     opacity: 0;
   }
   to {
-    opacity: 1;
+    opacity: 0.9;
   }
 }
 </style>

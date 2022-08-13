@@ -1,8 +1,12 @@
 <template>
   <div class="background">
     <GameTimer class="timer" @TimeOut="failSuddenAttack" />
-    <div v-for="(row,index) in number2D" :key="index">
-        <div class="cell" v-for="(cell,index2) in row" :key="index2" @click="clickCell(cell.num,index,index2)"  :style="{visibility: cell.flag}">{{cell.num}}</div>
+    <div class="d-flex justify-content-center">
+      <div v-for="(row,index) in number2D" :key="index" class="">
+        <div class="cell d-flex justify-content-center align-items-center" v-for="(cell,index2) in row" :key="index2" @click="clickCell(cell.num,index,index2)"  :style="{visibility: cell.flag}">
+          <p style="margin : 0">{{cell.num}}</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -60,15 +64,24 @@ export default {
 }
 .cell{
     cursor: pointer;
-    margin: 2vw;
-    font-size: 50px;
+    margin: 4vw 2vw 0vw 2vw;
+
     display: inline-block;
-    width: 20vw;
-    height: 20vh;
-    background: rgb(240, 90, 25);
+    width: 8vw;
+    height: 8vw;
+    background: #ffcc74;
+    border: 1px #fcab1f solid;
+    box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
     border-radius: 5%;
     text-align: center;
-    animation: bounce-in 1.5s;
+    /* animation: bounce-in 1.5s; */
+    animation: beat .25s infinite alternate;
+
+    font-size: 100px;
+    font-family: 'SDSamliphopangche_Basic';
+    /* text-shadow: 1px 2px 2px; */
+    text-shadow: -1px 0 #555, 0 1px #555, 1px 0 #555, 0 -1px #555;
+    color : #555
 }
 @keyframes bounce-in {
   0% {
@@ -80,5 +93,16 @@ export default {
   100% {
     transform: scale(1);
   }
+}
+
+@keyframes beat{
+	to { transform: scale(1.15); }
+}
+
+@font-face {
+    font-family: 'SDSamliphopangche_Basic';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts-20-12@1.0/SDSamliphopangche_Basic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 </style>
