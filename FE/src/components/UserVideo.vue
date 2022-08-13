@@ -1,7 +1,7 @@
 <template>
 <div class="userVideo" v-if="streamManager">
 	<ov-video :stream-manager="streamManager"/>
-	<div class="userInfo">{{ clientData }}</div>
+	<div class="userInfo">{{ clientName }}</div>
 </div>
 </template>
 
@@ -21,9 +21,9 @@ export default {
 			'WRParticipantList',
 			'session',
 		]),
-		clientData() {
-			const { clientData } = this.getConnectionData();
-			return clientData;
+		clientName() {
+			const { clientName } = this.getConnectionData();
+			return clientName;
 		},
 		showVid() {
 			if(this.$router.currentRoute.value.name === 'waiting-room'){
@@ -55,8 +55,8 @@ export default {
 		async inWR() {
 			await this.session.on('signal:publisherOn')
 			if(this.streamManager){
-				const vidUserName = JSON.parse(this.streamManager.stream.connection.data).clientData
-				if(this.WRParticipantList.filter(e=> e.name === vidUserName).length === 0){
+				const vidUserEmail = JSON.parse(this.streamManager.stream.connection.data).clientEmail
+				if(this.WRParticipantList.filter(e=> e.name === vidUserEmail).length === 0){
 					this.videoStatus = false
 				} else { 
 					this.videoStatus = true}
