@@ -410,6 +410,8 @@ const actions = {
     .then(res=> {
       dispatch('deleteData')
       console.log('방장 유저 정상적으로 세션 나감', res.response)
+      router.push('/main')
+      this.dispatch('rhtModule/getStudyRoom', {root:true})
     })
     .catch(err=>console.error(err.response))
   },
@@ -427,9 +429,7 @@ const actions = {
     })
     .then(res=> {
       console.log('일단 방을 나감', state.roomSeq, res.response)
-      router.push('/main')
       dispatch('studyDestorySecondAxios')
-      this.dispatch('rhtModule/getStudyRoom', {root:true})
     })
     .catch(err=>console.error(err.response))
   },
@@ -444,7 +444,9 @@ const actions = {
     })
     .then(res => {
       dispatch('deleteData')
-      console.log('방이 성공적으로 폭파됨', res.response) 
+      console.log('방이 성공적으로 폭파됨', res)
+      router.push('/main') 
+      this.dispatch('rhtModule/getStudyRoom', {root:true})
     })
     .catch(err=>console.error(err.response))
   },

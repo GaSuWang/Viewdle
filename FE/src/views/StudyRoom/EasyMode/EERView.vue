@@ -325,7 +325,7 @@ export default {
 
         window.removeEventListener("beforeunload", this.EERleaveSession);
 
-        this.$router.push('/main')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
       }
     },
     openEECL() {

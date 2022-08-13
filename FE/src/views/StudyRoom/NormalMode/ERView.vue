@@ -196,7 +196,8 @@ export default {
       // this.$store.commit('lbhModule/EMPTY_FB')
       
       // window.removeEventListener("beforeunload", this.ERLeaveSession);
-      this.$router.push('/main')
+      // this.$router.push('/main')
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
       }
     },
     async toFB() {

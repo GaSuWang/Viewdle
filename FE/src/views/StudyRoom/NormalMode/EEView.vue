@@ -197,7 +197,8 @@ export default {
         // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
         // this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
 
-        this.$router.push("/main");
+        // this.$router.push("/main");
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
       }
     },
     async finishInterview(){

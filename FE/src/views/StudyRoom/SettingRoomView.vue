@@ -1,5 +1,7 @@
 // 이병헌
 <template>
+<div>
+  <AuthorityPassModal/>
   <div class="SettingRoomView">
     <!-- 좌단 -->
     <!-- 유저 화면 나오는 곳 -->
@@ -101,9 +103,11 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
+import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 import {mapGetters, useStore} from 'vuex';
 import { OpenVidu } from 'openvidu-browser';
 import { VideoPlayer } from '@videojs-player/vue'
@@ -112,7 +116,8 @@ var vid = document.getElementById('testVid')
 export default {
   name: "SettingRoomView",
   components:{
-    VideoPlayer
+    VideoPlayer,
+    AuthorityPassModal
   },
   created(){
     console.log(this.CLList)

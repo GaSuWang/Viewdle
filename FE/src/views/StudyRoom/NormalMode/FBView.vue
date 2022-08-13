@@ -29,11 +29,11 @@
           </button>
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
-        <div class="FBtoLBbtn superUser" v-show="userType === 'superUser'">
-          <button @click.prevent="FBtoLBConfirm(userType)">
+      <div v-show="userType === 'superUser'" class="FBtoLBbtn superUser">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
+        </button>
+      </div>
       </div>
 
       <!-- 피드백 구역 -->
@@ -55,9 +55,10 @@
 import { VideoPlayer } from '@videojs-player/vue'
 import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
-import { useRouter } from "vue-router";
+// 임현탁 나가기기능하면서 주석처리함
+// import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { mapGetters } from 'vuex';
+import { mapGetters, useStore } from 'vuex';
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -231,7 +232,7 @@ export default {
   },
   setup() {
     const videoInfo = {}; //해당 session의 면접자 영상 정보를 가져와야 함
-    const router = useRouter();
+    const store = useStore();
     const userType = ref("user");
     function FBtoLBConfirm(userType) {
       if (userType === "user") {
@@ -240,17 +241,9 @@ export default {
             "정말 피드백 수정 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
           )
         ) {
-          router.push({ name: "main" });
+        store.dispatch('lbhModule/userLeaveSessionAxios')
         }
-      } else if (userType === "superUser") {
-        if (
-          confirm(
-            "정말 피드백 수정 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
-          )
-        ) {
-          // 권한위임 모달 실행
-        }
-      }
+      } 
     }
     return {
       userType,
