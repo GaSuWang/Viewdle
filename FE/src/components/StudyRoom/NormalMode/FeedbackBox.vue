@@ -11,6 +11,10 @@
     <button :class="[fb.gb === 'good' ? 'good' : 'bad']" class="FBBoxBtn" @click="deleteFB">
       <i class="bi bi-trash3"></i>
     </button>
+    <!-- [김이랑] 비디오 시간 이동 / 임시로 버튼 삽입 -->
+    <button :class="[fb.gb === 'good' ? 'good' : 'bad']" class="FBBoxBtn" @click="moveTo">
+      <i class="fa-solid fa-circle-play"></i>
+    </button>
   </div>
 </template>
 
@@ -46,6 +50,10 @@ export default {
       this.$store.commit('lbhModule/UPDATE_FB', data)
       this.updateClick = false 
     },
+    // [김이랑] 비디오 시간 이동
+    moveTo(){
+      this.$store.commit('lbhModule/SET_VIDEO_TIME', this.fb.reg_dt)
+    }
   },
 };
 </script>

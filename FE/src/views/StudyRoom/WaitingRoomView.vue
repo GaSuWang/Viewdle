@@ -19,14 +19,12 @@
     </div>
 
     <div class="WRRightArea">
+      <!-- 현탁 -->
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
-      <div class="user-out" v-if="userType === 'user'"  
-      @click ="userLeaveSessionfromWR"
-      >
-        <button>
-          방나가기
-          <i class="bi bi-x-lg"></i>
-        </button>
+      <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
+          <button class="toLBBtn">
+            <i class="bi bi-backspace"></i>
+          </button>
       </div>
       <!-- 대기실에서 나가기 버튼(방장 유저) -->
       <div v-if="userType === 'superUser'" class="superUser">
@@ -34,7 +32,10 @@
             <i class="bi bi-x-lg"></i>
         </button>
       </div>
+      <!-- 현탁 끝 -->
 
+
+      
       <!-- 방장 유저 기능 -->
       <!-- 면접자 선택 -->
       <div class="dropdown" v-if="userType === 'superUser'">
@@ -131,6 +132,10 @@ export default {
         this.$router.push('/main')
     })
     console.log('대기실들어옴',this.currentUserList,this.myUserInfo,this.roomSeq)
+
+    this.session.on('signal:startVideoTime', (e)=>{
+      this.$store.commit('lbhModule/SET_START_VIDEO_TIME', e.data)
+    })
   },
   unmounted(){
     window.removeEventListener("beforeunload", this.forceLeaveSession,);
@@ -175,7 +180,10 @@ export default {
       "CLSelected",
 
       //녹화 관련
-      "recordingObject"
+      "recordingObject",
+
+      //[김이랑] 피드백 영상 관련
+      "startVideoTime",
     ]),
 		// showVid() {
 		// 	if(this.$router.currentRoute.value.name === 'waiting-room'){
@@ -185,6 +193,13 @@ export default {
 		// },
   },
   methods: {
+    // 현탁
+       userLeaveSessionAxios(){
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    },
+    // 현탁 끝
+
+
     //일반,방장 유저 공통 기능
     //새로고침 막기
     onConfirmRefresh(){
@@ -420,7 +435,7 @@ export default {
           })
 
           this.startRecording();
-
+          this.setRecordingtime();
           this.$router.push({ name: "ee-room" });
         } 
 
@@ -571,6 +586,18 @@ export default {
           })
           .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
       });
+    },
+
+    // 피드백 관련
+    setRecordingtime(){
+      var date = Date.now();
+      this.session.signal({
+        data: date,
+        to: [],
+        type: 'startVideoTime'
+      })
+
+      this.$store.commit('lbhModule/SET_START_VIDEO_TIME', Date.now())
     },
 
     // 녹화 funcion

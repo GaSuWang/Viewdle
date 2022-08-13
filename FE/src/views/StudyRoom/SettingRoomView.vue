@@ -1,5 +1,7 @@
 // 이병헌
 <template>
+<div>
+  <AuthorityPassModal/>
   <div class="SettingRoomView">
     <!-- 좌단 -->
     <!-- 유저 화면 나오는 곳 -->
@@ -75,16 +77,23 @@
           </ul>
         </div>
       </div>
-
       <!-- 하단 -->
+      <!-- 임현탁 방에서 나가기 건들이는중 -->
       <div class="SRNavBtnArea">
+
         <!-- 로비 되돌아가기 버튼 -->
-        <div class="toLBBtnDiv" @click="SRtoLB">
+        <!-- <div class="toLBBtnDiv" @click="SRtoLB"> -->
+        <div class="toLBBtnDiv" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
           <button class="toLBBtn">
             <i class="bi bi-backspace"></i>
           </button>
         </div>
-
+        <div v-if="userType === 'superUser'" class="toLBBtnDiv">
+          <button type="button" class="toLBBtn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+              <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      <!-- 임현탁 여기까지 건들임 -->
         <!-- 대기실 입장 버튼 -->
         <div class="toWRBtnDiv" @click="SRtoWR">
           <button class="toWRBtn">
@@ -94,9 +103,11 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
+import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 import {mapGetters, useStore} from 'vuex';
 import { OpenVidu } from 'openvidu-browser';
 import { VideoPlayer } from '@videojs-player/vue'
@@ -105,7 +116,8 @@ var vid = document.getElementById('testVid')
 export default {
   name: "SettingRoomView",
   components:{
-    VideoPlayer
+    VideoPlayer,
+    AuthorityPassModal
   },
   created(){
     console.log(this.CLList)
@@ -133,6 +145,7 @@ export default {
       "CLList",
       "CLSelected",
       'CLStatus',
+      'userType',
     ]),
     ...mapGetters('rhtModule',[
       'CoverLetterList',
@@ -172,11 +185,18 @@ export default {
     selectMic(mic){
       this.$store.commit('lbhModule/SELECT_MIC', mic)
     },
-    SRtoLB() {
-      if (confirm("로비로 되돌아가시겠습니까?")) {
-        this.$router.push("main");
-      }
+    // 임현탁  방나가기를 위한 작업
+    // SRtoLB() {
+    //   if (confirm("로비로 되돌아가시겠습니까?")) {
+    //     this.$router.push("main");
+    //   }
+    // },
+    userLeaveSessionAxios(){
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
     },
+
+    // 임현탁 작업 끝 
+    
     SRtoWR() {
       // if(Object.keys(this.CameraSelected).length === 0 || 
       // Object.keys(this.MicSelected).length === 0 || 
@@ -192,7 +212,7 @@ export default {
   },
   setup() {
     const store = useStore();
-
+    
     // 디바이스 목록 가져오기
     var OV = new OpenVidu();
     function findDevices(){

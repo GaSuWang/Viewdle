@@ -180,6 +180,7 @@ export default {
         if (this.session) this.session.disconnect();
 
         this.$router.push("/main");
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
       }
     },
     async finishInterview(){

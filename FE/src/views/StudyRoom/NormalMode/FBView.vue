@@ -7,11 +7,14 @@
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
     <div class="savedEEVid">
-      <VideoPlayer id="testVid" src="RecordingRes.data.url" 
-      controls
-      width="680"
-      height="340"
-      />    </div>
+      <!-- [김이랑] 비디오 관련 -->
+      <video ref="video" width="" height="" controls>
+          <source :src="VideoSrc" type="video/mp4">
+      </video>
+      <button @click="timeCheck">
+            <p>비디오 시간</p>
+      </button>
+    </div>
     <!-- 우단 -->
     <div class="FBRightArea">
       <button type="button" class="btn btn-primary" :disabled="counting" @click="startCountdown">
@@ -32,11 +35,11 @@
           </button>
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
-        <div class="FBtoLBbtn superUser" v-show="userType === 'superUser'">
-          <button @click.prevent="FBtoLBConfirm(userType)">
+      <div v-show="userType === 'superUser'" class="FBtoLBbtn superUser">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
+        </button>
+      </div>
       </div>
 
       <!-- 피드백 구역 -->
@@ -55,12 +58,13 @@
 </template>
 
 <script>
-import { VideoPlayer } from '@videojs-player/vue'
+// import { VideoPlayer } from '@videojs-player/vue'
 import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
-import { useRouter } from "vue-router";
+// 임현탁 나가기기능하면서 주석처리함
+// import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { mapGetters } from 'vuex';
+import { mapGetters, useStore } from 'vuex';
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -68,10 +72,13 @@ const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
-  components: { FeedbackArea, AuthorityPassModal, VideoPlayer },
+  //, VideoPlayer
+  components: { FeedbackArea, AuthorityPassModal },
   data(){
     return {
       counting: false,
+      // [김이랑] 비디오 관련 - 테스트 위해 data에 저장
+      VideoSrc: 'https://localhost:4443/openvidu/recordings/SessionA~2/SessionA~2.mp4'
     }
   },
   computed:{
@@ -89,11 +96,24 @@ export default {
       "MicSelected",
       "MicStatus",
       "MicStatus",
+      // [김이랑] 비디오 관련
+      // "VideoSrc"
+      "videoTime"
     ]),
-    ...mapGetters('rhtModule',[
-      'RecordingRes',
-    ])
+    checkVideoTime(){
+      return this.$store.getters['lbhModule/videoTime']
+    }
   },
+  watch:{
+    checkVideoTime(time){
+      console.log("실행됨")
+      this.video = this.$refs.video
+      console.log(this.video.currentTime)
+      this.video.currentTime = time
+      console.log(this.video.currentTime)
+    }
+  },
+  // [김이랑] 비디오 관련
   created(){
     window.addEventListener("close", this.ERLeaveSessionFromFB);
 
@@ -237,7 +257,7 @@ export default {
   },
   setup() {
     const videoInfo = {}; //해당 session의 면접자 영상 정보를 가져와야 함
-    const router = useRouter();
+    const store = useStore();
     const userType = ref("user");
     function FBtoLBConfirm(userType) {
       if (userType === "user") {
@@ -246,17 +266,9 @@ export default {
             "정말 피드백 수정 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
           )
         ) {
-          router.push({ name: "main" });
+        store.dispatch('lbhModule/userLeaveSessionAxios')
         }
-      } else if (userType === "superUser") {
-        if (
-          confirm(
-            "정말 피드백 수정 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
-          )
-        ) {
-          // 권한위임 모달 실행
-        }
-      }
+      } 
     }
     return {
       userType,
