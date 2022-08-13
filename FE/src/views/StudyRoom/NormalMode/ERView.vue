@@ -110,6 +110,10 @@ export default {
     // .catch(err=>console.err(err.response))
 
 // this.nextSuperUser = ''
+    // 영상 저장에 필요한 비디오 타임 받음
+    this.session.on('signal:startVideoTime', (e)=>{
+      this.$store.commit('lbhModule/SET_START_VIDEO_TIME', e.data)
+    })
 
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
     this.session.on('signal:EECL', (e)=>{

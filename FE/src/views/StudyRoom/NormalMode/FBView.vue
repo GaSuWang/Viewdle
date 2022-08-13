@@ -7,7 +7,13 @@
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
     <div class="savedEEVid">
-      <VideoPlayer src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"/>
+      <!-- [김이랑] 비디오 관련 -->
+      <video ref="video" width="" height="" controls>
+          <source :src="VideoSrc" type="video/mp4">
+      </video>
+      <button @click="timeCheck">
+            <p>비디오 시간</p>
+      </button>
     </div>
     <!-- 우단 -->
     <div class="FBRightArea">
@@ -52,7 +58,7 @@
 </template>
 
 <script>
-import { VideoPlayer } from '@videojs-player/vue'
+// import { VideoPlayer } from '@videojs-player/vue'
 import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
 // 임현탁 나가기기능하면서 주석처리함
@@ -66,10 +72,13 @@ const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
-  components: { FeedbackArea, AuthorityPassModal, VideoPlayer },
+  //, VideoPlayer
+  components: { FeedbackArea, AuthorityPassModal },
   data(){
     return {
       counting: false,
+      // [김이랑] 비디오 관련 - 테스트 위해 data에 저장
+      VideoSrc: 'https://localhost:4443/openvidu/recordings/SessionA~2/SessionA~2.mp4'
     }
   },
   computed:{
@@ -87,8 +96,25 @@ export default {
       "MicSelected",
       "MicStatus",
       "MicStatus",
-    ])
+
+      // [김이랑] 비디오 관련
+      // "VideoSrc"
+      "videoTime"
+    ]),
+    checkVideoTime(){
+      return this.$store.getters['lbhModule/videoTime']
+    }
   },
+  watch:{
+    checkVideoTime(time){
+      console.log("실행됨")
+      this.video = this.$refs.video
+      console.log(this.video.currentTime)
+      this.video.currentTime = time
+      console.log(this.video.currentTime)
+    }
+  },
+  // [김이랑] 비디오 관련
   created(){
     window.addEventListener("close", this.ERLeaveSessionFromFB);
 
