@@ -199,20 +199,10 @@ export default {
     console.log("eerview cretaed", this.EE);
     console.log("eerview cretaed", this.ERS);
     console.log(this.session);
-    this.session.on("signal:warning", (event) => {
-      console.log(event.data);
-      //신호를 받고, 내가 면접자인 경우에만 warningCount++
+    this.session.on("signal:warning", () => {
       // 이병헌: 이제는 connection.data에 { clientName: this.myUserName, clientEmail: this.myUserEmail } 이런식으로 정보가 넘어가서,
       // clientData가 아닌, clientEmail로 확인해야 될 거 같아. 그래서 아래도 일단 다 수정해뒀어.
-      // if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
-      if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail) {
-        console.log("EE: ", this.EE);
         this.addWarn(); //경고 누적
-        //this.setFilter(); //필터 걸기
-      }
-
-      // <- 테스트용, 모든 참여자 warningCoutn 올림
-      //this.addWarn();
     });
 
     //change filter 신호 받기
@@ -403,8 +393,7 @@ export default {
     addWarn() {
       //경고 누적용
       this.warningCount++;
-      console.log("warningCount: ", this.warningCount);
-      if (this.warningCount >= 5) {
+      if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail &&this.warningCount >= 5) {
         console.log("warningCount limit, return waiting room");
         //면접 종료
         this.session.signal({
@@ -562,7 +551,7 @@ export default {
     },
     endSuddenAttack(success){
       if(!success){
-        this.addWarn();
+        this.sendWarningSignal();
       }
       this.suddenAttackFlag = -1;
       this.activeSuddenBtn();
