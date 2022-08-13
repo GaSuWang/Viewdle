@@ -403,7 +403,7 @@ export default {
       //경고 누적용
       this.warningCount++;
       console.log("warningCount: ", this.warningCount);
-      if (this.warningCount >= 3) {
+      if (this.warningCount >= 5) {
         console.log("warningCount limit, return waiting room");
         //면접 종료
         this.session.signal({
@@ -559,7 +559,10 @@ export default {
       //분기 나눔
       this.suddenAttackFlag =  Math.floor(Math.random() * 3);
     },
-    endSuddenAttack(){
+    endSuddenAttack(success){
+      if(!success){
+        this.addWarn();
+      }
       this.suddenAttackFlag = -1;
       this.activeSuddenBtn();
     },
