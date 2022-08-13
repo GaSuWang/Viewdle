@@ -59,6 +59,8 @@ export default {
       "EE",
       "ERS",
       "myUserName",
+      "myUserEmail",
+      'myUserInfo',
       "mySessionId",
       "userType",
       "publisher",
@@ -67,7 +69,6 @@ export default {
       "session",
       "nextSuperUserList",
       'currentUserList',
-      'myUserInfo',
       'recordingObject'
     ])
   },
@@ -78,16 +79,23 @@ export default {
   },
   created(){
     //방장이 면접을 완료할 경우
-    this.session.on('signal:endInterview', () => {
+    this.session.on('signal:finishInterview', () => {
       alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
-      this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserInfo)
-      this.toWR()
-    //녹화 종료 시그널 보내기
+      //녹화 종료 시그널 보내기
       this.session.signal({
       data: this.myUserName,
       to: [],
       type: 'stopRecording'
-      })      
+      })
+      this.toWR()
+
+      //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+      const data = JSON.stringify(this.myUserInfo)
+      this.session.signal({
+        data: `${data}`,
+        to: [],
+        type: 'WRParticipantListUpdate'
+      })
     });  
 
     //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
@@ -184,20 +192,26 @@ export default {
       }
     },
     async finishInterview(){
-      
-      // 종료하면 녹화 종료 보내기
-      this.session.signal({
-        data: this.myUserName,
-        to: [],
-        type: 'stopRecording'
-      })
-      this.$store.dispatch('lbhModule/finishInterview')
-      const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
-      this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
+      console.log('면접 완료 버튼 눌렸는데?')
+      if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
+        // 종료하면 녹화 종료 보내기
+        this.session.signal({
+          data: this.myUserName,
+          to: [],
+          type: 'stopRecording'
+        })
+        const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
+        this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
+        this.session.signal({
+          data: '',
+          to: [],
+          type: 'finishInterview'
+        })
+      }
     },
     async toWR() {
       await this.$router.push('/waiting-room')
-      this.$store.commit('lbhModule/SET_EE', [])
+      this.$store.commit('lbhModule/EMPTY_EE')
       this.$store.commit('lbhModule/EMPTY_ERS')
     },
   }

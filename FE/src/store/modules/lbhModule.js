@@ -83,7 +83,12 @@ const getters = {
   //방장권한
   userType(state){return state.userType},
   // WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
-  WRParticipantList(state) {return state.WRParticipantList},
+  WRParticipantList(state) {
+    function unique(data, key){
+      return [ ...new Map(data.map(x => [key(x), x])).values()]
+    }
+    return unique(state.WRParticipantList, e => e.myUserEmail)
+  },
   StartInterview(state) {return state.StartInterview},
   currentUserList(state) {return state.currentUserList},
   // nextSuperUserList(state){return state.currentUserList.filter(p => p.name !== state.myUserName)},
@@ -212,6 +217,7 @@ const mutations = {
   ADD_WR_PARTICIPANT_LIST(state, userInfo) {
     console.log("ADD_WR_PARTICIPANT_LIST 시작", state.WRParticipantList, userInfo);
     if (!state.WRParticipantList.includes(userInfo)) {
+      console.log(state.WRParticipantList.includes(userInfo))
       state.WRParticipantList.push(userInfo);
     }
     console.log("ADD_WR_PARTICIPANT_LIST 끝", state.WRParticipantList, userInfo);
@@ -486,6 +492,7 @@ const actions = {
   // 임현탁 videourl credentials에 받아옴
   //면접 끝, 면접자는 대기실로, 면접관은 피드백실로 이동(내 영상 저장)
   finishInterviewAxios({state, rootGetters, commit}, credentials){
+    console.log(credentials)
     axios({
       url: BASE_URL + 'video',
       method: 'post',
@@ -493,11 +500,12 @@ const actions = {
       data: {
         userEmail: state.myUserEmail,
         videoTitle: state.roomTitle,
-        videoUrl: credentials.url, //videoUrl 추가해야됨
+        videoUrl: credentials, //videoUrl 추가해야됨
+        // videoUrl: credentials.url, //videoUrl 추가해야됨
       }
     })
     .then(res=>{
-      console.log('성공적으로 면접 완료')
+      console.log('성공적으로 면접 완료', state.myUserEmail, state.roomTitle,credentials)
       commit('SET_VIDEOSEQ', res.data) //vdieoSeq 추가해야됨
     }) 
     .catch(err=>console.error(err.response))
@@ -536,28 +544,6 @@ const actions = {
     })
     .catch(err=>console.error(err.response))
   },
-
-  finishInterview(){
-    if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
-      state.session.signal({
-      data: 'true',  
-      to: [],
-      type: 'endInterview'
-      })
-      .then(() => {
-        console.log('erview send signal test')
-      })
-      .catch(error => {
-          console.error(error);
-      });
-    }
-  },
-  // setMySessionId({ commit }, mySessionId) {
-  //   commit("SET_MYSESSIONID", mySessionId);
-  // },
-  // setMyUserName({ commit }, myUserName) {
-  //   commit("SET_MYUSERNAME", myUserName);
-  // },
 
   //SettingRoom
   getCameraList({ commit }, cameraList) {commit("GET_CAMERA_LIST", cameraList)},

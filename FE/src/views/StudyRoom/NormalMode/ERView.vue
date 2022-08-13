@@ -60,12 +60,12 @@
       <!-- 하단 -->
       <div class="ERButtonFooter">
         <!-- 면접 완료 버튼(방장 유저) -->
-        <div class="finishInterviewBtn" @click="finishInterview" v-show="userType === 'superUser'">
+        <div class="finishInterviewBtn" @click="finishInterview" v-show="userType == 'superUser'">
           <button>
             <i class="bi bi-check-lg"></i>
           </button>
         </div>
-        <button @click="switchUserType">{{userType}}</button>
+        <!-- <button @click="switchUserType">{{userType}}</button> -->
       </div>
     </div>
   </div>
@@ -100,6 +100,8 @@ export default {
       "session",
       "currentUserList",
       "nextSuperUserList",
+      "myUserInfo",
+      "myUserEmail",
     ]),
   },
   created(){
@@ -123,8 +125,8 @@ export default {
     });
 
     //방장이 면접을 완료할 경우
-    this.session.on('signal:endInterview', () => {
-      console.log('endinterview signal received, erview')
+    this.session.on('signal:finishInterview', () => {
+      console.log('finishinterview signal received, erview')
       this.toFB()
     });
 
@@ -206,12 +208,12 @@ export default {
     },
     async toFB() {
       await this.$router.push({name:'fb-room'})
-      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      this.$store.commit('lbhModule/EMPTY_EE') //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
       this.$store.commit('lbhModule/EMPTY_ERS')
     },
     async toWR() {
       await this.$router.push({name:'waiting-room'})
-      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      this.$store.commit('lbhModule/EMPTY_EE') //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
       this.$store.commit('lbhModule/EMPTY_ERS')
     },
     openEECL() {
@@ -228,9 +230,16 @@ export default {
       });
     },
     async finishInterview(){
-      this.$store.dispatch('lbhModule/finishInterview')
-      const videoUrl = '' //await (videoUrl 받아오기)
-      this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
+      console.log('면접 완료 버튼 눌렸는데?')
+      if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
+        const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
+        this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
+        this.session.signal({
+          data: '',
+          to: [],
+          type: 'finishInterview'
+        })
+      }
     },
   }
 };

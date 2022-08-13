@@ -88,6 +88,9 @@ export default {
       'mySessionId',
       'publisher',
       'subscribers',
+      'myUserEmail',
+      'myUserName',
+      'myUserInfo',
 
       //기기
       "CameraSelected",
@@ -188,9 +191,16 @@ export default {
     },
     FBComplete() {
       if (confirm("피드백을 이대로 제출하시겠습니까? 이후에 대기실로 이동합니다.")) {
-        // this.toWR();
-        this.$store.commit('lbhModule/SET_EE', [])
+        //면접관이 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+        const data = JSON.stringify(this.myUserInfo)
+        this.session.signal({
+          data: `${data}`,
+          to: [],
+          type: 'WRParticipantListUpdate'
+        })
+        this.$store.commit('lbhModule/EMPTY_EE')
         this.$store.commit('lbhModule/EMPTY_ERS')
+        console.log('피드백실에서 이제 나감')
         this.$router.push({name:'waiting-room'})
       }
     },
