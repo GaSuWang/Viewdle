@@ -54,7 +54,7 @@
           </button>
         </div>
         <div class="StudyEnd">
-          <button>
+          <button @click="removeImgFilter">
             <i class="bi bi-check-lg"></i>
           </button>
         </div>
@@ -64,7 +64,7 @@
           </button>
         </div>
         <div class="CaptureBtn">
-          <button>
+          <button @click="removeFilter">
             <i class="bi bi-camera"></i>
           </button>
         </div>
@@ -282,14 +282,34 @@ export default {
       this.startRecognition();
     }
 
-    // potato filter
+    // img filter
     this.session.on("signal:imgFilterOn", (event) => {
-      console.log(this.publisher);
       let data = event.data;
-      let img = ""; 
+      let img = "";
+      let offsetX = "";
+      let offsetY = "";
+      let width = "";
+      let height = ""; 
       console.log(data);
+
       if(data == "potato"){
-        img = "https://cdn.pixabay.com/photo/2013/07/12/14/14/derby-148046_960_720.png"
+        img = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fpotato_shape.png?alt=media&token=2426c722-cdb2-48af-8982-f17a16bd9e5e" // potato img => 지금은 모자임
+        offsetX = "-0.2F"
+        offsetY = "-0.45F";
+        width = "1.4F";
+        height = "1.9"; 
+      }else if (data == "bread"){
+        img = 'https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbread_shape.png?alt=media&token=5fe3699b-17e1-4086-9cd1-53fa59cce6c9'; // bread img
+        offsetX = "-0.35F"
+        offsetY = "-0.55F";
+        width = "1.7F";
+        height = "2.0F"; 
+      }else if(data == "bald"){
+        img = 'https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbald_remove.png?alt=media&token=5b340aed-24b0-4f9a-93aa-3abfa2b1b736'; // bald img
+        offsetX = "-0.05F"
+        offsetY = "-0.7F";
+        width = "1.15F";
+        height = "0.9F"; 
       }
       if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
         for (let ER of this.ERS) {
@@ -301,11 +321,12 @@ export default {
                     "setOverlayedImage",
                   {
                     "uri": img,
-                    "offsetXPercent":"-0.2F",
-                    "offsetYPercent":"-0.8F",
-                    "widthPercent":"1.3F",
-                    "heightPercent":"1.0F"
+                    "offsetXPercent": offsetX,
+                    "offsetYPercent": offsetY,
+                    "widthPercent": width,
+                    "heightPercent": height
                   });
+                  console.log("img filter success");
                 });
             }
         }
@@ -566,7 +587,7 @@ export default {
       }
     },
 
-    // send img filter : potato or bread
+    // send img filter : potato or bread or bald
     setImgFilterOn(filter) {
       this.session
         .signal({
@@ -580,6 +601,22 @@ export default {
         .catch(() => {
           console.log("failed");
         });
+    },
+
+    removeImgFilter() {
+      // if (this.isFiltered) {
+        for (let ER of this.ERS) {
+          let name = JSON.parse(ER.stream.connection.data).clientData;
+          if (name === this.myUserName) {
+            ER.stream.applyFilter("FaceOverlayFilter")
+                .then(filter => {
+                  filter.execMethod(
+                    "unsetOverlayedImage");
+                  console.log("img filter remove");
+                });
+          }
+        }
+      // }
     },
 
     
@@ -600,10 +637,14 @@ export default {
             let script = e.results[i][0].transcript;
             // console.log(script);
             if(script.includes("빵")){
-              alert("빵!");
+              console.log("빵");
+              this.setImgFilterOn("bread");
             }else if(script.includes("감자")){
               console.log("감자");
               this.setImgFilterOn("potato");
+            }else if(script.includes("나 안 해")){
+              console.log("대머리");
+              this.setImgFilterOn("bald");
             }
           }
         }
@@ -617,6 +658,10 @@ export default {
       recognition.onerror = function(e) {
         console.log(e);
       }
+    },
+
+    timer(){
+
     }
   },
 };
