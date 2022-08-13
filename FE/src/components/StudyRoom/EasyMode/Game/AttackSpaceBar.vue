@@ -54,7 +54,7 @@ export default {
 
 <style>
 .background {
-  background-color: rgb(61, 216, 255);
+  background-color: #47A0FF;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
