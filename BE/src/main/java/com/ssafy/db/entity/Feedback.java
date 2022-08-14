@@ -19,7 +19,7 @@ public class Feedback {
     int feedbackSeq;
 
     @Column(name = "timeline")
-    int timeline;
+    float timeline;
 
     @Column(name = "feedback_type")
     String feedbackType;
@@ -43,7 +43,7 @@ public class Feedback {
     }
 
     @Builder
-    public Feedback(int timeline, String feedbackType, String feedbackContent, Video video) {
+    public Feedback(float timeline, String feedbackType, String feedbackContent, Video video) {
         this.timeline = timeline;
         this.feedbackType = feedbackType;
         this.feedbackContent = feedbackContent;

@@ -31,7 +31,7 @@ public class VideoController {
     VideoService videoService;
 
     @PostMapping
-    @ApiOperation(value = "내 영상 저장", notes = "<strong>저장할 영상의 이름, url, 유저 이메일</strong>를 가지고 영상을 저장한다")
+    @ApiOperation(value = "면접 영상 저장", notes = "<strong>저장할 영상의 이름, url, 유저 이메일</strong>를 가지고 영상을 저장한다")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 401, message = "존재하지 않는 사용자")
