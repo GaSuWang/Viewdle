@@ -1,6 +1,6 @@
 <template>
   <div class="background">
-    <GameTimer class="timer" @TimeOut="failSuddenAttack" />
+    <GameTimer class="timer" @TimeOut="failSuddenAttack" :endSuddenAttack='endSuddenAttack'/>
     <div class="d-flex justify-content-center">
       <div v-for="(row,index) in number2D" :key="index" class="">
         <div class="cell d-flex justify-content-center align-items-center" v-for="(cell,index2) in row" :key="index2" @click="clickCell(cell.num,index,index2)"  :style="{visibility: cell.flag}">
@@ -20,6 +20,7 @@ export default {
       number: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       number2D:[],
       currentNum:1,
+      endSuddenAttack : false,
     };
   },
   created() {
@@ -38,6 +39,7 @@ export default {
   },
   methods: {
     successSuddenAttack() {
+      this.endSuddenAttack = true;
       this.$emit("endSuddenAttack", true);
     },
     failSuddenAttack() {
