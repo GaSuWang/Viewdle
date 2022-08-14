@@ -116,7 +116,7 @@ export default {
     this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
     this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
     console.log('방관련 정보', this.roomType, this.roomTitle)
-    window.addEventListener("beforeunload", this.forceLeaveSession,);
+    // window.addEventListener("beforeunload", this.forceLeaveSession,);
     
     //대기실에서 joinSession
     if(!this.currentUserList.filter((e)=>e.myUserEmail===this.myUserEmail).length){
@@ -153,7 +153,7 @@ export default {
     })
   },
   unmounted(){
-    window.removeEventListener("beforeunload", this.forceLeaveSession,);
+    // window.removeEventListener("beforeunload", this.forceLeaveSession,);
   },
   data() {
     return {
