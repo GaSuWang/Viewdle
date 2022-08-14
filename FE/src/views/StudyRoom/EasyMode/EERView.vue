@@ -312,13 +312,6 @@ export default {
         width = "1.15F";
         height = "0.9F"; 
       }
-      // else if(data == "bald2"){
-      //   img = 'https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbald_shape.png?alt=media&token=ba56dafc-b3d5-42b2-966e-9953a704ca9e'
-      //   offsetX = "-0.35F"
-      //   offsetY = "-0.55F";
-      //   width = "2.5F";
-      //   height = "2.0F"; 
-      // }
       if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
         for (let ER of this.ERS) {
           let name = JSON.parse(ER.stream.connection.data).clientData;
@@ -340,7 +333,7 @@ export default {
                     });
                     this.isFiltered = true; 
                     console.log("img filter success");
-                    this.timeout = setTimeout(this.removeFilter, 10000);
+                    this.timeout = setTimeout(this.removeFilter, 20000);
                   });
                 }, 1000);
               }else{
@@ -357,7 +350,7 @@ export default {
                     });
                     this.isFiltered = true; 
                     console.log("img filter success");
-                    this.timeout = setTimeout(this.removeFilter, 10000);
+                    this.timeout = setTimeout(this.removeFilter, 20000);
                 });
               }
             }
@@ -661,9 +654,6 @@ export default {
               console.log("대머리");
               this.setImgFilterOn("bald");
             }
-            // else if(script.includes("대머리")){
-            //   this.setImgFilterOn("bald2")
-            // }
           }
         }
       }
