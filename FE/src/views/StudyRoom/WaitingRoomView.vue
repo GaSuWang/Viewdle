@@ -109,6 +109,12 @@ export default {
   name: "WaitingRoomView",
   components: { UserVideo,  AuthorityPassModal },
   created(){
+    //대기실에 들어오면, 그 전 면접에서 사용한 면접 관련 state들 모두 초기화
+    this.$store.commit('lbhModule/EMPTY_ERS')
+    this.$store.commit('lbhModule/EMPTY_FB')
+    this.$store.commit('lbhModule/EMPTY_AXIOS_FBLIST')
+    this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
+    this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
     console.log('방관련 정보', this.roomType, this.roomTitle)
     window.addEventListener("beforeunload", this.forceLeaveSession,);
   },
