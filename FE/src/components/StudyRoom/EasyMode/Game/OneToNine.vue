@@ -1,6 +1,9 @@
 <template>
   <div class="background">
-    <GameTimer class="timer" @TimeOut="failSuddenAttack" :endSuddenAttack='endSuddenAttack'/>
+    <div :style="Startbackground">
+      <GameStart :gameDiscription="gameDiscription"></gameStart>
+    </div>
+    <GameTimer class="timer" @start="start" @TimeOut="failSuddenAttack" :endSuddenAttack='endSuddenAttack'/>
     <div class="d-flex justify-content-center">
       <div v-for="(row,index) in number2D" :key="index" class="">
         <div class="cell d-flex justify-content-center align-items-center" v-for="(cell,index2) in row" :key="index2" @click="clickCell(cell.num,index,index2)"  :style="{visibility: cell.flag}">
@@ -13,14 +16,23 @@
 
 <script>
 import GameTimer from "@/components/StudyRoom/EasyMode/Game/GameTimer.vue";
+import GameStart from "@/components/StudyRoom/EasyMode/Game/GameStart.vue";
+
 export default {
-  components: { GameTimer },
+  components: { GameTimer, GameStart },
   data() {
     return {
       number: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       number2D:[],
       currentNum:1,
       endSuddenAttack : false,
+      gameDiscription : "제한 시간 내에 1부터 9까지 숫자를 클릭해 주세요!",
+      Startbackground : {
+          width: "100vw",
+          height: "100vh",
+          display : "block",
+          margin:"auto", 
+      }
     };
   },
   created() {
@@ -38,6 +50,10 @@ export default {
     console.log(this.number2D);
   },
   methods: {
+    start(){
+      console.log("왔다")
+      this.Startbackground.display = "none"
+    },
     successSuddenAttack() {
       this.endSuddenAttack = true;
       this.$emit("endSuddenAttack", true);
@@ -60,7 +76,7 @@ export default {
 
 <style scoped>
 .background {
-  background-color: rgba(255,255,255,0.8);
+  background-color: rgba(255,255,255,0.9);
   width: 100vw;
   height: 100vh;
 }
