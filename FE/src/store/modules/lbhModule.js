@@ -491,7 +491,7 @@ const actions = {
     .catch(err=>console.error(err.response))
   },
   //방장이 방 폭파시킴 두번째 단계(스터디 룸 삭제)
-  studyDestorySecondAxios({state, dispatch, rootGetters}){
+  studyDestroySecondAxios({state, dispatch, rootGetters}){
     axios({
       // url: BASE_URL + `studyroom/exit/${state.roomSeq}`, 이게 내가 기억하는 거
       url: BASE_URL + `studyroom/${state.roomSeq}`,
