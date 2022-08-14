@@ -95,10 +95,10 @@ public class User{
         userRegTime = now;
         userModTime = now;
         userDelYN = "N";
-        userTotalTime = "0";
+        userTotalTime = "00:00:00";
         userTotalVideo = 0;
-        userProfileImage = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/base_image%2Fbase_profile.PNG?alt=media";
-        userMainBadge = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/base_image%2Fbase_badge.PNG?alt=media";
+        userProfileImage = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/base_image%2Fbase_profile.png?alt=media&token=3c3cd999-65bf-437b-af56-2f5aa3dcbeee";
+        userMainBadge = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/badges%2Fbronze.png?alt=media&token=51b19cb0-7d9c-482a-8b64-f136a78c3468";
     }
 
     @PreUpdate
