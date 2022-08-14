@@ -13,6 +13,7 @@ export default {
   computed: {
     cssVariable() {
       return {
+        
         "--stack-count": "-" + this.stack * 24 + "%",
       };
     },
@@ -38,7 +39,7 @@ div {
   transform: translate3d(0, 0, 0);
 }
 .wave {
-  --stack-count: -1%;
+  --stack-count: 10%;
   top: var(--stack-count);
   left: 0%;
   position: absolute;

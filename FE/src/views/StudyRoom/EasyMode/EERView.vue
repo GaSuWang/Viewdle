@@ -25,7 +25,7 @@
       <!-- 면접자 영상 구역  -->
       <div class="EEVidContainer">
         <div class="EEVid">
-          <!-- <warningStackBar :stack="warningCount"></warningStackBar> 경고게이지 주석 -->
+          <warningStackBar :stack="warningCount"></warningStackBar>
           <user-video :stream-manager="EE" />
         </div>
       </div>
@@ -102,7 +102,7 @@
 import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue";
 import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
-// import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
+import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
 import AttackSpaceBar from "@/components/StudyRoom/EasyMode/Game/AttackSpaceBar.vue";
 import OneToNine from "@/components/StudyRoom/EasyMode/Game/OneToNine.vue";
 import ArrowDirection from "@/components/StudyRoom/EasyMode/Game/ArrowDirection.vue";
@@ -110,7 +110,7 @@ import { useRouter } from "vue-router";
 
 export default {
   name: "EERView",
-  components: { UserVideo, AuthorityPassModal, AttackSpaceBar, OneToNine, ArrowDirection }, // warningStackBar //경고게이지 주석
+  components: { UserVideo, AuthorityPassModal, AttackSpaceBar, OneToNine, ArrowDirection,warningStackBar }, //  //경고게이지 주석
   data() {
     return {
       warningCount: 0, //현재 쌓인 경고수

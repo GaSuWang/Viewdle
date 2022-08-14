@@ -52,7 +52,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .background {
   background-color: #47A0FF;
   width: 100vw;
