@@ -256,13 +256,19 @@ public class StudyroomController {
             return ResponseEntity.status(901).body(BaseResponseBody.of(901, "종료된 스터디 룸은 면접을 종료 할 수 없습니다."));
         }
 
-        // 피드백 저장
-        Video video = videoService.getVideoBySeq(feedbackRegPostReq.getVideoSeq());
-        if(video == null){
-            return ResponseEntity.status(925).body(BaseResponseBody.of(925, "존재하지 않는 영상입니다."));
-        }
+        // 플레이 모드
+        if(feedbackRegPostReq.getVideoSeq() == null){
+            studyroomService.endInterview(roomSeq);
+            return ResponseEntity.status(200).body(BaseResponseBody.of(200, "플레이 모드 면접을 종료합니다."));
+        }else { // 스터디 모드
+            // 피드백 저장
+            Video video = videoService.getVideoBySeq(feedbackRegPostReq.getVideoSeq());
+            if (video == null) {
+                return ResponseEntity.status(925).body(BaseResponseBody.of(925, "존재하지 않는 영상입니다."));
+            }
 
-        videoService.registFeedback(video, feedbackRegPostReq.getFeedbackList());
+            videoService.registFeedback(video, feedbackRegPostReq.getFeedbackList());
+        }
 
         // 방 상태 변경
         studyroomService.endInterview(roomSeq);

@@ -13,6 +13,6 @@ import java.util.List;
 public class FeedbackRegPostReq {
 
     int roomSeq;
-    int videoSeq;
+    Integer videoSeq;
     List<FeedbackDto> feedbackList;
 }
