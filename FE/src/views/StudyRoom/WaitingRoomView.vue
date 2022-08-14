@@ -108,7 +108,7 @@ const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "WaitingRoomView",
   components: { UserVideo,  AuthorityPassModal },
-  created(){
+  mounted(){
     //대기실에 들어오면, 그 전 면접에서 사용한 면접 관련 state들 모두 초기화
     this.$store.commit('lbhModule/EMPTY_ERS')
     this.$store.commit('lbhModule/EMPTY_FB')
@@ -117,8 +117,7 @@ export default {
     this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
     console.log('방관련 정보', this.roomType, this.roomTitle)
     window.addEventListener("beforeunload", this.forceLeaveSession,);
-  },
-  mounted(){
+    
     //대기실에서 joinSession
     if(!this.currentUserList.filter((e)=>e.myUserEmail===this.myUserEmail).length){
       console.log('현재 스터디 참여 유저 목록',this.currentUserList)
