@@ -1,9 +1,6 @@
 package com.ssafy.api.controller;
 
-import com.ssafy.api.request.FeedbackRegPostReq;
-import com.ssafy.api.request.RoomEnterPostReq;
-import com.ssafy.api.request.RoomExitPatchReq;
-import com.ssafy.api.request.RoomRegisterPostReq;
+import com.ssafy.api.request.*;
 import com.ssafy.api.response.RoomListRes;
 import com.ssafy.api.response.RoomRegisterPostRes;
 import com.ssafy.api.service.*;
@@ -169,7 +166,7 @@ public class StudyroomController {
     }
 
     @PatchMapping("/exit")
-    @ApiOperation(value = "스터디 룸 나가기", notes = "<strong>스터디 룸 번호, 방장 여부, 다음 방장</strong>정보를 넘기고 스터디 룸을 나간다.")
+    @ApiOperation(value = "스터디 룸 나가기", notes = "<strong>스터디 룸 번호, 다음 방장 이메일, 참여 시간</strong>정보를 넘기고 스터디 룸을 나간다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 401, message = "인증 실패"),
@@ -192,12 +189,12 @@ public class StudyroomController {
         if(roomExitPatchReq.getNextOwnerEmail() != "") {
             User nextUser = userService.getUserByUserEmail(roomExitPatchReq.getNextOwnerEmail());
             ParticipantResMapping nextOwner = participantService.findRecentByUserSeq(nextUser);
-            participantService.exitOwner(participant.getParticipantSeq());
+            participantService.exitOwner(participant.getParticipantSeq(), user, roomExitPatchReq.getTime());
             participantService.changeOwner(nextOwner.getParticipantSeq());
         }
         // 방장이 아닐 때 또는 방장이지만 방을 폭파할 때
         else{
-            participantService.outUser(participant.getParticipantSeq());
+            participantService.outUser(participant.getParticipantSeq(), user, roomExitPatchReq.getTime());
         }
 
         // 스터디 룸이 full 상태였다면 not full로 상태 변경
@@ -296,7 +293,4 @@ public class StudyroomController {
 //        Studyroom studyroom = studyroomService.getRoomBySeq(roomSeq);
 //        return ResponseEntity.status(200).body(participantService.findInStudyroomUser(studyroom, "Y"));
 //    }
-
-
-
 }
