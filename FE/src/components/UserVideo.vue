@@ -35,8 +35,8 @@ export default {
 	mounted(){
 		console.log()
 		this.inWR()
-		// this.session.on('signal:publisherOn',()=>{
-		// })
+		console.log('uservideo mounted',this.session, this.streamManager)
+
 		console.log('지금 어디있지?', this.$router.currentRoute.value.name)
 		console.log('show this video?',this.videoStatus)
 	},

@@ -213,13 +213,13 @@ export default {
     },
     async toFB() {
       await this.$router.push({name:'fb-room'})
-      this.$store.commit('lbhModule/EMPTY_EE') //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
-      this.$store.commit('lbhModule/EMPTY_ERS')
+      // this.$store.commit('lbhModule/EMPTY_EE') //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      // this.$store.commit('lbhModule/EMPTY_ERS')
     },
     async toWR() {
       await this.$router.push({name:'waiting-room'})
-      this.$store.commit('lbhModule/EMPTY_EE') //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
-      this.$store.commit('lbhModule/EMPTY_ERS')
+      // this.$store.commit('lbhModule/EMPTY_EE') //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
+      // this.$store.commit('lbhModule/EMPTY_ERS')
     },
     openEECL() {
       let route = this.$router.resolve({ path: "/eecl" });
