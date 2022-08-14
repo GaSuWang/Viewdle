@@ -12,8 +12,9 @@ public interface ParticipantService {
     public int registParticipant(String isOwner, User user, Studyroom studyroom);
     public ParticipantResMapping findRecentByUserSeq(User user);
     public List<ParticipantResMapping> findInStudyroomUser(Studyroom studyroom, String enteryn);
-    public void outUser(int participantSeq);
+    public void outUser(int participantSeq, User user, int time);
     public long countInStudyroomUser(Studyroom studyroom, String enteryn);
-    public void exitOwner(int participantSeq);
+    public void exitOwner(int participantSeq, User user, int time);
     public void changeOwner(int participantSeq);
+    public void timeUpdate(String userTime, int inputTime, User user);
 }

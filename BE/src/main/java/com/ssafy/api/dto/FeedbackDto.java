@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class FeedbackDto {
 
-    int timeline;
+    float timeline;
     String feedbackType;
     String feedbackContent;
 }
