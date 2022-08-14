@@ -192,12 +192,12 @@ public class StudyroomController {
         if(roomExitPatchReq.getNextOwnerEmail() != "") {
             User nextUser = userService.getUserByUserEmail(roomExitPatchReq.getNextOwnerEmail());
             ParticipantResMapping nextOwner = participantService.findRecentByUserSeq(nextUser);
-            participantService.exitOwner(participant.getParticipantSeq());
+            participantService.exitOwner(participant.getParticipantSeq(), user, roomExitPatchReq.getTime());
             participantService.changeOwner(nextOwner.getParticipantSeq());
         }
         // 방장이 아닐 때 또는 방장이지만 방을 폭파할 때
         else{
-            participantService.outUser(participant.getParticipantSeq());
+            participantService.outUser(participant.getParticipantSeq(), user, roomExitPatchReq.getTime());
         }
 
         // 스터디 룸이 full 상태였다면 not full로 상태 변경
