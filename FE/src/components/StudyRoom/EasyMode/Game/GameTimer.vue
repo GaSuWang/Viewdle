@@ -6,16 +6,11 @@
   <div class="progressBar">
       <div id="bar" class="innerbar"></div>
   </div>
-
-  <audio id="audio"
-      src="https://firebasestorage.googleapis.com/v0/b/test-b1def.appspot.com/o/tiktak.mp3?alt=media&token=8c73354c-e263-46e2-b7f7-4b95f63da61f">
-          Your browser does not support the
-          <code>audio</code> element.
-  </audio>
 </template>
 
 <script>
 export default {
+  props : ["endSuddenAttack"],
   data() {
     return {
       time: "6.00",
@@ -26,7 +21,14 @@ export default {
       progressbarHandler: null,
       timeBegan: null,
       MAX_TIME: 6000,
+      // audio : null,
     };
+  },
+  watch : {
+    endSuddenAttack(){
+      console.log("변함")
+      // this.audio.pause();
+    }
   },
   mounted() {
     setTimeout(() => {
@@ -48,6 +50,8 @@ export default {
         if (this.timeSec <= 0 && this.timeMiliSec <= 0) {
           clearInterval(this.timer);
           this.timeOut();
+          clearInterval(this.progressbarHandler);
+          this.progressbarHandler = null;
         } else {
           if (this.timeMiliSec === 0) {
             this.timeSec--;
@@ -63,8 +67,9 @@ export default {
       this.timeBegan = new Date();
       let el = document.getElementById("bar");
       el.style.width = "0%";
-      var audio = new Audio('https://firebasestorage.googleapis.com/v0/b/test-b1def.appspot.com/o/tiktak.mp3?alt=media&token=8c73354c-e263-46e2-b7f7-4b95f63da61f');
-      audio.play();
+      // this.audio = new Audio('https://firebasestorage.googleapis.com/v0/b/test-b1def.appspot.com/o/tiktak.mp3?alt=media&token=8c73354c-e263-46e2-b7f7-4b95f63da61f');
+      // this.audio.play();
+      // this.audio.volume = 0.5;
 
       if (this.progressbarHandler == null) {
         this.progressbarHandler = setInterval(this.updateProgressbar, 30);
@@ -82,8 +87,6 @@ export default {
       let width = (1 - time / this.MAX_TIME) * 100 + "%";
       width = parseFloat(width).toFixed(2);
       if (width > 100) width = 100;
-
-      //console.log("width" + width);
       let widthStr = width + "%";
       el.style.width = widthStr;
     },
