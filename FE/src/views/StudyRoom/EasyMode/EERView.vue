@@ -436,6 +436,7 @@ export default {
           to: [],
           type: 'finishInterview'
         })
+        this.$store.dispatch('lbhModule/finishInterviewEERAxios')
       }
     },
     openEECL() {
