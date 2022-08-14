@@ -182,6 +182,7 @@ export default {
         type: 'WRParticipantListUpdate'
       })
       alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
+      this.$store.dispatch('lbhModule/EELeaveSessionAxios')
       this.$router.push({ name: "waiting-room" });
     });
 
@@ -195,6 +196,7 @@ export default {
       const pastSuperUserEmail = e.data.split(" ")[0];
       const currentSuperUserEmail = e.data.split(" ")[1];
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", pastSuperUserEmail);
+      this.$store.dispatch('lbhModule/EELeaveSessionAxios')
       if (this.myUserEmail === currentSuperUserEmail) {
         alert("방장이 면접 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.");
         this.$store.commit("lbhModule/SWITCH_USER_TYPE", "superUser");

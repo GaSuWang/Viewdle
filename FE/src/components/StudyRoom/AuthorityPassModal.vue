@@ -113,6 +113,7 @@ methods:{
     const nextSuperUserEmail = this.nextSuperUser.myUserEmail
     //방장이 현재 면접자
     if(this.$router.currentRoute.value.name === 'ee-room' || this.$router.currentRoute.value.name === 'ee-room-ez'){
+      this.$store.dispatch('lbhModule/EELeaveSessionAxios')
       this.session.signal({
         // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
         // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
