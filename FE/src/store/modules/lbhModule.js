@@ -301,7 +301,7 @@ const mutations = {
   EMPTY_FB(state){state.FBList = []},
   ADD_AXIOS_FBLIST(state, data){
     const fblist = JSON.parse(data)
-    state.axiosFBList = [state.axiosFBList, ...fblist]
+    if(state.axiosFBList !== []){ state.axiosFBList = [...state.axiosFBList, ...fblist] }
     console.log('axiosfblist add',data, fblist, state.axiosFBList)
   },
   EMPTY_AXIOS_FBLIST(state){state.axiosFBList = []},
