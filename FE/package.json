@@ -11,13 +11,14 @@
     "@chenfengyuan/vue-countdown": "^2.0.0",
     "@teachablemachine/pose": "^0.8.6",
     "@tensorflow/tfjs": "^3.19.0",
-    "@videojs-player/vue": "^1.0.0-beta.4",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.9.1",
     "chart.js": "^3.9.1",
     "core-js": "^3.8.3",
+    "n": "^1.0.0-beta.4",
     "openvidu-browser": "^2.22.0",
+    "primevue": "^3.15.0",
     "sweetalert2": "^11.4.24",
     "v-calendar": "^3.0.0-alpha.8",
     "vue": "^3.2.37",
@@ -35,8 +36,7 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "video.js": "^7.20.2"
+    "eslint-plugin-vue": "^8.0.3"
   },
   "eslintConfig": {
     "root": true,
