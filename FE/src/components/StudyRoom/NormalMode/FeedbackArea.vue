@@ -20,13 +20,13 @@
         v-model="feedbackContent"
         @keypress.enter="saveFB"
         placeholder="피드백을 등록하려면 엔터를 누르세요."/>
-      <div class="FBGoodBtn" v-if="feedbackType==='good'">
-        <button @click="createFB('good')">
+      <div class="FBGoodBtn" v-if="feedbackType==='G'">
+        <button @click="createFB('G')">
           <i class="bi bi-hand-thumbs-up-fill"></i>
         </button>
       </div>
-      <div class="FBBadBtn" v-else-if="feedbackType==='bad'">
-        <button @click="createFB('bad')">
+      <div class="FBBadBtn" v-else-if="feedbackType==='B'">
+        <button @click="createFB('B')">
           <i class="bi bi-hand-thumbs-down-fill"></i>
         </button>
       </div>
@@ -34,12 +34,12 @@
 
     <div class="FBBtncontainer inputOff" v-else>
       <div class="FBGoodBtn">
-        <button @click="createFB('good')">
+        <button @click="createFB('G')">
           <i class="bi bi-hand-thumbs-up-fill"></i>
         </button>
       </div>
       <div class="FBBadBtn">
-        <button @click="createFB('bad')">
+        <button @click="createFB('B')">
           <i class="bi bi-hand-thumbs-down-fill"></i>
         </button>
       </div>
@@ -77,17 +77,17 @@ export default {
     createFB(gb){
       if (!this.feedbackType) {
         //만약 굿/뱃 버튼 둘 다 눌리지 않은 상태에서 굿/뱃 버튼이 눌린다면
-        if (gb === "good") {
-          this.feedbackType = "good";
+        if (gb === "G") {
+          this.feedbackType = "G";
         } else {
-          this.feedbackType = "bad";
+          this.feedbackType = "B";
         }
       } else {
         //만약 굿/뱃 버튼 둘 중 하나가 눌린 상태에서 또 다시 굿/뱃 버튼이 눌린다면
-        if (gb === "good") {
-          this.feedbackType= "good";
+        if (gb === "G") {
+          this.feedbackType= "G";
         } else {
-          this.feedbackType = "bad";
+          this.feedbackType = "B";
         }
       }
     },
@@ -165,7 +165,7 @@ export default {
   hyphens: auto;
 }
 
-.good{
+.G{
   /* background: #47A0FF */
   background: linear-gradient(#e1f3f2, #f0f9f9)
 

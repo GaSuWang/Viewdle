@@ -9,11 +9,11 @@
       @keypress.enter="updateFB"/>
     <span v-if="!updateClick" @click="openUpdateFB">{{ fb.feedbackContent }}</span>
     <div class="FBBtnContainer">
-      <button :class="[fb.feedbackType === 'good' ? 'good' : 'bad']" class="FBBoxBtn" @click="deleteFB">
+      <button :class="[fb.feedbackType === 'G' ? 'good' : 'bad']" class="FBBoxBtn" @click="deleteFB">
         <i class="bi bi-trash3"></i>
       </button>
       <!-- [김이랑] 비디오 시간 이동 / 임시로 버튼 삽입 -->
-      <button :class="[fb.feedbackType === 'good' ? 'good' : 'bad']" class="FBBoxBtn" @click="moveTo">
+      <button :class="[fb.feedbackType === 'G' ? 'good' : 'bad']" class="FBBoxBtn" @click="moveTo">
         <i class="fa-solid fa-circle-play"></i>
       </button>
     </div>
