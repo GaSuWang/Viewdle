@@ -124,6 +124,12 @@ export default {
   },
   // [김이랑] 비디오 관련
   created(){
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    })
+
       //현재 피드백실에 있는 인원 설정
       this.$store.commit('lbhModule/SET_FB_USER_COUNT')
 
@@ -134,21 +140,21 @@ export default {
 
       //방장인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
       this.session.on('signal:superLeaveSessionWR', (e)=>{
-        const pastSuperUserName = e.data.split(' ')[0]
-        const currentSuperUserName = e.data.split(' ')[1]
-        this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
-        if(this.myUserName === currentSuperUserName){
+        const pastSuperUserEmail = e.data.split(' ')[0]
+        const currentSuperUserEmail = e.data.split(' ')[1]
+        this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+        if(this.myUserName === currentSuperUserEmail){
           alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
-          this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+          this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
         }
       })
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e)=>{
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+      const pastSuperUserEmail = e.data.split(' ')[0]
+      const currentSuperUserEmail = e.data.split(' ')[1]
+      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+      if(this.myUserName === currentSuperUserEmail){
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
         alert('현재 방장이 스터디를 종료했으며, 다음 방장으로 선택되셨습니다.')
       } 
     })

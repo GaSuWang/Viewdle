@@ -112,6 +112,12 @@ export default {
     // .catch(err=>console.err(err.response))
 
 // this.nextSuperUser = ''
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    })
+
     // 영상 저장에 필요한 비디오 타임 받음
     this.session.on('signal:startVideoTime', (e)=>{
       this.$store.commit('lbhModule/SET_START_VIDEO_TIME', e.data)
@@ -132,28 +138,28 @@ export default {
 
     //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:ERLeaveSession', (e)=>{
-      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', e.data)
     })
 
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e) => {
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
+      const pastSuperUserEmail = e.data.split(' ')[0]
+      const currentSuperUserEmail = e.data.split(' ')[1]
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+      if(this.myUserEmail === currentSuperUserEmail){
         alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
       }
     })
 
     //방장인 면접자가, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superEELeaveSession', (e)=>{
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
+      const pastSuperUserEmail = e.data.split(' ')[0]
+      const currentSuperUserEmail = e.data.split(' ')[1]
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+      if(this.myUserEmail === currentSuperUserEmail){
         alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superuser')
         this.toWR()
       } else{
         alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
@@ -163,7 +169,7 @@ export default {
 
     //일반 유저인 면접자가, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:EELeaveSession', (e)=>{
-      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', e.data)
       this.$store.commit('lbhModule/EMPTY_FB')
       alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
       this.toWR()

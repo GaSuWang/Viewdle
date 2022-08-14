@@ -129,41 +129,41 @@ export default {
     ])
   },
   created(){
-    if(this.roomSeq){
-      if(this.userType === 'user'){
-        console.log('일반 유저 방나가기 실행')
-        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-      } else {
-        if(this.studyDestroy === true){
-          console.log('방장 유저 방폭파 실행')
-          this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
-          this.$store.dispatch('lbhModule/studyDestorySecondAxios')
-          this.$store.commit('lbhModule/SET_STUDY_DESTOY', false)
-        } else {
-          console.log('방장 유저 방나가기 실행')
-          this.$store.dispatch('lbhModule/superUserLeaveSessionAxios', this.nextSuperUserInfo.myUserEmail)
-        }
-      }
+    // if(this.roomSeq){
+    //   if(this.userType === 'user'){
+    //     console.log('일반 유저 방나가기 실행')
+    //     this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    //   } else {
+    //     if(this.studyDestroy === true){
+    //       console.log('방장 유저 방폭파 실행')
+    //       this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
+    //       this.$store.dispatch('lbhModule/studyDestorySecondAxios')
+    //       this.$store.commit('lbhModule/SET_STUDY_DESTOY', false)
+    //     } else {
+    //       console.log('방장 유저 방나가기 실행')
+    //       this.$store.dispatch('lbhModule/superUserLeaveSessionAxios', this.nextSuperUserInfo.myUserEmail)
+    //     }
+    //   }
     
-    // this.$store.commit('lbhModule/GET_ROOM_INFO', {roomSeq: undefined, roomTitle: undefined, roomType: '1', isSuperUser:false})
-    // this.$store.commit('lbhModule/SET_OV', undefined)
-    // this.$store.commit('lbhModule/SET_SESSION', undefined)
-    // this.$store.commit('lbhModule/SET_SESSION_TOKEN', undefined)
-    // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-    // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-    // // this.$store.commit('lbhModule/SET_MYSESSIONID', undefined)
-    // this.$store.commit('lbhModule/SELECT_CAMERA', {})
-    // this.$store.commit('lbhModule/SELECT_MIC', {})
-    // this.$store.commit('lbhModule/SELECT_CL', {})
-    // this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
-    // this.$store.commit('lbhModule/EMPTY_CURRENT_USER_LIST')
-    // this.$store.commit('lbhModule/SET_ISEE', false)
-    // this.$store.commit('lbhModule/SET_ISER', false)
-    // this.$store.commit('lbhModule/EMPTY_EE')
-    // this.$store.commit('lbhModule/EMPTY_ERS')
-    // this.$store.commit('lbhModule/EMPTY_FB')
-    // this.$store.commit('lbhModule/EMPTY_NEXT_SUPERUSER_INFO')
-    }
+    // // this.$store.commit('lbhModule/GET_ROOM_INFO', {roomSeq: undefined, roomTitle: undefined, roomType: '1', isSuperUser:false})
+    // // this.$store.commit('lbhModule/SET_OV', undefined)
+    // // this.$store.commit('lbhModule/SET_SESSION', undefined)
+    // // this.$store.commit('lbhModule/SET_SESSION_TOKEN', undefined)
+    // // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+    // // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+    // // // this.$store.commit('lbhModule/SET_MYSESSIONID', undefined)
+    // // this.$store.commit('lbhModule/SELECT_CAMERA', {})
+    // // this.$store.commit('lbhModule/SELECT_MIC', {})
+    // // this.$store.commit('lbhModule/SELECT_CL', {})
+    // // this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
+    // // this.$store.commit('lbhModule/EMPTY_CURRENT_USER_LIST')
+    // // this.$store.commit('lbhModule/SET_ISEE', false)
+    // // this.$store.commit('lbhModule/SET_ISER', false)
+    // // this.$store.commit('lbhModule/EMPTY_EE')
+    // // this.$store.commit('lbhModule/EMPTY_ERS')
+    // // this.$store.commit('lbhModule/EMPTY_FB')
+    // // this.$store.commit('lbhModule/EMPTY_NEXT_SUPERUSER_INFO')
+    // }
   },
 ///이병헌 끝
    setup() {

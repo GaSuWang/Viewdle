@@ -78,7 +78,7 @@
             <i class="bi bi-mic-fill"></i>
           </button>
         </div>
-        <div class="StudyEnd">
+        <div class="StudyEnd" v-if="userType == 'superUser'" @click="finishInterview">
           <button>
             <i class="bi bi-check-lg"></i>
           </button>
@@ -130,6 +130,8 @@ export default {
     ...mapGetters("lbhModule", [
       "EE",
       "ERS",
+      "isEE",
+      "isER",
       "myUserName",
       "myUserEmail",
       "myUserInfo",
@@ -152,6 +154,11 @@ export default {
     },
   },
   created() {
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    })
 
     // 내가 면접자인지 아닌지 확인
      if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail){
@@ -167,16 +174,19 @@ export default {
 
     //일반 유저인 면접자가, 면접 도중에 나간 경우
     this.session.on("signal:EELeaveSessionFromEER", (e) => {
-      alert("면접자가 면접 도중에 나갔습니다.\n남은 참가자들 모두 대기실로 이동합니다.");
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);
-      this.$store.commit("lbhModule/SET_EE", []);
-      this.$store.commit("lbhModule/EMPTY_ERS");
-      this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", this.myUserInfo);
+      const data = JSON.stringify(this.myUserInfo)
+      this.session.signal({
+        data: `${data}`,
+        to: [],
+        type: 'WRParticipantListUpdate'
+      })
+      alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
       this.$router.push({ name: "waiting-room" });
     });
 
     //일반 유저인 면접관이, 면접 도중에 나간 경우
-    this.session.on("signal:ERLeaveSession", (e) => {
+    this.session.on("signal:ERLeaveSessionFromEER", (e) => {
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);
     });
 
@@ -188,14 +198,10 @@ export default {
       if (this.myUserEmail === currentSuperUserEmail) {
         alert("방장이 면접 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.");
         this.$store.commit("lbhModule/SWITCH_USER_TYPE", "superUser");
-        this.$store.commit("lbhModule/EMPTY_EE");
-        this.$store.commit("lbhModule/EMPTY_ERS");
         this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", this.myUserInfo);
         this.$router.push({ name: "waiting-room" });
       } else if (this.myUserEmail !== pastSuperUserEmail) {
         alert("면접자가 방에서 나갔습니다. 대기실로 이동합니다.");
-        this.$store.commit("lbhModule/EMPTY_EE");
-        this.$store.commit("lbhModule/EMPTY_ERS");
         this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", this.myUserInfo);
         this.$router.push({ name: "waiting-room" });
       }
@@ -217,6 +223,18 @@ export default {
       }
     });
 
+    //방장이 면접을 완료할 경우
+    this.session.on('signal:finishInterview', () => {
+      alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
+      //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+      const data = JSON.stringify(this.myUserInfo)
+      this.session.signal({
+        data: `${data}`,
+        to: [],
+        type: 'WRParticipantListUpdate'
+      })
+      this.$router.push('/waiting-room')
+    });  
     // this.nextSuperUser = "";
     window.addEventListener("beforeunload", this.EERleaveSession);
     console.log("eerview cretaed", this.EE);
@@ -378,35 +396,44 @@ export default {
       if (confirm("정말 면접 도중에 나가시겠습니까?")) {
         if (this.isEE) {
           this.session.signal({
-            data: `${this.myUserName}`,
+            data: `${this.myUserEmail}`,
             to: [],
             type: "EELeaveSessionFromEER",
           });
-          if (this.session) {
-            console.log("플레이모드에서, 일반 면접자가 방을 나감", this.session);
-            this.session.disconnect();
-            console.log("this.session.disconnect가 실행됐나?", this.session);
-          } else {
-            console.log("뭔소리 하는거야? 세션?");
-          }
-        } else if (!this.isER) {
+          // if (this.session) {
+          //   console.log("플레이모드에서, 일반 면접자가 방을 나감", this.session);
+          //   this.session.disconnect();
+          //   console.log("this.session.disconnect가 실행됐나?", this.session);
+          // } else {
+          //   console.log("뭔소리 하는거야? 세션?");
+          // }
+        } else  {
           this.session.signal({
-            data: `${this.myUserName}`,
+            data: `${this.myUserEmail}`,
             to: [],
             type: "ERLeaveSessionFromEER",
           });
-          if (this.session) {
-            console.log("플레이모드에서, 일반 면접자가 방을 나감", this.session);
-            this.session.disconnect();
-            console.log("this.session.disconnect가 실행됐나?", this.session);
-          } else {
-            console.log("뭔소리 하는거야? 세션?");
-          }
+          // if (this.session) {
+          //   console.log("플레이모드에서, 일반 면접자가 방을 나감", this.session);
+          //   this.session.disconnect();
+          //   console.log("this.session.disconnect가 실행됐나?", this.session);
+          // } else {
+          //   console.log("뭔소리 하는거야? 세션?");
+          // }
         }
 
-        window.removeEventListener("beforeunload", this.EERleaveSession);
+        // window.removeEventListener("beforeunload", this.EERleaveSession);
 
         this.$store.dispatch("lbhModule/userLeaveSessionAxios");
+      }
+    },
+    finishInterview(){
+      if(confirm('면접을 종료하시겟습니까?')){
+        this.session.signal({
+          data: '',
+          to: [],
+          type: 'finishInterview'
+        })
       }
     },
     openEECL() {
@@ -589,61 +616,61 @@ export default {
 
     //---------------------돌발 질문,상황 관련 함수 끝-----------------------------
     //면접관실에서 나갈 때
-    EERleaveSession() {
-      if (this.userType === "superUser") {
-        this.$store.commit("lbhModule/SET_APM_DESTINATION", "ERView");
-        this.$store.commit("lbhModule/SET_APM_OPEN", true);
-      } else {
-        if (this.session) this.session.disconnect();
+    // EERleaveSession() {
+    //   if (this.userType === "superUser") {
+    //     this.$store.commit("lbhModule/SET_APM_DESTINATION", "ERView");
+    //     this.$store.commit("lbhModule/SET_APM_OPEN", true);
+    //   } else {
+    //     if (this.session) this.session.disconnect();
 
-        this.$store.commit("lbhModule/SET_SESSION", undefined);
-        this.$store.commit("lbhModule/SET_OV", undefined);
-        this.$store.commit("lbhModule/SET_PUBLISHER", undefined);
-        this.$store.commit("lbhModule/SET_SUBSCRIBERS", []);
-        this.$store.commit("lbhModule/SET_SUPERUSER", {});
+    //     this.$store.commit("lbhModule/SET_SESSION", undefined);
+    //     this.$store.commit("lbhModule/SET_OV", undefined);
+    //     this.$store.commit("lbhModule/SET_PUBLISHER", undefined);
+    //     this.$store.commit("lbhModule/SET_SUBSCRIBERS", []);
+    //     this.$store.commit("lbhModule/SET_SUPERUSER", {});
 
-        window.removeEventListener("beforeunload", this.EERleaveSession);
-      }
-    },
-    EERtoLBConfirm() {
-      if (this.userType === "user") {
-        if (
-          confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
-          )
-        ) {
-          this.$router.push({ name: "main" });
-        }
-      } else if (this.userType === "superUser") {
-        if (
-          confirm(
-            "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
-          )
-        ) {
-          console.log("권한 위임 모달 실행");
-        }
-      }
-    },
-    StudyDestroy() {
-      if (
-        confirm(
-          "정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다."
-        )
-      ) {
-        this.session
-          .signal({
-            data: "true",
-            to: [],
-            type: "endInterview",
-          })
-          .then(() => {
-            console.log("erview send signal test");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
-    },
+    //     window.removeEventListener("beforeunload", this.EERleaveSession);
+    //   }
+    // },
+    // EERtoLBConfirm() {
+    //   if (this.userType === "user") {
+    //     if (
+    //       confirm(
+    //         "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
+    //       )
+    //     ) {
+    //       this.$router.push({ name: "main" });
+    //     }
+    //   } else if (this.userType === "superUser") {
+    //     if (
+    //       confirm(
+    //         "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
+    //       )
+    //     ) {
+    //       console.log("권한 위임 모달 실행");
+    //     }
+    //   }
+    // },
+    // StudyDestroy() {
+    //   if (
+    //     confirm(
+    //       "정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다."
+    //     )
+    //   ) {
+    //     this.session
+    //       .signal({
+    //         data: "true",
+    //         to: [],
+    //         type: "endInterview",
+    //       })
+    //       .then(() => {
+    //         console.log("erview send signal test");
+    //       })
+    //       .catch((error) => {
+    //         console.error(error);
+    //       });
+    //   }
+    // },
 
     // Speech API
     startRecognition() {

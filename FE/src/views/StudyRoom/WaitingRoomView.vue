@@ -276,17 +276,17 @@ export default {
     },
 
     //대기실에서 나갈 때
-    WRleaveSession() {
-      if (this.session) this.session.disconnect();
+    // WRleaveSession() {
+    //   if (this.session) this.session.disconnect();
 
-      this.$store.commit('lbhModule/SET_SESSION', undefined)
-      this.$store.commit('lbhModule/SET_OV', undefined)
-      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-      this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
+    //   this.$store.commit('lbhModule/SET_SESSION', undefined)
+    //   this.$store.commit('lbhModule/SET_OV', undefined)
+    //   this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+    //   this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+    //   this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
 
-      window.removeEventListener("beforeunload", this.WRleaveSession);
-    },
+    //   window.removeEventListener("beforeunload", this.WRleaveSession);
+    // },
 
     //방장 유저 기능
     selectEE(user){
@@ -419,11 +419,11 @@ export default {
 
       //방장이 대기실에서 나감
       this.session.on('signal:superLeaveSessionWR', (e) => {
-        const pastSuperUser = JSON.parse(e.data.split(' ')[0])
-        const currentSuperUser = JSON.parse(e.data.split(' ')[1])
-        console.log('전, 현 방장 정보',pastSuperUser, currentSuperUser)
-        this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUser)
-        if(this.myUserEmail === currentSuperUser.myUserEmail){
+        const pastSuperUserEmail = e.data.split(' ')[0]
+        const currentSuperUserEmail = e.data.split(' ')[1]
+        console.log('전, 현 방장 정보',pastSuperUserEmail, currentSuperUserEmail)
+        this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+        if(this.myUserEmail === currentSuperUserEmail){
           alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
           this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
         }

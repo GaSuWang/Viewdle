@@ -79,6 +79,13 @@ export default {
     }
   },
   created(){
+
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    })
+
     //방장이 면접을 완료할 경우
     this.session.on('signal:finishInterview', () => {
       alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
@@ -107,10 +114,10 @@ export default {
 
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e) => {
-      const pastSuperUser = JSON.parse(e.data.split(' ')[0])
-      const currentSuperUser = JSON.parse(e.data.split(' ')[1])
-      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUser)
-      if(this.myUserEmail === currentSuperUser.myUserEmail){
+      const pastSuperUserEmail = e.data.split(' ')[0]
+      const currentSuperUserEmail = e.data.split(' ')[1]
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+      if(this.myUserEmail === currentSuperUserEmail){
         alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
         this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
       }
@@ -212,8 +219,6 @@ export default {
     },
     async toWR() {
       await this.$router.push('/waiting-room')
-      this.$store.commit('lbhModule/EMPTY_EE')
-      this.$store.commit('lbhModule/EMPTY_ERS')
     },
   }
 };

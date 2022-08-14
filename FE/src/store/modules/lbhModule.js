@@ -442,10 +442,11 @@ const actions = {
     .then(res =>{
       console.log('유저 방에서 잘 나감')
       console.log(res.response),
-      dispatch('deleteData')
       router.push('/main')
       alert('방에서 나왔습니다.')
-      dispatch('rhtModule/getStudyRoom', {root:true})
+      if(state.session) state.session.disconnect()
+      dispatch('rhtModule/getStudyRoom',{}, {root:true})
+      dispatch('deleteData')
     }
     )
     .catch(err=>console.error(err.response.data))
@@ -464,9 +465,10 @@ const actions = {
     })
     .then(res=> {
       dispatch('deleteData')
-      console.log('방장 유저 정상적으로 세션 나감', res.response)
+      console.log('방장 유저 정상적으로 세션 나감', res)
       router.push('/main')
-      dispatch('rhtModule/getStudyRoom', {root:true})
+      if(state.session) state.session.disconnect()
+      dispatch('rhtModule/getStudyRoom',{}, {root:true})
     })
     .catch(err=>console.error(err.response))
   },
@@ -498,10 +500,11 @@ const actions = {
       data: {roomSeq: state.roomSeq},
     })
     .then(res => {
-      dispatch('deleteData')
       console.log('방이 성공적으로 폭파됨', res)
       router.push('/main') 
-      dispatch('rhtModule/getStudyRoom', {root:true})
+      dispatch('rhtModule/getStudyRoom',{}, {root:true})
+      if(state.session) state.session.disconnect()
+      dispatch('deleteData')
     })
     .catch(err=>console.error(err.response))
   },
@@ -561,7 +564,7 @@ const actions = {
       method: 'post',
       headers: {Authorization: rootGetters['rhtModule/authHeader']},
       data: {
-        feedbackList: state.FBList,
+        feedbackList: state.axiosFBList,
         roomSeq: state.roomSeq,
         videoSeq: state.videoSeq,
       }
