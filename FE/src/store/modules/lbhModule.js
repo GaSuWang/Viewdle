@@ -573,6 +573,48 @@ const actions = {
     .catch(err=>console.error(err.response))
   },
 
+  //면접자가 중간에 나가서 면접이 갑자기 종료됨 (스터디 룸 면접 종료)
+  EELeaveSessionAxios({state,rootGetters}){
+    console.log('EELeaveSessionAxios 실행됨')
+    axios({
+      url: BASE_URL + 'studyroom/interview',
+      method: 'post',
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
+      data: {
+        feedbackList: [],
+        roomSeq: state.roomSeq,
+        videoSeq: null,
+      }
+    })
+    .then(console.log('면접자가 중간에 나가서 면접이 종료됨'))
+    .catch(err=>{
+      console.log('면접자가 중간에 나가서 면접을 종료하려 했는데 에러가 남')
+      console.error(err.response)
+    })
+  },
+
+  //플레이 모드 면접이 종료됨 (스터디 룸 면접 종료)
+  finishInterviewEERAxios({state,rootGetters}){
+    console.log('finishInterviewEERAxios 실행됨')
+    axios({
+      url: BASE_URL + 'studyroom/interview',
+      method: 'post',
+      headers: {Authorization: rootGetters['rhtModule/authHeader']},
+      data: {
+        feedbackList: [],
+        roomSeq: state.roomSeq,
+        videoSeq: null,
+      }
+    })
+    .then(console.log('플레이 모드 면접이 종료됨'))
+    .catch(err=>{
+      console.log('플레이 모드 면접을 종료하려 했는데 에러남')
+      console.error(err.response)
+    })
+  },
+
+
+
   // 다시보기 비디오 가져오기(영상 및 피드백 다시보기)
   getReplayAxios({state, rootGetters, commit}){
     axios({
