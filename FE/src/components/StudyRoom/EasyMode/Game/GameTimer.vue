@@ -6,6 +6,7 @@
   <div class="progressBar">
       <div id="bar" class="innerbar"></div>
   </div>
+  
 </template>
 
 <script>
@@ -32,6 +33,7 @@ export default {
   },
   mounted() {
     setTimeout(() => {
+      this.$emit("start");
       this.timerStart();
       this.start();
     }, 1600);
