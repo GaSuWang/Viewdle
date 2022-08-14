@@ -76,21 +76,24 @@
         <!-- 로비 되돌아가기 버튼 -->
         <!-- <div class="toLBBtnDiv" @click="SRtoLB"> -->
         <div class="toLBBtnDiv" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
-          <button class="toLBBtn">
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+          <!-- <button class="toLBBtn">
             <i class="bi bi-backspace"></i>
-          </button>
+          </button> -->
         </div>
-        <div v-if="userType === 'superUser'" class="toLBBtnDiv">
-          <button type="button" class="toLBBtn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+        <div v-if="userType === 'superUser'" class="toLBBtnDiv" @click="studyDestroy">
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+          <!-- <button type="button" class="toLBBtn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
               <i class="bi bi-x-lg"></i>
-          </button>
+          </button> -->
         </div>
       <!-- 임현탁 여기까지 건들임 -->
         <!-- 대기실 입장 버튼 -->
         <div class="toWRBtnDiv" @click="SRtoWR">
-          <button class="toWRBtn">
+          <Button icon="pi pi-check" class="p-button-rounded p-button-secondary" />
+          <!-- <button class="toWRBtn">
             <i class="bi bi-check-lg"></i>
-          </button>
+          </button> -->
         </div>
       </div>
     </div>
@@ -141,6 +144,9 @@ export default {
     ])
   },
   methods:{
+    studyDestroy(){
+      this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
+    },
     async forceLeaveSession() {
       if(this.userType === 'user'){
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
@@ -289,7 +295,7 @@ export default {
   border-radius: 30px;
 }
 
-.SRNavBtnArea > button,
+/* .SRNavBtnArea > button,
 .toLBBtn,
 .toWRBtn {
   border: none;
@@ -343,5 +349,5 @@ export default {
   text-decoration: none;
   color: #555;
   background: #f5f5f5;
-}
+} */
 </style>

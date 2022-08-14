@@ -486,7 +486,7 @@ const actions = {
     })
     .then(res=> {
       console.log('일단 방을 나감', state.roomSeq, res.response)
-      dispatch('studyDestorySecondAxios')
+      dispatch('studyDestroySecondAxios')
     })
     .catch(err=>console.error(err.response))
   },

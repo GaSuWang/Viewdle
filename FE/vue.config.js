@@ -1,7 +1,7 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
-
+  lintOnSave : false,
   // https://code-hoon.tistory.com/163
   // prefetch는 router로 연결된 다른 페이지들의 리소스들을 미리 다운 받는 것
   // prefetch 활성화 시키면 request 횟수가 늘어나 첫 페이지 로딩이 느릴 수 있음
