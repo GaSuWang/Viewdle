@@ -6,10 +6,10 @@
     <div class="sidebarbody">
     <MiniProfile class="SidebarMiniProfile"/>
     <ul>
-        <li><router-link to="/main"><i :class="{'클래스이름': '조건식'}" class="fas fa-qrcode"></i>Main</router-link></li>
-        <li><router-link to="/mypage"><i class="fas fa-user"></i>MyPage</router-link></li>
-        <li><router-link to="/cl"><i class="fas fa-envelope-open-text"></i>CoverLetter</router-link></li>
-        <li><router-link to="/replay"><i class="fas fa-video"></i>Replay</router-link></li>
+        <li><div @click="main()"><i :class="{'클래스이름': '조건식'}" class="fas fa-qrcode"></i>Main</div></li>
+        <li><div @click="mypage()"><i class="fas fa-user"></i>MyPage</div></li>
+        <li><div @click="cl()"><i class="fas fa-envelope-open-text"></i>CoverLetter</div></li>
+        <li><div @click="replay()"><i class="fas fa-video"></i>Replay</div></li>
         <li><div @click="logout()"><i class="fas fa-sign-out-alt"></i>Logout</div></li>
     </ul>
     </div>
@@ -21,29 +21,35 @@
 <script>
 import MiniProfile from '@/components/Lobby/MiniProfile.vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 export default {
   name: 'NavBar',
   components:{
     MiniProfile
   },
   setup () {
+    const router = useRouter()
     const store = useStore()
     function logout(){
       store.dispatch('rhtModule/logout')
     }
     function main(){
-      store.dispatch('rhtModule/logout')
+      store.dispatch('rhtModule/getStudyRoom')
+      router.push('/main')
     }
     function mypage(){
         store.dispatch('rhtModule/fetchCurrentUser')
         store.dispatch('rhtModule/fetchHistories')
         store.dispatch('rhtModule/getBadge')
+        router.push('/mypage')
     }
     function cl(){
       store.dispatch('rhtModule/getCoverLetter')
+      router.push('/cl')
     }
     function replay(){
       store.dispatch('rhtModule/getReplay')
+      router.push('/replay')
     }
     return {
       logout, main, mypage, cl, replay
