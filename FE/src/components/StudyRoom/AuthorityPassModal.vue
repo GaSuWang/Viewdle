@@ -5,7 +5,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <h5 class="modal-title" id="exampleModalLabel">방장 권한 넘기기</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -30,7 +30,7 @@
         <div class="modal-footer">
           <!-- 현탁 페이지이동하면 페이지 어두워지는거 고침 -->
           <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button> -->
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">돌아가기</button>
+          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">돌아가기</button> -->
           <!-- <button v-if="nextSuperUserList.length == 0" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="studyDestroy">로비로 나가기아무도없을떄</button> -->
           <button v-if="nextSuperUserList.length != 0" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="superUserLeaveSessionAxios">로비로 나가기물려줄사람있을때</button>
           <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="studyDestroy">스터디 폭파</button>

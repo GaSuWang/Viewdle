@@ -93,6 +93,7 @@ export default {
       'myUserEmail',
       'myUserName',
       'myUserInfo',
+      'studyRoomCL',
 
       //기기
       "CameraSelected",
@@ -108,6 +109,9 @@ export default {
       "FBList",
       "FBUserCount",
       "axiosFBList",
+    ]),
+    ...mapGetters('rhtModule',[
+      'CoverLetterDetail',
     ]),
     checkVideoTime(){
       return this.$store.getters['lbhModule/videoTime']
@@ -180,12 +184,21 @@ export default {
       }
     })
 
+    this.session.on("signal:EECL", (e) => {
+      // console.log("EECL signal로 받은 데이터", e.data);
+      // const cl = JSON.parse(e.data);
+      const data = parseInt(e.data)
+      console.log("면접관이 받은 유저의 자소서", data);
+      this.$store.commit("lbhModule/SET_STUDYROOM_CL",data);
+    });
+
   },
   unmounted(){
     this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
     this.$store.commit('lbhModule/EMPTY_FB')
     this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
-    
+    localStorage['cl'] = {}
+
   },
   methods: {
     //vue-countdown
@@ -216,7 +229,12 @@ export default {
     // },
 
     openEECL() {
-      let route = this.$router.resolve({ path: "/eecl" });
+      this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
+      localStorage['cl'] = JSON.stringify({
+        coverLetterTitle: this.CoverLetterDetail.coverLetterTitle,
+        coverLetterContent: this.CoverLetterDetail.coverLetterContent,
+      })
+      let route = this.$router.resolve({ path: "/eecl"});
       window.open(route.href);
     },
     FBComplete() {

@@ -441,16 +441,17 @@ export default {
           this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
 
           // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
-          const coverLetterTitle = this.CLSelected.coverLetterTitle
-          const coverLetterContent = this.CLSelected.coverLetterContent
-          console.log('자소서', coverLetterTitle, coverLetterContent)
+          // const coverLetterTitle = this.CLSelected.coverLetterTitle
+          // const coverLetterContent = this.CLSelected.coverLetterContent
+          console.log('자소서', this.CLSelected)
           this.session.signal({ 
-          data: `"title": ${coverLetterTitle}, "content": ${coverLetterContent}`, 
+          data: `${this.CLSelected.coverLetterSeq}`, 
           to: [], 
           type: 'EECL' 
           })
-          .then(() => {console.log('자소서 보냄')})
-          .catch(error => {console.error(error)});
+          console.log('자소서 보냄')
+          // .then(() => {console.log('자소서 보냄')})
+          // .catch(error => {console.error(error)});
 
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
             this.$store.commit('lbhModule/SET_ERS', s)
@@ -490,21 +491,17 @@ export default {
           this.$store.commit('lbhModule/SET_ISEE', true)
           this.$store.commit("lbhModule/SET_EE", this.publisher); //나(publisher)를 EE에 넣음
 
-          const coverLetterTitle = this.CLSelected.coverLetterTitle
-          const coverLetterContent = this.CLSelected.coverLetterContent
-          this.session
-            .signal({
-              // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
-              data: `"title": ${coverLetterTitle}, "content": ${coverLetterContent}`,
-              to: [],
-              type: "EECL",
-            })
-            .then(() => {
-              console.log("자소서 보냄");
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+          // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
+          // const coverLetterTitle = this.CLSelected.coverLetterTitle
+          // const coverLetterContent = this.CLSelected.coverLetterContent
+          // const cl = JSON.stringify(this.CLSelected)
+          // console.log('자소서', this.CLSelected)
+          this.session.signal({ 
+          data: `${this.CLSelected.coverLetterSeq}`, 
+          to: [], 
+          type: 'EECL' 
+          })
+          console.log('자소서 보냄')
 
           //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
           this.subscribers.forEach((s) => {

@@ -143,6 +143,10 @@ export default {
       "session",
       "currentUserList",
       "WRParticipantList",
+      'studyRoomCL',
+    ]),
+    ...mapGetters('rhtModule',[
+      'CoverLetterDetail',
     ]),
     // nextSuperUserList() {
     //   return this.currentUserList.filter((p) => p.name !== this.myUserName);
@@ -153,6 +157,9 @@ export default {
       };
     },
   },
+  unmounted(){
+    localStorage['cl'] = {}
+  },
   created() {
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
@@ -161,15 +168,16 @@ export default {
     })
 
     // 내가 면접자인지 아닌지 확인
-     if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail){
-      this.isEE = true;
-     }
+    //  if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail){
+    //   this.isEE = true;
+    //  }
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
     this.session.on("signal:EECL", (e) => {
-      console.log("EECL signal로 받은 데이터", e.data);
-      const cl = JSON.parse(e.data);
-      console.log("면접관이 받은 유저의 자소서", cl);
-      this.$store.commit("SET_STUDYROOM_CL", cl);
+      // console.log("EECL signal로 받은 데이터", e.data);
+      // const cl = JSON.parse(e.data);
+      const data = parseInt(e.data)
+      console.log("면접관이 받은 유저의 자소서", data);
+      this.$store.commit("lbhModule/SET_STUDYROOM_CL",data);
     });
 
     //일반 유저인 면접자가, 면접 도중에 나간 경우
@@ -239,8 +247,8 @@ export default {
     });  
     // this.nextSuperUser = "";
     window.addEventListener("beforeunload", this.EERleaveSession);
-    console.log("eerview cretaed", this.EE);
-    console.log("eerview cretaed", this.ERS);
+    console.log("eerview created", this.EE);
+    console.log("eerview created", this.ERS);
     console.log(this.session);
     this.session.on("signal:warning", () => {
       // 이병헌: 이제는 connection.data에 { clientName: this.myUserName, clientEmail: this.myUserEmail } 이런식으로 정보가 넘어가서,
@@ -440,7 +448,12 @@ export default {
       }
     },
     openEECL() {
-      let route = this.$router.resolve({ path: "/eecl" });
+      this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
+      localStorage['cl'] = JSON.stringify({
+        coverLetterTitle: this.CoverLetterDetail.coverLetterTitle,
+        coverLetterContent: this.CoverLetterDetail.coverLetterContent,
+      })
+      let route = this.$router.resolve({ path: "/eecl"});
       window.open(route.href);
     },
     changeVoice() {},

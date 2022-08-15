@@ -102,7 +102,14 @@ export default {
       "nextSuperUserList",
       "myUserInfo",
       "myUserEmail",
+      'studyRoomCL',
     ]),
+    ...mapGetters('rhtModule',[
+      'CoverLetterDetail',
+    ]),
+  },
+  unmounted(){
+    localStorage['cl'] = {}
   },
   created(){
     // this.OV = new OpenVidu();
@@ -124,10 +131,12 @@ export default {
     })
 
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
-    this.session.on('signal:EECL', (e)=>{
-      const cl = JSON.parse(e.data)
-      console.log('면접관이 받은 유저의 자소서', cl)
-      this.$store.commit('SET_STUDYROOM_CL', cl)
+    this.session.on("signal:EECL", (e) => {
+      // console.log("EECL signal로 받은 데이터", e.data);
+      // const cl = JSON.parse(e.data);
+      const data = parseInt(e.data)
+      console.log("면접관이 받은 유저의 자소서", data);
+      this.$store.commit("lbhModule/SET_STUDYROOM_CL",data);
     });
 
     //방장이 면접을 완료할 경우
@@ -228,7 +237,12 @@ export default {
       // this.$store.commit('lbhModule/EMPTY_ERS')
     },
     openEECL() {
-      let route = this.$router.resolve({ path: "/eecl" });
+      this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
+      localStorage['cl'] = JSON.stringify({
+        coverLetterTitle: this.CoverLetterDetail.coverLetterTitle,
+        coverLetterContent: this.CoverLetterDetail.coverLetterContent,
+      })
+      let route = this.$router.resolve({ path: "/eecl"});
       window.open(route.href);
     },
     openQTip() {

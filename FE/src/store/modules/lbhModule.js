@@ -52,7 +52,7 @@ const state = {
   EE: [], //면접자
   ERS: [], //면접관들
   InterviewTipList: {}, // 면접 팁
-  StudyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
+  studyRoomCL: {}, // 유저가 설정실에서 정해서, 면접관이 면접실에서 새로운 페이지로 보는 자소서
 
   //FeedbackRoom
   FBList: [],
@@ -137,7 +137,7 @@ const getters = {
       })
   }},
   InterviewTipList(state) {return state.interviewTipList},
-  StudyRoomCL(state) {return state.studyRoomCL},
+  studyRoomCL(state) {return state.studyRoomCL},
 
   //ErView, FeedbackRoom, ReplayView
   FBList(state) {return state.FBList},
