@@ -83,14 +83,23 @@ export default {
     NavBar,
     ReplayCard,
   },
-computed:{
+  computed:{
     ...mapGetters('lbhModule', [
       "videoTime",
-      checkVideoTime(){
+    ]),
+    checkVideoTime(){
       return this.$store.getters['lbhModule/videoTime']
     },
-    ])
-    },
+  },
+  watch:{
+    checkVideoTime(time){
+      console.log("실행됨")
+      this.video = this.$refs.video
+      console.log(this.video.currentTime)
+      this.video.currentTime = time
+      console.log(this.video.currentTime)
+    }
+  },
   setup(){
     const credentialsToFilterReplay= reactive({
       order:"",
