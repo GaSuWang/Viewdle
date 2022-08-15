@@ -144,6 +144,7 @@ export default {
       "currentUserList",
       "WRParticipantList",
       'studyRoomCL',
+      "filters"
     ]),
     ...mapGetters('rhtModule',[
       'CoverLetterDetail',
@@ -161,6 +162,7 @@ export default {
     localStorage['cl'] = {}
   },
   created() {
+    this.$store.dispatch('lbhModule/getFilter');
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
       alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
@@ -386,6 +388,82 @@ export default {
     if (this.isEE) {
       this.startRecognition();
     }
+
+    // img filter
+    this.session.on("signal:imgFilterOn",  (event) => {
+      let data = event.data;
+      let img = "";
+      let offsetX = "";
+      let offsetY = "";
+      let width = "";
+      let height = ""; 
+      console.log(data);
+      
+      if(data == "potato"){
+        img = this.filters[1].imgUrl; // potato img
+        offsetX = "-0.2F";
+        offsetY = "-0.45F";
+        width = "1.4F";
+        height = "1.9"; 
+      }else if (data == "bread"){
+        img = this.filters[0].imgUrl // bread img
+        offsetX = "-0.35F"
+        offsetY = "-0.55F";
+        width = "1.7F";
+        height = "2.0F"; 
+      }else if(data == "bald"){
+        img = this.filters[2].imgUrl// bald img
+        offsetX = "-0.05F"
+        offsetY = "-0.7F";
+        width = "1.15F";
+        height = "0.9F"; 
+      }
+      if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+        for (let ER of this.ERS) {
+          let name = JSON.parse(ER.stream.connection.data).clientData;
+            if (name === this.myUserName) {
+              if(this.isFiltered){
+                clearTimeout(this.timeout); 
+                this.removeFilter();
+                setTimeout(() => {
+                  ER.stream.applyFilter("FaceOverlayFilter")
+                  .then(filter => {
+                    filter.execMethod(
+                      "setOverlayedImage",
+                    {
+                      "uri": img,
+                      "offsetXPercent": offsetX,
+                      "offsetYPercent": offsetY,
+                      "widthPercent": width,
+                      "heightPercent": height
+                    });
+                    this.isFiltered = true; 
+                    console.log("img filter success");
+                    this.timeout = setTimeout(this.removeFilter, 20000);
+                  });
+                }, 1000);
+              }else{
+                ER.stream.applyFilter("FaceOverlayFilter")
+                  .then(filter => {
+                    filter.execMethod(
+                      "setOverlayedImage",
+                    {
+                      "uri": img,
+                      "offsetXPercent": offsetX,
+                      "offsetYPercent": offsetY,
+                      "widthPercent": width,
+                      "heightPercent": height
+                    });
+                    this.isFiltered = true; 
+                    console.log("img filter success");
+                    this.timeout = setTimeout(this.removeFilter, 20000);
+                });
+              }
+            }
+        }
+      }
+    })
+
   },
   setup() {
     const router = useRouter();
@@ -688,42 +766,61 @@ export default {
     //   }
     // },
 
+    // send img filter : potato or bread or bald
+    setImgFilterOn(filter) {
+      this.session
+        .signal({
+          data: filter,
+          to: [],
+          type: "imgFilterOn",
+        })
+        .then(() => {
+          console.log("success");
+        })
+        .catch(() => {
+          console.log("failed");
+        });
+    },
+
     // Speech API
     startRecognition() {
-      let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      let recognition = SpeechRecognition ? new SpeechRecognition() : false;
+      let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      let recognition = SpeechRecognition? new SpeechRecognition() : false
       recognition.interimResults = true;
-      recognition.lang = "ko-KR";
+      recognition.lang = 'ko-KR';
       recognition.continuous = false;
-
+    
       recognition.start(); // 음성 인식 시작
       console.log("start speech recognition");
 
-      recognition.onresult = function (e) {
-        // 음성 인식 결과 반환
-        for (let i = e.resultIndex; i < e.results.length; ++i) {
-          if (e.results[i].isFinal) {
+      recognition.onresult = (e) => { // 음성 인식 결과 반환
+        for(let i = e.resultIndex; i < e.results.length; ++i){
+          if(e.results[i].isFinal){ 
             let script = e.results[i][0].transcript;
             // console.log(script);
-            if (script.includes("빵")) {
-              alert("빵!");
-            } else if (script.includes("감자")) {
-              alert("감자!");
+            if(script.includes("빵")){
+              console.log("빵");
+              this.setImgFilterOn("bread");
+            }else if(script.includes("감자")){
+              console.log("감자");
+              this.setImgFilterOn("potato");
+            }else if(script.includes("나 안 해")){
+              console.log("대머리");
+              this.setImgFilterOn("bald");
             }
           }
         }
-      };
+      }
 
-      recognition.onend = function () {
-        // 음성 인식이 끊겼을 때
+      recognition.onend = function(){ // 음성 인식이 끊겼을 때 
         //recognition.stop();
-        recognition.start();
-      };
+        recognition.start(); 
+      }     
 
-      recognition.onerror = function (e) {
+      recognition.onerror = function(e) {
         console.log(e);
-      };
-    },
+      }
+    }
   },
 };
 </script>
