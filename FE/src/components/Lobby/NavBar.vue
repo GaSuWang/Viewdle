@@ -31,10 +31,24 @@ export default {
     function logout(){
       store.dispatch('rhtModule/logout')
     }
-    return {
-      logout
+    function main(){
+      store.dispatch('rhtModule/logout')
     }
-  } 
+    function mypage(){
+        store.dispatch('rhtModule/fetchCurrentUser')
+        store.dispatch('rhtModule/fetchHistories')
+        store.dispatch('rhtModule/getBadge')
+    }
+    function cl(){
+      store.dispatch('rhtModule/getCoverLetter')
+    }
+    function replay(){
+      store.dispatch('rhtModule/getReplay')
+    }
+    return {
+      logout, main, mypage, cl, replay
+    }
+  }           
 }
 </script>
 
