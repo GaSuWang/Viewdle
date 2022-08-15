@@ -108,6 +108,7 @@ export default {
       "SessionToken",
       "session",
       "currentUserList",
+      "filters"
     ]),
     nextSuperUserList() {
       return this.currentUserList.filter((p) => p.name !== this.myUserName);
@@ -119,6 +120,7 @@ export default {
     },
   },
   created() {
+    this.$store.dispatch('lbhModule/getFilter');
     //일반 유저인 면접자가, 면접 도중에 나간 경우
     this.session.on('signal:EELeaveSessionFromEER', (e)=>{
       alert('면접자가 면접 도중에 나갔습니다.\n남은 참가자들 모두 대기실로 이동합니다.')
@@ -292,21 +294,21 @@ export default {
       let width = "";
       let height = ""; 
       console.log(data);
-
+      
       if(data == "potato"){
-        img = "https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fpotato_shape.png?alt=media&token=2426c722-cdb2-48af-8982-f17a16bd9e5e" // potato img => 지금은 모자임
-        offsetX = "-0.2F"
+        img = this.filters[1].imgUrl; // potato img
+        offsetX = "-0.2F";
         offsetY = "-0.45F";
         width = "1.4F";
         height = "1.9"; 
       }else if (data == "bread"){
-        img = 'https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbread_shape.png?alt=media&token=5fe3699b-17e1-4086-9cd1-53fa59cce6c9'; // bread img
+        img = this.filters[0].imgUrl // bread img
         offsetX = "-0.35F"
         offsetY = "-0.55F";
         width = "1.7F";
         height = "2.0F"; 
       }else if(data == "bald"){
-        img = 'https://firebasestorage.googleapis.com/v0/b/viewdle-b6bf5.appspot.com/o/filter%2Fbald_remove.png?alt=media&token=5b340aed-24b0-4f9a-93aa-3abfa2b1b736'; // bald img
+        img = this.filters[2].imgUrl// bald img
         offsetX = "-0.05F"
         offsetY = "-0.7F";
         width = "1.15F";

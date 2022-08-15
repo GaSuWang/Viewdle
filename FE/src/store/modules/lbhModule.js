@@ -55,6 +55,9 @@ const state = {
 
   // 녹화 관련
   recordingObject : null,
+
+  // 박채림 / 필터 관련
+  filters : []
 };
 const getters = {
   //방장권한
@@ -108,6 +111,10 @@ const getters = {
 
   //녹화 관련
   recordingObject(state) {return state.recordingObject},
+
+  // 박채림 / 필터 관련
+  filters(state) {return state.filters}
+
 };
 const mutations = {
   SWITCH_USER_TYPE_TEMP(state){ //개발 단계에서는 버튼으로 commit, 실제로는 userType은 권한 위임을 통해서만 commit
@@ -228,9 +235,15 @@ const mutations = {
   EMPTY_FB(state){state.FBList = []},
   //녹화 관련
   SET_RECORDING_OBJECT(state, recordingObject){state.recordingObject = recordingObject},
+
+  // 박채림 / 필터 관련
+  SET_VIDEO_FILTER_LIST(state, filters){
+    state.filters = filters;
+  },
 };
 
 const BASE_URL = 'https://' + location.hostname + '/api/v1/'
+// const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'
 
 const actions = {
   //Axios 모음
@@ -430,6 +443,20 @@ const actions = {
     })
     .catch(err=>console.error(err.response))
   },
+
+  // 박채림 / 필터
+  getFilter({commit}){
+    axios({
+      url : BASE_URL + 'studyroom/filter',
+      method : 'get'
+    }).
+    then(res => {
+      commit('SET_VIDEO_FILTER_LIST', res.data)
+    })
+    .catch(error => {
+      console.log(error);
+    }) 
+  }
 };
 
 export default {
