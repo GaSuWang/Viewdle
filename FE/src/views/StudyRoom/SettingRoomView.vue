@@ -227,7 +227,7 @@ export default {
   width: 90vw;
   /* 화면 구성을 위해서 min-width나 min-height를 주는 게 맞는 거 같은데*/
   min-width: 1000px;
-  aspect-ratio: 16/9;
+  aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
