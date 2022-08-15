@@ -23,16 +23,18 @@
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
       <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
       <!-- <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionfromWR"> -->
-          <button class="toLBBtn">
-            <!-- <i class="bi bi-backspace"></i> -->
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+
+          <!-- <button class="toLBBtn">
             <i class="bi bi-x-lg"></i>
-          </button>
+          </button> -->
       </div>
       <!-- 대기실에서 나가기 버튼(방장 유저) -->
       <div v-if="userType === 'superUser'" class="superUser">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
+        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
-        </button>
+        </button> -->
       </div>
       <!-- 현탁 끝 -->
 
@@ -58,24 +60,35 @@
       </div>
 
       <div class="start-interview" v-if="userType === 'superUser'">
-        <button @click="startInterview">
+        <!-- <button @click="startInterview">
           <i class="bi bi-check-lg"></i>
-        </button>
+        </button> -->
+        <Button @click="startInterview" icon="pi pi-check" class="p-button-rounded p-button-secondary" />
+
         <!-- <button @click="startEZInterview">EZ<i class="bi bi-check-lg"></i></button> -->
       </div>
 
       <div class="mic-status">
-        <button @click="switchMicStatus" v-if="session">
+        <Button @click="switchMicStatus" v-if="session" class="p-button-rounded p-button-secondary">
           <i v-if="MicStatus" class="bi bi-mic"></i>
           <i v-else class="bi bi-mic-mute"></i>
-        </button>
+        </Button>
+
+        <!-- <button class="deviceBtn" @click="switchMicStatus" v-if="session">
+          <i v-if="MicStatus" class="bi bi-mic"></i>
+          <i v-else class="bi bi-mic-mute"></i>
+        </button> -->
       </div>
 
       <div class="camera-status">
-        <button @click="switchCameraStatus" v-if="session">
+        <Button @click="switchCameraStatus" v-if="session" class="p-button-rounded p-button-secondary">
           <i v-if="CameraStatus===true" class="bi bi-camera-video"></i>
           <i v-else-if="CameraStatus===false" class="bi bi-camera-video-off"></i>
-        </button>
+        </Button>
+        <!-- <button  class="deviceBtn" @click="switchCameraStatus" v-if="session">
+          <i v-if="CameraStatus===true" class="bi bi-camera-video"></i>
+          <i v-else-if="CameraStatus===false" class="bi bi-camera-video-off"></i>
+        </button> -->
       </div>
 
       <!-- 삭제할 버튼들 -->
@@ -660,7 +673,8 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
+  background: rgb(255,255,255,0.5);
   border-radius: 60px;
   padding: 3%;
   display: flex;
@@ -674,6 +688,7 @@ export default {
   padding: 0;
   display: flex;
   justify-content: center;
+
 }
 
 .WRVideo {
@@ -684,7 +699,9 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
+  overflow-y: hidden; /* Hide vertical scrollbar */
+
 }
 
 .row {
@@ -707,14 +724,21 @@ export default {
   width: 30%;
   height: 100%;
   border-radius: 20px;
-  background-color: #edf0f6;
+  background-color: #fff;
 }
 
-.WRRightArea button {
-  border: none;
-  border-radius: 10%;
-  width: 20%;
-  aspect-ratio: 2/1;
-  background-color: rgb(181, 180, 180);
+.WaitingRoomView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
 }
+.WaitingRoomView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
+}
+/* .deviceBtn{
+  border: none;
+  border-radius: 50%;
+  width: 20%;
+  background-color: rgb(181, 180, 180);
+} */
 </style>

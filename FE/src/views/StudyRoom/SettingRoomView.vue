@@ -295,12 +295,8 @@ export default {
   border-radius: 30px;
 }
 
-.toLBBtnDiv > button{
-  background-color: #a7a9b9;
-  border: #a7a9b9
-}
-.toWRBtnDiv > button{
-  background-color: #a7a9b9;
-  border: #a7a9b9
-}  
+.SettingRoomView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
+} 
 </style>

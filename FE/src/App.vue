@@ -21,4 +21,7 @@ export default {
   justify-content: center;
   background: #D8DBEB;
 }
+.app::-webkit-scrollbar {
+  display: none;
+}
 </style>
