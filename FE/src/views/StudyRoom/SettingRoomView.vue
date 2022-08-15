@@ -138,6 +138,7 @@ export default {
       "CLSelected",
       'CLStatus',
       'userType',
+      'WRParticipantList',
     ]),
     ...mapGetters('rhtModule',[
       'CoverLetterList',
@@ -295,8 +296,23 @@ export default {
   border-radius: 30px;
 }
 
-.SettingRoomView button:enabled:hover{
+.toLBBtnDiv button, 
+.toWRBtnDiv button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.toLBBtnDiv button:enabled:hover, 
+.toWRBtnDiv button:enabled:hover{
   background-color: #787a89;
   border: #787a89
-} 
+}
+
+/* .SettingRoomView button{
+  background-color: #787a89;
+  border: #787a89
+}  */
+/* .SettingRoomView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
+}  */
 </style>

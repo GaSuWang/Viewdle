@@ -90,10 +90,17 @@ const getters = {
   userType(state){return state.userType},
   // WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
   WRParticipantList(state) {
+    console.log('state.WRParticipantList', state.WRParticipantList, typeof(state.WRParticipantList))
     function unique(data, key){
       return [ ...new Map(data.map(x => [key(x), x])).values()]
     }
     return unique(state.WRParticipantList, e => e.myUserEmail)
+    // function unique(data, key){
+    //   return [ ...new Map(data.map(x => [key(x), x])).values()]
+    // }
+    // if(state.WRParticipantList.isArray){
+    //   return unique(state.WRParticipantList, e => e.myUserEmail)
+    // } else return state.WRParticipantList
   },
   StartInterview(state) {return state.StartInterview},
   currentUserList(state) {return state.currentUserList},
