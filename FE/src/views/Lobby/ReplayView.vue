@@ -24,19 +24,17 @@
 
     <!-- 영상 다시보기 -->
     <div class="modal fade" id="enterReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog modal-xl">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
           <div class="modal-content">
-          {{replayDetail.videoSeq}}
-          {{replayDetail.Title}}
-          {{replayDetail.videoRegTime}}
-          {{replayDetail.videoUrl}}
-          {{replayDetail.feedbackList}}
+            <div class="modalshow">
 
           <!-- 동영상 삽입 및 AI 평가 입력 -->
           <div style="position:relative;height:200px">
             <div style="position:absolute;">
               <video id="video" ref="video" crossOrigin='anonymous' width="640" height="480" controls="" autoplay="" name="media" >
-                <source src="https://localhost:4443/openvidu/recordings/SessionA/SessionA.mp4" type="video/mp4">
+                <!-- <source src="https://localhost:4443/openvidu/recordings/SessionA/SessionA.mp4" type="video/mp4"> -->
+                <source :src="replayDetail.videoUrl" type="video/mp4">
+
                   <!-- <source src = "file://C:/Users/multicampus/Desktop/test.mp4"> -->
               </video>
             </div>
@@ -51,11 +49,22 @@
           </div>
           <div>
             <!--  style="position:absolute"-->
-            <canvas id="canvas" ref="canvas" ></canvas>
+            <!-- <canvas id="canvas" ref="canvas" ></canvas> -->
+          </div>
+          <div class="replayfeedback">
+              <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in replayDetail.feedbackList" :key="item.seq">
+              {{item.feedbackContent}}
+              <button :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" @click="moveTo(item.timeline)">
+                <i class="fa-solid fa-circle-play"></i>
+              </button>
+              </div>
+            </div>
+        <button class="btn btn-secondary replaymodalclose" data-bs-dismiss="modal">Close</button> 
           </div>
           </div>
         </div>
-    </div>  
+
+    </div> 
   </div>  
   </div>  
 </template>
@@ -63,7 +72,7 @@
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
 import ReplayCard from '@/components/Lobby/ReplayCard.vue'
-import { useStore } from 'vuex'
+import { useStore, mapGetters } from 'vuex'
 import { reactive, computed } from "vue";
 
 // AI 코드
@@ -74,7 +83,23 @@ export default {
     NavBar,
     ReplayCard,
   },
-
+  computed:{
+    ...mapGetters('lbhModule', [
+      "videoTime",
+    ]),
+    checkVideoTime(){
+      return this.$store.getters['lbhModule/videoTime']
+    },
+  },
+  watch:{
+    checkVideoTime(time){
+      console.log("실행됨")
+      this.video = this.$refs.video
+      console.log(this.video.currentTime)
+      this.video.currentTime = time
+      console.log(this.video.currentTime)
+    }
+  },
   setup(){
     const credentialsToFilterReplay= reactive({
       order:"",
@@ -86,8 +111,11 @@ export default {
     function sortReplay(){
       store.dispatch('rhtModule/sortReplay', credentialsToFilterReplay)
     }
+    function moveTo(replaytimeline){
+      store.commit('lbhModule/SET_VIDEO_TIME', replaytimeline)
+    }
     return {
-      replayDetail,sortReplay, credentialsToFilterReplay
+      replayDetail,sortReplay, credentialsToFilterReplay, moveTo
     }
   },
 
@@ -288,4 +316,42 @@ export default {
   padding: 20px;
   overflow: scroll;
 }
-</style>
+.modalshow{
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  height: 600px;
+}
+.replayfeedback{
+  position: absolute;
+  left: 680px;
+  width: 450px;
+  height: 510px;
+  margin-right: 15px;
+  overflow: scroll;
+}
+.replayFeedbackBox{
+  border-radius: 20px;
+  width: 430px;
+  height: 90px;
+  margin-bottom: 30px; 
+}
+.replaymodalclose{
+  position: absolute;
+  left: 1000px;
+  width: 100px;
+  height: 45px;
+  top: 540px
+}
+.replaygood{
+  background-color: #89B2E8;
+  border: 1px #0f70ed solid;
+}
+.replaybad{
+  background-color: #ffcc74;
+  border: 1px #fcab1f solid
+}
+ /* width="640" height="480" */
+</style> 
