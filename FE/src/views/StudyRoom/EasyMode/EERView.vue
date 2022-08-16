@@ -253,6 +253,7 @@ export default {
 
     //방장이 면접을 완료할 경우
     this.session.on('signal:finishInterview', () => {
+      this.removeFilter();
       alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
       const data = JSON.stringify(this.myUserInfo)
@@ -413,31 +414,34 @@ export default {
       let offsetY = "";
       let width = "";
       let height = ""; 
-      console.log(data);
       
       if(data == "potato"){
-        img = this.filters[1].imgUrl; // potato img
+        img = this.filters[1].imgUrl.toString(); // potato img
         offsetX = "-0.2F";
         offsetY = "-0.45F";
         width = "1.4F";
-        height = "1.9"; 
+        height = "1.9";;
       }else if (data == "bread"){
-        img = this.filters[0].imgUrl // bread img
-        offsetX = "-0.35F"
+        img = this.filters[0].imgUrl.toString(); // bread img
+        offsetX = "-0.35F";
         offsetY = "-0.55F";
         width = "1.7F";
-        height = "2.0F"; 
+        height = "2.0F";
       }else if(data == "bald"){
-        img = this.filters[2].imgUrl// bald img
-        offsetX = "-0.05F"
+        img = this.filters[2].imgUrl.toString(); // bald img
+        offsetX = "-0.05F";
         offsetY = "-0.7F";
         width = "1.15F";
-        height = "0.9F"; 
+        height = "0.9F";
       }
-      if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+      // console.log(img);
+      // if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+      if(this.isER){
         for (let ER of this.ERS) {
-          let name = JSON.parse(ER.stream.connection.data).clientData;
-            if (name === this.myUserName) {
+          let mail = JSON.parse(ER.stream.connection.data).clientEmail;
+          // let name = JSON.parse(ER.stream.connection.data).clientData;
+            // if (name === this.myUserName) {
+            if (mail === this.myUserEmail) {
               if(this.isFiltered){
                 clearTimeout(this.timeout); 
                 this.removeFilter();
@@ -459,6 +463,7 @@ export default {
                   });
                 }, 1000);
               }else{
+                console.log("############################# 면접관이야");
                 ER.stream.applyFilter("FaceOverlayFilter")
                   .then(filter => {
                     filter.execMethod(
