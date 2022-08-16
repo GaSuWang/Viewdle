@@ -3,7 +3,6 @@
 <div class="ReplayViewBoss">
   <NavBar class="NavView"/>
   <div class="ReplayView">
-    <p class="pagetitle">Replay</p>
     <div class='ReplayTop'>
       <div class="dropdown ReplayTopitem">
         <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -286,11 +285,17 @@ export default {
 
   height: 100%;
   width: 80%;
+  overflow: scroll;
+}
+.ReplayView::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 .ReplayTop{
+  margin-top: 20px;
+  margin-left: 20px;
   background: white;
   border-radius: 20px;
-  width:98%;
+  width:95%;
   height: 80px;
   display: flex;
   flex-direction: row;
@@ -305,12 +310,13 @@ export default {
   margin-top: 20px;
 }
 .ReplayBody{
+  margin-left: 20px;
   display: flex;
   flex-direction: row;
   flex-flow: row wrap;
   justify-content: space-around;
-  width: 98%;
-  height: 83%;
+  width: 95%;
+  height: 80%;
   background: white;
   border-radius: 20px;
   padding: 20px;
