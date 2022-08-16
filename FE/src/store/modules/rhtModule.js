@@ -103,8 +103,8 @@ const mutations= {
     },
   }
 // const router = useRouter()
-// const BASE_URL = 'http://' + location.hostname + ':8081'
-const BASE_URL = 'https://' + location.hostname
+const BASE_URL = 'http://' + location.hostname + ':8081'
+// const BASE_URL = 'https://' + location.hostname
 const actions= {
   // 토큰저장
     saveToken({ commit }, token){
@@ -762,7 +762,7 @@ const actions= {
         // url:BASE_URL + '/api/v1/users/badge', // 비번수정 api 
         url: BASE_URL + `/api/v1/users/badge`, 
         method:'put',
-        data: credentialsToset,
+        data: {"badge":credentialsToset},
         headers: {Authorization: getters.authHeader },
       })
       .then(() => {
