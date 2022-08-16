@@ -17,8 +17,7 @@
       <div class="MyBody">
         <div class="card-top">
           <div class="card-topitem1">
-            <!-- <img :src="userLists.userProfileImage"> -->
-            <img class="profileimg" src="@/assets/images/anyimgs.png">
+            <img :src="userLists.userProfileImage">
             <SendImg/>
           </div>
           <div class="card-topitem2">
@@ -63,7 +62,7 @@
                 </form>
                 <div class="modal-footer">
                   <form @submit.prevent="deleteID()">
-                    <div v-if="pwcode == true">
+                    <div v-if="pwcode == false">
                       <button class="btn btn-primary" data-bs-dismiss="modal">회원탈퇴하기</button>
                     </div>
                   </form>
@@ -96,7 +95,7 @@
                 </form>
                 {{pwcodeforedit}}
                 <div class="modal-footer">
-                    <div v-if="pwcodeforedit == true">
+                    <div v-if="pwcodeforedit == false">
                       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editmodal">비번수정모달</button>
                     </div>
                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -224,7 +223,7 @@ export default {
   height: 48%;
   display: flex;
   flex-flow: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: space-around;
   margin: 0 20px;
 }
@@ -232,7 +231,8 @@ export default {
   width: 98%;
   height: 18%;
   display: flex;
-  margin: 0 20px;
+  margin: none;
+  justify-content: center;
 }
 .card{
   width: 98%;

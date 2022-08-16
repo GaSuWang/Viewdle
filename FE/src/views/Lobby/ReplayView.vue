@@ -314,7 +314,10 @@ export default {
   background: white;
   border-radius: 20px;
   padding: 20px;
-  overflow: scroll;
+  overflow-y: scroll;
+}
+.ReplayBody::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 .modalshow{
   display: flex;
@@ -330,7 +333,10 @@ export default {
   width: 450px;
   height: 510px;
   margin-right: 15px;
-  overflow: scroll;
+  overflow-y: scroll;
+}
+.replayfeedback::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 .replayFeedbackBox{
   border-radius: 20px;
