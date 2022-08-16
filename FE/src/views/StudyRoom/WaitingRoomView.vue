@@ -120,7 +120,7 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname;
+const OPENVIDU_SERVER_URL = "https://" + location.hostname+":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
@@ -453,7 +453,8 @@ export default {
         //대기실 유저 목록 지우기
         console.log('면접 시작! 내 이름과 이메일은', this.myUserName, this.myUserEmail)
         this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
-
+        this.$store.commit('lbhModule/SET_ISEE', false)
+        this.$store.commit('lbhModule/SET_ISER', false)
         //만약에 내가 면접자라면
         if(e.data === this.myUserEmail){ 
           console.log('startinterview as ee')
@@ -505,6 +506,8 @@ export default {
       this.session.on("signal:startEZInterview", (e) => {
         //대기실 유저 목록 지우기
         this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
+        this.$store.commit('lbhModule/SET_ISEE', false)
+        this.$store.commit('lbhModule/SET_ISER', false)
         //만약에 내가 면접자라면
         if (e.data === this.myUserEmail) {
           console.log("startEZInterview as EE");
