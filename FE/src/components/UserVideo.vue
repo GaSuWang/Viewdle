@@ -1,5 +1,5 @@
 <template>
-<div class="userVideo" v-if="streamManager">
+<div class="userVideo" v-if="streamManager && showVid">
 	<ov-video :stream-manager="streamManager"/>
 	<div class="userInfo">{{ clientName }}</div>
 </div>
@@ -20,16 +20,20 @@ export default {
 		...mapGetters('lbhModule',[
 			'WRParticipantList',
 			'session',
+			'myUserEmail',
 		]),
 		clientName() {
 			const { clientName } = this.getConnectionData();
 			return clientName;
 		},
 		showVid() {
-			if(this.$router.currentRoute.value.name === 'waiting-room'){
-				if(this.videoStatus===true){return true
-				} else {return false}
-			} else {return true}
+			const inWR = this.WRParticipantList.filter(p => p.myUserEmail === this.myUserEmail)
+    // if(state.currentUserList.length) {
+    //   return state.currentUserList.filter(p => p.myUserEmail !== state.myUserEmail)
+    // } else return []
+			if(this.$router.currentRoute.value.name === 'waiting-room' && (inWR === [])){
+				return false
+			} else return true
 		},
 	},
 	mounted(){
