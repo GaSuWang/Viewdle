@@ -104,7 +104,7 @@ const mutations= {
   }
 // const router = useRouter()
 const BASE_URL = 'http://' + location.hostname + ':8081'
-// const BASE_URL = BASE_URL
+// const BASE_URL = 'https://' + location.hostname
 const actions= {
   // 토큰저장
     saveToken({ commit }, token){

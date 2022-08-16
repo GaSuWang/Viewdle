@@ -40,12 +40,13 @@ export default {
     })
 
 
-
+    const BASE_URL = 'http://' + location.hostname + ':8081'
+    // const BASE_URL = 'https://' + location.hostname
     function getEmailCode(credentials) {
         console.log("코드보내기야 안녕?")
         axios({
-          // url: 'https://' + location.hostname + '/api/v1/users/password',  // 비밀번호찾기 api
-          url: 'http://' + location.hostname + ':8081' + '/api/v1/uses/password',
+          // url: BASE_URL + '/api/v1/users/password',  // 비밀번호찾기 api
+          url: BASE_URL + '/api/v1/uses/password',
           method: 'post',
           data: {"email":credentials.userEmail}
         })
