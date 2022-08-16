@@ -46,6 +46,8 @@ name: "GoogleLoginView",
 
     },
     async GoogleLoginSuccess(googleUser) {
+      // const BASE_URL = 'http://' + location.hostname + ':8081'
+      const BASE_URL = 'https://' + location.hostname
       const profile = googleUser.getBasicProfile()
       // console.log('idToken: ', googleUser.getAuthResponse().id_token); // 실제 토큰
       // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
@@ -54,8 +56,8 @@ name: "GoogleLoginView",
       // console.log('Email: ' + profile.getEmail());
 
       axios({
-        // url: 'https://' + location.hostname + `/api/v1/users/check/duplicate`,  // 이메일확인 api
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/users/check/duplicate',
+        // url: BASE_URL + `/api/v1/users/check/duplicate`,  // 이메일확인 api
+        url: BASE_URL + '/api/v1/users/check/duplicate',
         method: 'post',
         data: {'email' : profile.getEmail()},
         
@@ -72,8 +74,8 @@ name: "GoogleLoginView",
         .catch(err => {
           if (err.response && err.response.status === 400 ){
             axios({
-              // url: 'https://' + location.hostname + '/api/v1/social/google/login',
-              url: 'http://' + location.hostname + ':8081' + '/api/v1/social/google/login',
+              // url: BASE_URL + '/api/v1/social/google/login',
+              url: BASE_URL + '/api/v1/social/google/login',
               method:'post',
               data: {'idToken':googleUser.getAuthResponse().id_token}           
             }).then(tq => {

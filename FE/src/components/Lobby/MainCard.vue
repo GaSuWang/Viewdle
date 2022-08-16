@@ -6,7 +6,8 @@
   </div>
   <div class="MainCardBottom">
     <div class="MainCardthumnail">
-      <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
+      <!-- <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start"/> -->
+      <img :src="item.thumbnailUrl" class="img-fluid rounded-start"/>
     </div>
     <div class="col MainCardBody">
       <h5>{{item.roomTitle}}</h5>

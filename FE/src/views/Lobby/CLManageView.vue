@@ -177,6 +177,9 @@ export default {
   padding: 20px;
   overflow: scroll;
 }
+.clmanageBody::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
 .CLContent{
   height : 300px;
   white-space:normal;

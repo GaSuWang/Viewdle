@@ -173,7 +173,7 @@ export default {
       "password":"",
       "privateYN":"N",
       "title":"",
-      "commonSeq":2
+      "commonSeq":''
     })
     const credentialsToenter = reactive({
       "roomPassword" : "",
@@ -188,7 +188,20 @@ export default {
       order: "",
     })
     const store = useStore()
-    function createStudyroom(){
+    function createStudyroom(info){
+      console.log(credentials.privateYN)
+      if (info.type == 1 && info.privateYN == 'Y'){
+        credentials.commonSeq = 10
+      } 
+      else if (info.type == 1 && info.privateYN == 'N'){
+        credentials.commonSeq = 8
+      }
+      else if (info.type == 2 && info.privateYN == 'Y'){
+        credentials.commonSeq = 11
+      }
+      else if (info.type == 2 && info.privateYN == 'N'){
+        credentials.commonSeq = 9
+      } 
       store.dispatch('rhtModule/createStudyroom', credentials)
     }
     function enterStudyroom(){
@@ -267,7 +280,10 @@ export default {
   background: white;
   border-radius: 20px;
   padding: 20px;
-  overflow: scroll;
+  overflow-y: scroll;
+}
+.MainBody::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 .Searchbar{
   margin-left:30px;

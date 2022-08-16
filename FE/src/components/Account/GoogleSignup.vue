@@ -40,6 +40,8 @@ export default {
       "password": '',
       "password2": ''
     })
+    // const BASE_URL = 'http://' + location.hostname + ':8081'
+const BASE_URL = 'https://' + location.hostname
     function googlesignup(credentials) {
       /* 
       POST: 사용자 입력정보를 signup URL로 보내기
@@ -52,8 +54,8 @@ export default {
       */
       console.log("회원가입아 안녕?")
       axios({
-        // url: 'https://' + location.hostname + '/api/v1/social/google/signup', //회원가입 api로
-        url: 'http://' + location.hostname + ':8081' + '/api/v1/social/google/signup',
+        // url: BASE_URL + '/api/v1/social/google/signup', //회원가입 api로
+        url: BASE_URL + '/api/v1/social/google/signup',
         method: 'post',
         data: credentials
       })
