@@ -17,7 +17,7 @@
     @endSuddenAttack="endSuddenAttack"
   />
   <!-- 돌발상황 영역 끝 -->
-  <div :style="cssVariable" class="siren"></div>
+  <div :style="cssVariable" class="siren" v-if="sirenIsShow"></div>
   <div class="EERView">
     <!-- 영상 구역 -->
     <!-- style cssVariable 삭제 -->
@@ -123,6 +123,7 @@ export default {
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
       suddenAttackFlag: -1, //돌발 상황 분기
       timeout: null, //타임아웃 저장용
+      sirenIsShow:false,
       // isEE: false,
     };
   },
@@ -154,7 +155,7 @@ export default {
     // },
     cssVariable() {
       return {
-        "--bgcolor": this.bgIsWhite ? "white" : "tomato",
+        "--bgcolor": this.bgIsWhite ? "#D8DBEB" : "tomato",
       };
     },
   },
@@ -253,6 +254,7 @@ export default {
 
     //방장이 면접을 완료할 경우
     this.session.on('signal:finishInterview', () => {
+      this.warningCount =0;
       this.removeFilter();
       alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
@@ -383,7 +385,12 @@ export default {
     //----------------돌발 질문 끝-----------------------
     this.session.on("signal:EndInterviewByWarning", (event) => {
       console.log(event.data);
-      this.returnWaitingRoom();
+      this.session.signal({
+          data: '',
+          to: [],
+          type: 'finishInterview'
+        })
+        this.$store.dispatch('lbhModule/finishInterviewEERAxios')
       //대기실로 돌아가는 메소드 구현
     });
 
@@ -695,12 +702,14 @@ export default {
     //배경 빨강->하양 반복 사이렌효과
     startSirenEffect() {
       console.log("웨에에에에에에에엥");
+      this.sirenIsShow = true;
       var interval = setInterval(() => {
         this.bgIsWhite = !this.bgIsWhite;
       }, 200);
       setTimeout(() => {
         clearInterval(interval);
         this.bgIsWhite = true;
+        this.sirenIsShow = false;
       }, 3000);
     },
 
@@ -976,11 +985,11 @@ export default {
   opacity: 0;
 }
 .siren {
-  --bgcolor: white;
+  --bgcolor: #D8DBEB;
   position: absolute;
   top: 0%;
   left: 0%;
-  z-index: -1;
+  z-index: 0;
   width: 100vw;
   height: 100vh;
   background-color: var(--bgcolor);
