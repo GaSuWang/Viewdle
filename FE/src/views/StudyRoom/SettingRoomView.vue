@@ -111,7 +111,7 @@ export default {
   components:{
     AuthorityPassModal
   },
-  unmounsted(){
+  unmounted(){
     if(this.userType === 'user'){
       this.$store.dispatch('lbhModule/userLeaveSessionAxios')
     } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
