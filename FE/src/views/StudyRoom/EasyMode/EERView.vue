@@ -83,12 +83,12 @@
             <i class="bi bi-check-lg"></i>
           </button>
         </div>
-        <div class="SuddenAttackBtn">
+        <div class="SuddenAttackBtn" v-if="isER">
           <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
             <i class="bi bi-exclamation-triangle-fill"></i>
           </button>
         </div>
-        <div class="CaptureBtn">
+        <div class="CaptureBtn" v-if="isER">
           <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
             <i class="bi bi-camera"></i>
           </button>
