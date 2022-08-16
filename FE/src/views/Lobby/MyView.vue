@@ -13,7 +13,6 @@
   <div class="MyViewBoss">
     <NavBar class="NavView"/>
     <div class="MyView">
-      <p class="pagetitle">My Page</p>
       <div class="MyBody">
         <div class="card-top">
           <div class="card-topitem1">
@@ -33,8 +32,8 @@
           <BadgeList/>
         </div>
         <div class="card-footer">
-          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
-          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
+          <button class="btn cardfooterbutton" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
+          <button class="btn cardfooterbutton" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
         </div>
       </div>
     </div>
@@ -208,6 +207,8 @@ export default {
 .NavView{
   height: 100%;
   width: 250px;
+  display:flex;
+
 }
 .pagetitle{
   margin-top: 20px;
@@ -217,6 +218,7 @@ export default {
   left: 300px;
   height: 100%;
   width: 80%;
+  margin-top:20px;
 }
 .Mycard-body{
   width:95%;
@@ -247,8 +249,9 @@ export default {
   margin: 0 20px;
 }
 .MyBody{
-  width: 98%;
-  height: 90%;
+  margin-left:20px;
+  width: 95%;
+  height: 95%;
   background: white;
   border-radius: 20px;
   padding: 20px;
@@ -275,6 +278,10 @@ export default {
 .profileimg{
   width: 150px;
   height: 150px;
+}
+.cardfooterbutton{
+  background-color: rgb(230,198,132);
+  color: white;
 }
 </style>
 

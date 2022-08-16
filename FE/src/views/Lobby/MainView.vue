@@ -3,7 +3,6 @@
   <div class="Lobbyboss">
   <NavBar class="NavView"/>
   <div class="MainView">
-      <p class="pagetitle">Main</p>
       <div class="MainTop">
         <div class="MainTop1">
           <!-- 서치바 -->
@@ -20,7 +19,7 @@
         <div class="MainTop2">
           <div class="MainTop2item">
           <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               필터
             </button>
             
@@ -33,7 +32,7 @@
           <!-- 정렬 -->
           <div class="MainTop2item">
           <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               정렬
             </button>
             <ul class="dropdown-menu">
@@ -44,7 +43,7 @@
           </div>
           <!-- 방생성 -->
           <div class="MainTop2item">
-          <button class="btn btn-secondary"  data-bs-toggle="modal" data-bs-target="#roommaker">
+          <button class="btn MainTop2itembutton"  data-bs-toggle="modal" data-bs-target="#roommaker">
             방생성
           </button>
           </div>
@@ -242,12 +241,17 @@ export default {
   left: 300px;
   height: 100%;
   width: 80%;
+  overflow: scroll;
+}
+.MainView::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 .MainTop{
+  margin-top: 20px;
+  margin-left: 20px;
   background: white;
   border-radius: 20px;
-  width:98%;
-  width: 98%;
+  width:95%;
   height: 80px;
   display: flex;
   flex-direction: row;
@@ -270,12 +274,17 @@ export default {
 .MainTop2item{
   margin: 0 20px;
 }
+.MainTop2itembutton{
+  background-color: rgb(230,198,132);
+  color: white;
+}
 .MainBody{
+  margin-left: 20px;
   display: flex;
   flex-direction: row;
   flex-flow: row wrap;
   justify-content: space-around;
-  width: 98%;
+  width: 95%;
   height: 80%;
   background: white;
   border-radius: 20px;
