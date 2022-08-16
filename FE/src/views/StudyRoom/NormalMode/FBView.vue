@@ -198,7 +198,9 @@ export default {
     this.$store.commit('lbhModule/EMPTY_FB')
     this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
     localStorage['cl'] = {}
-
+    if(this.userType === 'user'){
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   methods: {
     //vue-countdown

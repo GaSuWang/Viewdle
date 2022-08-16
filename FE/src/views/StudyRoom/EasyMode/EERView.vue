@@ -160,6 +160,9 @@ export default {
   },
   unmounted(){
     localStorage['cl'] = {}
+    if(this.userType === 'user'){
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   created() {
     this.$store.dispatch('lbhModule/getFilter');

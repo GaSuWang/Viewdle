@@ -170,8 +170,10 @@ export default {
       this.$store.commit('lbhModule/SET_START_VIDEO_TIME', e.data)
     })
   },
-  unmounted(){
-    // window.removeEventListener("beforeunload", this.forceLeaveSession,);
+  unmounsted(){
+    if(this.userType === 'user'){
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   data() {
     return {
@@ -682,7 +684,7 @@ export default {
   box-shadow: 10px 10px 20px 6px #9ea7b2;  
   background: rgb(255,255,255,0.5);
   border-radius: 60px;
-  padding: 3%;
+  padding: 1.5%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
