@@ -31,9 +31,9 @@
           <!-- 현탁 페이지이동하면 페이지 어두워지는거 고침 -->
           <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button> -->
           <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">돌아가기</button> -->
-          <!-- <button v-if="nextSuperUserList.length == 0" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="studyDestroy">로비로 나가기아무도없을떄</button> -->
-          <button v-if="nextSuperUserList.length != 0" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="superUserLeaveSessionAxios">로비로 나가기물려줄사람있을때</button>
-          <button v-if="isWR" type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="studyDestroy">스터디 폭파</button>
+          <button v-if="nextSuperUserList.length != 0" type="button" class="btn" data-bs-dismiss="modal" @click="superUserLeaveSessionAxios">로비로 나가기</button>
+          <button v-if="nextSuperUserList.length == 0 || isWR" type="button" class="btn" data-bs-dismiss="modal" @click="studyDestroy">스터디 폭파</button>
+          <!-- <button v-if="isWR" type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="studyDestroy">스터디 폭파</button> -->
           <!-- 현탁 끝  -->
         </div>
       </div>
@@ -74,10 +74,7 @@ computed: {
     'nextSuperUserInfo',
   ]),
   isWR(){
-    if(this.$router.currentRoute.value.name === 'waiting-room'){
-      console.log('waiting-room')
-      return true
-    } else return false
+    return !!(this.$router.currentRoute.value.name === 'waiting-room')
   },
   currentSuperUserInfo(){
     return {
@@ -169,4 +166,7 @@ methods:{
 </script>
 
 <style>
+.modal-body ul{
+  list-style: none;
+}
 </style>

@@ -19,6 +19,27 @@
   <!-- 돌발상황 영역 끝 -->
   <div :style="cssVariable" class="siren"></div>
   <div class="EERView">
+    <div class="EERButtonHeader">
+      <!-- 면접에서 나가기 버튼(방장 유저) -->
+      <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-bs-backdrop="false"/>
+        <!-- <button
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          data-bs-backdrop="false"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button> -->
+      </div>
+      <!-- 면접에서 나가기 버튼(일반 유저) -->
+      <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary"/>
+      </div>
+      <div class="StudyEnd" v-if="userType == 'superUser'" @click="finishInterview">
+        <Button icon="pi pi-check" class="p-button-rounded p-button-secondary"/>
+      </div>
+    </div>
     <!-- 영상 구역 -->
     <!-- style cssVariable 삭제 -->
     <div class="EERContent">
@@ -40,26 +61,8 @@
       </div>
     </div>
 
-    <div class="EERRightArea">
-      <div class="EERButtonHeader">
-        <!-- 면접에서 나가기 버튼(방장 유저) -->
-        <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
-          <button
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-            data-bs-backdrop="false"
-          >
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-        <!-- 면접에서 나가기 버튼(일반 유저) -->
-        <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
-          <button type="button">
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-      </div>
+    <div class="EERBottomArea">
+
       <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
       <div v-if="OXBtnState">
         <button @click="selectOBtn">O</button>
@@ -67,33 +70,33 @@
       </div>
       <div v-if="isCountDownOn">countdown: {{ countDown }}</div>
       <!-- 돌발질문 카운트 다운 및 OX버튼 끝-->
-      <div class="EERButtonFooter">
-        <div class="CLViewBtn">
-          <button @click="openEECL">
+        <div class="CLOpen">
+         <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-file-earmark-text"></i>
-          </button>
+          </Button>
         </div>
         <div class="VoiceChangeBtn">
-          <button>
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-mic-fill"></i>
-          </button>
+        </Button>
         </div>
-        <div class="StudyEnd" v-if="userType == 'superUser'" @click="finishInterview">
-          <button>
-            <i class="bi bi-check-lg"></i>
-          </button>
-        </div>
-        <div class="SuddenAttackBtn">
-          <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+
+        <div class="SuddenAttackBtn" >
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" :disabled="suddenBtnState" @click="sendSuddenQASignal" >
             <i class="bi bi-exclamation-triangle-fill"></i>
-          </button>
+          </Button>
+          <!-- <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </button> -->
         </div>
         <div class="CaptureBtn">
-          <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
             <i class="bi bi-camera"></i>
-          </button>
+          </Button>
+          <!-- <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
+            <i class="bi bi-camera"></i>
+          </button> -->
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -256,15 +259,17 @@ export default {
 
     //방장이 면접을 완료할 경우
     this.session.on('signal:finishInterview', () => {
-      alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
-      //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
-      const data = JSON.stringify(this.myUserInfo)
-      this.session.signal({
-        data: `${data}`,
-        to: [],
-        type: 'WRParticipantListUpdate'
-      })
-      this.$router.push('/waiting-room')
+      if(this.userType === 'user '){
+        alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
+        //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+        const data = JSON.stringify(this.myUserInfo)
+        this.session.signal({
+          data: `${data}`,
+          to: [],
+          type: 'WRParticipantListUpdate'
+        })
+        this.$router.push('/waiting-room')
+      }
     });  
     // this.nextSuperUser = "";
     window.addEventListener("beforeunload", this.EERleaveSession);
@@ -848,41 +853,48 @@ export default {
 .EERView {
   position: absolute;
   width: 90vw;
+  min-width: 1000px;
   aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
-  box-shadow: 10px 10px 20px 6px #b5b8c0;
+  background: rgb(255,255,255,0.5);
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
   border-radius: 60px;
-  padding: 1%;
+  padding: 1.5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.EERButtonHeader{
+  width: 100%;
+  height: 10%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .EERContent {
-  width: 80%;
-  height: 100%;
-  /* opacity: 50%; */
+  width: 100%;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   transition-duration: 0.2s;
-  background-color: white;
+  /* background-color: white; */
 }
 
 .EEVidContainer {
   width: 100%;
+  height: 80%;
   display: flex;
   justify-content: center;
 }
 
 .EEVid {
   width: 65%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 2/1;
 }
 
 .ERVidContainer {
@@ -890,8 +902,8 @@ export default {
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  overflow-x: scroll;
-  /* height: 20%;  */
+  height: 20%; 
+  /* overflow-x: scroll; */
 }
 
 .ERVid {
@@ -910,20 +922,21 @@ export default {
   justify-self: center;
 }
 
-.EERRightArea {
+.EERBottomArea {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 20%;
-  height: 100%;
-  border-radius: 20px;
-  background-color: #edf0f6;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 10%;
+  /* border-radius: 20px; */
 }
 
-.EERButtonHeader {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+.EERView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.EERView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
 }
 
 .EERButtonFooter {
@@ -932,16 +945,15 @@ export default {
   justify-content: flex-end;
 }
 
-.EERButtonHeader > button {
+/* .EERButtonHeader > button {
   border: none;
   background-color: rgb(209, 209, 209);
   border-radius: 50%;
   width: 3%;
   height: 3%;
-  /* filter: blur(3px); */
-}
+  /* filter: blur(3px);} */
 
-.EERButtonHeader > div > button > i {
+/* .EERButtonHeader > div > button > i {
   font-size: 100%;
   color: black;
 }
@@ -962,7 +974,7 @@ export default {
 .EERButtonFooter > div > button > i {
   font-size: 150%;
   color: black;
-}
+} */
 
 .suddenAttack {
   z-index: 1;
