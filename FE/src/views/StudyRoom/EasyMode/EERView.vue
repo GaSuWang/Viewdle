@@ -17,7 +17,7 @@
     @endSuddenAttack="endSuddenAttack"
   />
   <!-- 돌발상황 영역 끝 -->
-  <div :style="cssVariable" class="siren"></div>
+  <div :style="cssVariable" class="siren" v-if="sirenIsShow"></div>
   <div class="EERView">
     <div class="EERButtonHeader">
       <!-- 면접에서 나가기 버튼(방장 유저) -->
@@ -126,6 +126,7 @@ export default {
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
       suddenAttackFlag: -1, //돌발 상황 분기
       timeout: null, //타임아웃 저장용
+      sirenIsShow:false,
       // isEE: false,
     };
   },
@@ -157,7 +158,7 @@ export default {
     // },
     cssVariable() {
       return {
-        "--bgcolor": this.bgIsWhite ? "white" : "tomato",
+        "--bgcolor": this.bgIsWhite ? "#D8DBEB" : "tomato",
       };
     },
   },
@@ -259,17 +260,17 @@ export default {
 
     //방장이 면접을 완료할 경우
     this.session.on('signal:finishInterview', () => {
-      if(this.userType === 'user '){
-        alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
-        //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
-        const data = JSON.stringify(this.myUserInfo)
-        this.session.signal({
-          data: `${data}`,
-          to: [],
-          type: 'WRParticipantListUpdate'
-        })
-        this.$router.push('/waiting-room')
-      }
+      this.warningCount =0;
+      this.removeFilter();
+      alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
+      //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+      const data = JSON.stringify(this.myUserInfo)
+      this.session.signal({
+        data: `${data}`,
+        to: [],
+        type: 'WRParticipantListUpdate'
+      })
+      this.$router.push('/waiting-room')
     });  
     // this.nextSuperUser = "";
     window.addEventListener("beforeunload", this.EERleaveSession);
@@ -390,7 +391,12 @@ export default {
     //----------------돌발 질문 끝-----------------------
     this.session.on("signal:EndInterviewByWarning", (event) => {
       console.log(event.data);
-      this.returnWaitingRoom();
+      this.session.signal({
+          data: '',
+          to: [],
+          type: 'finishInterview'
+        })
+        this.$store.dispatch('lbhModule/finishInterviewEERAxios')
       //대기실로 돌아가는 메소드 구현
     });
 
@@ -421,31 +427,31 @@ export default {
       let offsetY = "";
       let width = "";
       let height = ""; 
-      console.log(data);
       
       if(data == "potato"){
-        img = this.filters[1].imgUrl; // potato img
+        img = this.filters[1].imgUrl.toString(); // potato img
         offsetX = "-0.2F";
         offsetY = "-0.45F";
         width = "1.4F";
-        height = "1.9"; 
+        height = "1.9";;
       }else if (data == "bread"){
-        img = this.filters[0].imgUrl // bread img
-        offsetX = "-0.35F"
+        img = this.filters[0].imgUrl.toString(); // bread img
+        offsetX = "-0.35F";
         offsetY = "-0.55F";
         width = "1.7F";
-        height = "2.0F"; 
+        height = "2.0F";
       }else if(data == "bald"){
-        img = this.filters[2].imgUrl// bald img
-        offsetX = "-0.05F"
+        img = this.filters[2].imgUrl.toString(); // bald img
+        offsetX = "-0.05F";
         offsetY = "-0.7F";
         width = "1.15F";
-        height = "0.9F"; 
+        height = "0.9F";
       }
-      if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+      // console.log(img);
+      if(this.isER){
         for (let ER of this.ERS) {
-          let name = JSON.parse(ER.stream.connection.data).clientData;
-            if (name === this.myUserName) {
+          let mail = JSON.parse(ER.stream.connection.data).clientEmail;
+            if (mail === this.myUserEmail) {
               if(this.isFiltered){
                 clearTimeout(this.timeout); 
                 this.removeFilter();
@@ -702,12 +708,14 @@ export default {
     //배경 빨강->하양 반복 사이렌효과
     startSirenEffect() {
       console.log("웨에에에에에에에엥");
+      this.sirenIsShow = true;
       var interval = setInterval(() => {
         this.bgIsWhite = !this.bgIsWhite;
       }, 200);
       setTimeout(() => {
         clearInterval(interval);
         this.bgIsWhite = true;
+        this.sirenIsShow = false;
       }, 3000);
     },
 
@@ -990,11 +998,11 @@ export default {
   opacity: 0;
 }
 .siren {
-  --bgcolor: white;
+  --bgcolor: #D8DBEB;
   position: absolute;
   top: 0%;
   left: 0%;
-  z-index: -1;
+  z-index: 0;
   width: 100vw;
   height: 100vh;
   background-color: var(--bgcolor);
