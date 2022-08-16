@@ -19,6 +19,9 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.1);
+  background: #D8DBEB;
+}
+.app::-webkit-scrollbar {
+  display: none;
 }
 </style>

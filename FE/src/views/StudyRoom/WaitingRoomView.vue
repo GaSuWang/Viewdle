@@ -3,10 +3,70 @@
   <AuthorityPassModal/>
   <div class="WaitingRoomView">
 
-    <!-- 참가자 영상 나오는 부분 -->
+    <div class="WRRightArea">
+      <!-- 현탁 -->
+      <!-- 대기실에서 나가기 버튼(일반 유저) -->
+      <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
+      <!-- <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionfromWR"> -->
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+
+          <!-- <button class="toLBBtn">
+            <i class="bi bi-x-lg"></i>
+          </button> -->
+      </div>
+      <!-- 대기실에서 나가기 버튼(방장 유저) -->
+      <div v-if="userType === 'superUser'" class="superUser">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
+        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+            <i class="bi bi-x-lg"></i>
+        </button> -->
+      </div>
+      <!-- 현탁 끝 -->
+      
+      <div class="startInterviewContainer">
+        <!-- 방장 유저 기능 -->
+        <!-- 면접자 선택 -->
+        <div class="dropdown" v-if="userType === 'superUser'">
+          <button
+            class="btn btn-secondary dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span v-if="!EECnd">면접자 선택</span>
+            <span v-else-if="EECnd">면접자: {{ EECnd.myUserName }}</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li v-for="user in WRParticipantList" :key="user.myUserEmail">
+              <span @click="selectEE(user)">{{ user.myUserName }}: {{user.myUserEmail}}</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="start-interview" v-if="userType === 'superUser'">
+          <!-- <button @click="startInterview">
+            <i class="bi bi-check-lg"></i>
+          </button> -->
+          <Button @click="startInterview" icon="pi pi-check" class="p-button-rounded p-button-secondary" />
+
+          <!-- <button @click="startEZInterview">EZ<i class="bi bi-check-lg"></i></button> -->
+        </div>
+
+      </div>
+
+
+
+      <!-- 삭제할 버튼들 -->
+      <!-- <div class="tempBtn">
+        <button v-if="!session" @click="joinSession">입장하기</button>
+        <button @click="switchUserType">{{ userType }}</button>
+      </div> -->
+    </div>
+
+        <!-- 참가자 영상 나오는 부분 -->
     <div class="WRLeftArea">
       <div class="WRVideo container">
-        <div class="row row-cols-2">
+        <div class="row row-cols-3">
           <user-video class="video" :stream-manager="publisher" />
           <user-video
             class="video"
@@ -18,72 +78,30 @@
       </div>
     </div>
 
-    <div class="WRRightArea">
-      <!-- 현탁 -->
-      <!-- 대기실에서 나가기 버튼(일반 유저) -->
-      <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
-      <!-- <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionfromWR"> -->
-          <button class="toLBBtn">
-            <!-- <i class="bi bi-backspace"></i> -->
-            <i class="bi bi-x-lg"></i>
-          </button>
-      </div>
-      <!-- 대기실에서 나가기 버튼(방장 유저) -->
-      <div v-if="userType === 'superUser'" class="superUser">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
-            <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
-      <!-- 현탁 끝 -->
+      <div class="deviceBtn">
+        <div class="mic-status">
+          <Button @click="switchMicStatus" v-if="session" class="p-button-rounded p-button-secondary">
+            <i v-if="MicStatus" class="bi bi-mic"></i>
+            <i v-else class="bi bi-mic-mute"></i>
+          </Button>
 
+          <!-- <button class="deviceBtn" @click="switchMicStatus" v-if="session">
+            <i v-if="MicStatus" class="bi bi-mic"></i>
+            <i v-else class="bi bi-mic-mute"></i>
+          </button> -->
+        </div>
 
-      
-      <!-- 방장 유저 기능 -->
-      <!-- 면접자 선택 -->
-      <div class="dropdown" v-if="userType === 'superUser'">
-        <button
-          class="btn btn-secondary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <span v-if="!EECnd">면접자 선택</span>
-          <span v-else-if="EECnd">면접자: {{ EECnd.myUserName }}</span>
-        </button>
-        <ul class="dropdown-menu">
-          <li v-for="user in WRParticipantList" :key="user.myUserEmail">
-            <span @click="selectEE(user)">{{ user.myUserName }}: {{user.myUserEmail}}</span>
-          </li>
-        </ul>
+        <div class="camera-status">
+          <Button @click="switchCameraStatus" v-if="session" class="p-button-rounded p-button-secondary">
+            <i v-if="CameraStatus===true" class="bi bi-camera-video"></i>
+            <i v-else-if="CameraStatus===false" class="bi bi-camera-video-off"></i>
+          </Button>
+          <!-- <button  class="deviceBtn" @click="switchCameraStatus" v-if="session">
+            <i v-if="CameraStatus===true" class="bi bi-camera-video"></i>
+            <i v-else-if="CameraStatus===false" class="bi bi-camera-video-off"></i>
+          </button> -->
+        </div>
       </div>
-
-      <div class="start-interview" v-if="userType === 'superUser'">
-        <button @click="startInterview">
-          <i class="bi bi-check-lg"></i>
-        </button>
-        <!-- <button @click="startEZInterview">EZ<i class="bi bi-check-lg"></i></button> -->
-      </div>
-
-      <div class="mic-status">
-        <button @click="switchMicStatus" v-if="session">
-          <i v-if="MicStatus" class="bi bi-mic"></i>
-          <i v-else class="bi bi-mic-mute"></i>
-        </button>
-      </div>
-
-      <div class="camera-status">
-        <button @click="switchCameraStatus" v-if="session">
-          <i v-if="CameraStatus===true" class="bi bi-camera-video"></i>
-          <i v-else-if="CameraStatus===false" class="bi bi-camera-video-off"></i>
-        </button>
-      </div>
-
-      <!-- 삭제할 버튼들 -->
-      <!-- <div class="tempBtn">
-        <button v-if="!session" @click="joinSession">입장하기</button>
-        <button @click="switchUserType">{{ userType }}</button>
-      </div> -->
-    </div>
   </div>
 </template>
 
@@ -588,7 +606,7 @@ export default {
               type: "WEBRTC",
               role: "PUBLISHER",
               kurentoOptions: {
-                allowedFilters: ["GStreamerFilter"],
+                allowedFilters: ["GStreamerFilter", "FaceOverlayFilter"],
               },
             },
             {
@@ -656,24 +674,30 @@ export default {
 .WaitingRoomView {
   position: absolute;
   width: 90vw;
-  aspect-ratio: 16/9;
+  min-width: 1000px;
+  aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
+  background: rgb(255,255,255,0.5);
   border-radius: 60px;
   padding: 3%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
 }
 
 .WRLeftArea {
-  width: 70%;
+  width: 100%;
+  height: 90%;
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
+  align-items:center;
+  /* overflow-y: scroll; */
+
 }
 
 .WRVideo {
@@ -684,7 +708,9 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
+  /* overflow-y: hidden; Hide vertical scrollbar */
+
 }
 
 .row {
@@ -695,26 +721,57 @@ export default {
 
 .video {
   align-self: center;
-  width: 35%;
-  margin-left: 5%;
-  margin-right: 5%;
+  width: 30%;
+  height: 20%;
+  /* margin-left: 5%;
+  margin-right: 5%; */
 }
 
 .WRRightArea {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
-  width: 30%;
-  height: 100%;
+  align-self: center;
+  align-items: center;
+  width: 100%;
+  height: 7%;
   border-radius: 20px;
-  background-color: #edf0f6;
+  /* background-color: #cacde0; */
 }
 
-.WRRightArea button {
-  border: none;
-  border-radius: 10%;
-  width: 20%;
-  aspect-ratio: 2/1;
-  background-color: rgb(181, 180, 180);
+/* .dropdown-toggle{
+  width: 80%;
+} */
+
+.deviceBtn{
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
+.deviceBtn .mic-status{
+  margin-right: 1%;
+}
+
+.deviceBtn .camera-status{
+  margin-left: 1%;
+}
+.startInterviewContainer{
+  display: flex;
+  justify-content: space-between;
+  width: 15%;
+}
+.WaitingRoomView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.WaitingRoomView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
+}
+/* .deviceBtn{
+  border: none;
+  border-radius: 50%;
+  width: 20%;
+  background-color: rgb(181, 180, 180);
+} */
 </style>

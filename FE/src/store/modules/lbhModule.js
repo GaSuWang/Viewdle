@@ -66,6 +66,9 @@ const state = {
   // [김이랑] 비디오 관련
   videoTime : null,
   startVideoTime : null,
+
+  // 박채림 / 필터 관련
+  filters : []
 };
 const getters = {
   //유저 정보
@@ -87,10 +90,17 @@ const getters = {
   userType(state){return state.userType},
   // WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
   WRParticipantList(state) {
+    console.log('state.WRParticipantList', state.WRParticipantList, typeof(state.WRParticipantList))
     function unique(data, key){
       return [ ...new Map(data.map(x => [key(x), x])).values()]
     }
     return unique(state.WRParticipantList, e => e.myUserEmail)
+    // function unique(data, key){
+    //   return [ ...new Map(data.map(x => [key(x), x])).values()]
+    // }
+    // if(state.WRParticipantList.isArray){
+    //   return unique(state.WRParticipantList, e => e.myUserEmail)
+    // } else return state.WRParticipantList
   },
   StartInterview(state) {return state.StartInterview},
   currentUserList(state) {return state.currentUserList},
@@ -149,6 +159,10 @@ const getters = {
   //[김이랑] 비디오 관련
   videoTime(state) {return state.videoTime},
   startVideoTime(state) {return state.startVideoTime},
+
+  // 박채림 / 필터 관련
+  filters(state) {return state.filters}
+
 };
 const mutations = {
   //방장권한
@@ -324,8 +338,13 @@ const mutations = {
   SET_VIDEOSEQ(state, data){
     state.videoSeq = parseInt(data)
     console.log('videoSEq 설정됨', state.videoSeq, data)
-  }
+  },
 
+
+  // 박채림 / 필터 관련
+  SET_VIDEO_FILTER_LIST(state, filters){
+    state.filters = filters;
+  },
 };
 
 const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'
@@ -693,6 +712,20 @@ const actions = {
     })
     .catch(err=>console.error(err.response))
   },
+
+  // 박채림 / 필터
+  getFilter({commit}){
+    axios({
+      url : BASE_URL + 'studyroom/filter',
+      method : 'get'
+    }).
+    then(res => {
+      commit('SET_VIDEO_FILTER_LIST', res.data)
+    })
+    .catch(error => {
+      console.log(error);
+    }) 
+  }
 };
 
 export default {
