@@ -132,6 +132,7 @@ export default {
 
 <style>
 .CLMBoss{
+  min-width: 1000px;
   width: 90%;
   height: 90%;
   background : rgb(255,255,255,0.5);

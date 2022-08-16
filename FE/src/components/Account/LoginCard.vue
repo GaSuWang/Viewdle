@@ -17,12 +17,12 @@
         <div class="loginpw">
           <input type="password" v-model="credentials.password" placeholder="Password" />
         </div>
-        <button class="loginsubmit btn btn-primary btn-lg">로그인</button>
+        <button class="loginsubmit">로그인</button>
       </form>
       <!-- Checkbox -->
       <div class="login_etc">
-        <router-link to="/pw">비번 찾기</router-link>
-        <router-link to="/signup">회원가입</router-link>
+        <router-link to="/pw" class="routerbutton">비번 찾기</router-link>
+        <router-link to="/signup" class="routerbutton">회원가입</router-link>
       </div>
     </div>
   </div>
@@ -104,8 +104,8 @@ export default {
   flex-direction: column;
 }
 .login {
-  width: 80%;
-  height: 100%;
+  min-width: 450px;
+  min-height: 550px;
   background: white;
   border-radius: 20px;
   display: flex;
@@ -165,7 +165,7 @@ export default {
     border: 0;
     outline: none;
     border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    background-color: rgb(230,198,132);
     color: white;
     font-size: 1.2em;
     letter-spacing: 2px;
@@ -180,6 +180,9 @@ export default {
   align-items: center;
   font-weight: bold;
   text-decoration: none;
+}
+.routerbutton{
+  
 }
   
 </style>

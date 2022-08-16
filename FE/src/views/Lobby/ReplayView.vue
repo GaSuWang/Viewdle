@@ -5,7 +5,7 @@
   <div class="ReplayView">
     <div class='ReplayTop'>
       <div class="dropdown ReplayTopitem">
-        <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn replaytopitembutton dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           정렬
         </button>
         <ul class="dropdown-menu">
@@ -269,6 +269,7 @@ export default {
     box-shadow: 1px 1px 1px 1px gray;
 }
 .ReplayViewBoss{
+  min-width: 1000px;
   width: 90%;
   height: 90%;
   background : rgb(255,255,255,0.5);
@@ -364,6 +365,10 @@ export default {
 .replaybad{
   background-color: #ffcc74;
   border: 1px #fcab1f solid
+}
+.replaytopitembutton{
+  background-color: rgb(230,198,132);
+  color: white
 }
  /* width="640" height="480" */
 </style> 

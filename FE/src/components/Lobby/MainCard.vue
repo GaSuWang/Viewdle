@@ -21,7 +21,7 @@
   <div class="enterbutton">
     <div v-if="item.roomPrivateYN === 'Y'">
       <form @submit.prevent="enterSecretStudyroom(item.roomSeq)">
-        <button class="btn btn-secondary enterbuttonitem" data-bs-toggle="modal" data-bs-target="#enterroom">비번방</button>
+        <button class="btn enterbuttonitem" data-bs-toggle="modal" data-bs-target="#enterroom">입장하기</button>
       </form>
     </div>
     <!-- 이병헌 시작 --> 
@@ -29,8 +29,8 @@
     <div v-else>
     <!-- 이병헌 끝 -->
       <form @submit.prevent="enterNormalStudyroom(item.roomSeq)">
-        <button class="btn btn-secondary enterbuttonitem">
-          일반방
+        <button class="btn enterbuttonitem">
+          입장하기
         </button>
       </form>
     </div>
@@ -124,5 +124,7 @@ export default {
 }
 .enterbuttonitem{
   font-size: 5px;
+  background-color: rgb(230,198,132);
+  color: white;
 }
 </style>

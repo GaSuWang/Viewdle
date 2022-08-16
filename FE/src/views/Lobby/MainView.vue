@@ -10,7 +10,7 @@
           <div class="Searchbar">
               <div class="input-group">
                 <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                <button class="btn btn-outline-primary">search</button>
+                <button class="btn mainsearchbutton">search</button>
               </div>
           </div>
           </form>
@@ -224,6 +224,7 @@ export default {
 
 <style>
 .Lobbyboss{
+  min-width: 1000px;
   width: 90%;
   height: 90%;
   background : rgb(255,255,255,0.5);
@@ -296,6 +297,10 @@ export default {
 }
 .Searchbar{
   margin-left:30px;
+}
+.mainsearchbutton{
+  background-color:rgb(153, 172, 230);
+  color:white;
 }
 
 </style>
