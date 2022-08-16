@@ -53,8 +53,8 @@ import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
-// const OPENVIDU_SERVER_URL = "https://" + location.hostname;
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ':4443';
+const OPENVIDU_SERVER_URL = "https://" + location.hostname;
+// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ':4443';
 
 export default {
   name: "EEView",
