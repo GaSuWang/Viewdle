@@ -435,12 +435,9 @@ export default {
         height = "0.9F";
       }
       // console.log(img);
-      // if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
       if(this.isER){
         for (let ER of this.ERS) {
           let mail = JSON.parse(ER.stream.connection.data).clientEmail;
-          // let name = JSON.parse(ER.stream.connection.data).clientData;
-            // if (name === this.myUserName) {
             if (mail === this.myUserEmail) {
               if(this.isFiltered){
                 clearTimeout(this.timeout); 
@@ -463,7 +460,6 @@ export default {
                   });
                 }, 1000);
               }else{
-                console.log("############################# 면접관이야");
                 ER.stream.applyFilter("FaceOverlayFilter")
                   .then(filter => {
                     filter.execMethod(
