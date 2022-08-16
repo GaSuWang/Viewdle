@@ -38,7 +38,6 @@ export default {
 	},
 	mounted(){
 		console.log()
-		this.inWR()
 		console.log('uservideo mounted',this.session, this.streamManager)
 
 		console.log('지금 어디있지?', this.$router.currentRoute.value.name)
@@ -56,16 +55,16 @@ export default {
 			const { connection } = this.streamManager?.stream;
 			return JSON.parse(connection.data);
 		},
-		async inWR() {
-			await this.session.on('signal:publisherOn')
-			if(this.streamManager){
-				const vidUserEmail = JSON.parse(this.streamManager.stream.connection.data).clientEmail
-				if(this.WRParticipantList.filter(e=> e.name === vidUserEmail).length === 0){
-					this.videoStatus = false
-				} else { 
-					this.videoStatus = true}
-			} else {this.videoStatus = false}
-		},
+		// async inWR() {
+		// 	await this.session.on('signal:publisherOn')
+		// 	if(this.streamManager){
+		// 		const vidUserEmail = JSON.parse(this.streamManager.stream.connection.data).clientEmail
+		// 		if(this.WRParticipantList.filter(e=> e.name === vidUserEmail).length === 0){
+		// 			this.videoStatus = false
+		// 		} else { 
+		// 			this.videoStatus = true}
+		// 	} else {this.videoStatus = false}
+		// },
 	},
 };
 </script>
