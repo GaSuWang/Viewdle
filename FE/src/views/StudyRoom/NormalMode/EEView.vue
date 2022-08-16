@@ -99,8 +99,10 @@ export default {
     
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
-      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     })
 
     //방장이 면접을 완료할 경우

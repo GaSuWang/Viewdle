@@ -138,9 +138,12 @@ export default {
 // this.nextSuperUser = ''
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
-      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     })
+
 
     // 영상 저장에 필요한 비디오 타임 받음
     this.session.on('signal:startVideoTime', (e)=>{

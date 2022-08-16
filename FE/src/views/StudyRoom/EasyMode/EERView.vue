@@ -181,9 +181,12 @@ export default {
     this.$store.dispatch('lbhModule/getFilter');
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
-      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     })
+
 
     // 내가 면접자인지 아닌지 확인
     //  if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail){

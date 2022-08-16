@@ -156,12 +156,14 @@ export default {
       this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", e.data);
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);  
     })
-    //방장이 방을 폭파시킬 때
-    this.session.on('signal:studyDestroy', ()=> {
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-        alert('방장이 스터디를 폭파했습니다.\n로비로 돌아갑니다.')
-        this.$router.push('/main')
+      }
     })
+
     console.log('대기실들어옴',this.currentUserList,this.myUserInfo,this.roomSeq)
 
     this.session.on('signal:startVideoTime', (e)=>{
