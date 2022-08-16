@@ -112,9 +112,7 @@ export default {
     AuthorityPassModal
   },
   unmounted(){
-    if(this.userType === 'user'){
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
+
   },
   created(){
     console.log(this.CLList)
@@ -153,13 +151,11 @@ export default {
     studyDestroy(){
       this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
     },
-    async forceLeaveSession() {
+    forceLeaveSession() {
       if(this.userType === 'user'){
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-      } else {
-        await this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
-        this.$store.dispatch('lbhModule/studyDestorySecondAxios')
-      }
+      } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
+      this.$router.push('/main')
     },
     micStatusSwitch() {
       this.micOn = !this.micOn;

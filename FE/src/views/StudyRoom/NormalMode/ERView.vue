@@ -112,11 +112,23 @@ export default {
   },
   unmounted(){
     localStorage['cl'] = {}
-    if(this.userType === 'user'){
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
+    // if(this.userType === 'user'){
+    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   created(){
+    //
+    this.session.on("streamDestroyed", ({ stream }) => {
+      console.log('streamCreated')
+      const index_s = this.subscribers.indexOf(stream.streamManager, 0);
+      if (index_s >= 0) {
+        this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
+      }
+
+      const subscriberEmail = JSON.parse(stream.connection.data).clientEmail;
+      this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
+    });
     // this.OV = new OpenVidu();
     // this.session = this.OV.initSession();
     // this.session.connect(this.sessionToken)

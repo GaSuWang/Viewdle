@@ -171,9 +171,9 @@ export default {
     })
   },
   unmounsted(){
-    if(this.userType === 'user'){
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
+    // if(this.userType === 'user'){
+    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   data() {
     return {

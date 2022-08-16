@@ -83,7 +83,19 @@ export default {
     }
   },
   created(){
+    //
+    this.session.on("streamDestroyed", ({ stream }) => {
+      console.log('streamCreated')
+      const index_s = this.subscribers.indexOf(stream.streamManager, 0);
+      if (index_s >= 0) {
+        this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
+      }
 
+      const subscriberEmail = JSON.parse(stream.connection.data).clientEmail;
+      this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
+    });
+    
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
       alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
@@ -188,9 +200,9 @@ export default {
   },
   unmounted(){
     clearInterval(this.interval)
-    if(this.userType === 'user'){
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
+    // if(this.userType === 'user'){
+    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   methods:{
     EELeaveSession(){
