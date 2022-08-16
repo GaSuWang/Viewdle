@@ -29,27 +29,32 @@
       <div class="ERButtonHeader">
         <!-- 면접자 자소서 페이지 열기 버튼 -->
         <div class="CLOpen">
-          <button @click.prevent="openEECL()">
+         <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-file-earmark-text"></i>
-          </button>
+          </Button>
+          <!-- <button @click.prevent="openEECL()">
+            <i class="bi bi-file-earmark-text"></i>
+          </button> -->
         </div>
         <!-- 질문 팁 모달 열기 버튼 -->
-        <div class="QTip">
+        <!-- <div class="QTip">
           <button @click="openQTip">
             <i class="bi bi-lightbulb-fill"></i>
           </button>
-        </div>
+        </div> -->
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div v-show="userType === 'user'" class="ERtoLBbtn user">
-          <button @click.prevent="ERLeaveSession">
+         <Button @click.prevent="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+          <!-- <button @click.prevent="ERLeaveSession">
             <i class="bi bi-x-lg"></i>
-          </button>
+          </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+          <Button @click.prevent="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
+          <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
               <i class="bi bi-x-lg"></i>
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -61,11 +66,8 @@
       <div class="ERButtonFooter">
         <!-- 면접 완료 버튼(방장 유저) -->
         <div class="finishInterviewBtn" @click="finishInterview" v-show="userType == 'superUser'">
-          <button>
-            <i class="bi bi-check-lg"></i>
-          </button>
+          <Button icon="pi pi-check" class="p-button-rounded p-button-secondary" />
         </div>
-        <!-- <button @click="switchUserType">{{userType}}</button> -->
       </div>
     </div>
   </div>
@@ -110,8 +112,23 @@ export default {
   },
   unmounted(){
     localStorage['cl'] = {}
+    // if(this.userType === 'user'){
+    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   created(){
+    //
+    this.session.on("streamDestroyed", ({ stream }) => {
+      console.log('streamCreated')
+      const index_s = this.subscribers.indexOf(stream.streamManager, 0);
+      if (index_s >= 0) {
+        this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
+      }
+
+      const subscriberEmail = JSON.parse(stream.connection.data).clientEmail;
+      this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
+    });
     // this.OV = new OpenVidu();
     // this.session = this.OV.initSession();
     // this.session.connect(this.sessionToken)
@@ -274,14 +291,15 @@ export default {
 .ERView {
   position: absolute;
   width: 90vw;
+  min-width: 1000px;
   aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
-  box-shadow: 10px 10px 20px 6px #b5b8c0;  
+  background: rgb(255,255,255,0.5);
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
   border-radius: 60px;
-  padding: 3%;
+  padding: 1.5%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -303,7 +321,7 @@ export default {
 
 .EEVid{
   width: 90%;
-  height: 80%;
+  height: 75%;
 }
 
 .ERVidContainer{
@@ -311,12 +329,13 @@ export default {
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  overflow-x: scroll;
-  /* height: 20%;  */
+  /* overflow-x: scroll; */
+  height: 20%; 
 }
 
 .ERVid{
   width: 100%;
+  height:100%;
   display: flex;
   justify-content: center;
 }
@@ -337,16 +356,30 @@ export default {
   flex-direction: row;
   justify-content: flex-end;
 }
+
+.CLOpen{
+  margin-right: 10%;
+}
+
 .ERButtonFooter {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
 }
 
+.ERView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.ERView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
+}
+
 /* 면접자 페이지 버튼들 시작*/
 /* https://css-tricks.com/examples/RoundButtons/ */
 /* 굿/뱃 버튼은 FeedbackArea에 있음 */
-.CLOpen > button,
+/* .CLOpen > button,
 .QTip > button,
 .finishInterviewBtn > button,
 .ERtoLBbtn > button {
@@ -405,7 +438,7 @@ export default {
   text-decoration: none;
   color: #555;
   background: #f5f5f5;
-}
+} */
 /* 면접자 페이지 버튼들 끝*/
 
 

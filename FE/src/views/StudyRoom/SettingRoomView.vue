@@ -111,6 +111,9 @@ export default {
   components:{
     AuthorityPassModal
   },
+  unmounted(){
+
+  },
   created(){
     console.log(this.CLList)
     console.log('userinfo', this.$store.getters['rhtModule/UserList'])
@@ -148,13 +151,11 @@ export default {
     studyDestroy(){
       this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
     },
-    async forceLeaveSession() {
+    forceLeaveSession() {
       if(this.userType === 'user'){
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-      } else {
-        await this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
-        this.$store.dispatch('lbhModule/studyDestorySecondAxios')
-      }
+      } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
+      this.$router.push('/main')
     },
     micStatusSwitch() {
       this.micOn = !this.micOn;
@@ -235,7 +236,7 @@ export default {
   background: rgb(255,255,255,0.5);
   box-shadow: 10px 10px 20px 6px #9ea7b2;  
   border-radius: 60px;
-  padding: 3%;
+  padding: 1.5%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

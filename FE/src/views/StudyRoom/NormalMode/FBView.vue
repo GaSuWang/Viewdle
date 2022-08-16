@@ -128,6 +128,19 @@ export default {
   },
   // [김이랑] 비디오 관련
   created(){
+    //
+    this.session.on("streamDestroyed", ({ stream }) => {
+      console.log('streamCreated')
+      const index_s = this.subscribers.indexOf(stream.streamManager, 0);
+      if (index_s >= 0) {
+        this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
+      }
+
+      const subscriberEmail = JSON.parse(stream.connection.data).clientEmail;
+      this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
+    });
+    
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
       alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
@@ -198,7 +211,9 @@ export default {
     this.$store.commit('lbhModule/EMPTY_FB')
     this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
     localStorage['cl'] = {}
-
+    // if(this.userType === 'user'){
+    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   methods: {
     //vue-countdown

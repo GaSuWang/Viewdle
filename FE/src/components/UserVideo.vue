@@ -73,7 +73,13 @@ export default {
 }
 
 .userInfo{
-	display: flex;
-	justify-content: center;
+    position: absolute;
+    justify-content: center;
+    background: #ffffff;
+    width: 10%;
+    color: rgb(0, 0, 0);
+    border-radius: 10px;
+    padding: 1px;
+    text-align: center;
 }
 </style>

@@ -23,21 +23,25 @@
     <div class="EERight">
       <!-- 면접에서 나가기 버튼(일반 유저) -->
       <div v-show="userType === 'user'" class="EEtoLBbtn user">
-        <button @click="EELeaveSession">
+        <Button @click="EELeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+        <!-- <button @click="EELeaveSession">
           <i class="bi bi-x-lg"></i>
-        </button>
+        </button> -->
       </div>
       <!-- 면접에서 나가기 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EEtoLBbtn superUser">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
+        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
-        </button>
+        </button> -->
       </div>
       <!-- 면접 완료 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EndStudyBtn superUser">
-        <button @click="finishInterview">
+        <!-- <button @click="finishInterview">
           <i class="bi bi-check-lg"></i>
-        </button>
+        </button> -->
+        <Button @click="finishInterview" icon="pi pi-check" class="p-button-rounded p-button-secondary" />
+
       </div>
     </div>
   </div>
@@ -79,7 +83,19 @@ export default {
     }
   },
   created(){
+    //
+    this.session.on("streamDestroyed", ({ stream }) => {
+      console.log('streamCreated')
+      const index_s = this.subscribers.indexOf(stream.streamManager, 0);
+      if (index_s >= 0) {
+        this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
+      }
 
+      const subscriberEmail = JSON.parse(stream.connection.data).clientEmail;
+      this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
+    });
+    
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
       alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
@@ -184,6 +200,9 @@ export default {
   },
   unmounted(){
     clearInterval(this.interval)
+    // if(this.userType === 'user'){
+    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   methods:{
     EELeaveSession(){
@@ -228,14 +247,15 @@ export default {
 .EEView {
   position: absolute;
   width: 90vw;
+  min-width: 1000px;
   aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
-  box-shadow: 10px 40px 20px 6px #bfc2cb;  
+  background: rgb(255,255,255,0.5);
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
   border-radius: 60px;
-  padding: 3%;
+  padding: 1.5%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -280,8 +300,17 @@ export default {
   align-items: flex-end;
 }
 
+.EEView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.EEView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
+}
+
 /* 버튼양식 */
-.EndStudyBtn > button,
+/* .EndStudyBtn > button,
 .EEtoLBbtn > button {
   border: none;
   display: block;
@@ -328,6 +357,6 @@ export default {
   text-decoration: none;
   color: #555;
   background: #f5f5f5;
-}
+} */
 /* 버튼양식 */
 </style>
