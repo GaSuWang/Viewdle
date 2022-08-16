@@ -1,33 +1,40 @@
 // 이병헌
-<template>
+<template v-if="currentUserList">
   <!-- 방장 권한 위임 모달 -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <h5 class="modal-title" id="exampleModalLabel">방장 권한 넘기기</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
           <p>
-            정말 면접 도중에 나가시겠습니까? <br>
-            지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다.
+            정말 나가시겠습니까? <br>
+            방장 권한 위임 후 로비로 이동합니다.
           </p>
-
+          <!-- 다음 방장 목록 -->
           <ul>
-            <li v-for="user in nextSuperUserList" :key="user.id">
+            <li v-for="user in nextSuperUserList" :key="user.myUserEmail">
               <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" :checked="nextSuperUser = user.name">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" @click="setNextSuperUser(user)">
                 <label class="form-check-label" for="flexRadioDefault1">
-                  {{user.name}}
+                  {{user.myUserName}}: {{user.myUserEmail}}
                 </label>
               </div>
             </li>
           </ul>
         </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button>
-          <button type="button" class="btn btn-primary" @click="superLeaveSession">로비로 나가기</button>
+          <!-- 현탁 페이지이동하면 페이지 어두워지는거 고침 -->
+          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button> -->
+          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">돌아가기</button> -->
+          <!-- <button v-if="nextSuperUserList.length == 0" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="studyDestroy">로비로 나가기아무도없을떄</button> -->
+          <button v-if="nextSuperUserList.length != 0" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="superUserLeaveSessionAxios">로비로 나가기물려줄사람있을때</button>
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="studyDestroy">스터디 폭파</button>
+          <!-- 현탁 끝  -->
         </div>
       </div>
     </div>
@@ -50,64 +57,112 @@ data(){
   return{
     // OV: undefined,
     // session: undefined,
+    nextSuperUser:{},
   }
 },
 computed: {
   ...mapGetters('lbhModule', [
     'myUserName',
-    'APMOpen',
-    'APMDestination',
+    'myUserEmail',
     'subscribers',
     'publisher',
     'currentUserList',
     'sessionToken',
+    'OV',
     'session',
+    'nextSuperUserList',
+    'nextSuperUserInfo',
   ]),
-  nextSuperUserList(){
-    return this.currentUserList.filter(p => p.name !== this.myUserName)
+  isWR(){
+    if(this.$router.currentRoute.value.name === 'waiting-room'){
+      console.log('waiting-room')
+      return true
+    } else return false
+  },
+  currentSuperUserInfo(){
+    return {
+      myUserName: this.myUserName,
+      myUserEmail: this.myUserEmail,
+    }
   }
 },
 methods:{
+  setNextSuperUser(user){
+    this.nextSuperUser = user
+  },
+  //방장이 면접을 폭파시킴
+  studyDestroy(){
+    // this.$store.commit('lbhModule/SET_STUDY_DESTOY', true)
+    this.session.signal({
+      data: '',
+      to: [],
+      type: 'studyDestroy'
+    })
+    // 현탁
+    // this.$router.push('/main')
+    this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
+    // 현탁 끝
+  },
   //방장이 면접을 나감
-  superLeaveSession(){
+  superUserLeaveSessionAxios(){
+    this.$store.commit('lbhModule/SET_NEXT_SUPERUSER_INFO', this.nextSuperUser)
+    this.$router.push('/main')
+    // const currentSuperUserName = this.myUserName
+    const currentSuperUserEmail = this.myUserEmail
+    // const nextSuperUserName = this.nextSuperUser.myUserName
+    const nextSuperUserEmail = this.nextSuperUser.myUserEmail
     //방장이 현재 면접자
     if(this.$router.currentRoute.value.name === 'ee-room' || this.$router.currentRoute.value.name === 'ee-room-ez'){
+      this.$store.dispatch('lbhModule/EELeaveSessionAxios')
       this.session.signal({
-        data:`${this.myUserName} ${this.nextSuperUser}`,
+        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
+        data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to:[],
         type:'superEELeaveSession'
       })
+      if (this.session) this.session.disconnect();
+    } 
     //방장이 현재 면접관
-    } else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez' || this.$router.currentRoute.value.name === 'fb-room') {
+    else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez') {
       this.session.signal({
-        data: `${this.myUserName} ${this.nextSuperUser}`,
+        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
+        data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to: [],
         type: 'superERLeaveSession'
       })
-    } else if(this.$router.currentRoute.value.name === 'waiting-room'){
+      if (this.session) this.session.disconnect();
+    } 
+    else if(this.$router.currentRoute.value.name === 'fb-room') {
       this.session.signal({
-        data: `${this.myUserName} ${this.nextSuperUser}`,
+        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
+        data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
+        to: [],
+        type: 'superERLeaveSessionFromFB'
+      })
+      if (this.session) this.session.disconnect();
+    } 
+    else if(this.$router.currentRoute.value.name === 'waiting-room'){
+      this.session.signal({
+        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
+        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
+        data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to: [],
         type: 'superLeaveSessionWR'
       })
+      if (this.session) this.session.disconnect();
     }
-    if (this.session) this.session.disconnect();
 
-    this.$store.commit('lbhModule/SET_SESSION', undefined)
-    this.$store.commit('lbhModule/SET_OV', undefined)
-    this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-    this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-    this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
-    
-    // window.removeEventListener("beforeunload", this.ERleaveSession);
-    // document.body.remove('.modal-open')
-    // $('.modal-backdrop').remove();
     alert('면접에서 성공적으로 나가셨습니다.')
-    this.$router.push('/main')
-
+// 현탁
+    // this.$router.push('/main')
+    this.$store.dispatch('lbhModule/superUserLeaveSessionAxios', nextSuperUserEmail)
+// 현탁끝
   },
   closeAPM(){
-    this.nextSuperUser = ''
+    this.$store.commit('lbhModule/EMPTY_NEXT_SUPERUSER_INFO')
   },
 },
 };

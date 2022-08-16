@@ -66,14 +66,14 @@
                 <input type="Text" class="form-control form-control-lg" v-model="credentials.title" placeholder="Title" /> 
                 <div>
                   <p>Play Mode : 1  /  Study Mode : 2</p>
-                  <input type="number" min='1' max='2' v-model.number="credentials.type">
+                  <input type="number" class="form-control form-control-lg" min='1' max='2' v-model.number="credentials.type">
                 </div>
                 <div>
                   <p>최소 : 2   /   최대 : 5</p>
-                <input type="number" min='2' max='5' v-model.number="credentials.limit">
+                <input type="number" class="form-control form-control-lg" min='2' max='5' v-model.number="credentials.limit">
                 </div>
                 비밀방생성<input type="checkbox" v-model="credentials.privateYN" true-value="Y" false-value="N"/>
-                <input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /> 
+                <div v-if="credentials.privateYN == 'Y'"><input type="Text" class="form-control form-control-lg" v-model="credentials.password" placeholder="Password" /></div>
               </div> 
               <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">생성</button>
@@ -83,6 +83,7 @@
             </div>
           </div>
         </div> 
+        
     <div class="modal fade" id="enterroom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -92,7 +93,6 @@
           </div>
           <div class="modal-body">
             <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control form-control-lg" placeholder="Password" />
-            <input type="Text" v-model="credentialsToenter.roomSeq" class="form-control form-control-lg" placeholder="Room code" /> 
           </div> 
           <div class="modal-footer">
             <button class="btn btn-secondary" data-bs-dismiss="modal">입장</button>
@@ -113,25 +113,70 @@
 <script>
 import NavBar from '@/components/Lobby/NavBar.vue'
 import MainCard from '@/components/Lobby/MainCard.vue'
-import { useStore } from 'vuex'
+import { mapGetters, useStore } from 'vuex'
 import { reactive } from "vue";
 export default {
   components:{
     NavBar,
     MainCard
   },
+///이병헌 시작
+  computed:{
+    ...mapGetters('lbhModule', [
+      'roomSeq',
+      'userType',
+      'nextSuperUserInfo',
+    ])
+  },
+  created(){
+    // if(this.roomSeq){
+    //   if(this.userType === 'user'){
+    //     console.log('일반 유저 방나가기 실행')
+    //     this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    //   } else {
+    //     if(this.studyDestroy === true){
+    //       console.log('방장 유저 방폭파 실행')
+    //       this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
+    //       this.$store.dispatch('lbhModule/studyDestorySecondAxios')
+    //       this.$store.commit('lbhModule/SET_STUDY_DESTOY', false)
+    //     } else {
+    //       console.log('방장 유저 방나가기 실행')
+    //       this.$store.dispatch('lbhModule/superUserLeaveSessionAxios', this.nextSuperUserInfo.myUserEmail)
+    //     }
+    //   }
+    
+    // // this.$store.commit('lbhModule/GET_ROOM_INFO', {roomSeq: undefined, roomTitle: undefined, roomType: '1', isSuperUser:false})
+    // // this.$store.commit('lbhModule/SET_OV', undefined)
+    // // this.$store.commit('lbhModule/SET_SESSION', undefined)
+    // // this.$store.commit('lbhModule/SET_SESSION_TOKEN', undefined)
+    // // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
+    // // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
+    // // // this.$store.commit('lbhModule/SET_MYSESSIONID', undefined)
+    // // this.$store.commit('lbhModule/SELECT_CAMERA', {})
+    // // this.$store.commit('lbhModule/SELECT_MIC', {})
+    // // this.$store.commit('lbhModule/SELECT_CL', {})
+    // // this.$store.commit('lbhModule/EMPTY_WR_PARTICIPANT_LIST')
+    // // this.$store.commit('lbhModule/EMPTY_CURRENT_USER_LIST')
+    // // this.$store.commit('lbhModule/SET_ISEE', false)
+    // // this.$store.commit('lbhModule/SET_ISER', false)
+    // // this.$store.commit('lbhModule/EMPTY_EE')
+    // // this.$store.commit('lbhModule/EMPTY_ERS')
+    // // this.$store.commit('lbhModule/EMPTY_FB')
+    // // this.$store.commit('lbhModule/EMPTY_NEXT_SUPERUSER_INFO')
+    // }
+  },
+///이병헌 끝
    setup() {
     const credentials = reactive({
       "type":'',
       "limit":'',
       "password":"",
-      "privateYN":"",
+      "privateYN":"N",
       "title":"",
-      "commonSeq":2
+      "commonSeq":''
     })
     const credentialsToenter = reactive({
       "roomPassword" : "",
-      "roomSeq": "",
     })
     const credentialsTosearch = reactive({
       keyword:""
@@ -143,7 +188,20 @@ export default {
       order: "",
     })
     const store = useStore()
-    function createStudyroom(){
+    function createStudyroom(info){
+      console.log(credentials.privateYN)
+      if (info.type == 1 && info.privateYN == 'Y'){
+        credentials.commonSeq = 10
+      } 
+      else if (info.type == 1 && info.privateYN == 'N'){
+        credentials.commonSeq = 8
+      }
+      else if (info.type == 2 && info.privateYN == 'Y'){
+        credentials.commonSeq = 11
+      }
+      else if (info.type == 2 && info.privateYN == 'N'){
+        credentials.commonSeq = 9
+      } 
       store.dispatch('rhtModule/createStudyroom', credentials)
     }
     function enterStudyroom(){
@@ -222,7 +280,10 @@ export default {
   background: white;
   border-radius: 20px;
   padding: 20px;
-  overflow: scroll;
+  overflow-y: scroll;
+}
+.MainBody::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 .Searchbar{
   margin-left:30px;

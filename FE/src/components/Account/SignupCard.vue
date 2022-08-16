@@ -25,20 +25,22 @@
             </div>
           </form>
 
+          <div v-if="credentialsTocheckEmail.EmailCheck == true">
           <!-- 비번 인풋 -->
-          <div class="pwinput">
-            <input type="password" v-model="credentials.userPassword" class="form-control form-control-lg"
-              placeholder="Password" />
-          </div>
+            <div class="pwinput">
+              <input type="password" v-model="credentials.userPassword" class="form-control form-control-lg"
+                placeholder="Password" />
+            </div>
 
-          <!-- 비번 확인 인풋 -->
-          <div class="pwcheckinput">
-            <input type="password" v-model="credentials.userPassword2" class="form-control form-control-lg"
-              placeholder="Password Check" />
-          </div>
+            <!-- 비번 확인 인풋 -->
+            <div class="pwcheckinput">
+              <input type="password" v-model="credentials.userPassword2" class="form-control form-control-lg"
+                placeholder="Password Check" />
+            </div>
 
-          <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
-          <router-link to="/">뒤로가기</router-link>
+            <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
+            <router-link to="/">뒤로가기</router-link>
+          </div>
         </form>
       </div>
       </div>
@@ -59,8 +61,12 @@ export default {
       userPassword: '',
       userPassword2: ''
     })
-
+    const credentialsTocheckEmail = reactive({
+      EmailCheck: false
+    })
     const router = useRouter();
+    // const BASE_URL = 'http://' + location.hostname + ':8081'
+    const BASE_URL = 'https://' + location.hostname
     function signup(credentials) {
       /* 
       POST: 사용자 입력정보를 signup URL로 보내기
@@ -73,7 +79,8 @@ export default {
       */
       console.log("회원가입아 안녕?")
       axios({
-        url: 'https://' + location.hostname + '/api/v1/users', //회원가입 api로
+        // url: BASE_URL + '/api/v1/users', //회원가입 api로
+        url: BASE_URL + '/api/v1/users',
         method: 'post',
         data: credentials
       })
@@ -89,12 +96,17 @@ export default {
     function checkEmail(credentials) {
     console.log("중복확인아 안녕?")
       axios({
-        url: 'https://' + location.hostname + '/api/v1/users/check/duplicate',  // 이메일확인 api
+        // url: BASE_URL + '/api/v1/users/check/duplicate',  // 이메일확인 api
+        url: BASE_URL + '/api/v1/users/check/duplicate',
         method: 'post',
         data: {"email":credentials.userEmail}
       })
-        .then(() => {
+        .then((res) => {
           alert('가입가능한 이메일입니다.')
+          console.log(res)
+          if(res.status == 200 ){
+            credentialsTocheckEmail.EmailCheck = true
+          }
         })
         .catch(err => {
           console.log(credentials)
@@ -104,7 +116,7 @@ export default {
     }
       
     return {
-      signup, checkEmail, credentials
+      signup, checkEmail, credentials, credentialsTocheckEmail
     }
   }
   // data() {

@@ -23,21 +23,25 @@
     <div class="EERight">
       <!-- 면접에서 나가기 버튼(일반 유저) -->
       <div v-show="userType === 'user'" class="EEtoLBbtn user">
-        <button @click.prevent="EELeaveSession">
+        <Button @click="EELeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+        <!-- <button @click="EELeaveSession">
           <i class="bi bi-x-lg"></i>
-        </button>
+        </button> -->
       </div>
       <!-- 면접에서 나가기 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EEtoLBbtn superUser">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
+        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
             <i class="bi bi-x-lg"></i>
-        </button>
+        </button> -->
       </div>
       <!-- 면접 완료 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EndStudyBtn superUser">
-        <button @click.prevent="finishInterview">
+        <!-- <button @click="finishInterview">
           <i class="bi bi-check-lg"></i>
-        </button>
+        </button> -->
+        <Button @click="finishInterview" icon="pi pi-check" class="p-button-rounded p-button-secondary" />
+
       </div>
     </div>
   </div>
@@ -49,9 +53,7 @@ import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
-
 const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
   name: "EEView",
@@ -61,6 +63,8 @@ export default {
       "EE",
       "ERS",
       "myUserName",
+      "myUserEmail",
+      'myUserInfo',
       "mySessionId",
       "userType",
       "publisher",
@@ -69,40 +73,136 @@ export default {
       "session",
       "nextSuperUserList",
       'currentUserList',
-
+      'recordingObject',
+      'roomTitle',
     ])
   },
   data(){
     return {
+      interval: null
     }
   },
   created(){
+    //
+    this.session.on("streamDestroyed", ({ stream }) => {
+      console.log('streamCreated')
+      const index_s = this.subscribers.indexOf(stream.streamManager, 0);
+      if (index_s >= 0) {
+        this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
+      }
+
+      const subscriberEmail = JSON.parse(stream.connection.data).clientEmail;
+      this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
+    });
+    
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    })
+
     //방장이 면접을 완료할 경우
-    this.session.on('signal:endInterview', () => {
-      alert('방장이 면접을 완료했습니다.\n이제 대기실로 이동합니다.')
-      this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', this.myUserName)
+    this.session.on('signal:finishInterview', () => {
+      alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
+      //녹화 종료 시그널 보내기
+      this.session.signal({
+      data: this.myUserName,
+      to: [],
+      type: 'stopRecording'
+      })
       this.toWR()
+
+      //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+      const data = JSON.stringify(this.myUserInfo)
+      this.session.signal({
+        data: `${data}`,
+        to: [],
+        type: 'WRParticipantListUpdate'
+      })
     });  
 
     //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:ERleaveSession', (e)=>{
-      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
+      const erInfo = JSON.parse(e)
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', erInfo)
     })
 
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e) => {
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
-        alert('방장이 면접을 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.')
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
-        if(this.currentUserList.lenght === 1){
-          alert('방에 혼자남으셨습니다.\n 면접을 종료하고 대기실로 이동합니다.')
-          this.toWR()
-        }
-      } else{'방장바뀜'}
+      const pastSuperUserEmail = e.data.split(' ')[0]
+      const currentSuperUserEmail = e.data.split(' ')[1]
+      this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+      if(this.myUserEmail === currentSuperUserEmail){
+        alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
+      }
     })
+  
+    // 녹화 중지 stop레코딩 시그널을 받은 경우
+    this.session.on("signal:stopRecording", (e) => {
+      console.log('이게')
+      console.log(e.data)
+      console.log('맞음?')
+      console.log("스탑 레코딩에 입장했습니다")
+      console.log(this.recordingObject)
+
+      return new Promise(() => {
+        axios({
+          url: `${OPENVIDU_SERVER_URL}/openvidu/api/recordings/stop/${this.recordingObject.id}`,
+          method: "post",
+          headers: {
+            Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
+          },
+        }).then((res) => {
+          console.log(`stop recording id ${res.data.id}`);
+          console.log(res.data)
+          // 임현탁 여기 부터
+          // //레코딩 끝난 후 시그널링으로 URL 보내기
+          this.session.signal({
+            data: res.data.url,
+            to: [],
+            type: 'ReviewURL'          
+          })
+          this.$store.commit('lbhModule/GET_VIDEO_SRC', res.data.url)
+          // 임현탁 여기까지 주석처리함
+
+
+          //레코딩 끝나고 저장하기
+          this.$store.commit('rhtModule/SET_RECORDING_RES', res.data)
+          this.$store.dispatch('lbhModule/finishInterviewAxios', res.data)
+          // 잠시 참고용
+          //   finishInterviewAxios({state, getters, commit}){
+          //   axios({
+          //     url: BASE_URL + 'video',
+          //     method: 'post',
+          //     headers: {Authorization: getters.authHeader},
+          //     data: {
+          //       userEmail: state.myUserEmail,
+          //       videoTitle: state.roomTitle,
+          //       videoUrl: state.videoUrl, //videoUrl 추가해야됨
+          //     }
+          //   })
+          //   .then(res=>{
+          //     console.log('성공적으로 면접 완료')
+          //     commit('SET_VIDEOSEQ', res.data) //vdieoSeq 추가해야됨
+          //   }) 
+          //   .catch(err=>console.error(err.response))
+          // },
+          
+        });
+      });
+    })
+      
+  },
+  mounted(){
+    this.interval = setInterval(this.interval++, 1000);
+  },
+  unmounted(){
+    clearInterval(this.interval)
+    // if(this.userType === 'user'){
+    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   methods:{
     EELeaveSession(){
@@ -114,88 +214,30 @@ export default {
         })
         if (this.session) this.session.disconnect();
 
-        this.$store.commit('lbhModule/SET_SESSION', undefined)
-        this.$store.commit('lbhModule/SET_OV', undefined)
-        this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-        this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-        this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
-
-        window.removeEventListener("beforeunload", this.WRleaveSession);
         this.$router.push("/main");
+        this.$store.dispatch('lbhModule/EELeaveSessionAxios')
       }
     },
-    finishInterview(){
-      this.$store.dispatch('lbhModule/finishInterview')
+    async finishInterview(){
+      console.log('면접 완료 버튼 눌렸는데?')
+      if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
+        // 종료하면 녹화 종료 보내기
+        this.session.signal({
+          data: this.myUserName,
+          to: [],
+          type: 'stopRecording'
+        })
+        // const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
+        // this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
+        this.session.signal({
+          data: '',
+          to: [],
+          type: 'finishInterview'
+        })
+      }
     },
     async toWR() {
-      await this.$router.push({name:'waiting-room'})
-      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
-      this.$store.commit('lbhModule/EMPTY_ERS')
-    },
-    getToken(mySessionId) {
-        console.log('getToken이 시작되긴 했음', mySessionId)
-        return this.createSession(mySessionId).then((sessionId) =>{
-          console.log('createSession은 잘 됨')
-          return this.createToken(sessionId)
-          }
-        );
-    },  
-    createSession(sessionId) {
-      console.log('createSession이 시작되긴 했음')
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
-            // {},
-            JSON.stringify({
-              customSessionId: sessionId,
-            }),
-            {
-              auth: {
-                username: "OPENVIDUAPP",
-                password: OPENVIDU_SERVER_SECRET,
-              },
-            }
-          )
-          .then((response) => response.data)
-          .then((data) => resolve(data.id))
-          .catch((error) => {
-            console.log('createSession에서 막힘')
-            if (error.response.status === 409) {
-              resolve(sessionId);
-            } else {
-              console.warn(
-                `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
-              );
-              if (
-                window.confirm(
-                  `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
-                )
-              ) {
-                location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
-              }
-              reject(error.response);
-            }
-          });
-      });
-    },
-    createToken(sessionId) {
-      console.log('createToken까지 왔나?')
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,{},
-            {
-              auth: {
-                username: "OPENVIDUAPP",
-                password: OPENVIDU_SERVER_SECRET,
-              },
-            }
-          )
-          .then((response) => response.data)
-          .then((data) => resolve(data.token))
-          .catch((error) => reject(error.response), console.log('createToken이 문제라고?'));
-      });
+      await this.$router.push('/waiting-room')
     },
   }
 };
@@ -205,14 +247,15 @@ export default {
 .EEView {
   position: absolute;
   width: 90vw;
-  aspect-ratio: 16/9;
+  min-width: 1000px;
+  aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
-  box-shadow: 10px 40px 20px 6px #bfc2cb;  
+  background: rgb(255,255,255,0.5);
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
   border-radius: 60px;
-  padding: 3%;
+  padding: 1.5%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -257,8 +300,17 @@ export default {
   align-items: flex-end;
 }
 
+.EEView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.EEView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
+}
+
 /* 버튼양식 */
-.EndStudyBtn > button,
+/* .EndStudyBtn > button,
 .EEtoLBbtn > button {
   border: none;
   display: block;
@@ -305,6 +357,6 @@ export default {
   text-decoration: none;
   color: #555;
   background: #f5f5f5;
-}
+} */
 /* 버튼양식 */
 </style>

@@ -1,5 +1,7 @@
 // 이병헌
 <template>
+<div>
+  <AuthorityPassModal/>
   <div class="SettingRoomView">
     <!-- 좌단 -->
     <!-- 유저 화면 나오는 곳 -->
@@ -60,59 +62,65 @@
             aria-expanded="false"
           >
           </button>
-          <ul class="dropdown-menu">
-            <li v-for="cl in CLList" :key="cl.coverLetterSeq">
+          <ul class="dropdown-menu" v-if="CoverLetterList">
+            <li v-for="cl in CoverLetterList" :key="cl.coverLetterSeq">
               <p :class="[CLSelected.coverLetterTitle===cl.coverLetterTitle ? 'deviceSelected' : '']" @click="selectCL(cl)">{{cl.coverLetterTitle}}</p>
             </li>
           </ul>
         </div>
       </div>
-
       <!-- 하단 -->
+      <!-- 임현탁 방에서 나가기 건들이는중 -->
       <div class="SRNavBtnArea">
-        <!-- 로비 되돌아가기 버튼 -->
-        <div class="toLBBtnDiv" @click="SRtoLB">
-          <button class="toLBBtn">
-            <i class="bi bi-backspace"></i>
-          </button>
-        </div>
 
+        <!-- 로비 되돌아가기 버튼 -->
+        <!-- <div class="toLBBtnDiv" @click="SRtoLB"> -->
+        <div class="toLBBtnDiv" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+          <!-- <button class="toLBBtn">
+            <i class="bi bi-backspace"></i>
+          </button> -->
+        </div>
+        <div v-if="userType === 'superUser'" class="toLBBtnDiv" @click="studyDestroy">
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+          <!-- <button type="button" class="toLBBtn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+              <i class="bi bi-x-lg"></i>
+          </button> -->
+        </div>
+      <!-- 임현탁 여기까지 건들임 -->
         <!-- 대기실 입장 버튼 -->
         <div class="toWRBtnDiv" @click="SRtoWR">
-          <button class="toWRBtn">
+          <Button icon="pi pi-check" class="p-button-rounded p-button-secondary" />
+          <!-- <button class="toWRBtn">
             <i class="bi bi-check-lg"></i>
-          </button>
+          </button> -->
         </div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
+import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 import {mapGetters, useStore} from 'vuex';
 import { OpenVidu } from 'openvidu-browser';
 
 export default {
   name: "SettingRoomView",
+  components:{
+    AuthorityPassModal
+  },
+  unmounted(){
+
+  },
   created(){
-    // this.$store.dispatch('rhtModule/getCoverLetter')
-    // let publisher = this.OV.initPublisher(undefined, {
-    //   audioSource: this.MicSelected, 
-    //   videoSource: this.CameraSelected, 
-    //   publishAudio: this.MicStatus,
-    //   publishVideo: this.CameraStatus,
-    //   resolution: "640x480", 
-    //   frameRate: 30, 
-    //   insertMode: "APPEND", 
-    //   mirror: false,
-    // });
+    console.log(this.CLList)
+    console.log('userinfo', this.$store.getters['rhtModule/UserList'])
+    this.$store.dispatch('rhtModule/getCoverLetter')
 
-    // this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
+    window.addEventListener('beforeunload', this.forceLeaveSession)
 
-    // // --- Publish your stream ---
-
-    // this.session.publish(this.publisher);
-    // console.log('오디오 비디오 어떻게 들어왔나',this.publisher.stream)
   },
   data(){
     return{
@@ -132,12 +140,23 @@ export default {
       "CLList",
       "CLSelected",
       'CLStatus',
+      'userType',
+      'WRParticipantList',
     ]),
-    // ...mapGetters('rhtModule',[
-    //   "CoverLetterList"
-    // ])
+    ...mapGetters('rhtModule',[
+      'CoverLetterList',
+    ])
   },
   methods:{
+    studyDestroy(){
+      this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
+    },
+    forceLeaveSession() {
+      if(this.userType === 'user'){
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
+      this.$router.push('/main')
+    },
     micStatusSwitch() {
       this.micOn = !this.micOn;
       this.$store.commit('lbhModule/SWITCH_MIC_STATUS', this.micOn)
@@ -159,11 +178,18 @@ export default {
     selectMic(mic){
       this.$store.commit('lbhModule/SELECT_MIC', mic)
     },
-    SRtoLB() {
-      if (confirm("로비로 되돌아가시겠습니까?")) {
-        this.$router.push("main");
-      }
+    // 임현탁  방나가기를 위한 작업
+    // SRtoLB() {
+    //   if (confirm("로비로 되돌아가시겠습니까?")) {
+    //     this.$router.push("main");
+    //   }
+    // },
+    userLeaveSessionAxios(){
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
     },
+
+    // 임현탁 작업 끝 
+    
     SRtoWR() {
       // if(Object.keys(this.CameraSelected).length === 0 || 
       // Object.keys(this.MicSelected).length === 0 || 
@@ -179,7 +205,7 @@ export default {
   },
   setup() {
     const store = useStore();
-
+    
     // 디바이스 목록 가져오기
     var OV = new OpenVidu();
     function findDevices(){
@@ -203,14 +229,14 @@ export default {
   width: 90vw;
   /* 화면 구성을 위해서 min-width나 min-height를 주는 게 맞는 거 같은데*/
   min-width: 1000px;
-  aspect-ratio: 16/9;
+  aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
-  box-shadow: 10px 10px 20px 6px #b5b8c0;  
+  background: rgb(255,255,255,0.5);
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
   border-radius: 60px;
-  padding: 3%;
+  padding: 1.5%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -228,7 +254,7 @@ export default {
   justify-content: center;
   width: 30%;
   border-radius: 20px;
-  background-color: #edf0f6;
+  background-color: #fff;
 }
 
 .SRDropdownARea{
@@ -271,59 +297,23 @@ export default {
   border-radius: 30px;
 }
 
-.SRNavBtnArea > button,
-.toLBBtn,
-.toWRBtn {
-  border: none;
-  display: block;
-  background: linear-gradient(#f7f7f7, #e7e7e7);
-  color: #a7a7a7;
-  margin: 18px;
-  width: 36px;
-  height: 36px;
-  position: relative;
-  text-align: center;
-  line-height: 36px;
-  border-radius: 50%;
-  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+.toLBBtnDiv button, 
+.toWRBtnDiv button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.toLBBtnDiv button:enabled:hover, 
+.toWRBtnDiv button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
 }
 
-.SRNavBtnArea > button:before,
-.toLBBtn:before,
-.toWRBtn:before {
-  content: "";
-  display: block;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #fff;
-  width: 100%;
-  height: 1px;
-  position: absolute;
-  top: 50%;
-  z-index: -1;
-}
-
-.SRNavBtnArea > button:after,
-.toLBBtn:after,
-.toWRBtn:after {
-  content: "";
-  display: block;
-  background: #fff;
-  border-top: 2px solid #ddd;
-  position: absolute;
-  top: -9px;
-  left: -9px;
-  bottom: -9px;
-  right: -9px;
-  z-index: -1;
-  border-radius: 50%;
-  box-shadow: inset 0px 4px 24px #ddd;
-}
-
-.SRNavBtnArea > button:hover,
-.toLBBtn:hover,
-.toWRBtn:hover {
-  text-decoration: none;
-  color: #555;
-  background: #f5f5f5;
-}
+/* .SettingRoomView button{
+  background-color: #787a89;
+  border: #787a89
+}  */
+/* .SettingRoomView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
+}  */
 </style>

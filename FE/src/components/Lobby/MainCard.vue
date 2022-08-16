@@ -6,7 +6,8 @@
   </div>
   <div class="MainCardBottom">
     <div class="MainCardthumnail">
-      <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
+      <!-- <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start"/> -->
+      <img :src="item.thumbnailUrl" class="img-fluid rounded-start"/>
     </div>
     <div class="col MainCardBody">
       <h5>{{item.roomTitle}}</h5>
@@ -14,10 +15,25 @@
       <p><small class="text-muted">{{item.roomRegTime}}</small></p>
       <p><small class="text-muted">{{item.roomType}}</small></p>
       <p><small class="text-muted">{{item.roomSeq}}</small></p>
+      <p><small class="text-muted">{{item.roomPrivateYN}}</small></p>
     </div>
   </div>
   <div class="enterbutton">
-      <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enterroom">입장하기</button>
+    <div v-if="item.roomPrivateYN === 'Y'">
+      <form @submit.prevent="enterSecretStudyroom(item.roomSeq)">
+        <button class="btn btn-secondary enterbuttonitem" data-bs-toggle="modal" data-bs-target="#enterroom">비번방</button>
+      </form>
+    </div>
+    <!-- 이병헌 시작 --> 
+    <!-- <div v-else-if="item.roomPrivateYN === 'N'"> -->
+    <div v-else>
+    <!-- 이병헌 끝 -->
+      <form @submit.prevent="enterNormalStudyroom(item.roomSeq)">
+        <button class="btn btn-secondary enterbuttonitem">
+          일반방
+        </button>
+      </form>
+    </div>
   </div>
   </div>
     <!-- 왼쪽 -->
@@ -36,14 +52,25 @@
 <script>
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import { reactive } from "vue";
 export default {
   setup(){
     const store = useStore()
     const StudyroomList = computed(
       () => store.state.rhtModule.StudyroomList
     );
+    const credentialsToenter = reactive({
+      "roomPassword" : "",
+      "roomSeq": '',
+    })
+    function enterNormalStudyroom(enterItem){
+      store.dispatch('rhtModule/enterNormalStudyroom', enterItem)
+    }
+    function enterSecretStudyroom(enterItem){
+      store.dispatch('rhtModule/enterSecretStudyroom', enterItem)
+    }
     return {
-      StudyroomList
+      StudyroomList, credentialsToenter, enterNormalStudyroom, enterSecretStudyroom
     }
   }
 }
@@ -68,13 +95,14 @@ export default {
 }
 .MainCardTop{
   width:100%;
-  height: 30px;
+  height: 10%;
   display:flex;
   justify-content: end;
   margin-right: 30px
 }
 .MainCardBottom{
   width: 100%;
+  height:80%;
   display:flex;
 }
 .MainCardthumnail{
@@ -88,8 +116,13 @@ export default {
 }
 .enterbutton{
   width:100%;
+  height: 10%;
   display: flex;
   justify-content: end;
   margin-right: 20%;
+  margin-bottom: 5px;
+}
+.enterbuttonitem{
+  font-size: 5px;
 }
 </style>

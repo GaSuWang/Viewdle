@@ -13,7 +13,7 @@ export default {
   computed: {
     cssVariable() {
       return {
-        "--stack-count": "-" + this.stack * 49 + "%",
+        "--stack-count": "-" + this.stack * 24 + "%",
       };
     },
   },

@@ -2,53 +2,75 @@
 //피드백실 - 면접관 (Feedback Room VIew => FBView)
 
 <template>
-  <div class="FeedbackView">
+  <AuthorityPassModal/>
+  <div class="FBView">
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
-    <div class="savedEEVid"></div>
+    <div class="savedEEVid">
+      <!-- [김이랑] 비디오 관련 -->
+      <video ref="video" width="640" height="280" controls :src="videoSrc">
+          <!-- <source  type="video/mp4"> -->
+      </video>
+      <button @click="timeCheck">
+            <p>비디오 시간</p>
+      </button>
+    </div>
     <!-- 우단 -->
     <div class="FBRightArea">
       <div class="FBButtonHeader">
+        <!-- 타이머 -->
+      <button type="button" class="btn btn-primary" :disabled="counting">
+        <vue-countdown v-if="counting" :time="5000" @end="onCountdownEnd" v-slot="{minutes, seconds}">{{minutes}}분 {{seconds}}초</vue-countdown>
+        <!-- <span v-else>Fetch Verification Code</span> -->
+      </button>
         <!-- 면접자 자소서 페이지 열기 버튼 -->
         <div class="CLOpen">
-          <button @click="openEECL">
+          <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-file-earmark-text"></i>
-          </button>
+          </Button>
+          <!-- <button @click="openEECL">
+            <i class="bi bi-file-earmark-text"></i>
+          </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div class="FBtoLBbtn user" v-show="userType === 'user'">
-          <button @click.prevent="FBtoLBConfirm(userType)">
+         <Button @click="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+          <!-- <button @click="ERLeaveSessionFromFB">
             <i class="bi bi-x-lg"></i>
-          </button>
+          </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
-        <div class="FBtoLBbtn superUser" v-show="userType === 'superUser'">
-          <button @click.prevent="FBtoLBConfirm(userType)">
-            <i class="bi bi-x-lg"></i>
-          </button>
+        <div v-show="userType === 'superUser'" class="FBtoLBbtn superUser">
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
+          <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+              <i class="bi bi-x-lg"></i>
+          </button> -->
         </div>
       </div>
 
       <!-- 피드백 구역 -->
       <feedback-area :videoInfo="videoInfo"></feedback-area>
 
-      <div class="FBButtonFooter">
+      <div @click="FBComplete" class="FBButtonFooter">
         <!-- 면접 종료 버튼(대기실로 이동) -->
-        <div class="FBCompleteBtn">
+        <Button icon="pi pi-check" class="p-button-rounded p-button-secondary" />
+        <!-- <div class="FBCompleteBtn">
           <button @click="FBComplete">
             <i class="bi bi-check-lg"></i>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
+// import { VideoPlayer } from '@videojs-player/vue'
+import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
-import { useRouter } from "vue-router";
-import { ref } from "vue";
-import { mapGetters } from 'vuex';
+// 임현탁 나가기기능하면서 주석처리함
+// import { useRouter } from "vue-router";
+import { mapGetters} from 'vuex';
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -56,7 +78,15 @@ const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
-  components: { FeedbackArea },
+  //, VideoPlayer
+  components: { FeedbackArea, AuthorityPassModal },
+  data(){
+    return {
+      counting: false,
+      // [김이랑] 비디오 관련 - 테스트 위해 data에 저장
+      // VideoSrc: ''
+    }
+  },
   computed:{
     ...mapGetters('lbhModule', [
       'session',
@@ -64,6 +94,11 @@ export default {
       'mySessionId',
       'publisher',
       'subscribers',
+      'myUserEmail',
+      'myUserName',
+      'myUserInfo',
+      'studyRoomCL',
+      'userType',
 
       //기기
       "CameraSelected",
@@ -72,70 +107,192 @@ export default {
       "MicSelected",
       "MicStatus",
       "MicStatus",
-    ])
-  },
-  created(){
-    window.addEventListener("close", this.ERLeaveSession);
+      // [김이랑] 비디오 관련
+      "videoSrc",
+      "videoTime",
 
-    //방장인 면접자가, 면접을 보는 도중에 나갈 경우
-    this.session.on('signal:superEELeaveSession', (e)=>{
-      if(this.myUserName === e.data){
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
-        alert('현재 방장이 스터디를 종료했으며, 다음 방장으로 선택되셨습니다.')
-      } 
+      "FBList",
+      "FBUserCount",
+      "axiosFBList",
+    ]),
+    ...mapGetters('rhtModule',[
+      'CoverLetterDetail',
+    ]),
+    checkVideoTime(){
+      return this.$store.getters['lbhModule/videoTime']
+    },
+  },
+  watch:{
+    checkVideoTime(time){
+      console.log("실행됨")
+      this.video = this.$refs.video
+      console.log(this.video.currentTime)
+      this.video.currentTime = time
+      console.log(this.video.currentTime)
+    }
+  },
+  // [김이랑] 비디오 관련
+  created(){
+    //
+    this.session.on("streamDestroyed", ({ stream }) => {
+      console.log('streamCreated')
+      const index_s = this.subscribers.indexOf(stream.streamManager, 0);
+      if (index_s >= 0) {
+        this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
+      }
+
+      const subscriberEmail = JSON.parse(stream.connection.data).clientEmail;
+      this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
+      this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
+    });
+    
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
     })
 
+      //현재 피드백실에 있는 인원 설정
+      this.$store.commit('lbhModule/SET_FB_USER_COUNT')
+
+      this.session.on('signal:sendVideoSeq', (e)=>{
+        this.$store.commit('lbhModule/SET_VIDEOSEQ', e.data)
+      })
+    // window.addEventListener("close", this.ERLeaveSessionFromFB);
+
+      //방장인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
+      this.session.on('signal:superLeaveSessionWR', (e)=>{
+        const pastSuperUserEmail = e.data.split(' ')[0]
+        const currentSuperUserEmail = e.data.split(' ')[1]
+        this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+        if(this.myUserName === currentSuperUserEmail){
+          alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
+          this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
+        }
+      })
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e)=>{
-      const pastSuperUserName = e.data.split(' ')[0]
-      const currentSuperUserName = e.data.split(' ')[1]
-      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserName)
-      if(this.myUserName === currentSuperUserName){
-        this.$store.commit('lbhModule/SWITCH_USER_TYPE_TEMP')
+      const pastSuperUserEmail = e.data.split(' ')[0]
+      const currentSuperUserEmail = e.data.split(' ')[1]
+      this.$store.commit('DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
+      if(this.myUserName === currentSuperUserEmail){
+        this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
         alert('현재 방장이 스터디를 종료했으며, 다음 방장으로 선택되셨습니다.')
       } 
-    })
-
-    //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
-    this.session.on('signal:ERLeaveSession', (e)=>{
-      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
     })
 
     //일반유저인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
-    this.session.on('signal:WRleaveSession', (e)=>{
+    this.session.on('signal:userLeaveSessionfromWR', (e)=>{
       this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
     })
+    //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
+    this.session.on('signal:ERLeaveSessionFromFB', (e)=>{
+      this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
+    })
+
+    //다른 면접관이 피드백 완료하면, 해당 면접관의 피드백을 받아 axiosFBList에 더하기
+    this.session.on('signal:addAllFBList', (e)=>{
+      console.log('addAllFbList',e)
+      this.$store.commit('lbhModule/MINUS_FB_USER_COUNT')
+      this.$store.commit('lbhModule/ADD_AXIOS_FBLIST', e.data)
+      //만약 피드백실에서 모두 나가면, 피드백까지 면접 종료
+      if(this.FBUserCount === 1){
+        console.log('fbcompleteAxios실행')
+        this.$store.dispatch('lbhModule/FBCompleteAxios')
+      }
+    })
+
+    this.session.on("signal:EECL", (e) => {
+      // console.log("EECL signal로 받은 데이터", e.data);
+      // const cl = JSON.parse(e.data);
+      const data = parseInt(e.data)
+      console.log("면접관이 받은 유저의 자소서", data);
+      this.$store.commit("lbhModule/SET_STUDYROOM_CL",data);
+    });
+
+  },
+  mounted(){
+    this.startCountdown()
+  },
+  unmounted(){
+    this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
+    this.$store.commit('lbhModule/EMPTY_FB')
+    this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
+    localStorage['cl'] = {}
+    // if(this.userType === 'user'){
+    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   methods: {
-    ERLeaveSession() {
+    //vue-countdown
+    startCountdown() {
+      this.counting = true;
+    },
+    onCountdownEnd() {
+      if (confirm("피드백을 이대로 제출하시겠습니까? 이후에 대기실로 이동합니다.")) {
+        //전체 피드백 리스트에 피드백 넣기
+        const myFBList = JSON.stringify(this.FBList)
+        this.session.signal({
+          data: myFBList,
+          to: [],
+          type: 'addAllFBList'
+        })
+        //면접관이 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+        const data = JSON.stringify(this.myUserInfo)
+        this.session.signal({
+          data: `${data}`,
+          to: [],
+          type: 'WRParticipantListUpdate'
+        })
+        this.$store.commit('lbhModule/EMPTY_EE')
+        this.$store.commit('lbhModule/EMPTY_ERS')
+        console.log('피드백실에서 이제 나감')
+        this.$router.push({name:'waiting-room'})
+      }
+    },
+
+    ERLeaveSessionFromFB() {
+      if(confirm('정말 피드백 수정 도중에 나가시겠습니까?\n작성한 피드백이 모두 삭제되고 로비로 이동합니다.')){
       this.session.signal({
-        data:`${this.myUserName}`,
+        data:`${this.myUserInfo}`,
         to: [],
         type: 'ERLeaveSession'
       })
 
       if (this.session) this.session.disconnect();
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
+    },
 
-      this.$store.commit('lbhModule/SET_SESSION', undefined)
-      this.$store.commit('lbhModule/SET_OV', undefined)
-      this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-      this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-      this.$store.commit('lbhModule/SET_SUPERUSER', {})
-      
-      window.removeEventListener("beforeunload", this.ERLeaveSession);
-    },
-    async toWR() {
-      await this.$router.push({name:'waiting-room'})
-      this.$store.commit('lbhModule/SET_EE', []) //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
-      this.$store.commit('lbhModule/EMPTY_ERS')
-    },
     openEECL() {
-      let route = this.$router.resolve({ path: "/eecl" });
+      this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
+      localStorage['cl'] = JSON.stringify({
+        coverLetterTitle: this.CoverLetterDetail.coverLetterTitle,
+        coverLetterContent: this.CoverLetterDetail.coverLetterContent,
+      })
+      let route = this.$router.resolve({ path: "/eecl"});
       window.open(route.href);
     },
     FBComplete() {
       if (confirm("피드백을 이대로 제출하시겠습니까? 이후에 대기실로 이동합니다.")) {
-        this.toWR();
+        //전체 피드백 리스트에 피드백 넣기
+        const myFBList = JSON.stringify(this.FBList)
+        this.session.signal({
+          data: myFBList,
+          to: [],
+          type: 'addAllFBList'
+        })
+        //면접관이 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+        const data = JSON.stringify(this.myUserInfo)
+        this.session.signal({
+          data: `${data}`,
+          to: [],
+          type: 'WRParticipantListUpdate'
+        })
+        this.$store.commit('lbhModule/EMPTY_EE')
+        this.$store.commit('lbhModule/EMPTY_ERS')
+        console.log('피드백실에서 이제 나감')
+        this.$router.push({name:'waiting-room'})
       }
     },
     getToken(mySessionId) {
@@ -201,41 +358,18 @@ export default {
   },
   setup() {
     const videoInfo = {}; //해당 session의 면접자 영상 정보를 가져와야 함
-    const router = useRouter();
-    const userType = ref("user");
-    function FBtoLBConfirm(userType) {
-      if (userType === "user") {
-        if (
-          confirm(
-            "정말 피드백 수정 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
-          )
-        ) {
-          router.push({ name: "main" });
-        }
-      } else if (userType === "superUser") {
-        if (
-          confirm(
-            "정말 피드백 수정 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
-          )
-        ) {
-          // 권한위임 모달 실행
-        }
-      }
-    }
     return {
-      userType,
       videoInfo,
-      FBtoLBConfirm,
     };
   },
 };
 </script>
 
 <style scoped>
-.FeedbackView {
+.FBView {
   position: absolute;
   width: 90vw;
-  aspect-ratio: 16/9;
+  aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -259,13 +393,27 @@ export default {
 }
 
 .FBButtonHeader {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
+}
+
+.CLOpen{
+  margin-left: 30%
+}
+
+.FBView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.FBView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
 }
 
 /* 버튼 시작*/
-.CLOpen > button,
+/* .CLOpen > button,
 .FBtoLBbtn > button,
 .FBCompleteBtn > button {
   border: none;
@@ -316,7 +464,7 @@ export default {
   text-decoration: none;
   color: #555;
   background: #f5f5f5;
-}
+} */
 /* 버튼 끝*/
 
 .FBButtonFooter {

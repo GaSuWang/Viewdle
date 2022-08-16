@@ -6,9 +6,6 @@
     <p class="pagetitle">Cover Letter Manage</p>
     <div class='clmanageTop'>
         <button class="btn btn-secondary clmanageTopitem" data-bs-toggle="modal" data-bs-target="#clmaker">자소서생성</button>
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCL">수정하기</button>
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteCL">삭제하기</button>
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#detailCL">상세보기</button>
     </div>
       <hr>
     <div class="clmanageBody">
@@ -27,7 +24,7 @@
               <input type="Text" v-model="credentials.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
             </div>
             <div class="modal-body">
-              <input type="Text" v-model="credentials.coverLetterContent" class="form-control form-control-lg" placeholder="body" /> 
+              <textarea type="Text" v-model="credentials.coverLetterContent" class="CLContent form-control form-control-lg" placeholder="body" /> 
             </div> 
             <div class="modal-footer">
               <button class="btn btn-secondary" data-bs-dismiss="modal">작성</button>
@@ -38,62 +35,20 @@
         </div>
       </div>
 
-      <!-- 자소서 수정모달 -->
-      <div class="modal fade" id="editCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <form @submit.prevent="updateCoverLetter(credentialsToedit)">
-            <div class="modal-header">
-              <h5 class="modal-title" id="staticBackdropLabel">자소서 제목</h5>
-              <input type="Text" v-model="credentials.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
-            </div>
-            <div class="modal-body">
-              <input type="Text" v-model="credentials.coverLetterContent" class="form-control form-control-lg" placeholder="body" /> 
-            </div> 
-            <div class="modal-footer">
-              <input type="number" v-model="credentialsToedit.coverLetterSeq">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">작성</button>
-            </div>
-            </form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div> 
 
-      <!-- 자소서 삭제모달  -->
-      <div class="modal fade" id="deleteCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <form @submit.prevent="deleteCoverLetter(credentialsTodelete)">
-              <h5 class="modal-title" id="staticBackdropLabel">정말 삭제 할거야?</h5>
-              <input type="number" v-model="credentialsTodelete.coverLetterSeq">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Yes</button>
-            </form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          </div>
-        </div>
-      </div>   
-
-      <!-- 상세모달 -->
-      <div class="modal fade" id="detailCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <form @submit.prevent="detailCoverLetter(credentialsTodelete)">
-              <h5 class="modal-title" id="staticBackdropLabel">어떤거 볼래?</h5>
-              <input type="number" v-model="credentialsTodelete.coverLetterSeq">
-              <button class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">Yes</button>
-            </form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          </div>
-        </div>
-      </div>   
-
-
+<!-- 상세 and 수정 -->
       <div class="modal fade" id="detailofCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            <h5 class="modal-title" id="staticBackdropLabel">{{CoverLetterDetail.coverLetterTitle}}</h5>
-            {{CoverLetterDetail.coverLetterContent}}
+            <form @submit.prevent="updateCoverLetter(CoverLetterDetail)">
+            <div class="modal-header">
+              <input type="Text" v-model="CoverLetterDetail.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
+            </div>
+            <div class="modal-body">
+            <textarea type="Text" v-model="CoverLetterDetail.coverLetterContent" class="CLContent form-control form-control-lg" placeholder="body" /> 
+            </div>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">수정</button>
+            </form>
             <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
           </div>
         </div>
@@ -165,7 +120,7 @@ export default {
 
 
     function updateCoverLetter(){
-      store.dispatch('rhtModule/updateCoverLetter', credentialsToedit)
+      store.dispatch('rhtModule/updateCoverLetter', CoverLetterDetail)
     }
 
     return {
@@ -221,5 +176,12 @@ export default {
   border-radius: 20px;
   padding: 20px;
   overflow: scroll;
+}
+.clmanageBody::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+.CLContent{
+  height : 300px;
+  white-space:normal;
 }
 </style>

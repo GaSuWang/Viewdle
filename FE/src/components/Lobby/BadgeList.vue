@@ -1,7 +1,6 @@
 // 임현탁
 <template>
 <div class="BadgeList">
-    <h2>뱃지</h2>
     <div class="BadgeTable">
     <div v-for="item in BadgeList" :key="item.seq">
       <p>하이</p>
@@ -39,7 +38,7 @@ export default {
 .BadgeList{
   width:90%;
   height:95%; 
-  margin:20px;
+  margin: 0 20px;
   border-radius: 20px;
   box-shadow: 1px 1px 1px 1px gray;
   display: flex;

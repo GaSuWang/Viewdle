@@ -1,29 +1,33 @@
 // 임현탁
 <template>
   <div class="ReplayCard" v-for="item in ReplayList" :key="item.seq">
-  <div class="ReplayTop">
-  </div>
-  <div class="ReplayBottom">
-    <div class="Replaythumnail">
-      <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
+    <div class="ReplayCardTop">
     </div>
-    <div class="Replaycard-body">
-      <h5>{{item.videoTitle}}</h5>
-      <p><small class="text-muted">{{item.videoRegTime}}</small></p>
-   
+    <div class="ReplayCardBottom">
+      <div class="ReplayCardthumnail">
+        <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
+      </div>
+      <div class="Replaycard-body">
+        <h5>{{item.videoTitle}}</h5>
+        <p><small class="text-muted">{{item.videoRegTime}}</small></p>
+        <p><small>{{item.videoSeq}}</small></p>
+      </div>
     </div>
-  </div>
-  <div class="Replaycard-button">
-    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#enterReplay">열람하기</button>
-    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#deleteReplay">삭제하기</button>
-  </div>
+    <div class="Replaycard-button">
+      <form @submit.prevent="detailReplay(item.videoSeq)">
+        <button class="btn btn-secondary Replaycard-buttonitem" data-bs-toggle="modal" data-bs-target="#enterReplay">열람</button>
+      </form>
+      <form @submit.prevent="deleteReplay(item.videoSeq)">
+      <button class="btn btn-secondary Replaycard-buttonitem">삭제하기</button>
+      </form>
+    </div>
     <!-- 왼쪽 -->
     <!-- 썸네일 -->
     
     <!-- 오른쪽 -->
     <!-- 방제 -->
-    <!-- 생성 시각 -->
-
+  
+    <!-- 생성 시각 -->  
   </div>
 </template>
 
@@ -36,8 +40,18 @@ export default {
     const ReplayList = computed(
       () => store.state.rhtModule.ReplayList
     );
+    function detailReplay(credentialsTodelete){
+      store.dispatch('rhtModule/detailReplay', credentialsTodelete)
+    }
+    function deleteReplay(credentialsTodelete){
+      if(confirm("정말 삭제 하시겠습니까?")){
+        store.dispatch('rhtModule/deleteReplay', credentialsTodelete)
+      } else{
+        alert("삭제가 취소되었습니다.")
+      }
+    }
     return {
-      ReplayList
+      ReplayList, deleteReplay, detailReplay
     }
   }
 }
@@ -60,19 +74,20 @@ export default {
 .ReplayCard:hover {
   transform:scale(1.04);
 }
-.ReplayTop{
+.ReplayCardTop{
   width:100%;
-  height: 30px;
+  height: 10%;
   display:flex;
   justify-content: end;
   margin-right: 30px
 }
-.ReplayBottom{
+.ReplayCardBottom{
   width: 100%;
+  height: 80%;
   display:flex;
   flex-flow:row;
 }
-.Replaythumnail{
+.ReplayCardthumnail{
   margin:20px;
   width:40%;
   display:flex;
@@ -85,8 +100,13 @@ export default {
 }
 .Replaycard-button{
   width:100%;
+  height:10%;
   display:flex;
   justify-content: end;
   margin-right: 20%;
+}
+.Replaycard-buttonitem{
+  margin : 3px;
+  font-size: 3px;
 }
 </style>

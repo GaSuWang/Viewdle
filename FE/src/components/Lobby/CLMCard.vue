@@ -12,6 +12,12 @@
         <p><small class="text-muted">{{item.coverLetterRegTime}}</small></p>
         <p><small class="text-muted">자소서 코드: {{item.coverLetterSeq}}</small></p>
       </div>
+      <form @submit.prevent="detailCoverLetter(item.coverLetterSeq)">
+        <button class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">상세보기</button>
+      </form>
+      <form @submit.prevent="deleteCoverLetter(item.coverLetterSeq)">
+      <button class="btn btn-secondary">삭제하기</button>
+      </form>
     </div>
 
   </div>
@@ -29,8 +35,20 @@ export default {
     const CoverLetterDetail = computed(
       () => store.state.rhtModule.CoverLetterDetail
     );
+    function detailCoverLetter(credentialsTodelete){
+      console.log('hi')
+      console.log(credentialsTodelete)
+      store.dispatch('rhtModule/detailCoverLetter', credentialsTodelete)
+    }
+    function deleteCoverLetter(credentialsTodelete){
+      if(confirm("정말 삭제 하시겠습니까?")){
+        store.dispatch('rhtModule/deleteCoverLetter', credentialsTodelete)
+      } else{
+        alert("삭제가 취소되었습니다.")
+      }
+    }
     return {
-      CoverLetterList, CoverLetterDetail
+      CoverLetterList, CoverLetterDetail, detailCoverLetter, deleteCoverLetter
     }
   }
 }
@@ -57,13 +75,14 @@ export default {
 }
 .CLMCardTop{
   width:100%;
-  height: 30px;
+  height: 10%;
   display:flex;
   justify-content: end;
   margin-right: 30px
 }
 .CLMCardBottom{
   width: 100%;
+  height: 80%;
   display:flex;
 }
 .CLMthumnail{
@@ -79,6 +98,7 @@ export default {
 }
 .CLMcard-button{
   width:100%;
+  height: 10%;
   display: flex;
   justify-content: end;
   align-content: end;

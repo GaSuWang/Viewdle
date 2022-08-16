@@ -4,11 +4,11 @@
   <div class="CLView">
     <!-- 상단 -->
     <!-- 면접자 이름? 이메일? -->
-    <h1>{{StudyRoomCL.title}}</h1>
+    <h1>{{coverLetterTitle}}</h1>
 
     <!-- 면접자 자소서 내용 -->
     <div class="CLContent">
-      <p>{{StudyRoomCL.content}}</p>
+      <p>{{coverLetterContent}}</p>
     </div>
 
     <!-- 탭 닫기 버튼 -->
@@ -27,8 +27,33 @@ export default {
   name: 'CLView',
   computed:{
     ...mapGetters('lbhModule',[
-      'StudyRoomCL'
-    ])
+      'studyRoomCL',
+      'session',
+      'sessionToken',
+    ]),
+
+  },
+  data(){
+    return{
+      // OV: undefined,
+      // session: undefined,
+      coverLetterTitle: '',
+      coverLetterContent: '',
+    }
+  },
+  created(){
+    console.log('자소서는 이거다', this.studyRoomCL)
+    let cl = {}
+    try {
+      cl = JSON.parse(localStorage['cl'])
+      this.coverLetterTitle = cl.coverLetterTitle
+      this.coverLetterContent = cl.coverLetterContent
+} catch (error) {
+      // ignore
+    }
+  },
+  mounted(){
+    // console.log(this.session)
   },
   setup(){
     function CloseTab () {
