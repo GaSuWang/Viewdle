@@ -106,11 +106,8 @@
 </template>
 
 <script>
-// 여기서 영상 띄우는 법
-// npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET -e OPENVIDU_RECORDING=true -e OPENVIDU_RECORDING_PUBLIC_ACCESS=true -e OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings -v /var/run/docker.sock:/var/run/docker.sock -v /opt/openvidu/recordings:/opt/openvidu/recordings openvidu/openvidu-server-kms:2.22.0
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
-// 단 도커 설치되어 있어야 함
+// docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET -e OPENVIDU_RECORDING=true -e OPENVIDU_RECORDING_PUBLIC_ACCESS=true -e OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings -v /var/run/docker.sock:/var/run/docker.sock -v /opt/openvidu/recordings:/opt/openvidu/recordings openvidu/openvidu-server-kms:2.22.0
+
 
 import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 // import { useRouter } from "vue-router";
@@ -120,7 +117,8 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname;
+// const OPENVIDU_SERVER_URL = "https://" + location.hostname;
+const OPENVIDU_SERVER_URL = "http://" + location.hostname + ':4443';
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
