@@ -3,9 +3,8 @@
 <div class="CLMBoss">
   <NavBar class="NavView"/>
   <div class="CLManageView">
-    <p class="pagetitle">Cover Letter Manage</p>
     <div class='clmanageTop'>
-        <button class="btn btn-secondary clmanageTopitem" data-bs-toggle="modal" data-bs-target="#clmaker">자소서생성</button>
+        <button class="btn clmanageTopitem" data-bs-toggle="modal" data-bs-target="#clmaker">자소서생성</button>
     </div>
       <hr>
     <div class="clmanageBody">
@@ -148,14 +147,21 @@ export default {
 .CLManageView{
   height: 100%;
   width: 80%;
+  overflow: scroll;
 }
+.CLManageView::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
 .pagetitle{
   margin-top: 20px;
 }
 .clmanageTop{
+  margin-top: 20px;
+  margin-left: 20px;
   background: white;
   border-radius: 20px;
-  width:98%;
+  width:95%;
   display: flex;
   justify-content: end;
   flex-direction: row;
@@ -163,14 +169,17 @@ export default {
   height: 80px;
 }
 .clmanageTopitem{
-  margin: 0 20px
+  margin: 0 20px;
+  background-color: rgb(230,198,132);
+  color: white;
 }
 .clmanageBody{
+  margin-left: 20px;
   display: flex;
   flex-direction: row;
   flex-flow: row wrap;
   justify-content: space-around;
-  width: 98%;
+  width: 95%;
   height: 80%;
   background: white;
   border-radius: 20px;
