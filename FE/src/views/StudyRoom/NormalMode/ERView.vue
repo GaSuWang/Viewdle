@@ -44,14 +44,14 @@
         </div> -->
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div v-show="userType === 'user'" class="ERtoLBbtn user">
-         <Button @click.prevent="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+         <Button @click="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
           <!-- <button @click.prevent="ERLeaveSession">
             <i class="bi bi-x-lg"></i>
           </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
-          <Button @click.prevent="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
           <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
               <i class="bi bi-x-lg"></i>
           </button> -->

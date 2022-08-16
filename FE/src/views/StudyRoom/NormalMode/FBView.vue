@@ -3,7 +3,7 @@
 
 <template>
   <AuthorityPassModal/>
-  <div class="FeedbackView">
+  <div class="FBView">
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
     <div class="savedEEVid">
@@ -14,46 +14,51 @@
       <button @click="timeCheck">
             <p>비디오 시간</p>
       </button>
-      {{axiosFBList}}
-      {{FBUserCount}}
     </div>
     <!-- 우단 -->
     <div class="FBRightArea">
-      <button type="button" class="btn btn-primary" :disabled="counting" @click="startCountdown">
-        <vue-countdown v-if="counting" :time="60000" @end="onCountdownEnd" v-slot="{ totalSeconds }">Fetch again {{ totalSeconds }} seconds later</vue-countdown>
-        <span v-else>Fetch Verification Code</span>
-      </button>
       <div class="FBButtonHeader">
+        <!-- 타이머 -->
+      <button type="button" class="btn btn-primary" :disabled="counting">
+        <vue-countdown v-if="counting" :time="5000" @end="onCountdownEnd" v-slot="{minutes, seconds}">{{minutes}}분 {{seconds}}초</vue-countdown>
+        <!-- <span v-else>Fetch Verification Code</span> -->
+      </button>
         <!-- 면접자 자소서 페이지 열기 버튼 -->
         <div class="CLOpen">
-          <button @click="openEECL">
+          <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-file-earmark-text"></i>
-          </button>
+          </Button>
+          <!-- <button @click="openEECL">
+            <i class="bi bi-file-earmark-text"></i>
+          </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div class="FBtoLBbtn user" v-show="userType === 'user'">
-          <button @click.prevent="FBtoLBConfirm(userType)">
+         <Button @click="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
+          <!-- <button @click="ERLeaveSessionFromFB">
             <i class="bi bi-x-lg"></i>
-          </button>
+          </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
-      <div v-show="userType === 'superUser'" class="FBtoLBbtn superUser">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
-            <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
+        <div v-show="userType === 'superUser'" class="FBtoLBbtn superUser">
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
+          <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
+              <i class="bi bi-x-lg"></i>
+          </button> -->
+        </div>
       </div>
 
       <!-- 피드백 구역 -->
       <feedback-area :videoInfo="videoInfo"></feedback-area>
 
-      <div class="FBButtonFooter">
+      <div @click="FBComplete" class="FBButtonFooter">
         <!-- 면접 종료 버튼(대기실로 이동) -->
-        <div class="FBCompleteBtn">
+        <Button icon="pi pi-check" class="p-button-rounded p-button-secondary" />
+        <!-- <div class="FBCompleteBtn">
           <button @click="FBComplete">
             <i class="bi bi-check-lg"></i>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -65,8 +70,7 @@ import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
 // 임현탁 나가기기능하면서 주석처리함
 // import { useRouter } from "vue-router";
-import { ref } from "vue";
-import { mapGetters, useStore } from 'vuex';
+import { mapGetters} from 'vuex';
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -94,6 +98,7 @@ export default {
       'myUserName',
       'myUserInfo',
       'studyRoomCL',
+      'userType',
 
       //기기
       "CameraSelected",
@@ -206,6 +211,9 @@ export default {
     });
 
   },
+  mounted(){
+    this.startCountdown()
+  },
   unmounted(){
     this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
     this.$store.commit('lbhModule/EMPTY_FB')
@@ -221,27 +229,40 @@ export default {
       this.counting = true;
     },
     onCountdownEnd() {
-      this.counting = false;
+      if (confirm("피드백을 이대로 제출하시겠습니까? 이후에 대기실로 이동합니다.")) {
+        //전체 피드백 리스트에 피드백 넣기
+        const myFBList = JSON.stringify(this.FBList)
+        this.session.signal({
+          data: myFBList,
+          to: [],
+          type: 'addAllFBList'
+        })
+        //면접관이 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+        const data = JSON.stringify(this.myUserInfo)
+        this.session.signal({
+          data: `${data}`,
+          to: [],
+          type: 'WRParticipantListUpdate'
+        })
+        this.$store.commit('lbhModule/EMPTY_EE')
+        this.$store.commit('lbhModule/EMPTY_ERS')
+        console.log('피드백실에서 이제 나감')
+        this.$router.push({name:'waiting-room'})
+      }
     },
-
 
     ERLeaveSessionFromFB() {
+      if(confirm('정말 피드백 수정 도중에 나가시겠습니까?\n작성한 피드백이 모두 삭제되고 로비로 이동합니다.')){
       this.session.signal({
-        data:`${this.myUserName}`,
+        data:`${this.myUserInfo}`,
         to: [],
-        type: 'ERLeaveSessionFromFB'
+        type: 'ERLeaveSession'
       })
 
-      // if (this.session) this.session.disconnect();
-      
-      // window.removeEventListener("beforeunload", this.ERLeaveSessionFromFB);
+      if (this.session) this.session.disconnect();
+      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     },
-
-    // async toWR() {
-    //   await this.$router.push({name:'waiting-room'})
-    //   this.$store.commit('lbhModule/SET_EE', [])
-    //   this.$store.commit('lbhModule/EMPTY_ERS')
-    // },
 
     openEECL() {
       this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
@@ -337,30 +358,15 @@ export default {
   },
   setup() {
     const videoInfo = {}; //해당 session의 면접자 영상 정보를 가져와야 함
-    const store = useStore();
-    const userType = ref("user");
-    function FBtoLBConfirm(userType) {
-      if (userType === "user") {
-        if (
-          confirm(
-            "정말 피드백 수정 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
-          )
-        ) {
-        store.dispatch('lbhModule/userLeaveSessionAxios')
-        }
-      } 
-    }
     return {
-      userType,
       videoInfo,
-      FBtoLBConfirm,
     };
   },
 };
 </script>
 
 <style scoped>
-.FeedbackView {
+.FBView {
   position: absolute;
   width: 90vw;
   aspect-ratio: 2/1;
@@ -387,13 +393,27 @@ export default {
 }
 
 .FBButtonHeader {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
+}
+
+.CLOpen{
+  margin-left: 30%
+}
+
+.FBView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.FBView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
 }
 
 /* 버튼 시작*/
-.CLOpen > button,
+/* .CLOpen > button,
 .FBtoLBbtn > button,
 .FBCompleteBtn > button {
   border: none;
@@ -444,7 +464,7 @@ export default {
   text-decoration: none;
   color: #555;
   background: #f5f5f5;
-}
+} */
 /* 버튼 끝*/
 
 .FBButtonFooter {
