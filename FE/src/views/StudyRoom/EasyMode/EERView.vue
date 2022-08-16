@@ -253,6 +253,7 @@ export default {
 
     //방장이 면접을 완료할 경우
     this.session.on('signal:finishInterview', () => {
+      this.warningCount =0;
       this.removeFilter();
       alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
@@ -383,7 +384,12 @@ export default {
     //----------------돌발 질문 끝-----------------------
     this.session.on("signal:EndInterviewByWarning", (event) => {
       console.log(event.data);
-      this.returnWaitingRoom();
+      this.session.signal({
+          data: '',
+          to: [],
+          type: 'finishInterview'
+        })
+        this.$store.dispatch('lbhModule/finishInterviewEERAxios')
       //대기실로 돌아가는 메소드 구현
     });
 
