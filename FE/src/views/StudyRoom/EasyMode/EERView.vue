@@ -128,6 +128,7 @@ export default {
       timeout: null, //타임아웃 저장용
       sirenIsShow:false,
       // isEE: false,
+      recognition : null,
     };
   },
   computed: {
@@ -207,6 +208,10 @@ export default {
 
     //일반 유저인 면접자가, 면접 도중에 나간 경우
     this.session.on("signal:EELeaveSessionFromEER", (e) => {
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);
       const data = JSON.stringify(this.myUserInfo)
       this.session.signal({
@@ -226,6 +231,10 @@ export default {
 
     //방장인 면접자가, 면접을 보는 도중에 나갈 경우
     this.session.on("signal:superEELeaveSession", (e) => {
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
       const pastSuperUserEmail = e.data.split(" ")[0];
       const currentSuperUserEmail = e.data.split(" ")[1];
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", pastSuperUserEmail);
@@ -262,6 +271,10 @@ export default {
     this.session.on('signal:finishInterview', () => {
       this.warningCount =0;
       this.removeFilter();
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
       alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
       const data = JSON.stringify(this.myUserInfo)
@@ -814,42 +827,45 @@ export default {
         });
     },
 
-    // Speech API
+// Speech API
     startRecognition() {
       let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      let recognition = SpeechRecognition? new SpeechRecognition() : false
-      recognition.interimResults = true;
-      recognition.lang = 'ko-KR';
-      recognition.continuous = false;
+      this.recognition = SpeechRecognition? new SpeechRecognition() : false
+      this.recognition.interimResults = true;
+      this.recognition.lang = 'ko-KR';
+      this.recognition.continuous = false;
     
-      recognition.start(); // 음성 인식 시작
+      this.recognition.start(); // 음성 인식 시작
       console.log("start speech recognition");
 
-      recognition.onresult = (e) => { // 음성 인식 결과 반환
+      this.recognition.onresult = (e) => { // 음성 인식 결과 반환
         for(let i = e.resultIndex; i < e.results.length; ++i){
           if(e.results[i].isFinal){ 
             let script = e.results[i][0].transcript;
             // console.log(script);
-            if(script.includes("빵")){
-              console.log("빵");
-              this.setImgFilterOn("bread");
-            }else if(script.includes("감자")){
-              console.log("감자");
-              this.setImgFilterOn("potato");
-            }else if(script.includes("나 안 해")){
-              console.log("대머리");
-              this.setImgFilterOn("bald");
-            }
+            if(this.isEE){
+              if(script.includes("빵")){
+                console.log("빵");
+                this.setImgFilterOn("bread");
+              }else if(script.includes("감자")){
+                console.log("감자");
+                this.setImgFilterOn("potato");
+              }else if(script.includes("나 안 해")){
+                console.log("대머리");
+                this.setImgFilterOn("bald");
+              }
+            } 
           }
         }
       }
 
-      recognition.onend = function(){ // 음성 인식이 끊겼을 때 
+      
+      this.recognition.onend = () => { // 음성 인식이 끊겼을 때 
         //recognition.stop();
-        recognition.start(); 
+        if(this.recognition) this.recognition.start(); 
       }     
 
-      recognition.onerror = function(e) {
+      this.recognition.onerror = (e) => { 
         console.log(e);
       }
     }
