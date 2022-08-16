@@ -118,7 +118,7 @@ export default {
     console.log(this.CLList)
     console.log('userinfo', this.$store.getters['rhtModule/UserList'])
     this.$store.dispatch('rhtModule/getCoverLetter')
-
+    this.$store.commit('lbhModule/START_ROOM_TIME')
     window.addEventListener('beforeunload', this.forceLeaveSession)
 
   },

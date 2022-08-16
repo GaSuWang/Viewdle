@@ -46,8 +46,8 @@ name: "GoogleLoginView",
 
     },
     async GoogleLoginSuccess(googleUser) {
-      // const BASE_URL = 'http://' + location.hostname + ':8081'
-      const BASE_URL = 'https://' + location.hostname
+      const BASE_URL = 'http://' + location.hostname + ':8081'
+      // const BASE_URL = 'https://' + location.hostname
       const profile = googleUser.getBasicProfile()
       // console.log('idToken: ', googleUser.getAuthResponse().id_token); // 실제 토큰
       // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
