@@ -40,8 +40,8 @@ export default {
     })
 
 
-    const BASE_URL = 'http://' + location.hostname + ':8081'
-    // const BASE_URL = 'https://' + location.hostname
+    // const BASE_URL = 'http://' + location.hostname + ':8081'
+    const BASE_URL = 'https://' + location.hostname
     function getEmailCode(credentials) {
         console.log("코드보내기야 안녕?")
         axios({

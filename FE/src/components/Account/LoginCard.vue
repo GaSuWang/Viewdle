@@ -56,8 +56,8 @@ export default {
     //   store.dispatch('rhtModule/login', credentials)
     //   router.push('/main')
     // }
-    const BASE_URL = 'http://' + location.hostname + ':8081'
-    // const BASE_URL = 'https://' + location.hostname
+    // const BASE_URL = 'http://' + location.hostname + ':8081'
+    const BASE_URL = 'https://' + location.hostname
     function login(credentials) {
 
       console.log("로그인아 안녕?")

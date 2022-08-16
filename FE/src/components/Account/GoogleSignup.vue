@@ -40,8 +40,8 @@ export default {
       "password": '',
       "password2": ''
     })
-    const BASE_URL = 'http://' + location.hostname + ':8081'
-// const BASE_URL = 'https://' + location.hostname
+    // const BASE_URL = 'http://' + location.hostname + ':8081'
+const BASE_URL = 'https://' + location.hostname
     function googlesignup(credentials) {
       /* 
       POST: 사용자 입력정보를 signup URL로 보내기
