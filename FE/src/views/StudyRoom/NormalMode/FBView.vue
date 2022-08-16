@@ -20,7 +20,7 @@
       <div class="FBButtonHeader">
         <!-- 타이머 -->
       <button type="button" class="btn btn-primary" :disabled="counting">
-        <vue-countdown v-if="counting" :time="5000" @end="onCountdownEnd" v-slot="{minutes, seconds}">{{minutes}}분 {{seconds}}초</vue-countdown>
+        <vue-countdown v-if="counting" :time="300000" @end="onCountdownEnd" v-slot="{minutes, seconds}">{{minutes}}분 {{seconds}}초</vue-countdown>
         <!-- <span v-else>Fetch Verification Code</span> -->
       </button>
         <!-- 면접자 자소서 페이지 열기 버튼 -->
@@ -74,7 +74,7 @@ import { mapGetters} from 'vuex';
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+const OPENVIDU_SERVER_URL = "https://" + location.hostname;
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
