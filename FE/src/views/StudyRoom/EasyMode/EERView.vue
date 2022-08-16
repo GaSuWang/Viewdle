@@ -433,7 +433,7 @@ export default {
         offsetX = "-0.2F";
         offsetY = "-0.45F";
         width = "1.4F";
-        height = "1.9";;
+        height = "1.9";
       }else if (data == "bread"){
         img = this.filters[0].imgUrl.toString(); // bread img
         offsetX = "-0.35F";
