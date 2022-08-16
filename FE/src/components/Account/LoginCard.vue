@@ -2,11 +2,8 @@
 <template>
   <div class="loginview">     
     <div class="login">
-      <h1>Log In</h1>
-      <p>구글 로그인 해</p>
+      <div class="d-flex"><h1 class="frontVeiwdle">뷰들</h1><h1 class="backVeiwdle">뷰들</h1></div>
       <!-- <button onclick="GoogleLoginBtn()"><i class="fab fa-google"></i></button> -->
-      <GoogleLogin/>
-      <p>or</p>
       <!-- 이메일 인풋 -->
       <form @submit.prevent="login(credentials)">
         <div class="loginid">
@@ -17,13 +14,22 @@
         <div class="loginpw">
           <input type="password" v-model="credentials.password" placeholder="Password" />
         </div>
-        <button class="loginsubmit btn btn-primary btn-lg">로그인</button>
+        <button class="loginsubmit btn btn-primary btn-lg d-flex justify-content-center align-items-center">로그인</button>
       </form>
       <!-- Checkbox -->
-      <div class="login_etc">
-        <router-link to="/pw">비번 찾기</router-link>
-        <router-link to="/signup">회원가입</router-link>
+      <div class="login_etc d-flex flex-column">
+        <div class="d-flex justify-content-center mt-3 mb-2"><p class="mt-0">SNS 간편 로그인</p> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <GoogleLogin/>
+        </div>
+
+        <div class="d-flex justify-content-center"><p class="m-0">계정이 없으신가요?</p> <span>&nbsp;&nbsp;</span>
+            <div class="userButtonBox"><router-link to="/signup">회원가입</router-link></div>
+        </div>
+
+        <div><span>&nbsp;&nbsp;</span></div>
+        <div class="userButtonBox"><router-link to="/pw">비밀번호 찾기</router-link></div>
       </div>
+
     </div>
   </div>
 </template>
@@ -96,6 +102,34 @@ export default {
 </script>
 
 <style>
+.frontVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #0f70ed;
+}
+.backVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #fcab1f;
+}
+a{
+  text-decoration: none;
+  color : black;
+}
+a:hover{
+  text-decoration: none;
+  color : black;
+}
+.userButtonBox a{
+  color:#FEAA00
+}
+.userButtonBox a:hover{
+  color:#ffcc74
+}
+
+p{
+  margin: auto;
+  padding: ;
+}
+
 .loginview{
   height: 70%;
   display: flex;
@@ -130,45 +164,51 @@ export default {
 }
 
 .loginid{
-  margin-top: 20px;
+  margin-top: 10px;
   width: 100%;
 }
 .loginid input{
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: #89B2E8;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #0f70ed;
   outline: none;
 }
 
 .loginpw{
-  margin-top: 20px;
+  margin-top: 0px;
   width: 100%;
 }
 .loginpw input{
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: #89B2E8;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #0f70ed;
   outline: none;
   }
 
   .loginsubmit{
-    margin-top: 50px;
-    width: 80%;
+    margin-top: 20px;
     width: 100%;
-    height: 50px;
+    height: 3vw;
     border: 0;
     outline: none;
-    border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    border-radius: 10px;
+    background: #fcab1f;
     color: white;
+    font-weight: bold;
     font-size: 1.2em;
     letter-spacing: 2px;
+    box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  }
+  .loginsubmit:hover{
+    background: #ffcc74;
 
   }
   .login_etc {
@@ -181,7 +221,13 @@ export default {
   font-weight: bold;
   text-decoration: none;
 }
-  
+
+@font-face {
+    font-family: 'yg-jalnan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 </style>
 
 
