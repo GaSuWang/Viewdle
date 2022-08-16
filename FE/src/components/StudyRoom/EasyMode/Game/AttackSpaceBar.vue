@@ -52,7 +52,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .background {
   background-color: #47A0FF;
   width: 100vw;
@@ -66,7 +66,7 @@ export default {
   height: 100vh;
   position: absolute;
   top: var(--top);
-  background: rgb(209, 209, 209);
+  background: #b5b8c0;
   transition-duration: 0.1s;
   animation: waterover 1s;
 }

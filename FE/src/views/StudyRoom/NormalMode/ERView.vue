@@ -138,9 +138,12 @@ export default {
 // this.nextSuperUser = ''
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
-      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     })
+
 
     // 영상 저장에 필요한 비디오 타임 받음
     this.session.on('signal:startVideoTime', (e)=>{
@@ -197,6 +200,13 @@ export default {
     this.session.on('signal:EELeaveSession', (e)=>{
       this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', e.data)
       this.$store.commit('lbhModule/EMPTY_FB')
+      //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
+      const data = JSON.stringify(this.myUserInfo)
+      this.session.signal({
+        data: `${data}`,
+        to: [],
+        type: 'WRParticipantListUpdate'
+      })
       alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
       this.toWR()
     })
@@ -207,15 +217,6 @@ export default {
     })
   },
   methods: {
-    // isAlone(){
-    //   if(this.currentUserList.length === 1){
-    //     console.log('얘 혼자 남아서 대기실로 보냄')
-    //     alert('현재 방에 혼자 남으셨습니다.\n대기실로 이동합니다.')
-    //     this.$store.commit('lbhModule/SET_EE', [])
-    //     this.$store.commit('lbhModule/EMPTY_ERS')
-    //     this.$router.push('/waiting-room')
-    //   }
-    // },
     closeAPM(){
       this.nextSuperUser = ''
     },
@@ -231,27 +232,16 @@ export default {
 
       if (this.session) this.session.disconnect();
 
-      // this.$store.commit('lbhModule/SET_SESSION', undefined)
-      // this.$store.commit('lbhModule/SET_OV', undefined)
-      // this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-      // this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-      // this.$store.commit('lbhModule/SET_SUPERUSER', {})
-      // this.$store.commit('lbhModule/EMPTY_FB')
-      
-      // window.removeEventListener("beforeunload", this.ERLeaveSession);
-      // this.$router.push('/main')
       this.$store.dispatch('lbhModule/userLeaveSessionAxios')
       }
     },
-    async toFB() {
-      await this.$router.push({name:'fb-room'})
-      // this.$store.commit('lbhModule/EMPTY_EE') //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
-      // this.$store.commit('lbhModule/EMPTY_ERS')
+    toFB() {
+      this.$router.push({name:'fb-room'})
+
     },
-    async toWR() {
-      await this.$router.push({name:'waiting-room'})
-      // this.$store.commit('lbhModule/EMPTY_EE') //방장이 면접 종료?완료 버튼을 눌러 하나의 면접을 끝내면, 일단 EE를 empty array로 만듬
-      // this.$store.commit('lbhModule/EMPTY_ERS')
+    toWR() {
+      this.$router.push({name:'waiting-room'})
+
     },
     openEECL() {
       this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)

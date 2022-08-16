@@ -1,5 +1,5 @@
 <template>
-<div class="userVideo" v-if="streamManager">
+<div class="userVideo" v-if="streamManager && showVid">
 	<ov-video :stream-manager="streamManager"/>
 	<div class="userInfo">{{ clientName }}</div>
 </div>
@@ -20,21 +20,24 @@ export default {
 		...mapGetters('lbhModule',[
 			'WRParticipantList',
 			'session',
+			'myUserEmail',
 		]),
 		clientName() {
 			const { clientName } = this.getConnectionData();
 			return clientName;
 		},
 		showVid() {
-			if(this.$router.currentRoute.value.name === 'waiting-room'){
-				if(this.videoStatus===true){return true
-				} else {return false}
-			} else {return true}
+			const inWR = this.WRParticipantList.filter(p => p.myUserEmail === this.myUserEmail)
+    // if(state.currentUserList.length) {
+    //   return state.currentUserList.filter(p => p.myUserEmail !== state.myUserEmail)
+    // } else return []
+			if(this.$router.currentRoute.value.name === 'waiting-room' && (inWR === [])){
+				return false
+			} else return true
 		},
 	},
 	mounted(){
 		console.log()
-		this.inWR()
 		console.log('uservideo mounted',this.session, this.streamManager)
 
 		console.log('지금 어디있지?', this.$router.currentRoute.value.name)
@@ -52,16 +55,16 @@ export default {
 			const { connection } = this.streamManager?.stream;
 			return JSON.parse(connection.data);
 		},
-		async inWR() {
-			await this.session.on('signal:publisherOn')
-			if(this.streamManager){
-				const vidUserEmail = JSON.parse(this.streamManager.stream.connection.data).clientEmail
-				if(this.WRParticipantList.filter(e=> e.name === vidUserEmail).length === 0){
-					this.videoStatus = false
-				} else { 
-					this.videoStatus = true}
-			} else {this.videoStatus = false}
-		},
+		// async inWR() {
+		// 	await this.session.on('signal:publisherOn')
+		// 	if(this.streamManager){
+		// 		const vidUserEmail = JSON.parse(this.streamManager.stream.connection.data).clientEmail
+		// 		if(this.WRParticipantList.filter(e=> e.name === vidUserEmail).length === 0){
+		// 			this.videoStatus = false
+		// 		} else { 
+		// 			this.videoStatus = true}
+		// 	} else {this.videoStatus = false}
+		// },
 	},
 };
 </script>

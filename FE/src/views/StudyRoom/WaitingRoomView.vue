@@ -106,11 +106,8 @@
 </template>
 
 <script>
-// 여기서 영상 띄우는 법
-// npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET -e OPENVIDU_RECORDING=true -e OPENVIDU_RECORDING_PUBLIC_ACCESS=true -e OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings -v /var/run/docker.sock:/var/run/docker.sock -v /opt/openvidu/recordings:/opt/openvidu/recordings openvidu/openvidu-server-kms:2.22.0
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
-// 단 도커 설치되어 있어야 함
+// docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET -e OPENVIDU_RECORDING=true -e OPENVIDU_RECORDING_PUBLIC_ACCESS=true -e OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings -v /var/run/docker.sock:/var/run/docker.sock -v /opt/openvidu/recordings:/opt/openvidu/recordings openvidu/openvidu-server-kms:2.22.0
+
 
 import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 // import { useRouter } from "vue-router";
@@ -121,6 +118,7 @@ import UserVideo from "@/components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const OPENVIDU_SERVER_URL = "https://" + location.hostname;
+// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ':4443';
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
@@ -158,12 +156,14 @@ export default {
       this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", e.data);
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);  
     })
-    //방장이 방을 폭파시킬 때
-    this.session.on('signal:studyDestroy', ()=> {
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-        alert('방장이 스터디를 폭파했습니다.\n로비로 돌아갑니다.')
-        this.$router.push('/main')
+      }
     })
+
     console.log('대기실들어옴',this.currentUserList,this.myUserInfo,this.roomSeq)
 
     this.session.on('signal:startVideoTime', (e)=>{
@@ -453,7 +453,8 @@ export default {
         //대기실 유저 목록 지우기
         console.log('면접 시작! 내 이름과 이메일은', this.myUserName, this.myUserEmail)
         this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
-
+        this.$store.commit('lbhModule/SET_ISEE', false)
+        this.$store.commit('lbhModule/SET_ISER', false)
         //만약에 내가 면접자라면
         if(e.data === this.myUserEmail){ 
           console.log('startinterview as ee')
@@ -505,6 +506,8 @@ export default {
       this.session.on("signal:startEZInterview", (e) => {
         //대기실 유저 목록 지우기
         this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
+        this.$store.commit('lbhModule/SET_ISEE', false)
+        this.$store.commit('lbhModule/SET_ISER', false)
         //만약에 내가 면접자라면
         if (e.data === this.myUserEmail) {
           console.log("startEZInterview as EE");

@@ -3,6 +3,7 @@ package com.ssafy.api.controller;
 import com.ssafy.api.request.*;
 import com.ssafy.api.response.RoomListRes;
 import com.ssafy.api.response.RoomRegisterPostRes;
+import com.ssafy.api.response.filterListRes;
 import com.ssafy.api.service.*;
 import com.ssafy.common.auth.VudleUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
@@ -292,6 +293,18 @@ public class StudyroomController {
     public ResponseEntity<? extends List<RoomListRes>> searchRooms(@RequestParam String keyword){
         return ResponseEntity.status(200).body(studyroomService.searchRoomList(keyword));
     }
+
+    @GetMapping("/filter")
+    @ApiOperation(value = "필터 목록 반환", notes = "플레이 모드에서 사용되는 필터 목록을 반환한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+    })
+    public ResponseEntity<? extends List<filterListRes>> getFilter(){
+        return ResponseEntity.status(200).body(commonService.getFilter());
+    }
+
+
+
     // 추후 필요하면 다시 구현 => join 필요
 //    @GetMapping("/{roomSeq}")
 //    @ApiOperation(value = "참여자 목록", notes = "<strong>스터디 룸 번호</strong>로 현재 스터디 룸의 참여자 목록을 반환한다.")

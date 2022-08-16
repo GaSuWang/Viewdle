@@ -10,7 +10,7 @@
       </li>
     </ul>
     <!-- 피드백 없을 때 보여줄 문구 -->
-    <span v-if="FBList == []">아직 피드백이 존재하지 않습니다.</span>
+    <span v-if="FBListEmpty">아직 피드백이 존재하지 않습니다.</span>
 
     <!-- 피드백 굿/뱃 버튼 -->
     <div class="FBBtncontainer inputOn" v-if="feedbackType">
@@ -21,12 +21,12 @@
         @keypress.enter="saveFB"
         placeholder="피드백을 등록하려면 엔터를 누르세요."/>
       <div class="FBGoodBtn" v-if="feedbackType==='G'">
-        <button @click="createFB('G')">
+        <button @click="saveFB">
           <i class="bi bi-hand-thumbs-up-fill"></i>
         </button>
       </div>
       <div class="FBBadBtn" v-else-if="feedbackType==='B'">
-        <button @click="createFB('B')">
+        <button @click="saveFB">
           <i class="bi bi-hand-thumbs-down-fill"></i>
         </button>
       </div>
@@ -71,7 +71,10 @@ export default {
     ...mapGetters('lbhModule',[
       'FBList',
       'startVideoTime',
-    ])
+    ]),
+    FBListEmpty(){
+      return !!(this.FBList === [])
+    }
   },
   methods:{
     createFB(gb){
