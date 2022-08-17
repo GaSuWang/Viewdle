@@ -51,7 +51,7 @@
             <!-- <canvas id="canvas" ref="canvas" ></canvas> -->
           </div>
           <div class="replayfeedback">
-              <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in replayDetail.feedbackList" :key="item.seq">
+              <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in feedbackList" :key="item.seq">
               {{item.feedbackContent}}
               <button :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" @click="moveTo(item.timeline)">
                 <i :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" class="fa-solid fa-circle-play"></i>
@@ -89,6 +89,12 @@ export default {
     checkVideoTime(){
       return this.$store.getters['lbhModule/videoTime']
     },
+    feedbackList(){
+      function unique(data, key){
+        return [ ...new Map(data.map(x => [key(x), x])).values()]
+      }
+      return unique(replayDetail.feedbackList, e => e.timeline)
+    }
   },
   watch:{
     checkVideoTime(time){
