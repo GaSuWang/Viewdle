@@ -67,7 +67,7 @@
       </div>
     </div>
     <!-- <div v-if="this.isER"> -->
-      <div class="EERBottomArea">
+      <div v-if="this.isER" class="EERBottomArea">
         <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
         <div v-if="OXBtnState">
           <button @click="selectOBtn">O</button>
@@ -117,8 +117,8 @@
             </button> -->
         </div>
       </div>
-    </div>
-  <!-- </div> -->
+    <!-- </div> -->
+  </div>
 </template>
 
 <script>
