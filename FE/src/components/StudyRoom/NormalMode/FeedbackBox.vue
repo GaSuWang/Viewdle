@@ -8,7 +8,7 @@
       v-model="feedbackContent"
       @keypress.enter="updateFB"/>
     <span v-if="!updateClick" @click="openUpdateFB">{{ fb.feedbackContent }}</span>
-    <div class="FBBtnContainer">
+    <div class="FBBtnContainer d-flex justify-content-end">
       <button :class="[fb.feedbackType === 'G' ? 'good' : 'bad']" class="FBBoxBtn" @click="deleteFB">
         <i class="bi bi-trash3"></i>
       </button>
@@ -98,13 +98,13 @@ export default {
 .good {
   /* background-color: #47a0ff; */
   background-color: #89B2E8;
-  border: 1px #0f70ed solid;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
 
 .bad {
   /* background-color: #ffe6b5; */
   background-color: #ffcc74;
-  border: 1px #fcab1f solid
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
 
 .FBBoxBtn {

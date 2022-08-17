@@ -19,11 +19,11 @@
         <div class="MainTop2">
           <div class="MainTop2item">
           <div class="dropdown">
-            <button class="btn MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               필터
             </button>
             
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" style="padding-left:15px">
               <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="Y">공개방</li>
               <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="N">비공개방</li>
             </ul>
@@ -32,10 +32,10 @@
           <!-- 정렬 -->
           <div class="MainTop2item">
           <div class="dropdown">
-            <button class="btn MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               정렬
             </button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" style="padding-left:15px">
               <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="ASC">최신순</li> 
               <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="DESC">오래된순</li>
             </ul>
