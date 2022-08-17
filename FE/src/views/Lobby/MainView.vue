@@ -9,7 +9,7 @@
           <form @submit.prevent="searchStudyroom(credentialsTosearch)">
           <div class="Searchbar">
               <div class="input-group">
-                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="검색" aria-label="Search" aria-describedby="search-addon" />
                 <button class="btn mainsearchbutton">search</button>
               </div>
           </div>
@@ -392,7 +392,7 @@ input[type=password]:placeholder {
   margin: 0 20px;
 }
 .MainTop2itembutton{
-  background-color: rgb(230,198,132);
+  background-color: #FEAA00;
   color: white;
 }
 .MainBody{
@@ -415,7 +415,7 @@ input[type=password]:placeholder {
   margin-left:30px;
 }
 .mainsearchbutton{
-  background-color:rgb(153, 172, 230);
+  background-color:#47A0FF;
   color:white;
 }
 
