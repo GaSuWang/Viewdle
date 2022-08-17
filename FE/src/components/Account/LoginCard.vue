@@ -67,7 +67,6 @@ export default {
     // const BASE_URL = 'https://' + location.hostname
     function login(credentials) {
 
-      console.log("로그인아 안녕?")
       axios({
         // url: BASE_URL + '/api/v1/users/login', 
         url: BASE_URL + '/api/v1/users/login',  
@@ -75,10 +74,7 @@ export default {
         data: credentials
       })
         .then(res => {
-          console.log("해윙")
-          console.log(res)
           const token = res.data.accessToken
-          console.log(token)
           store.dispatch('rhtModule/saveToken', token)
           store.dispatch('rhtModule/fetchCurrentUser')
           store.dispatch('rhtModule/fetchHistories')

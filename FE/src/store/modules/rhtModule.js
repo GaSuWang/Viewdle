@@ -163,7 +163,6 @@ const actions= {
 
     // 로그아웃
     logout({ dispatch }) {
-      console.log("로그아웃아 안녕?")
       dispatch('removeToken')
       router.push('/main')
       alert('성공적으로 logout!')
@@ -182,14 +181,12 @@ const actions= {
           .then(res => {
             commit('SET_USER_LIST', res.data)
             //이병헌 시작
-            console.log('모듈....', res.data)
             commit("lbhModule/GET_USER_INFO", res.data, {root:true})
             //이병헌 끝
             })
           .catch(err => {
             if (err.response.status === 401) {
               dispatch('removeToken')
-              console.log('여기가 잘못된거야 바보아')
               useRouter.push({ name: 'Account' })
             }
           })
@@ -207,7 +204,6 @@ const actions= {
           .catch(err => {
             if (err.response.status === 401) {
               dispatch('removeToken')
-              console.log('여기가 잘못된거야 바보아')
               useRouter.push({ name: 'Account' })
             }
           })
@@ -216,7 +212,6 @@ const actions= {
 
     // 회원삭제를 위한 비번 확인
     confirmPW({commit, getters}, confirmPW) {
-      console.log("비밀번호 확인아 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/users/check/password', // 비밀번호 컨펌 api
         url: BASE_URL + '/api/v1/users/check/password', 
@@ -238,7 +233,6 @@ const actions= {
 
     // 회원삭제를 위한 비번 확인
     confirmEmail(Email) {
-      console.log("비밀번호 확인아 안녕?")
       axios({
         // url:BASE_URL + `/api/v1/users/check/${Email}`, // 비밀번호 컨펌 api 
         url: BASE_URL + `/api/v1/users/check/${Email}`,
@@ -256,7 +250,6 @@ const actions= {
 
     //비번수정을 위한 비번확인 
     confirmPWforEdit({commit, getters}, confirmPW) {
-      console.log("비밀번호 확인아 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         url: BASE_URL + '/api/v1/users/check/password',
@@ -278,7 +271,6 @@ const actions= {
 
     // 회원탈퇴
     deleteID({getters, commit}) {
-      console.log("회원탈퇴야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/users', // 회원탈퇴 api 
         url: BASE_URL + '/api/v1/users',
@@ -301,7 +293,6 @@ const actions= {
 
     // 비밀번호 수정
     changePW({commit, getters}, changepassword) {
-      console.log("비번수정아 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/users/password', // 비번수정 api 
         url: BASE_URL + '/api/v1/users/password',
@@ -328,7 +319,6 @@ const actions= {
 
     // 자소서 만들기
     createCoverLetter({dispatch, getters}, credentials) {
-      console.log("자소서만들기야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/coverletters', // 비번수정 api 
         url: BASE_URL + '/api/v1/coverletters',
@@ -348,7 +338,6 @@ const actions= {
 
     //자소서 정보 가져오기
     getCoverLetter({commit, getters}) {
-      console.log("자소서가져오기야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/coverletters', // 비번수정 api 
         url: BASE_URL + '/api/v1/coverletters',
@@ -367,7 +356,6 @@ const actions= {
 
     //자소서 상세보기
     detailCoverLetter({commit, getters}, credentialsTodelete) {
-      console.log("자소서상세보기야 안녕?")
       axios({
         // url:BASE_URL + `/api/v1/coverletters/${credentialsTodelete.coverLetterSeq}`, // 비번수정 api 
         url: BASE_URL + `/api/v1/coverletters/${credentialsTodelete}`,
@@ -403,7 +391,6 @@ const actions= {
 
     //자소서 삭제하기
     deleteCoverLetter({dispatch, getters}, credentialsTodelete) {
-      console.log("자소서 삭제하기야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/coverletters', // 비번수정 api 
         url: BASE_URL + '/api/v1/coverletters',
@@ -422,7 +409,6 @@ const actions= {
     },
     //자소서 수정하기
     updateCoverLetter({dispatch, getters}, CoverLetterDetail) {
-      console.log("자소서수정하기야 안녕? 여기까진 괜찮네?")
       axios({
         // url:BASE_URL + '/api/v1/coverletters', // 비번수정 api 
         url: BASE_URL + '/api/v1/coverletters',
@@ -436,16 +422,15 @@ const actions= {
       })
       .then(() => {
         dispatch('getCoverLetter')
-        alert('자소서가 수정되었습니다 됐다^^')
+        alert('자소서가 수정되었습니다.')
       })
       .catch(err => {
         console.error(err.response)
-        alert('실패 ㅅㅂ....')
+        alert('실패')
       })
     },
     //스터디룸 정보 얻어오기
     getStudyRoom({commit}) {
-      console.log("스터디룸가져오기야야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/studyroom', // 비번수정 api 
         url: BASE_URL + '/api/v1/studyroom',
@@ -463,8 +448,6 @@ const actions= {
 
     /// 이병헌 시작(바로 아래 줄에는 commit넣어줌)
     createStudyroom({commit, dispatch, getters},credentials) {
-      console.log("스터디룸만들기야 안녕?")
-      console.log(credentials)
       axios({
         // url:BASE_URL + '/api/v1/studyroom', // 비번수정 api 
         url: BASE_URL + '/api/v1/studyroom',
@@ -473,8 +456,6 @@ const actions= {
         headers: {Authorization: getters.authHeader }
       })
       .then((res) => {
-        console.log(res)
-        console.log(res.data.roomSeq)
         dispatch('getStudyRoom')
         alert('스터디룸이 생성되었습니다.')
         router.push({
@@ -503,7 +484,6 @@ const actions= {
     // 일반방스터디룸 입장
     /// 이병헌 시작(바로 아래 줄에는 commit, state넣어줌)
     enterNormalStudyroom({commit, state, getters}, credentials) {
-      console.log("스터디룸입장 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/studyroom/enter', // 비번수정 api 
         url: BASE_URL + '/api/v1/studyroom/enter',
@@ -516,8 +496,6 @@ const actions= {
         headers: {Authorization: getters.authHeader }
       })
       .then((res) => {
-        console.log(res)
-        console.log(credentials)
         alert('스터디룸에 입장되었습니다.')
         /// 이병헌 시작
         router.push({
@@ -539,7 +517,6 @@ const actions= {
           roomTitle: roomTitle,
           isSuperUser: false,
         }
-        console.log('room data from rhtModule', data)
         commit("lbhModule/GET_ROOM_INFO", data, {root:true})
         /// 이병헌 끝 
       })
@@ -551,8 +528,6 @@ const actions= {
     // 비번방스터디룸 입장
     //이병헌 시작
     enterStudyroom({state, commit, getters}, credentials) {
-      console.log("스터디룸입장 안녕?")
-      console.log(getters.SecretCode)
       axios({
         // url:BASE_URL + '/api/v1/studyroom/enter', // 비번수정 api 
         url: BASE_URL + '/api/v1/studyroom/enter',
@@ -564,7 +539,6 @@ const actions= {
         headers: {Authorization: getters.authHeader }
       })
       .then((res) => {
-        console.log(res)
         alert('스터디룸에 입장되었습니다.')
         router.push({
           name: 'setting-room', 
@@ -573,7 +547,6 @@ const actions= {
           //   moderator : false
           // }
         })
-        console.log('roomSeq',getters.SecretCode, credentials.roomSeq, parseInt(credentials.roomSeq) )
         function findRoom(e){
           return e.roomSeq ===  getters.SecretCode
         }
@@ -585,7 +558,6 @@ const actions= {
           roomTitle: roomTitle,
           isSuperUser: false,
         }
-        console.log('room data from rhtModule', data)
         commit("lbhModule/GET_ROOM_INFO", data, {root:true})
         //이병헌 끝
       })
@@ -652,8 +624,6 @@ const actions= {
     },
     // 영상 지우기
     deleteReplay({getters, dispatch}, credentialsTodelete) {
-      console.log("리플레이지우기야 안녕?")
-      console.log(credentialsTodelete)
       axios({
         // url:BASE_URL + `/api/v1/video/${credentialsTodelete}`, // 비번수정 api 
         url: BASE_URL + `/api/v1/video/${credentialsTodelete}`,
@@ -674,8 +644,6 @@ const actions= {
     // 영상 가져오기
     detailReplay({commit, getters}, credentialsTodetail) {
     // detailReplay({commit}, credentialsTodetail) {
-      console.log("리플레이상세보기야 안녕?")
-      console.log(credentialsTodetail)
       axios({
         // url:BASE_URL + `/api/v1/video/${credentialsTodetail.replaySeq}`, // 비번수정 api 
         url: BASE_URL + `/api/v1/video/${credentialsTodetail}`,
@@ -694,7 +662,6 @@ const actions= {
 
     // 뱃지 가져오기
     getBadge({commit, getters}) {
-      console.log("뱃지가져오기야야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/users/badges', // 비번수정 api
         url: BASE_URL + `/api/v1/users/badges`, 
@@ -703,7 +670,6 @@ const actions= {
       })
       .then(res => {
         commit('SET_BADGE_LIST', res.data)
-        console.log('뱃지정보를 가져왔습니다.')
       }
       )
       .catch(err => {
@@ -713,7 +679,6 @@ const actions= {
     },
     // 스터디룸 서치
     searchStudyroom({commit}, credentialsTosearch) {
-      console.log("서치기능아 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/studyroom/search', // 비번수정 api
         url: BASE_URL + `/api/v1/studyroom/search`  ,
@@ -722,7 +687,6 @@ const actions= {
       })
       .then(res => {
         commit('SET_STUDYROOM_LIST', res.data)
-        console.log('서치했어용')
       }
       )
       .catch(err => {
@@ -732,7 +696,6 @@ const actions= {
     },
     //스터디룸 필터
     filterStudyRoom({commit}, credentialsToFilter) {
-      console.log("스터디룸가져오기야야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/studyroom', // 비번수정 api 
         url: BASE_URL + `/api/v1/studyroom`, 
@@ -742,7 +705,6 @@ const actions= {
         }
       })
       .then(res => {
-        console.log("너냐?")
         commit('SET_STUDYROOM_LIST', res.data)
       }
       )
@@ -753,7 +715,6 @@ const actions= {
     },
     //스터디룸 정렬
     sortStudyRoom({commit}, credentialsToFilter) {
-      console.log("스터디룸가져오기야야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/studyroom', // 비번수정 api
         url: BASE_URL + `/api/v1/studyroom`,  
@@ -774,7 +735,6 @@ const actions= {
     //뱃지 설정
     setBadge
     ({dispatch, getters}, credentialsToset) {
-      console.log("메인뱃지설정아 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/users/badge', // 비번수정 api 
         url: BASE_URL + `/api/v1/users/badge`, 
@@ -793,7 +753,6 @@ const actions= {
       })
     },
     profileImg ({ getters}, formdata) {
-      console.log("프로필 이미지야 안녕?")
       axios({
         // url:BASE_URL + '/api/v1/users/profile', // 비번수정 api 
         url: BASE_URL + `/api/v1/users/profile`, 

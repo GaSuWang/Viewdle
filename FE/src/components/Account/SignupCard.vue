@@ -78,7 +78,6 @@ export default {
         실패하면
           에러 메시지 표시
       */
-      console.log("회원가입아 안녕?")
       axios({
         // url: BASE_URL + '/api/v1/users', //회원가입 api로
         url: BASE_URL + '/api/v1/users',
@@ -95,7 +94,6 @@ export default {
     }
 
     function checkEmail(credentials) {
-    console.log("중복확인아 안녕?")
       axios({
         // url: BASE_URL + '/api/v1/users/check/duplicate',  // 이메일확인 api
         url: BASE_URL + '/api/v1/users/check/duplicate',
@@ -110,7 +108,6 @@ export default {
           }
         })
         .catch(err => {
-          console.log(credentials)
           console.error(err.response)
           alert('이미 가입된 이메일입니다.')
         })

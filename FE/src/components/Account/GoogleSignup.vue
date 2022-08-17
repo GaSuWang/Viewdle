@@ -52,7 +52,6 @@ export default {
         실패하면
           에러 메시지 표시
       */
-      console.log("회원가입아 안녕?")
       axios({
         // url: BASE_URL + '/api/v1/social/google/signup', //회원가입 api로
         url: BASE_URL + '/api/v1/social/google/signup',
@@ -73,7 +72,6 @@ export default {
         })
         .catch(err => {
           console.error(err)
-          console.log(credentials)
           router.push('/main')
         })
     }

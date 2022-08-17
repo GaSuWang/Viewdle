@@ -27,15 +27,12 @@ export default {
     onChange (event) {
           this.profile = event.target.files[0]
           this.changing = true
-          console.log(this.$store.getters['rhtModule/authHeader'])
         },
         onUpload() {
         const BASE_URL = 'http://' + location.hostname + ':8081'
         // const BASE_URL = 'https://' + location.hostname
           const formData = new FormData()
           formData.append('profile', this.profile, this.profile.name)
-          console.log(this.profile)
-          console.log(this.$store.getters['rhtModule/authHeader'])
         axios({
             url: BASE_URL + '/api/v1/users/profile', //회원가입 api로
             method: 'post',
