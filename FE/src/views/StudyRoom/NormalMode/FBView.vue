@@ -11,15 +11,15 @@
       <video ref="video" width="640" height="280" controls :src="videoSrc">
           <!-- <source  type="video/mp4"> -->
       </video>
-      <button @click="timeCheck">
+      <!-- <button @click="timeCheck">
             <p>비디오 시간</p>
-      </button>
+      </button> -->
     </div>
     <!-- 우단 -->
     <div class="FBRightArea">
       <div class="FBButtonHeader">
         <!-- 타이머 -->
-      <button type="button" class="btn btn-primary" :disabled="counting">
+      <button type="button" class="btn" :disabled="counting">
         <vue-countdown v-if="counting" :time="300000" @end="onCountdownEnd" v-slot="{minutes, seconds}">{{minutes}}분 {{seconds}}초</vue-countdown>
         <!-- <span v-else>Fetch Verification Code</span> -->
       </button>
@@ -74,7 +74,8 @@ import { mapGetters} from 'vuex';
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname;
+// const OPENVIDU_SERVER_URL = "https://" + location.hostname;
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ':4443';
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 export default {
   name: "FeedbackView",
@@ -148,9 +149,12 @@ export default {
     
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
-      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     })
+
 
       //현재 피드백실에 있는 인원 설정
       this.$store.commit('lbhModule/SET_FB_USER_COUNT')
@@ -382,6 +386,19 @@ export default {
   justify-content: space-between;
 }
 
+.savedEEVid{
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#app > div > div.FBView > div.savedEEVid > video{
+  width: 90%;
+  height: 90%;
+}
+
 .FBRightArea {
   display: flex;
   flex-direction: column;
@@ -410,6 +427,12 @@ export default {
 .FBView button:enabled:hover{
   background-color: #787a89;
   border: #787a89
+}
+
+#app > div > div.FBView > div.FBRightArea > div.FBButtonHeader > button{
+  background-color: #a7a9b9;
+  border: #a7a9b9;
+  color: white;
 }
 
 /* 버튼 시작*/

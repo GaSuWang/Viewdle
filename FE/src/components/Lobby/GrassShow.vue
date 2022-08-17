@@ -235,7 +235,7 @@ th {
 .calendardate{
     width:30px;
     height:30px;
-    background-color: aqua;
+    background-color: rgb(153, 172, 230);;
     border-radius: 70%;
     overflow: hidden;
 }

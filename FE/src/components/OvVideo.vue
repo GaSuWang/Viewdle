@@ -5,7 +5,6 @@
 <script>
 export default {
 	name: 'OvVideo',
-
 	props: {
 		streamManager: Object,
 	},
@@ -22,7 +21,8 @@ export default {
 <style scoped>
 video{
 	width: 100%;
-	border-radius: 20px;
+	height: 100%;
+	/* border-radius: 20px; */
 	border: 1px rgb(231, 231, 231) solid;
 }
 </style>

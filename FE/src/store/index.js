@@ -1,7 +1,7 @@
 import { createLogger, createStore } from "vuex";
 import lbhModule from "./modules/lbhModule";
 import rhtModule from "./modules/rhtModule";
-import createPersistedState from 'vuex-persistedstate'
+// import createPersistedState from 'vuex-persistedstate'
 // import rhtModule from "@/store/modules/rhtModule";
 
 // // state는 기존대로state.moduleName.stateName으로호출
@@ -12,7 +12,7 @@ import createPersistedState from 'vuex-persistedstate'
 
 export default createStore({
   plugins: [createLogger(), 
-    //createPersistedState()
+    // createPersistedState({paths: ['rhtModule']})
   ], //vuex store의 모든 행위를 console log해줌
   modules: { lbhModule, rhtModule},
 });

@@ -6,7 +6,7 @@
     <div class="WRRightArea">
       <!-- 현탁 -->
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
-      <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
+      <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios">
       <!-- <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionfromWR"> -->
           <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
 
@@ -106,11 +106,8 @@
 </template>
 
 <script>
-// 여기서 영상 띄우는 법
-// npm run serve
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET -e OPENVIDU_RECORDING=true -e OPENVIDU_RECORDING_PUBLIC_ACCESS=true -e OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings -v /var/run/docker.sock:/var/run/docker.sock -v /opt/openvidu/recordings:/opt/openvidu/recordings openvidu/openvidu-server-kms:2.22.0
-// cmd에서 docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET openvidu/openvidu-server-kms:2.22.0
-// 단 도커 설치되어 있어야 함
+// docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET -e OPENVIDU_RECORDING=true -e OPENVIDU_RECORDING_PUBLIC_ACCESS=true -e OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings -v /var/run/docker.sock:/var/run/docker.sock -v /opt/openvidu/recordings:/opt/openvidu/recordings openvidu/openvidu-server-kms:2.22.0
+
 
 import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
 // import { useRouter } from "vue-router";
@@ -120,7 +117,8 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "@/components/UserVideo.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+// const OPENVIDU_SERVER_URL = "https://" + location.hostname;
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ':4443';
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
@@ -158,12 +156,14 @@ export default {
       this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", e.data);
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);  
     })
-    //방장이 방을 폭파시킬 때
-    this.session.on('signal:studyDestroy', ()=> {
-        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+    //방장이 스터디룸을 폭파할 때
+    this.session.on('signal:studyDestroy', ()=>{
+      if(this.userType === 'user'){
         alert('방장이 스터디를 폭파했습니다.\n로비로 돌아갑니다.')
-        this.$router.push('/main')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     })
+
     console.log('대기실들어옴',this.currentUserList,this.myUserInfo,this.roomSeq)
 
     this.session.on('signal:startVideoTime', (e)=>{
@@ -413,7 +413,7 @@ export default {
               videoSource: this.CameraSelected, 
               publishAudio: this.MicStatus, 
               publishVideo: this.CameraStatus, 
-              resolution: "320x180", 
+              resolution: "640x360", 
               frameRate: 30, 
               insertMode: "APPEND", 
               mirror: false, 

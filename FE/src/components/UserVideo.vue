@@ -1,7 +1,7 @@
 <template>
-<div class="userVideo" v-if="streamManager">
+<div class="userVideo" v-if="streamManager && showVid">
+	<!-- <div class="userInfo">{{ clientName }}</div> -->
 	<ov-video :stream-manager="streamManager"/>
-	<div class="userInfo">{{ clientName }}</div>
 </div>
 </template>
 
@@ -20,21 +20,28 @@ export default {
 		...mapGetters('lbhModule',[
 			'WRParticipantList',
 			'session',
+			'myUserEmail',
 		]),
 		clientName() {
 			const { clientName } = this.getConnectionData();
 			return clientName;
 		},
+		clientEmail() {
+			const { clientEmail } = this.getConnectionData();
+			return clientEmail;
+		},
 		showVid() {
-			if(this.$router.currentRoute.value.name === 'waiting-room'){
-				if(this.videoStatus===true){return true
-				} else {return false}
-			} else {return true}
+			const inWR = this.WRParticipantList.filter(p => p.myUserEmail === this.clientEmail)
+    // if(state.currentUserList.length) {
+    //   return state.currentUserList.filter(p => p.myUserEmail !== state.myUserEmail)
+    // } else return []
+			if(this.$router.currentRoute.value.name === 'waiting-room' && (inWR.length === 0)){
+				return false
+			} else return true
 		},
 	},
 	mounted(){
 		console.log()
-		this.inWR()
 		console.log('uservideo mounted',this.session, this.streamManager)
 
 		console.log('지금 어디있지?', this.$router.currentRoute.value.name)
@@ -45,23 +52,21 @@ export default {
 			videoStatus: true,
 		}
 	},
-
-
 	methods: {
 		getConnectionData () {
 			const { connection } = this.streamManager?.stream;
 			return JSON.parse(connection.data);
 		},
-		async inWR() {
-			await this.session.on('signal:publisherOn')
-			if(this.streamManager){
-				const vidUserEmail = JSON.parse(this.streamManager.stream.connection.data).clientEmail
-				if(this.WRParticipantList.filter(e=> e.name === vidUserEmail).length === 0){
-					this.videoStatus = false
-				} else { 
-					this.videoStatus = true}
-			} else {this.videoStatus = false}
-		},
+		// async inWR() {
+		// 	await this.session.on('signal:publisherOn')
+		// 	if(this.streamManager){
+		// 		const vidUserEmail = JSON.parse(this.streamManager.stream.connection.data).clientEmail
+		// 		if(this.WRParticipantList.filter(e=> e.name === vidUserEmail).length === 0){
+		// 			this.videoStatus = false
+		// 		} else { 
+		// 			this.videoStatus = true}
+		// 	} else {this.videoStatus = false}
+		// },
 	},
 };
 </script>
@@ -74,9 +79,10 @@ export default {
 
 .userInfo{
     position: absolute;
-    justify-content: center;
+    /* justify-content: center; */
     background: #ffffff;
     width: 10%;
+	margin-left: 6%;
     color: rgb(0, 0, 0);
     border-radius: 10px;
     padding: 1px;

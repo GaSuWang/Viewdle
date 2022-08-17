@@ -1,9 +1,12 @@
 package com.ssafy.api.service;
 
+import com.ssafy.api.response.filterListRes;
 import com.ssafy.db.entity.Common;
 import com.ssafy.db.repository.CommonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CommonServiceImpl implements CommonService{
@@ -17,5 +20,10 @@ public class CommonServiceImpl implements CommonService{
 
         // 추후 exception 처리 추가 할 것
         return common;
+    }
+
+    @Override
+    public List<filterListRes> getFilter() {
+        return commonRepository.findByImgGroup("filter");
     }
 }

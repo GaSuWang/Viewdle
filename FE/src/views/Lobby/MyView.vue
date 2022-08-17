@@ -20,8 +20,8 @@
             <SendImg/>
           </div>
           <div class="card-topitem2">
-            <p class="card-text">이름 : {{userLists.userName}}</p>
-            <p class="card-text">email :{{userLists.userEmail}}</p>
+            <p class="card-text" style="font-size : 20px;">이름 : {{userLists.userName}}</p>
+            <p class="card-text" style="font-size : 15px">이메일 :{{userLists.userEmail}}</p>
           </div>
         </div>
         <div class="Mycard-body">
@@ -32,8 +32,8 @@
           <BadgeList/>
         </div>
         <div class="card-footer">
-          <button class="btn cardfooterbutton" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
-          <button class="btn cardfooterbutton" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
+          <button class="deleteSubmit" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원 탈퇴</button>
+          <button class="modifySubmit" data-bs-toggle="modal" data-bs-target="#editconfirm">정보 수정</button>
         </div>
       </div>
     </div>
@@ -48,24 +48,25 @@
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">비밀번호 확인</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form @submit.prevent="confirmPW(credentials)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="Password Confirm" />
+                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="비밀번호 확인" />
                     </div>
                   </div>
-                  <button class="btn btn-primary">비번확인하기</button>
+                  <div v-if="pwcode != false">
+                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인하기</button>
+                  </div>
                 </form>
                 <div class="modal-footer">
                   <form @submit.prevent="deleteID()">
                     <div v-if="pwcode == false">
-                      <button class="btn btn-primary" data-bs-dismiss="modal">회원탈퇴하기</button>
+                      <button class="deleteSubmit" style="width:8vw" data-bs-dismiss="modal">회원탈퇴하기</button>
                     </div>
                   </form>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="button" @click.prevent="empty()" class="modifySubmit" data-bs-dismiss="modal">취소</button>
                 </div>
               </div>
             </div>
@@ -81,23 +82,23 @@
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">비밀번호 확인</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  
                 </div>
                 <form @submit.prevent="confirmPWforEdit(credentials)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="Password Confirm" />
+                      <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="비밀번호 확인" />
                     </div>
+                 <div v-if="pwcodeforedit != false">
+                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인하기</button>
                   </div>
-                  <button class="btn btn-primary">비번확인하기</button>
+                  </div>
                 </form>
-                {{pwcodeforedit}}
                 <div class="modal-footer">
                     <div v-if="pwcodeforedit == false">
-                      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editmodal">비번수정모달</button>
+                      <button class="deleteSubmit" style="width:8vw" data-bs-toggle="modal" data-bs-target="#editmodal">비밀번호 수정</button>
                     </div>
-                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="button" @click.prevent="empty()" class="modifySubmit" data-bs-dismiss="modal">취소</button>
                 </div>
               </div>
             </div>
@@ -114,19 +115,20 @@
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">비번 수정</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form @submit.prevent="changePW(changepassword)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="changepassword.password" class="form-control form-control-lg" placeholder="Password Confirm" />
-                      <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="New Password Confirm" />
+                      <input type="password" v-model="changepassword.password" class="form-control form-control-lg" placeholder="New Password" />
+                      <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="Check New Password" />
                     </div>
                   </div>
-                  <button class="btn btn-primary" data-bs-dismiss="modal">비번바꾸기</button>
+                  <div class="modal-footer">
+                  <button class="deleteSubmit" style="width:8vw" data-bs-dismiss="modal">비밀번호 수정</button>
+                  <button class="modifySubmit" @click.prevent="empty()" data-bs-dismiss="modal"><router-link to="/mypage">취소</router-link></button>
+                  </div>
                 </form>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>  
@@ -185,10 +187,13 @@ export default {
     function changePW(){
       store.dispatch('rhtModule/changePW', changepassword)
     }
-
-
+    function empty(){
+      credentials.password=''
+    store.commit('rhtModule/SET_PW_CODE', true)
+    store.commit('rhtModule/SET_PW_CODE_FOR_EDIT', true)
+    }
     return {
-      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
+      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword,empty
     };
   },
 };
@@ -196,6 +201,7 @@ export default {
 
 <style>
 .MyViewBoss{
+  min-width: 1000px;
   width: 90%;
   height: 90%;
   background : rgb(255,255,255,0.5);
@@ -282,6 +288,65 @@ export default {
 .cardfooterbutton{
   background-color: rgb(230,198,132);
   color: white;
+}
+.deleteSubmit{
+  /* margin-top: 20px; */
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.deleteSubmit1{
+  /* margin-top: 20px; */
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  margin-left:75%;
+  margin-bottom:20px;
+}
+.deleteSubmit:hover{
+  background: #ffcc74;
+}
+
+.modifySubmit{
+  /* margin-top: 20px; */
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.modifySubmit:hover{
+  background: #89B2E8;
+}
+a{
+  text-decoration: none;
+  color : white;
+}
+a:hover{
+  text-decoration: none;
+  color : white;
 }
 </style>
 

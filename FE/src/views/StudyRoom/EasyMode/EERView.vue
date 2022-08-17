@@ -19,13 +19,34 @@
   <!-- 돌발상황 영역 끝 -->
   <div :style="cssVariable" class="siren" v-if="sirenIsShow"></div>
   <div class="EERView">
+    <div class="EERButtonHeader">
+      <!-- 면접에서 나가기 버튼(방장 유저) -->
+      <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-bs-backdrop="false"/>
+        <!-- <button
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          data-bs-backdrop="false"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button> -->
+      </div>
+      <!-- 면접에서 나가기 버튼(일반 유저) -->
+      <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary"/>
+      </div>
+      <div class="StudyEnd" v-if="userType == 'superUser'" @click="finishInterview">
+        <Button icon="pi pi-check" class="p-button-rounded p-button-secondary"/>
+      </div>
+    </div>
     <!-- 영상 구역 -->
     <!-- style cssVariable 삭제 -->
     <div class="EERContent">
       <!-- 면접자 영상 구역  -->
       <div class="EEVidContainer">
         <div class="EEVid">
-          <!-- <warningStackBar :stack="warningCount"></warningStackBar> 경고게이지 주석 -->
+          <warningStackBar :stack="warningCount"></warningStackBar>
           <user-video :stream-manager="EE" />
         </div>
       </div>
@@ -40,26 +61,8 @@
       </div>
     </div>
 
-    <div class="EERRightArea">
-      <div class="EERButtonHeader">
-        <!-- 면접에서 나가기 버튼(방장 유저) -->
-        <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
-          <button
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-            data-bs-backdrop="false"
-          >
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-        <!-- 면접에서 나가기 버튼(일반 유저) -->
-        <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
-          <button type="button">
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-      </div>
+    <div class="EERBottomArea">
+
       <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
       <div v-if="OXBtnState">
         <button @click="selectOBtn">O</button>
@@ -67,33 +70,33 @@
       </div>
       <div v-if="isCountDownOn">countdown: {{ countDown }}</div>
       <!-- 돌발질문 카운트 다운 및 OX버튼 끝-->
-      <div class="EERButtonFooter">
-        <div class="CLViewBtn">
-          <button @click="openEECL">
+        <div class="CLOpen">
+         <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-file-earmark-text"></i>
-          </button>
+          </Button>
         </div>
         <div class="VoiceChangeBtn">
-          <button>
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-mic-fill"></i>
-          </button>
+        </Button>
         </div>
-        <div class="StudyEnd" v-if="userType == 'superUser'" @click="finishInterview">
-          <button>
-            <i class="bi bi-check-lg"></i>
-          </button>
-        </div>
-        <div class="SuddenAttackBtn" v-if="isER">
-          <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+
+        <div class="SuddenAttackBtn" >
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" :disabled="suddenBtnState" @click="sendSuddenQASignal" >
             <i class="bi bi-exclamation-triangle-fill"></i>
-          </button>
+          </Button>
+          <!-- <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </button> -->
         </div>
-        <div class="CaptureBtn" v-if="isER">
-          <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
+        <div class="CaptureBtn">
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
             <i class="bi bi-camera"></i>
-          </button>
+          </Button>
+          <!-- <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
+            <i class="bi bi-camera"></i>
+          </button> -->
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -102,7 +105,7 @@
 import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue";
 import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
-// import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
+import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
 import AttackSpaceBar from "@/components/StudyRoom/EasyMode/Game/AttackSpaceBar.vue";
 import OneToNine from "@/components/StudyRoom/EasyMode/Game/OneToNine.vue";
 import ArrowDirection from "@/components/StudyRoom/EasyMode/Game/ArrowDirection.vue";
@@ -110,7 +113,7 @@ import { useRouter } from "vue-router";
 
 export default {
   name: "EERView",
-  components: { UserVideo, AuthorityPassModal, AttackSpaceBar, OneToNine, ArrowDirection }, // warningStackBar //경고게이지 주석
+  components: { UserVideo, AuthorityPassModal, AttackSpaceBar, OneToNine, ArrowDirection, warningStackBar }, // warningStackBar //경고게이지 주석
   data() {
     return {
       warningCount: 0, //현재 쌓인 경고수
@@ -125,6 +128,7 @@ export default {
       timeout: null, //타임아웃 저장용
       sirenIsShow:false,
       // isEE: false,
+      recognition : null,
     };
   },
   computed: {
@@ -182,9 +186,12 @@ export default {
     this.$store.dispatch('lbhModule/getFilter');
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
-      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     })
+
 
     // 내가 면접자인지 아닌지 확인
     //  if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail){
@@ -201,6 +208,10 @@ export default {
 
     //일반 유저인 면접자가, 면접 도중에 나간 경우
     this.session.on("signal:EELeaveSessionFromEER", (e) => {
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);
       const data = JSON.stringify(this.myUserInfo)
       this.session.signal({
@@ -220,6 +231,10 @@ export default {
 
     //방장인 면접자가, 면접을 보는 도중에 나갈 경우
     this.session.on("signal:superEELeaveSession", (e) => {
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
       const pastSuperUserEmail = e.data.split(" ")[0];
       const currentSuperUserEmail = e.data.split(" ")[1];
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", pastSuperUserEmail);
@@ -256,7 +271,11 @@ export default {
     this.session.on('signal:finishInterview', () => {
       this.warningCount =0;
       this.removeFilter();
-      alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
+      // alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
       const data = JSON.stringify(this.myUserInfo)
       this.session.signal({
@@ -427,7 +446,7 @@ export default {
         offsetX = "-0.2F";
         offsetY = "-0.45F";
         width = "1.4F";
-        height = "1.9";;
+        height = "1.9";
       }else if (data == "bread"){
         img = this.filters[0].imgUrl.toString(); // bread img
         offsetX = "-0.35F";
@@ -442,12 +461,9 @@ export default {
         height = "0.9F";
       }
       // console.log(img);
-      // if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
       if(this.isER){
         for (let ER of this.ERS) {
           let mail = JSON.parse(ER.stream.connection.data).clientEmail;
-          // let name = JSON.parse(ER.stream.connection.data).clientData;
-            // if (name === this.myUserName) {
             if (mail === this.myUserEmail) {
               if(this.isFiltered){
                 clearTimeout(this.timeout); 
@@ -470,7 +486,6 @@ export default {
                   });
                 }, 1000);
               }else{
-                console.log("############################# 면접관이야");
                 ER.stream.applyFilter("FaceOverlayFilter")
                   .then(filter => {
                     filter.execMethod(
@@ -812,42 +827,45 @@ export default {
         });
     },
 
-    // Speech API
+// Speech API
     startRecognition() {
       let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      let recognition = SpeechRecognition? new SpeechRecognition() : false
-      recognition.interimResults = true;
-      recognition.lang = 'ko-KR';
-      recognition.continuous = false;
+      this.recognition = SpeechRecognition? new SpeechRecognition() : false
+      this.recognition.interimResults = true;
+      this.recognition.lang = 'ko-KR';
+      this.recognition.continuous = false;
     
-      recognition.start(); // 음성 인식 시작
+      this.recognition.start(); // 음성 인식 시작
       console.log("start speech recognition");
 
-      recognition.onresult = (e) => { // 음성 인식 결과 반환
+      this.recognition.onresult = (e) => { // 음성 인식 결과 반환
         for(let i = e.resultIndex; i < e.results.length; ++i){
           if(e.results[i].isFinal){ 
             let script = e.results[i][0].transcript;
             // console.log(script);
-            if(script.includes("빵")){
-              console.log("빵");
-              this.setImgFilterOn("bread");
-            }else if(script.includes("감자")){
-              console.log("감자");
-              this.setImgFilterOn("potato");
-            }else if(script.includes("나 안 해")){
-              console.log("대머리");
-              this.setImgFilterOn("bald");
-            }
+            if(this.isEE){
+              if(script.includes("빵")){
+                console.log("빵");
+                this.setImgFilterOn("bread");
+              }else if(script.includes("감자")){
+                console.log("감자");
+                this.setImgFilterOn("potato");
+              }else if(script.includes("나 안 해")){
+                console.log("대머리");
+                this.setImgFilterOn("bald");
+              }
+            } 
           }
         }
       }
 
-      recognition.onend = function(){ // 음성 인식이 끊겼을 때 
+      
+      this.recognition.onend = () => { // 음성 인식이 끊겼을 때 
         //recognition.stop();
-        recognition.start(); 
+        if(this.recognition) this.recognition.start(); 
       }     
 
-      recognition.onerror = function(e) {
+      this.recognition.onerror = (e) => { 
         console.log(e);
       }
     }
@@ -859,56 +877,84 @@ export default {
 .EERView {
   position: absolute;
   width: 90vw;
+  min-width: 1000px;
   aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
-  box-shadow: 10px 10px 20px 6px #b5b8c0;
+  background: rgb(255,255,255,0.5);
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
   border-radius: 60px;
-  padding: 1%;
+  padding: 1.5%;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
 }
 
+.EERButtonHeader{
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content: space-between;
+}
+
 .EERContent {
+  position: absolute;
   width: 80%;
-  height: 100%;
-  /* opacity: 50%; */
+  height: 78%;
   border-radius: 10px;
+  margin-top: 1%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   transition-duration: 0.2s;
-  background-color: white;
+  /* background-color: white; */
 }
 
 .EEVidContainer {
   width: 100%;
+  height: 70%;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .EEVid {
-  width: 65%;
-  aspect-ratio: 16/9;
+  /* width: 60%; */
+  height: 100%;
+  aspect-ratio: 2/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }
 
 .ERVidContainer {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  /* justify-content: center; */
   width: 100%;
-  overflow-x: scroll;
-  /* height: 20%;  */
+  height: 30%; 
+  /* overflow-x: scroll; */
 }
 
 .ERVid {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+div.EEVidContainer > div > div:nth-child(1){
+  margin: 0;
+  height: 98%;
+}
+
+div.EEVidContainer > div > div.userVideo{
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 .EERBtnContainer {
@@ -921,20 +967,22 @@ export default {
   justify-self: center;
 }
 
-.EERRightArea {
+.EERBottomArea {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 20%;
-  height: 100%;
-  border-radius: 20px;
-  background-color: #edf0f6;
+  justify-content: space-evenly;
+  align-items:center;
+  width: 100%;
+  height: 10%;
+  /* border-radius: 20px; */
 }
 
-.EERButtonHeader {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+.EERView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.EERView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
 }
 
 .EERButtonFooter {
@@ -943,16 +991,15 @@ export default {
   justify-content: flex-end;
 }
 
-.EERButtonHeader > button {
+/* .EERButtonHeader > button {
   border: none;
   background-color: rgb(209, 209, 209);
   border-radius: 50%;
   width: 3%;
   height: 3%;
-  /* filter: blur(3px); */
-}
+  /* filter: blur(3px);} */
 
-.EERButtonHeader > div > button > i {
+/* .EERButtonHeader > div > button > i {
   font-size: 100%;
   color: black;
 }
@@ -973,11 +1020,20 @@ export default {
 .EERButtonFooter > div > button > i {
   font-size: 150%;
   color: black;
-}
+} */
 
 .suddenAttack {
   z-index: 1;
 }
+.CLOpen button:enabled:hover,
+.VoiceChangeBtn button:enabled:hover,
+.SuddenAttackBtn button:enabled:hover,
+.CaptureBtn button:enabled:hover {
+  z-index: 1;
+  background-color: #ffcc74;
+  color: red;
+}
+
 .guard {
   position: absolute;
   top: 0%;
