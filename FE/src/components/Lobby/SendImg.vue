@@ -2,11 +2,12 @@
 <template>
   <div class="SendImg">
       <form @submit.prevent="onUpload">
-          <div class="form-group">
-              <input class="modifySubmit" type="file" name="imagesArray" @change="onChange">
-          </div>
-          <div v-if="this.changing===true">
-              <button class="modifySubmit" style="width:8vw" @click="onsubmit">프로필 수정</button>
+          <div class="form-group filebox">
+            <label for="sendimgsubmitbutton">파일선택</label>
+            <input class="modifySubmit" id="sendimgsubmitbutton" type="file" name="imagesArray" @change="onChange">
+            <div v-if="this.changing===true">
+              <button class="modifySubmit" @click="onsubmit">프로필 수정</button>
+            </div>
           </div>
       </form>
   </div>
@@ -42,12 +43,12 @@ export default {
             headers: {Authorization: this.$store.getters['rhtModule/authHeader'] }
         })
             .then(() => {
-            alert('성공적으로 회원가입!')
-            this.$router.push({ name: 'Account' })
+            alert('프로필수정이 완료되었습니다!')
+            this.$router.push({ name: 'main' })
             this.changing = false
             })
             .catch(err => {
-              alert('성공적으로 회원가입!')
+              alert('더 작은 데이터크기의 이미지를 가져오세요!')
             console.error(err)
             })
         }  
@@ -90,5 +91,47 @@ export default {
 }
 .modifySubmit:hover{
   background: #89B2E8;
+}
+.filebox button{
+  background: #FEAA00;
+}
+.filebox button:hover{
+  background: #ffcc74;
+}
+.filebox label{
+  /* margin-top: 20px; */
+  width: 8vw;
+  height: 2.5vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  margin-right: 5px;
+}
+.filebox label:hover{
+  background: #89B2E8;
+}
+.filebox input[type="file"] {  /* 파일 필드 숨기기 */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip:rect(0,0,0,0);
+  border: 0;
+}
+.form-group{
+  line-height: 35px;
+  text-align: center;
+}
+.filebox{
+  display: flex;
+  flex-flow: row;
 }
 </style>

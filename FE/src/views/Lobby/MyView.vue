@@ -16,12 +16,20 @@
       <div class="MyBody">
         <div class="card-top">
           <div class="card-topitem1">
-            <img :src="userLists.userProfileImage">
-            <SendImg/>
+            <div class="card-topitem1-img">
+              <img :src="userLists.userProfileImage">
+            </div>
+            <div class="card-topitem1-2">
+              <div class="card-topitem1-ptag">
+                <p class="card-text" style="font-size : 20px;">이름 : {{userLists.userName}}</p>
+                <p class="card-text" style="font-size : 20px">이메일 :{{userLists.userEmail}}</p>
+              </div>
+              <div class="card-topitem1-sendimg">
+                <SendImg/>
+              </div>
+            </div>
           </div>
           <div class="card-topitem2">
-            <p class="card-text" style="font-size : 20px;">이름 : {{userLists.userName}}</p>
-            <p class="card-text" style="font-size : 15px">이메일 :{{userLists.userEmail}}</p>
           </div>
         </div>
         <div class="Mycard-body">
@@ -227,20 +235,20 @@ export default {
   margin-top:20px;
 }
 .Mycard-body{
-  width:95%;
+  width:98%;
   height: 48%;
   display: flex;
   flex-flow: row;
   justify-content: center;
-  align-items: space-around;
-  margin: 0 20px;
+  align-items: space-between;
 }
 .card-body2{
-  width: 98%;
+  width: 97%;
   height: 18%;
   display: flex;
   margin: none;
   justify-content: center;
+  margin-left:0.5%;
 }
 .card{
   width: 98%;
@@ -272,13 +280,13 @@ export default {
   margin-left: 5%;
 }
 .card-topitem1{
-  width: 50%;
+  width: 70%;
   height: 100%;
   display:flex;
   flex-flow:row;
 }
 .card-topitem2{
-  width: 50%;
+  width: 30%;
   height: 100%;
 }
 .profileimg{
@@ -316,7 +324,7 @@ export default {
   font-size: 1.2em;
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
-  margin-left:75%;
+  margin-left:66%;
   margin-bottom:20px;
 }
 .deleteSubmit:hover{
@@ -347,6 +355,25 @@ a{
 a:hover{
   text-decoration: none;
   color : white;
+}
+.card-topitem1-img img{
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+.card-topitem1-2{
+  width:100%;
+  display:flex;
+  flex-flow: column;
+}
+.card-topitem1-ptag{
+  display:flex;
+  flex-flow: column;
+}
+.card-topitem1-sendimg{
+  margin-top:16px;
+  display:flex;
+  flex-flow: row;
 }
 </style>
 

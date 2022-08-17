@@ -480,5 +480,8 @@ input[type=password]:placeholder {
 .clSubmit:hover{
   background: #89B2E8;
 }
-
+.modal-body{
+  display:flex;
+  justify-content: center;
+}
 </style>

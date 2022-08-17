@@ -56,7 +56,7 @@ export default {
         labels: ['이용시간', '영상수'],
         datasets: [
           {
-            backgroundColor: ['#41B883', '#E46651'],
+            backgroundColor: ['#47A0FF', '#FEAA00'],
             data: [HistoryList.value.userTotalTime, HistoryList.value.userTotalVideo]
           }
         ]
@@ -85,5 +85,6 @@ export default {
 .Piegraph{
   width:70%;
   height:70%
+  
 }
 </style>

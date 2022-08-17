@@ -3,9 +3,9 @@
   <div class="GrassShow"> 
     <div>
       <section class="calendertop">
-        <i class="fas fa-angle-left"  @click="controlMonth('prev')" ></i>
+        <i class="fas fa-angle-left calendermove"  @click="controlMonth('prev')" ></i>
         <div class="calendertoptext">{{year}}.{{month}}</div>
-        <i class="fas fa-angle-right" @click="controlMonth('next')"></i>
+        <i class="fas fa-angle-right calendermove" @click="controlMonth('next')"></i>
       </section>
     </div>
     <div v-if="HistoryList.usingDates.length">
@@ -241,5 +241,8 @@ th {
 }
 .calendertoptext{
   font-size: 20px;
+}
+.calendermove{
+  margin-top:10%;
 }
 </style>
