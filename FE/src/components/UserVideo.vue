@@ -52,8 +52,6 @@ export default {
 			videoStatus: true,
 		}
 	},
-
-
 	methods: {
 		getConnectionData () {
 			const { connection } = this.streamManager?.stream;

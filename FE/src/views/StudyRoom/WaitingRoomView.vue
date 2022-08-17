@@ -6,7 +6,7 @@
     <div class="WRRightArea">
       <!-- 현탁 -->
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
-      <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
+      <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios">
       <!-- <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionfromWR"> -->
           <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
 
@@ -159,7 +159,7 @@ export default {
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
       if(this.userType === 'user'){
-        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+        alert('방장이 스터디를 폭파했습니다.\n로비로 돌아갑니다.')
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
       }
     })
@@ -413,7 +413,7 @@ export default {
               videoSource: this.CameraSelected, 
               publishAudio: this.MicStatus, 
               publishVideo: this.CameraStatus, 
-              resolution: "320x180", 
+              resolution: "640x360", 
               frameRate: 30, 
               insertMode: "APPEND", 
               mirror: false, 

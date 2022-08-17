@@ -1025,22 +1025,15 @@ div.EEVidContainer > div > div.userVideo{
 .suddenAttack {
   z-index: 1;
 }
-
-.VoiceChangeBtn button:enabled:hover {
-  z-index: 1;
-  background-color: #FEAA00;
-  color: red;
-}
-.SuddenAttackBtn button:enabled:hover {
-  z-index: 1;
-  background-color: #FEAA00;
-  color: red;
-}
+.CLOpen button:enabled:hover,
+.VoiceChangeBtn button:enabled:hover,
+.SuddenAttackBtn button:enabled:hover,
 .CaptureBtn button:enabled:hover {
   z-index: 1;
-  background-color: #FEAA00;
+  background-color: #ffcc74;
   color: red;
 }
+
 .guard {
   position: absolute;
   top: 0%;
