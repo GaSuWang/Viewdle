@@ -40,6 +40,7 @@ export default {
   align-items: center;
   width: 50%;
   height: 100%;
+  margin-right: 0;
 }
 .MiniProfileItem2{
   display:flex;

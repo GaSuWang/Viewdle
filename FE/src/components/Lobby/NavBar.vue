@@ -105,7 +105,7 @@ export default {
     line-height: 65px;
     /* color: white; */
     color: black;
-    padding-left:40px;
+    padding-left:60px;
     box-sizing: border-box;
     /* border-top: 1px solid rgb(153, 172, 230); */
     /* border-bottom: 1px solid rgb(153, 172, 230); */

@@ -32,7 +32,7 @@
       
       <!-- <p><small class="text-muted">{{item.roomCnt}}/{{item.roomLimit}}</small></p> -->
       <p style="margin-bottom:0; margin-top:5px"><small class="text-muted">{{item.roomCnt}} / {{item.roomLimit}}</small></p>
-      <p style="margin-bottom:0; margin-top:5px"><small class="text-muted">{{item.roomRegTime}}</small></p>
+      <p style="margin-bottom:0; margin-top:5px"><small class="text-muted">{{item.roomRegTime.split(":")[3] + "시 " + item.roomRegTime.split(":")[4] + "분" }}</small></p>
       <!-- <p style="margin-bottom:0; margin-top:5px display:none"><small class="text-muted" :calDate="{{item.roomRegTime}}"></small></p> -->
       <!-- <p><small class="text-muted">{{item.roomType}}</small></p> -->
       <!-- <p><small class="text-muted">{{item.roomSeq}}</small></p>

@@ -107,14 +107,16 @@
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">방입장</h5>
           </div>
-          <div class="modal-body">
-            <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control form-control-lg" placeholder="Password" />
+          <div class="modal-body enterPwInput">
+              <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control" placeholder="비밀번호" />
           </div> 
           <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">입장</button>
+            <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">입장</button> -->
+              <button class="clCancle" data-bs-dismiss="modal"><router-link to="/main">취소</router-link></button>
+              <button class="clSubmit" data-bs-dismiss="modal">입장</button>
           </div>
           </form>
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
         </div>
       </div>
     </div> 
@@ -480,8 +482,10 @@ input[type=password]:placeholder {
 .clSubmit:hover{
   background: #89B2E8;
 }
-.modal-body{
+
+.enterPwInput{
   display:flex;
   justify-content: center;
 }
+
 </style>
