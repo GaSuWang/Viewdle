@@ -32,8 +32,8 @@
           <BadgeList/>
         </div>
         <div class="card-footer">
-          <button class="btn cardfooterbutton" data-bs-toggle="modal" data-bs-target="#editconfirm">정보수정</button>
-          <button class="btn cardfooterbutton" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원탈퇴</button>
+          <button class="deleteSubmit" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원 탈퇴</button>
+          <button class="modifySubmit" data-bs-toggle="modal" data-bs-target="#editconfirm">정보 수정</button>
         </div>
       </div>
     </div>
@@ -92,7 +92,6 @@
                   </div>
                   <button class="btn btn-primary">비번확인하기</button>
                 </form>
-                {{pwcodeforedit}}
                 <div class="modal-footer">
                     <div v-if="pwcodeforedit == false">
                       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editmodal">비번수정모달</button>
@@ -283,6 +282,50 @@ export default {
 .cardfooterbutton{
   background-color: rgb(230,198,132);
   color: white;
+}
+
+.deleteSubmit{
+  /* margin-top: 20px; */
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.deleteSubmit:hover{
+  background: #ffcc74;
+}
+
+.modifySubmit{
+  /* margin-top: 20px; */
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.modifySubmit:hover{
+  background: #89B2E8;
+}
+a{
+  text-decoration: none;
+  color : white;
+}
+a:hover{
+  text-decoration: none;
+  color : white;
 }
 </style>
 
