@@ -9,8 +9,8 @@ const state= {
     HistoryList:{},
     isLoggedIn: true,
     emailcode:{},
-    pwcode: false,
-    pwcodeforedit: false,
+    pwcode: '',
+    pwcodeforedit: '',
     pwcheck: false,
     // 풀방여부, 참여시간
     ParticipantList:{},

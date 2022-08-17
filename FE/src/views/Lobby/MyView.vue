@@ -56,7 +56,9 @@
                       <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="비밀번호 확인" />
                     </div>
                   </div>
-                  <button class="deleteSubmit" style="width:10vw">비밀번호 확인하기</button>
+                  <div v-if="pwcode != false">
+                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인하기</button>
+                  </div>
                 </form>
                 <div class="modal-footer">
                   <form @submit.prevent="deleteID()">
@@ -64,7 +66,7 @@
                       <button class="deleteSubmit" style="width:8vw" data-bs-dismiss="modal">회원탈퇴하기</button>
                     </div>
                   </form>
-                     <button type="button" class="modifySubmit" data-bs-dismiss="modal">취소</button>
+                     <button type="button" @click.prevent="empty()" class="modifySubmit" data-bs-dismiss="modal">취소</button>
                 </div>
               </div>
             </div>
@@ -87,14 +89,16 @@
                     <div class="form-outline mb-4">
                       <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="비밀번호 확인" />
                     </div>
+                 <div v-if="pwcodeforedit != false">
+                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인하기</button>
                   </div>
-                  <button class="deleteSubmit" style="width:10vw">비밀번호 확인하기</button>
+                  </div>
                 </form>
                 <div class="modal-footer">
                     <div v-if="pwcodeforedit == false">
                       <button class="deleteSubmit" style="width:8vw" data-bs-toggle="modal" data-bs-target="#editmodal">비밀번호 수정</button>
                     </div>
-                     <button type="button" class="modifySubmit" data-bs-dismiss="modal">취소</button>
+                     <button type="button" @click.prevent="empty()" class="modifySubmit" data-bs-dismiss="modal">취소</button>
                 </div>
               </div>
             </div>
@@ -116,12 +120,14 @@
                 <form @submit.prevent="changePW(changepassword)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="changepassword.password" class="form-control form-control-lg" placeholder="새 비밀번호" />
-                      <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="새 비밀번호 확인" />
+                      <input type="password" v-model="changepassword.password" class="form-control form-control-lg" placeholder="New Password" />
+                      <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="Check New Password" />
                     </div>
                   </div>
+                  <div class="modal-footer">
                   <button class="deleteSubmit" style="width:8vw" data-bs-dismiss="modal">비밀번호 수정</button>
-                  <button class="modifySubmit" @click.prevent data-bs-dismiss="modal"><router-link to="/mypage">취소</router-link></button>
+                  <button class="modifySubmit" @click.prevent="empty()" data-bs-dismiss="modal"><router-link to="/mypage">취소</router-link></button>
+                  </div>
                 </form>
               </div>
             </div>
@@ -181,10 +187,13 @@ export default {
     function changePW(){
       store.dispatch('rhtModule/changePW', changepassword)
     }
-
-
+    function empty(){
+      credentials.password=''
+    store.commit('rhtModule/SET_PW_CODE', true)
+    store.commit('rhtModule/SET_PW_CODE_FOR_EDIT', true)
+    }
     return {
-      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
+      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword,empty
     };
   },
 };
@@ -280,7 +289,6 @@ export default {
   background-color: rgb(230,198,132);
   color: white;
 }
-
 .deleteSubmit{
   /* margin-top: 20px; */
   width: 6vw;
@@ -294,6 +302,22 @@ export default {
   font-size: 1.2em;
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.deleteSubmit1{
+  /* margin-top: 20px; */
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  margin-left:75%;
+  margin-bottom:20px;
 }
 .deleteSubmit:hover{
   background: #ffcc74;

@@ -5,46 +5,49 @@
           <div class="form-group">
               <input class="modifySubmit" type="file" name="imagesArray" @change="onChange">
           </div>
-          <div >
-              <button class="modifySubmit" style="width:8vw">프로필 수정</button>
+          <div v-if="this.changing===true">
+              <button class="modifySubmit" style="width:8vw" @click="onsubmit">프로필 수정</button>
           </div>
-      </form>>>
+      </form>
   </div>
 
 </template>
 
 <script>
 import axios from "axios";
-import { mapGetters } from 'vuex'
 export default {
     data(){
       return {
-         profile: null
+        profile: null,
+        changing: null,
       };  
     },
-    ...mapGetters('rhtModule',[
-      'authHeader',
-    ]),
     methods:{
     onChange (event) {
           this.profile = event.target.files[0]
+          this.changing = true
+          console.log(this.$store.getters['rhtModule/authHeader'])
         },
         onUpload() {
         const BASE_URL = 'http://' + location.hostname + ':8081'
         // const BASE_URL = 'https://' + location.hostname
           const formData = new FormData()
           formData.append('profile', this.profile, this.profile.name)
+          console.log(this.profile)
+          console.log(this.$store.getters['rhtModule/authHeader'])
         axios({
             url: BASE_URL + '/api/v1/users/profile', //회원가입 api로
             method: 'post',
             data: formData,
-            headers: {Authorization: this.authHeader }
+            headers: {Authorization: this.$store.getters['rhtModule/authHeader'] }
         })
             .then(() => {
             alert('성공적으로 회원가입!')
             router.push({ name: 'Account' })
+            this.changing = false
             })
             .catch(err => {
+              alert('성공적으로 회원가입!')
             console.error(err)
             })
         }  
