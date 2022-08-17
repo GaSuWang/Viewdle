@@ -465,11 +465,11 @@ export default {
           // const coverLetterTitle = this.CLSelected.coverLetterTitle
           // const coverLetterContent = this.CLSelected.coverLetterContent
           console.log('자소서', this.CLSelected)
-          this.session.signal({ 
-          data: `${this.CLSelected.coverLetterSeq}`, 
-          to: [], 
-          type: 'EECL' 
-          })
+          // this.session.signal({ 
+          // data: `${this.CLSelected}`, 
+          // to: [], 
+          // type: 'EECL' 
+          // })
           console.log('자소서 보냄')
           // .then(() => {console.log('자소서 보냄')})
           // .catch(error => {console.error(error)});
@@ -519,12 +519,12 @@ export default {
           // const coverLetterContent = this.CLSelected.coverLetterContent
           // const cl = JSON.stringify(this.CLSelected)
           // console.log('자소서', this.CLSelected)
-          this.session.signal({ 
-          data: `${this.CLSelected.coverLetterSeq}`, 
-          to: [], 
-          type: 'EECL' 
-          })
-          console.log('자소서 보냄')
+          // this.session.signal({ 
+          // data: `${this.CLSelected.coverLetterSeq}`, 
+          // to: [], 
+          // type: 'EECL' 
+          // })
+          // console.log('자소서 보냄')
 
           //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
           this.subscribers.forEach((s) => {
