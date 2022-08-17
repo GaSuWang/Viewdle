@@ -29,7 +29,7 @@
           <GrassShow/>
         </div>
         <div class="card-body2">
-          <BadgeList/>
+          <BadgeList style="width:95%"></BadgeList>
         </div>
         <div class="card-footer">
           <button class="deleteSubmit" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원 탈퇴</button>
@@ -57,13 +57,13 @@
                     </div>
                   </div>
                   <div v-if="pwcode != false">
-                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인하기</button>
+                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인</button>
                   </div>
                 </form>
                 <div class="modal-footer">
                   <form @submit.prevent="deleteID()">
                     <div v-if="pwcode == false">
-                      <button class="deleteSubmit" style="width:8vw" data-bs-dismiss="modal">회원탈퇴하기</button>
+                      <button class="deleteSubmit" style="width:10vw" data-bs-dismiss="modal">회원탈퇴하기</button>
                     </div>
                   </form>
                      <button type="button" @click.prevent="empty()" class="modifySubmit" data-bs-dismiss="modal">취소</button>
@@ -90,7 +90,7 @@
                       <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="비밀번호 확인" />
                     </div>
                  <div v-if="pwcodeforedit != false">
-                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인하기</button>
+                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인</button>
                   </div>
                   </div>
                 </form>
@@ -291,8 +291,8 @@ export default {
 }
 .deleteSubmit{
   /* margin-top: 20px; */
-  width: 6vw;
-  height: 2vw;
+  width: 8vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -305,8 +305,8 @@ export default {
 }
 .deleteSubmit1{
   /* margin-top: 20px; */
-  width: 6vw;
-  height: 2vw;
+  width: 8vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -325,8 +325,8 @@ export default {
 
 .modifySubmit{
   /* margin-top: 20px; */
-  width: 6vw;
-  height: 2vw;
+  width: 8vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
