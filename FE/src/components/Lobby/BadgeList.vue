@@ -46,9 +46,9 @@ export default {
   align-items: center;
 }
 .BadgeTable{
-  width:70%;
+  width:95%;
   height:70%;
-  text-align: center;
+  /* text-align: center; */
 }
 .Badgeimg{
   width:50px;

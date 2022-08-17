@@ -8,7 +8,37 @@
         <i class="fas fa-angle-right calendermove" @click="controlMonth('next')"></i>
       </section>
     </div>
-    <div v-if="HistoryList.usingDates.length">
+        <table v-if="HistoryList.usingDates.length">
+      <thead>
+        <th v-for="day in days" :key="day">{{ day }}</th>
+      </thead>
+      <tbody>
+        <tr v-for="(date, idx) in dates" :key="idx">
+        <td v-for="(day, index) in date" :key="index">
+          <div v-for="usingdate in HistoryList.usingDates" :key="usingdate.seq">
+          <div :class="[usingdate===year+':'+0+month+':'+day ? 'calendardate' : 'calendardates']">
+            {{day}}
+          </div>
+          </div>
+        </td>
+        </tr>
+      </tbody>
+    </table> 
+    <div v-if="!HistoryList.usingDates.length">
+    <table>
+      <thead>
+        <th v-for="day in days" :key="day">{{ day }}</th>
+      </thead>
+      <tbody>
+        <tr v-for="(date, idx) in dates" :key="idx">
+        <td v-for="(day, index) in date" :key="index">
+          {{day}}
+        </td>
+        </tr>
+      </tbody>
+    </table> 
+  </div>
+    <!-- <div v-if="HistoryList.usingDates.length">
     <table>
       <thead>
         <th v-for="day in days" :key="day">{{ day }}</th>
@@ -43,8 +73,8 @@
         </td>
         </tr>
       </tbody>
-    </table>
-  </div>
+    </table> 
+  </div> -->
   </div>
 </template>
 
@@ -63,6 +93,7 @@ export default {
   },
   data: function() {
     return {
+      data:null,
       days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"],
       dates: [],
       currentYear: 0,
@@ -233,11 +264,19 @@ th {
   text-align: center;
 }
 .calendardate{
-    width:30px;
-    height:30px;
-    background-color: rgb(153, 172, 230);;
-    border-radius: 70%;
-    overflow: hidden;
+  position:absolute;  
+  width:30px;
+  height:30px;
+  background-color: #47A0FF;
+  border-radius: 70%;
+  overflow: hidden;
+}
+.calendardates{
+  position:absolute;  
+  width:30px;
+  height:30px;
+  border-radius: 70%;
+  overflow: hidden;
 }
 .calendertoptext{
   font-size: 20px;

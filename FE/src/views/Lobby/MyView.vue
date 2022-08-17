@@ -40,8 +40,8 @@
           <BadgeList style="width:95%"></BadgeList>
         </div>
         <div class="card-footer">
-          <button class="deleteSubmit" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원 탈퇴</button>
           <button class="modifySubmit" data-bs-toggle="modal" data-bs-target="#editconfirm">정보 수정</button>
+          <button class="deleteSubmit" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원 탈퇴</button>
         </div>
       </div>
     </div>
@@ -258,6 +258,8 @@ export default {
   display: flex;
   justify-content: end;
   height: 6%;
+  margin-right:30px;
+  margin-top:15px;
 }
 .card-footer button{
   margin: 0 20px;
@@ -357,9 +359,10 @@ a:hover{
   color : white;
 }
 .card-topitem1-img img{
-  width: 150px;
-  height: 150px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
+  margin-right: 30px
 }
 .card-topitem1-2{
   width:100%;
