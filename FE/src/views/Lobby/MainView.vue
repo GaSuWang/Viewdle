@@ -8,9 +8,9 @@
           <!-- 서치바 -->
           <form @submit.prevent="searchStudyroom(credentialsTosearch)">
           <div class="Searchbar">
-              <div class="input-group">
-                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="검색" aria-label="Search" aria-describedby="search-addon" />
-                <button class="btn mainsearchbutton">search</button>
+              <div class="input-group d-flex flex-row align-items-center">
+                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="검색어를 입력해주세요" aria-label="Search" aria-describedby="search-addon" />
+                <button class="btn mainsearchbutton">검색</button>
               </div>
           </div>
           </form>
@@ -392,8 +392,20 @@ input[type=password]:placeholder {
   margin: 0 20px;
 }
 .MainTop2itembutton{
-  background-color: #FEAA00;
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
   color: white;
+  font-weight: bold;
+  font-size: 1em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.MainTop2itembutton:hover{
+  background: #ffcc74;
 }
 .MainBody{
   margin-left: 20px;
@@ -415,8 +427,20 @@ input[type=password]:placeholder {
   margin-left:30px;
 }
 .mainsearchbutton{
-  background-color:#47A0FF;
-  color:white;
+  width: 5vw;
+  height: 3vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.mainsearchbutton:hover{
+  background: #89B2E8;
 }
 
 .clCancle{
