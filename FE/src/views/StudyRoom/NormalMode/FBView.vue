@@ -386,12 +386,9 @@ export default {
   justify-content: space-between;
 }
 
-.savedEEVid{
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+#app > div > div.FBView > div.savedEEVid > video{
+  width: 90%;
+  height: 90%;
 }
 
 .FBRightArea {
