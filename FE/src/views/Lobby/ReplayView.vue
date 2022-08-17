@@ -30,7 +30,7 @@
           <!-- 동영상 삽입 및 AI 평가 입력 -->
           <div style="position:relative;height:200px">
             <div style="position:absolute;">
-              <video id="video" ref="video" crossOrigin='anonymous' width="640" height="480" controls="" autoplay="" name="media" >
+              <video id="video" ref="video" crossOrigin='anonymous' width="640" height="480" controls="" name="media" >
                 <!-- <source src="https://localhost:4443/openvidu/recordings/SessionA/SessionA.mp4" type="video/mp4"> -->
                 <source :src="replayDetail.videoUrl" type="video/mp4">
 
