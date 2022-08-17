@@ -7,13 +7,14 @@
       <div class="d-flex" style="margin-top:40px"><div class="frontVeiwdle">뷰들</div><div class="backVeiwdle">뷰들</div></div>
     </div>
     <div class="sidebarbody">
+
     <MiniProfile class="SidebarMiniProfile"/>
-    <ul>
-        <li><div @click="main()"><i class="fas fa-qrcode"></i>Main</div></li>
-        <li><div @click="mypage()"><i class="fas fa-user"></i>MyPage</div></li>
-        <li><div @click="cl()"><i class="fas fa-envelope-open-text"></i>CoverLetter</div></li>
-        <li><div @click="replay()"><i class="fas fa-video"></i>Replay</div></li>
-        <li><div @click="logout()"><i class="fas fa-sign-out-alt"></i>Logout</div></li>
+    <ul class="menu">
+        <li><div @click="main()"><i class="fas fa-qrcode" ></i>메뉴</div></li>
+        <li><div @click="mypage()"><i class="fas fa-user"></i>마이페이지</div></li>
+        <li><div @click="cl()"><i class="fas fa-envelope-open-text"></i>자기소개서</div></li>
+        <li><div @click="replay()"><i class="fas fa-video"></i>다시보기</div></li>
+        <li><div @click="logout()"><i class="fas fa-sign-out-alt"></i>로그아웃</div></li>
     </ul>
     </div>
     </div>
@@ -74,6 +75,7 @@ export default {
     /* background: rgb(153, 172, 230); */
     background: white;
     border-radius: 20px;
+    box-shadow: 3px 5px 15px 5px rgb(192, 192, 192);
 }
 .sidebar header{
     border-radius: 20px;
@@ -119,17 +121,29 @@ button{
     border: rgb(153, 172, 230);
 }
 .SidebarMiniProfile{
+  /* margin-top: 10px; */
+  margin-bottom: 10px;
 
 }
 
 .frontVeiwdle{
+  margin-top: 10px;
+  margin-bottom: 30px;
+
   font-family: 'yg-jalnan';
   color: #47A0FF;
   font-size: 45px;
 }
 .backVeiwdle{
+  margin-top: 10px;
+
   font-family: 'yg-jalnan';
   color: #FEAA00;
   font-size: 45px;
 }
+.menu{
+  font-size: 17px;
+  padding: 0;
+}
+
 </style>
