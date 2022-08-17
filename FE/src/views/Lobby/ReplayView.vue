@@ -1,14 +1,14 @@
-// 임현탁
+// 임현탁dow
 <template>
 <div class="ReplayViewBoss">
   <NavBar class="NavView"/>
   <div class="ReplayView">
     <div class='ReplayTop'>
       <div class="dropdown ReplayTopitem">
-        <button class="btn replaytopitembutton dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="replaytopitembutton dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           정렬
         </button>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" style="padding-left:15px">
           <li><input type="checkbox" @click="sortReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="ASC">오래된순</li>
           <li><input type="checkbox" @click="sortReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="DESC">최신순</li>
         </ul>
@@ -378,8 +378,20 @@ export default {
   background-color: white;
 }
 .replaytopitembutton{
-  background-color: rgb(230,198,132);
-  color: white
+width: 6vw;
+  height: 2.5vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.replaytopitembutton:hover{
+  background: #ffcc74;
 }
 .replaybadbutton{
   height: 20px;
