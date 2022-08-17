@@ -35,6 +35,12 @@ export default {
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'yg-jalnan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 .app {
   width: 100%;
   height: 100vh;

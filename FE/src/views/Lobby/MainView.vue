@@ -9,7 +9,7 @@
           <form @submit.prevent="searchStudyroom(credentialsTosearch)">
           <div class="Searchbar">
               <div class="input-group">
-                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="검색" aria-label="Search" aria-describedby="search-addon" />
                 <button class="btn mainsearchbutton">search</button>
               </div>
           </div>
@@ -92,10 +92,10 @@
 
               </div> 
               <div class="modal-footer">
-                <button class="btn btn-secondary" @click="cleanData" data-bs-dismiss="modal">생성</button>
+                <button class="clCancle" @click.prevent="cleanData" data-bs-dismiss="modal"><router-link to="/main">취소</router-link></button>
+                <button class="clSubmit" @click="cleanData" data-bs-dismiss="modal">생성</button>
               </div>
               </form>
-              <button class="btn btn-secondary" @click="cleanData" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
         </div> 
@@ -258,6 +258,14 @@ export default {
 </script>
 
 <style>
+a{
+  text-decoration: none;
+  color : white;
+}
+a:hover{
+  text-decoration: none;
+  color : white;
+}
 input[id="privateCheck"] + label {
   display: inline-block;
   width: 20px;
@@ -384,7 +392,7 @@ input[type=password]:placeholder {
   margin: 0 20px;
 }
 .MainTop2itembutton{
-  background-color: rgb(230,198,132);
+  background-color: #FEAA00;
   color: white;
 }
 .MainBody{
@@ -407,8 +415,44 @@ input[type=password]:placeholder {
   margin-left:30px;
 }
 .mainsearchbutton{
-  background-color:rgb(153, 172, 230);
+  background-color:#47A0FF;
   color:white;
+}
+
+.clCancle{
+  /* margin-top: 20px; */
+  width: 3vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.clCancle:hover{
+  background: #ffcc74;
+}
+
+.clSubmit{
+  /* margin-top: 20px; */
+  width: 3vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.clSubmit:hover{
+  background: #89B2E8;
 }
 
 </style>

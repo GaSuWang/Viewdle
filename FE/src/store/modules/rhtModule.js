@@ -11,6 +11,7 @@ const state= {
     emailcode:{},
     pwcode: false,
     pwcodeforedit: false,
+    pwcheck: false,
     // 풀방여부, 참여시간
     ParticipantList:{},
     // 썸네일 따오기
@@ -29,9 +30,13 @@ const state= {
       {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
       {"videoSeq":13, "videoTitle":"220802 SSAFY 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:08:09:56:57"},
       {"videoSeq":14, "videoTitle":"220802 HYUN DAI 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:09:19:17:17"},
+      {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17"},
+      {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
+      {"videoSeq":13, "videoTitle":"220802 SSAFY 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:08:09:56:57"},
+      {"videoSeq":14, "videoTitle":"220802 HYUN DAI 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:09:19:17:17"},
        ],
     ReplayDetail:{
-      "videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17", "feedbackList": [{"timeline":1000, "feedbackType":"B", "feadbackContent":"못생김"}, {"timeline":1490, "feedbackType":"G", "feadbackContent":"잘생김"}],
+      "videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:02:09:56:17", "feedbackList": [{"timeline":1000, "feedbackType":"B", "feedbackContent":"못생김"}, {"timeline":1490, "feedbackType":"G", "feedbackContent":"잘생김"},{"timeline":1000, "feedbackType":"B", "feedbackContent":"못생김"}, {"timeline":1490, "feedbackType":"G", "feedbackContent":"잘생김"},{"timeline":1000, "feedbackType":"B", "feedbackContent":"못생김"}, {"timeline":1490, "feedbackType":"G", "feedbackContent":"잘생김"}],
     },
     RecordingRes:{}
   }
@@ -43,6 +48,7 @@ const getters = {
     UserList(state){return state.UserList},
     HistoryList(state){return state.History},
     Emailcode(state){return state.emailcode},
+    pwCheck(state){return state.emailcode},
     pwCode(state){return state.pwcode},
     pwCodeForEdit(state){return state.pwcodeforedit},
     ParticipantList(state){return state.ParticipantList},
@@ -76,6 +82,9 @@ const mutations= {
     },
     SET_EMAIL_CODE(state, emailcode){
       state.emailcode = emailcode
+    },
+    SET_CHECK(state, pwcheck){
+      state.pwcheck = pwcheck
     },
     SET_PW_CODE(state, pwcode){
       state.pwcode = pwcode
