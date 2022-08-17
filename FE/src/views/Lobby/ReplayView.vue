@@ -93,7 +93,7 @@ export default {
       function unique(data, key){
         return [ ...new Map(data.map(x => [key(x), x])).values()]
       }
-      return unique(replayDetail.feedbackList, e => e.timeline)
+      return unique(this.replayDetail.feedbackList, e => e.timeline)
     }
   },
   watch:{
