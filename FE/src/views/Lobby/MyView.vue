@@ -196,6 +196,7 @@ export default {
 
 <style>
 .MyViewBoss{
+  min-width: 1000px;
   width: 90%;
   height: 90%;
   background : rgb(255,255,255,0.5);

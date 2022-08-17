@@ -14,8 +14,8 @@
         <div class="pwFindinput">
           <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
         </div>
-        <button class="pwFindsubmit btn btn-primary btn-lg">인증코드받기</button>
-        <router-link to="/">뒤로가기</router-link>
+        <button class="pwFindsubmit">인증코드받기</button>
+        <router-link to="/" class="pwfindbackbutton">뒤로가기</router-link>
 
       </form>
     </div>
@@ -73,8 +73,8 @@ export default {
 .pwFind{
   width: 90%;
   height: 90%;
-  background : rgb(255,255,255,0.5);
-  border-radius: 20px;
+  /* background : rgb(255,255,255,0.5); */
+  /* border-radius: 20px; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,8 +88,8 @@ export default {
 
 }
 .pwFindcard{
-  width: 80%;
-  height: 100%;
+  min-width: 450px;
+  min-height: 550px;
   background: white;
   border-radius: 20px;
   display: flex;
@@ -125,9 +125,12 @@ export default {
     border: 0;
     outline: none;
     border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    background-color: rgb(230,198,132);
     color: white;
     font-size: 1.2em;
     letter-spacing: 2px;
+}
+.pwfindbackbutton{
+  
 }
 </style>

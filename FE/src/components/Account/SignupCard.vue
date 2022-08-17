@@ -21,7 +21,7 @@
           <form @submit.prevent="checkEmail(credentials)">
             <div class="emailinput">
               <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
-              <button class="pwchecksubmit btn btn-primary btn-lg"> 중복 확인 </button>
+              <button class="pwchecksubmit"> 중복 확인 </button>
             </div>
           </form>
 
@@ -38,8 +38,8 @@
                 placeholder="Password Check" />
             </div>
 
-            <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
-            <router-link to="/">뒤로가기</router-link>
+            <button class="signupsubmit">가입완료</button>
+            <router-link to="/" class="signupbackbutton">뒤로가기</router-link>
           </div>
         </form>
       </div>
@@ -139,8 +139,8 @@ export default {
 .signup{
   width: 90%;
   height: 90%;
-  background : rgb(255,255,255,0.5);
-  border-radius: 20px;
+  /* background : rgb(255,255,255,0.5);
+  border-radius: 20px; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,8 +154,8 @@ export default {
 
 }
 .signupcard{
-  width: 80%;
-  height: 100%;
+  min-width: 450px;
+  min-height: 550px;
   background: white;
   border-radius: 20px;
   display: flex;
@@ -232,7 +232,7 @@ export default {
     border: 0;
     outline: none;
     border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    background-color: rgb(230,198,132);
     color: white;
     font-size: 1.2em;
     letter-spacing: 2px;
@@ -244,9 +244,12 @@ export default {
     border: 0;
     outline: none;
     border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    background-color: rgb(230,198,132);
     color: white;
     font-size: 1.2em;
     letter-spacing: 2px;
+}
+.signupbackbutton{
+  
 }
 </style>

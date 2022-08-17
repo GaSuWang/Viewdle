@@ -183,7 +183,7 @@ export default {
     border: 0;
     outline: none;
     border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    background-color: rgb(230,198,132);
     color: white;
     font-size: 1.2em;
     letter-spacing: 2px;
@@ -195,7 +195,7 @@ export default {
     border: 0;
     outline: none;
     border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    background-color: rgb(230,198,132);
     color: white;
     font-size: 1.2em;
     letter-spacing: 2px;

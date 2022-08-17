@@ -13,10 +13,10 @@
         <p><small class="text-muted">자소서 코드: {{item.coverLetterSeq}}</small></p>
       </div>
       <form @submit.prevent="detailCoverLetter(item.coverLetterSeq)">
-        <button class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">상세보기</button>
+        <button class="btn coverletterbutton" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">상세보기</button>
       </form>
       <form @submit.prevent="deleteCoverLetter(item.coverLetterSeq)">
-      <button class="btn btn-secondary">삭제하기</button>
+      <button class="btn coverletterbutton">삭제하기</button>
       </form>
     </div>
 
@@ -112,5 +112,9 @@ export default {
 }
 .CLMcard-buttonitem3{
   margin-left:10px;
+}
+.coverletterbutton{
+  background-color: rgb(230,198,132);
+  color: white;
 }
 </style>

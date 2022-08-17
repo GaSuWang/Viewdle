@@ -14,7 +14,7 @@
         <div class="loginpw">
           <input type="password" v-model="credentials.password" placeholder="Password" />
         </div>
-        <button class="loginsubmit btn btn-primary btn-lg d-flex justify-content-center align-items-center">로그인</button>
+        <button class="loginsubmit btn-lg d-flex justify-content-center align-items-center">로그인</button>
       </form>
       <!-- Checkbox -->
       <div class="login_etc d-flex flex-column">
@@ -104,11 +104,11 @@ export default {
 <style>
 .frontVeiwdle{
   font-family: 'yg-jalnan';
-  color: #0f70ed;
+  color: #47A0FF;
 }
 .backVeiwdle{
   font-family: 'yg-jalnan';
-  color: #fcab1f;
+  color: #FEAA00;
 }
 a{
   text-decoration: none;
@@ -127,7 +127,7 @@ a:hover{
 
 p{
   margin: auto;
-  padding: ;
+  /* padding:  */
 }
 
 .loginview{
@@ -138,8 +138,8 @@ p{
   flex-direction: column;
 }
 .login {
-  width: 80%;
-  height: 100%;
+  min-width: 450px;
+  min-height: 550px;
   background: white;
   border-radius: 20px;
   display: flex;
@@ -174,7 +174,7 @@ p{
   border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid #0f70ed;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 
@@ -189,7 +189,7 @@ p{
   border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid #0f70ed;
+  border: 1px solid #47A0FF;
   outline: none;
   }
 
@@ -200,7 +200,7 @@ p{
     border: 0;
     outline: none;
     border-radius: 10px;
-    background: #fcab1f;
+    background: #FEAA00;
     color: white;
     font-weight: bold;
     font-size: 1.2em;
