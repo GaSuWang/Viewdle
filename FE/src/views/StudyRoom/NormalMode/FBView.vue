@@ -221,9 +221,9 @@ export default {
     this.startCountdown()
   },
   unmounted(){
-    this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
-    this.$store.commit('lbhModule/EMPTY_FB')
-    this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
+    // this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
+    // this.$store.commit('lbhModule/EMPTY_FB')
+    // this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
     localStorage['cl'] = {}
     // if(this.userType === 'user'){
     //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
