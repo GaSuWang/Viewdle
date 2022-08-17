@@ -13,13 +13,13 @@
         <form @submit.prevent="signup(credentials)">
           <!-- 이름 -->
           <div class="nameinput">
-            <input type="text" v-model="credentials.userName" placeholder="Nick Name" />
+            <input type="text" v-model="credentials.userName" placeholder="닉네임" />
           </div>
           <!-- 이메일 인풋 -->
 
           <form @submit.prevent="checkEmail(credentials)">
             <div class="emailinput">
-              <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
+              <input type="email" v-model="credentials.userEmail" placeholder="이메일 주소" />
               <div v-if="credentialsTocheckEmail.EmailCheck == false">
               <button class="pwchecksubmit"> 중복 확인 </button>
               </div>
@@ -29,18 +29,20 @@
           <div v-if="credentialsTocheckEmail.EmailCheck == true">
           <!-- 비번 인풋 -->
             <div class="pwinput">
-              <input type="password" v-model="credentials.userPassword" placeholder="Password" />
+              <input type="password" v-model="credentials.userPassword" placeholder="비밀번호" />
             </div>
 
             <!-- 비번 확인 인풋 -->
             <div class="pwcheckinput">
-              <input type="password" v-model="credentials.userPassword2" placeholder="Password Check" />
+              <input type="password" v-model="credentials.userPassword2" placeholder="비밀번호 확인" />
             </div>
 
             <button class="signupsubmit">가입완료</button>
           </div>
         </form>
-        <div class="signupbackbutton"><router-link to="/">뒤로가기</router-link></div>
+        <div class="m-3">
+          <div class="signupbackbutton" style="color:black"><router-link to="/"><p style="font-size:14px; font-weight:bold; color:black">뒤로가기</p></router-link></div>
+        </div>
       </div>
       </div>
   </div>
@@ -134,7 +136,15 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+a{
+  text-decoration: none;
+  color : black;
+}
+a:hover{
+  text-decoration: none;
+  color : black;
+}
 .signup{
   width: 90%;
   height: 90%;
@@ -178,7 +188,7 @@ export default {
 }
 
 .emailinput{
-  margin-top: 20px;
+  margin-top: 0;
   width: 100%;
 }
 .emailinput input{
@@ -193,7 +203,7 @@ export default {
 }
 
 .pwinput{
-  margin-top: 50px;
+  margin-top: 20px;
   width: 100%;
 }
 .pwinput input{
@@ -207,7 +217,7 @@ export default {
   outline: none;
 }
 .pwcheckinput{
-  margin-top: 20px;
+  /* margin-top: 20px; */
   width: 100%;
 }
 .pwcheckinput input{

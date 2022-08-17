@@ -6,7 +6,15 @@ const state= {
     // 회원가입
     token: localStorage.getItem('token') || '',
     UserList:{},
-    HistoryList:{},
+    HistoryList:{
+      "userTotalTime": 5,
+      "userTotalVideo": 12,
+      "usingDates": [
+        "2022:08:17",
+        "2022:08:16",
+        "2022:08:18"
+      ]
+    },
     isLoggedIn: true,
     emailcode:{},
     pwcode: '',

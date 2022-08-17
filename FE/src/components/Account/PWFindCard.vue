@@ -15,7 +15,9 @@
         </div>
         <button class="pwFindsubmit">인증코드받기</button>
       </form>
-      <router-link to="/" class="pwfindbackbutton">뒤로가기</router-link>
+      <div class="m-3">
+        <router-link to="/" style="color:black" class="pwfindbackbutton"><p style="font-size:14px; font-weight:bold ">뒤로가기</p></router-link>
+      </div>
     </div>
     </div>
 </div>
@@ -67,7 +69,15 @@ export default {
 } 
 </script>
 
-<style>
+<style scoped>
+a{
+  text-decoration: none;
+  color : black;
+}
+a:hover{
+  text-decoration: none;
+  color : black;
+}
 .pwFind{
   width: 90%;
   height: 90%;

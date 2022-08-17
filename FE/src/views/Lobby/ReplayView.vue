@@ -266,7 +266,7 @@ export default {
     margin-left: 5px;
     overflow-wrap: break-word;
     background-color: white;
-    box-shadow: 1px 1px 1px 1px gray;
+    box-shadow:  0px 1.5px 4px #aaa, inset 0px 2.5px 6px #fff
 }
 .ReplayViewBoss{
   min-width: 1000px;
@@ -322,6 +322,7 @@ export default {
   border-radius: 20px;
   padding: 20px;
   overflow-y: scroll;
+  
 }
 .ReplayBody::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera*/

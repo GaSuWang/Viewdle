@@ -151,12 +151,16 @@ export default {
     })
 
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
-    this.session.on("signal:EECL", (e) => {
+        this.session.on("signal:EECL", (e) => {
       // console.log("EECL signal로 받은 데이터", e.data);
-      // const cl = JSON.parse(e.data);
-      const data = parseInt(e.data)
-      console.log("면접관이 받은 유저의 자소서", data);
-      this.$store.commit("lbhModule/SET_STUDYROOM_CL",data);
+      var title = e.data.split("/")[0];
+      var content = e.data.split("/")[1];
+      const cl = {
+        coverLetterTitle: title,
+        coverLetterContent: content,
+      }
+      this.$store.commit("lbhModule/SET_STUDYROOM_CL", cl);
+      console.log("면접장 자소서: ",this.studyRoomCL);
     });
 
     //방장이 면접을 완료할 경우
@@ -244,10 +248,10 @@ export default {
 
     },
     openEECL() {
-      this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
+      //this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
       localStorage['cl'] = JSON.stringify({
-        coverLetterTitle: this.CoverLetterDetail.coverLetterTitle,
-        coverLetterContent: this.CoverLetterDetail.coverLetterContent,
+        coverLetterTitle: this.studyRoomCL.coverLetterTitle,
+        coverLetterContent: this.studyRoomCL.coverLetterContent,
       })
       let route = this.$router.resolve({ path: "/eecl"});
       window.open(route.href);

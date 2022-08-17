@@ -320,7 +320,7 @@ input[type=password]:placeholder {
     display: inline-block;
     cursor: pointer;
     height: 24px;
-    width: 90px;
+    width: 105px;
     border-radius: 10%;
     box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
     line-height: 24px;
@@ -397,7 +397,7 @@ input[type=password]:placeholder {
 }
 .MainTop2itembutton{
   width: 6vw;
-  height: 2vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -432,7 +432,7 @@ input[type=password]:placeholder {
 }
 .mainsearchbutton{
   width: 5vw;
-  height: 2.5vw;
+  height: 3vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -449,8 +449,8 @@ input[type=password]:placeholder {
 
 .clCancle{
   /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+  width: 6vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -467,8 +467,8 @@ input[type=password]:placeholder {
 
 .clSubmit{
   /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+  width: 6vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
