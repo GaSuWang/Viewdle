@@ -889,6 +889,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 .EERButtonHeader{
@@ -900,7 +901,7 @@ export default {
 
 .EERContent {
   position: absolute;
-  width: 100%;
+  width: 80%;
   height: 78%;
   border-radius: 10px;
   margin-top: 1%;
@@ -1023,6 +1024,22 @@ div.EEVidContainer > div > div.userVideo{
 
 .suddenAttack {
   z-index: 1;
+}
+
+.VoiceChangeBtn button:enabled:hover {
+  z-index: 1;
+  background-color: #FEAA00;
+  color: red;
+}
+.SuddenAttackBtn button:enabled:hover {
+  z-index: 1;
+  background-color: #FEAA00;
+  color: red;
+}
+.CaptureBtn button:enabled:hover {
+  z-index: 1;
+  background-color: #FEAA00;
+  color: red;
 }
 .guard {
   position: absolute;
