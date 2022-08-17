@@ -1,12 +1,12 @@
 // 임현탁
 <template>
   <div class="ReplayCard" v-for="item in ReplayList" :key="item.seq">
-    <div class="ReplayCardTop">
-    </div>
+    <!-- <div class="ReplayCardTop">
+    </div> -->
     <div class="ReplayCardBottom">
-      <div class="ReplayCardthumnail">
-        <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
-      </div>
+    <form @submit.prevent="detailReplay(item.videoSeq)">
+      <button class="Replaycard-buttonitem1" data-bs-toggle="modal" data-bs-target="#enterReplay">열람</button>
+    </form>
       <div class="Replaycard-body">
         <h5>{{item.videoTitle}}</h5>
         <p><small class="text-muted">{{item.videoRegTime}}</small></p>
@@ -14,11 +14,8 @@
       </div>
     </div>
     <div class="Replaycard-button">
-      <form @submit.prevent="detailReplay(item.videoSeq)">
-        <button class="btn Replaycard-buttonitem" data-bs-toggle="modal" data-bs-target="#enterReplay">열람</button>
-      </form>
       <form @submit.prevent="deleteReplay(item.videoSeq)">
-      <button class="btn Replaycard-buttonitem">삭제하기</button>
+      <button class="btn Replaycard-buttonitem2">삭제하기</button>
       </form>
     </div>
     <!-- 왼쪽 -->
@@ -70,6 +67,7 @@ export default {
   transition: all 0.1s linear;
   display: flex;
   flex-flow: column;
+  overflow: hidden;
 }
 .ReplayCard:hover {
   transform:scale(1.04);
@@ -94,7 +92,7 @@ export default {
   justify-content: center;
 }
 .Replaycard-body{
-  width: 60%;
+  width: 100%;
   display: flex;
   flex-flow: column;
 }
@@ -105,10 +103,20 @@ export default {
   justify-content: end;
   margin-right: 20%;
 }
-.Replaycard-buttonitem{
+.Replaycard-buttonitem2{
   margin : 3px;
   font-size: 3px;
   background-color: rgb(230,198,132);
   color: white;
+}
+.Replaycard-buttonitem1{
+  position:fixed;
+  width:100%;
+  height: 80%;
+  margin : 3px;
+  font-size: 3px;
+  background-color: rgb(230,198,132);
+  opacity:0;
+  color: black;
 }
 </style>

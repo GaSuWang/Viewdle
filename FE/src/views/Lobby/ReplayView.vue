@@ -53,12 +53,12 @@
           <div class="replayfeedback">
               <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in replayDetail.feedbackList" :key="item.seq">
               {{item.feedbackContent}}
-              <button :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" @click="moveTo(item.timeline)">
-                <i class="fa-solid fa-circle-play"></i>
+              <button :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" @click="moveTo(item.timeline)">
+                <i :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" class="fa-solid fa-circle-play"></i>
               </button>
               </div>
             </div>
-        <button class="btn btn-secondary replaymodalclose" data-bs-dismiss="modal">Close</button> 
+        <button class="btn replaymodalclose" data-bs-dismiss="modal">Close</button> 
           </div>
           </div>
         </div>
@@ -338,9 +338,14 @@ export default {
   position: absolute;
   left: 680px;
   width: 450px;
-  height: 510px;
+  height: 480px;
   margin-right: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   overflow-y: scroll;
+  background-color:#e4e6eb;
+  border-radius: 20px;
 }
 .replayfeedback::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera*/
@@ -349,26 +354,42 @@ export default {
   border-radius: 20px;
   width: 430px;
   height: 90px;
-  margin-bottom: 30px; 
+  margin-bottom: 15px;
+  margin-top: 15px; 
+  text-align: center;
+  line-height: 90px;
+  display: flex;
+  justify-content: space-between;
 }
 .replaymodalclose{
   position: absolute;
   left: 1000px;
   width: 100px;
   height: 45px;
-  top: 540px
+  top: 540px;
+  background-color:#ffcc74;
 }
 .replaygood{
-  background-color: #89B2E8;
-  border: 1px #0f70ed solid;
+  border: #89B2E8;
+  background-color: white;
 }
 .replaybad{
-  background-color: #ffcc74;
-  border: 1px #fcab1f solid
+  border: #ffcc74;
+  background-color: white;
 }
 .replaytopitembutton{
   background-color: rgb(230,198,132);
   color: white
+}
+.replaybadbutton{
+  height: 20px;
+  color:#ffcc74;
+  background: white;
+}
+.replaygoodbutton{
+  height: 20px;
+  color:#89B2E8;
+  background: white;
 }
  /* width="640" height="480" */
 </style> 

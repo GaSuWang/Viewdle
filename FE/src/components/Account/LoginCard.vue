@@ -7,12 +7,12 @@
       <!-- 이메일 인풋 -->
       <form @submit.prevent="login(credentials)">
         <div class="loginid">
-          <input type="email" v-model="credentials.email" placeholder="Email address" />
+          <input type="email" class="loginidinput" v-model="credentials.email" placeholder="Email address" />
         </div>
         
         <!-- Password input -->
         <div class="loginpw">
-          <input type="password" v-model="credentials.password" placeholder="Password" />
+          <input type="password" class="loginpwinput" v-model="credentials.password" placeholder="Password" />
         </div>
         <button class="loginsubmit btn-lg d-flex justify-content-center align-items-center">로그인</button>
       </form>
@@ -26,8 +26,9 @@
             <div class="userButtonBox"><router-link to="/signup">회원가입</router-link></div>
         </div>
 
-        <div><span>&nbsp;&nbsp;</span></div>
+        <div class="d-flex justify-content-center"><p class="m-0">비번을 잊으셨나요?</p> <span>&nbsp;&nbsp;</span>
         <div class="userButtonBox"><router-link to="/pw">비밀번호 찾기</router-link></div>
+        </div>
       </div>
 
     </div>
@@ -167,10 +168,10 @@ p{
   margin-top: 10px;
   width: 100%;
 }
-.loginid input{
+.loginidinput{
   width: 100%;
   height: 50px;
-  background-color: #89B2E8;
+  background-color: white;
   border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
@@ -182,10 +183,10 @@ p{
   margin-top: 0px;
   width: 100%;
 }
-.loginpw input{
+.loginpwinput{
   width: 100%;
   height: 50px;
-  background-color: #89B2E8;
+  background-color: white;
   border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
