@@ -106,7 +106,7 @@ export default {
 .Replaycard-buttonitem2{
   margin : 3px;
   font-size: 3px;
-  background-color: rgb(230,198,132);
+  background-color: #FEAA00;
   color: white;
 }
 .Replaycard-buttonitem1{
@@ -115,7 +115,6 @@ export default {
   height: 80%;
   margin : 3px;
   font-size: 3px;
-  background-color: rgb(230,198,132);
   opacity:0;
   color: black;
 }

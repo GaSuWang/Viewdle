@@ -1,25 +1,23 @@
 // 임현탁
 <template>
   <div class="CLMCard" v-for="item in CoverLetterList" :key="item.seq">
+      <form @submit.prevent="detailCoverLetter(item.coverLetterSeq)">
+        <button class="btn coverletterbutton1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">상세보기</button>
+      </form>
     <div class="CLMCardTop">
     </div>
     <div class="CLMCardBottom">
-      <div class="CLMthumnail">
-          <img src="@/assets/images/anyimgs.png" class="img-fluid rounded-start">
-      </div>
       <div class="CLMcard-body">
         <h5>{{item.coverLetterTitle}}</h5>
         <p><small class="text-muted">{{item.coverLetterRegTime}}</small></p>
         <p><small class="text-muted">자소서 코드: {{item.coverLetterSeq}}</small></p>
       </div>
-      <form @submit.prevent="detailCoverLetter(item.coverLetterSeq)">
-        <button class="btn coverletterbutton" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">상세보기</button>
-      </form>
+    </div>
+      <div class="CLMfooter">
       <form @submit.prevent="deleteCoverLetter(item.coverLetterSeq)">
       <button class="btn coverletterbutton">삭제하기</button>
       </form>
-    </div>
-
+      </div>
   </div>
 </template>
 
@@ -61,7 +59,7 @@ export default {
   height:45%; 
   margin:10px;
   border-radius: 20px;
-  align-items: center;
+  /* align-items: center; */
   align-content: center;
   justify-content: center;
   box-shadow: 1px 1px 1px 1px gray;
@@ -114,7 +112,27 @@ export default {
   margin-left:10px;
 }
 .coverletterbutton{
-  background-color: rgb(230,198,132);
+  margin : 3px;
+  font-size: 3px;
+  background-color:#FEAA00;
   color: white;
+}
+.coverletterbutton:hover{
+  margin : 3px;
+  font-size: 3px;
+  background-color: #ffcc74;
+  color: white;
+}
+.coverletterbutton1{
+  position: absolute;
+  width:100%;
+  height: 80%;
+  color: white;
+  opacity:0;
+}
+.CLMfooter{
+  display: flex;
+  justify-content: end;
+  margin-right:20px
 }
 </style>

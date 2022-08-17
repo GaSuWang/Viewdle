@@ -120,10 +120,10 @@ a:hover{
   color : black;
 }
 .userButtonBox a{
-  color:#FEAA00
+  color:#FEAA00;
 }
 .userButtonBox a:hover{
-  color:#ffcc74
+  color:#ffcc74;
 }
 
 p{
