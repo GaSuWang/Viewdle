@@ -1,7 +1,7 @@
 <template>
   <div class="background">
     <div :style="Startbackground">
-      <GameStart :gameDiscription="gameDiscription"></gameStart>
+      <GameStart :gameDiscription="gameDiscription"  class="desc"></gameStart>
     </div>
     <GameTimer class="timer" @start="start" @TimeOut="failSuddenAttack" :endSuddenAttack='endSuddenAttack'/>
     <div class="d-flex justify-content-center">
@@ -29,9 +29,6 @@ export default {
       gameDiscription : "제한 시간 내에 1부터 9까지 숫자를 클릭해 주세요!",
       Startbackground : {
           width: "100vw",
-          height: "100vh",
-          display : "block",
-          margin:"auto", 
       }
     };
   },
@@ -51,7 +48,6 @@ export default {
   },
   methods: {
     start(){
-      console.log("왔다")
       this.Startbackground.display = "none"
     },
     successSuddenAttack() {
@@ -79,6 +75,14 @@ export default {
   background-color: rgba(255,255,255,0.9);
   width: 100vw;
   height: 100vh;
+}
+.desc{
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0%;
+  left: 0%;
+  z-index: 2;
 }
 .cell{
     cursor: pointer;
