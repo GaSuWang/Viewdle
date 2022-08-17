@@ -52,7 +52,7 @@
       <!-- 면접자 영상 구역  -->
       <div class="EEVidContainer">
         <div class="EEVid">
-          <!-- <warningStackBar :stack="warningCount"></warningStackBar> 경고게이지 주석 -->
+          <warningStackBar :stack="warningCount"></warningStackBar>
           <user-video :stream-manager="EE" />
         </div>
       </div>
@@ -124,7 +124,7 @@
 import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue";
 import UserVideo from "@/components/UserVideo.vue";
 import { mapGetters } from "vuex";
-// import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
+import warningStackBar from "@/components/StudyRoom/EasyMode/WarningStackBar.vue"; //경고게이지 주석
 import AttackSpaceBar from "@/components/StudyRoom/EasyMode/Game/AttackSpaceBar.vue";
 import OneToNine from "@/components/StudyRoom/EasyMode/Game/OneToNine.vue";
 import ArrowDirection from "@/components/StudyRoom/EasyMode/Game/ArrowDirection.vue";
@@ -132,7 +132,7 @@ import { useRouter } from "vue-router";
 
 export default {
   name: "EERView",
-  components: { UserVideo, AuthorityPassModal, AttackSpaceBar, OneToNine, ArrowDirection }, // warningStackBar //경고게이지 주석
+  components: { UserVideo, AuthorityPassModal, AttackSpaceBar, OneToNine, ArrowDirection, warningStackBar }, // warningStackBar //경고게이지 주석
   data() {
     return {
       warningCount: 0, //현재 쌓인 경고수
@@ -297,7 +297,7 @@ export default {
         this.recognition.stop();
         this.recognition = null;
       }
-      alert("방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.");
+      // alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
       const data = JSON.stringify(this.myUserInfo);
       this.session.signal({
@@ -907,6 +907,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 .EERButtonHeader {
@@ -917,8 +918,11 @@ export default {
 }
 
 .EERContent {
-  width: 100%;
+  position: absolute;
+  width: 80%;
+  height: 78%;
   border-radius: 10px;
+  margin-top: 1%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -929,22 +933,28 @@ export default {
 
 .EEVidContainer {
   width: 100%;
-  height: 80%;
+  height: 70%;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .EEVid {
-  width: 65%;
+  /* width: 60%; */
+  height: 100%;
   aspect-ratio: 2/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }
 
 .ERVidContainer {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  /* justify-content: center; */
   width: 100%;
-  height: 20%;
+  height: 30%; 
   /* overflow-x: scroll; */
 }
 
@@ -952,6 +962,17 @@ export default {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+div.EEVidContainer > div > div:nth-child(1){
+  margin: 0;
+  height: 98%;
+}
+
+div.EEVidContainer > div > div.userVideo{
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 .EERBtnContainer {
@@ -967,6 +988,7 @@ export default {
 .EERBottomArea {
   display: flex;
   justify-content: space-evenly;
+  align-items:center;
   width: 100%;
   height: 10%;
   /* border-radius: 20px; */
@@ -1021,6 +1043,15 @@ export default {
 .suddenAttack {
   z-index: 1;
 }
+.CLOpen button:enabled:hover,
+.VoiceChangeBtn button:enabled:hover,
+.SuddenAttackBtn button:enabled:hover,
+.CaptureBtn button:enabled:hover {
+  z-index: 1;
+  background-color: #ffcc74;
+  color: red;
+}
+
 .guard {
   position: absolute;
   top: 0%;

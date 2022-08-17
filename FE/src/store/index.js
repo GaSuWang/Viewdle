@@ -12,7 +12,7 @@ import rhtModule from "./modules/rhtModule";
 
 export default createStore({
   plugins: [createLogger(), 
-    //createPersistedState()
+    // createPersistedState({paths: ['rhtModule']})
   ], //vuex store의 모든 행위를 console log해줌
   modules: { lbhModule, rhtModule},
 });

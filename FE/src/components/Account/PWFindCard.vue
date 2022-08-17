@@ -3,8 +3,7 @@
 <div class="pwFind">
   <div class="pwFindbody">
     <div class="pwFindcard">
-      <h1>Find Password</h1>
-    <img id="logoimg" src="@/assets/images/anyimgs.png" alt="Sample image">
+      <div class="d-flex"><h1 class="frontVeiwdle">뷰들</h1><h1 class="backVeiwdle">뷰들</h1></div>
         <!-- 이메일 입력란 -->
         <!-- 버튼클릭시 이메일로 임의의 비밀번호 발송 or 원래비밀번호 발송 -->
         <!-- 취소버튼 -->
@@ -15,9 +14,8 @@
           <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
         </div>
         <button class="pwFindsubmit">인증코드받기</button>
-        <router-link to="/" class="pwfindbackbutton">뒤로가기</router-link>
-
       </form>
+      <router-link to="/" class="pwfindbackbutton">뒤로가기</router-link>
     </div>
     </div>
 </div>
@@ -107,30 +105,52 @@ export default {
   width: 100%;
 }
 .pwFindinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 .pwFindsubmit{
-    margin-top: 50px;
-    width: 80%;
+    margin-top: 20px;
     width: 100%;
-    height: 50px;
+    height: 3vw;
     border: 0;
     outline: none;
-    border-radius: 40px;
-    background-color: rgb(230,198,132);
+    border-radius: 10px;
+    background: #FEAA00;
     color: white;
+    font-weight: bold;
     font-size: 1.2em;
     letter-spacing: 2px;
+    box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.pwFindsubmit:hover{
+
 }
 .pwfindbackbutton{
-  
+  text-decoration: none;
+  color:#FEAA00
+}
+.pwfindbackbutton:hover{
+  text-decoration: none;
+  color:#ffcc74
+}
+.frontVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #47A0FF;
+}
+.backVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #FEAA00;
+}
+@font-face {
+    font-family: 'yg-jalnan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 </style>
