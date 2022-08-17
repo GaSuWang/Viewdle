@@ -7,12 +7,12 @@
       <!-- 이메일 인풋 -->
       <form @submit.prevent="login(credentials)">
         <div class="loginid">
-          <input type="email" class="loginidinput" v-model="credentials.email" placeholder="Email address" />
+          <input type="email" class="loginidinput" v-model="credentials.email" placeholder="이메일" />
         </div>
         
         <!-- Password input -->
         <div class="loginpw">
-          <input type="password" class="loginpwinput" v-model="credentials.password" placeholder="Password" />
+          <input type="password" class="loginpwinput" v-model="credentials.password" placeholder="비밀번호" />
         </div>
         <button class="loginsubmit btn-lg d-flex justify-content-center align-items-center">로그인</button>
       </form>
