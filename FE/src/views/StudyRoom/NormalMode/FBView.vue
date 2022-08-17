@@ -19,7 +19,7 @@
     <div class="FBRightArea">
       <div class="FBButtonHeader">
         <!-- 타이머 -->
-      <button type="button" class="btn btn-primary" :disabled="counting">
+      <button type="button" class="btn" :disabled="counting">
         <vue-countdown v-if="counting" :time="300000" @end="onCountdownEnd" v-slot="{minutes, seconds}">{{minutes}}분 {{seconds}}초</vue-countdown>
         <!-- <span v-else>Fetch Verification Code</span> -->
       </button>
@@ -427,6 +427,12 @@ export default {
 .FBView button:enabled:hover{
   background-color: #787a89;
   border: #787a89
+}
+
+#app > div > div.FBView > div.FBRightArea > div.FBButtonHeader > button{
+  background-color: #a7a9b9;
+  border: #a7a9b9;
+  color: white;
 }
 
 /* 버튼 시작*/
