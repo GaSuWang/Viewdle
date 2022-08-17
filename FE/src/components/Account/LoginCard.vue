@@ -102,7 +102,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 .frontVeiwdle{
   font-family: 'yg-jalnan';
   color: #47A0FF;

@@ -92,10 +92,10 @@
 
               </div> 
               <div class="modal-footer">
-                <button class="btn btn-secondary" @click="cleanData" data-bs-dismiss="modal">생성</button>
+                <button class="clCancle" @click.prevent="cleanData" data-bs-dismiss="modal"><router-link to="/main">취소</router-link></button>
+                <button class="clSubmit" @click="cleanData" data-bs-dismiss="modal">생성</button>
               </div>
               </form>
-              <button class="btn btn-secondary" @click="cleanData" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
         </div> 
@@ -258,6 +258,14 @@ export default {
 </script>
 
 <style>
+a{
+  text-decoration: none;
+  color : white;
+}
+a:hover{
+  text-decoration: none;
+  color : white;
+}
 input[id="privateCheck"] + label {
   display: inline-block;
   width: 20px;
@@ -409,6 +417,42 @@ input[type=password]:placeholder {
 .mainsearchbutton{
   background-color:rgb(153, 172, 230);
   color:white;
+}
+
+.clCancle{
+  /* margin-top: 20px; */
+  width: 3vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.clCancle:hover{
+  background: #ffcc74;
+}
+
+.clSubmit{
+  /* margin-top: 20px; */
+  width: 3vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.clSubmit:hover{
+  background: #89B2E8;
 }
 
 </style>
