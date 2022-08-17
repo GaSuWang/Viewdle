@@ -66,58 +66,59 @@
         </div>
       </div>
     </div>
+    <!-- <div v-if="this.isER"> -->
+      <div class="EERBottomArea">
+        <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
+        <div v-if="OXBtnState">
+          <button @click="selectOBtn">O</button>
+          <button @click="selectXBtn">X</button>
+        </div>
+        <div v-if="isCountDownOn">countdown: {{ countDown }}</div>
+        <!-- 돌발질문 카운트 다운 및 OX버튼 끝-->
+        <div class="CLOpen">
+          <Button
+            @click.prevent="openEECL()"
+            icon="pi pi-times"
+            class="p-button-rounded p-button-secondary"
+          >
+            <i class="bi bi-file-earmark-text"></i>
+          </Button>
+        </div>
+        <!-- <div class="VoiceChangeBtn">
+          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary">
+            <i class="bi bi-mic-fill"></i>
+          </Button>
+        </div> -->
 
-    <div class="EERBottomArea">
-      <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
-      <div v-if="OXBtnState">
-        <button @click="selectOBtn">O</button>
-        <button @click="selectXBtn">X</button>
-      </div>
-      <div v-if="isCountDownOn">countdown: {{ countDown }}</div>
-      <!-- 돌발질문 카운트 다운 및 OX버튼 끝-->
-      <div class="CLOpen">
-        <Button
-          @click.prevent="openEECL()"
-          icon="pi pi-times"
-          class="p-button-rounded p-button-secondary"
-        >
-          <i class="bi bi-file-earmark-text"></i>
-        </Button>
-      </div>
-      <div class="VoiceChangeBtn">
-        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary">
-          <i class="bi bi-mic-fill"></i>
-        </Button>
-      </div>
-
-      <div class="SuddenAttackBtn">
-        <Button
-          icon="pi pi-times"
-          class="p-button-rounded p-button-secondary"
-          :disabled="suddenBtnState"
-          @click="sendSuddenQASignal"
-        >
-          <i class="bi bi-exclamation-triangle-fill"></i>
-        </Button>
-        <!-- <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+        <div class="SuddenAttackBtn">
+          <Button
+            icon="pi pi-times"
+            class="p-button-rounded p-button-secondary"
+            :disabled="suddenBtnState"
+            @click="sendSuddenQASignal"
+          >
             <i class="bi bi-exclamation-triangle-fill"></i>
-          </button> -->
-      </div>
-      <div class="CaptureBtn">
-        <Button
-          icon="pi pi-times"
-          class="p-button-rounded p-button-secondary"
-          :disabled="suddenBtnState"
-          @click="sendSuddenAttackSignal"
-        >
-          <i class="bi bi-camera"></i>
-        </Button>
-        <!-- <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
-            <i class="bi bi-camera"></i>
-          </button> -->
+          </Button>
+          <!-- <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+            </button> -->
+        </div>
+        <div class="CaptureBtn">
+          <Button
+            icon="pi pi-times"
+            class="p-button-rounded p-button-secondary"
+            :disabled="suddenBtnState"
+            @click="sendSuddenAttackSignal"
+          >
+            <i class="bi bi-controller"></i>
+          </Button>
+          <!-- <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
+              <i class="bi bi-camera"></i>
+            </button> -->
+        </div>
       </div>
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script>
