@@ -3,7 +3,6 @@
 <div class="BadgeList">
     <div class="BadgeTable">
     <div v-for="item in BadgeList" :key="item.seq">
-      <p>하이</p>
       <img class="Badgeimg" v-on:click="setBadge(item.imgUrl)" :src="item.imgUrl">
     </div>
     </div>

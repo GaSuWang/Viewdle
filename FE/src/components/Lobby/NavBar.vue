@@ -2,11 +2,14 @@
 <template>
 <div class="sidebarall">
     <div class="sidebar">
-    <header>My app</header>
+    <!-- <header>V:Dle</header> -->
+    <div style="display: flex; align-items: center; flex-direction: column;">
+      <div class="d-flex" style="margin-top:40px"><div class="frontVeiwdle">뷰들</div><div class="backVeiwdle">뷰들</div></div>
+    </div>
     <div class="sidebarbody">
     <MiniProfile class="SidebarMiniProfile"/>
     <ul>
-        <li><div @click="main()"><i :class="{'클래스이름': '조건식'}" class="fas fa-qrcode"></i>Main</div></li>
+        <li><div @click="main()"><i class="fas fa-qrcode"></i>Main</div></li>
         <li><div @click="mypage()"><i class="fas fa-user"></i>MyPage</div></li>
         <li><div @click="cl()"><i class="fas fa-envelope-open-text"></i>CoverLetter</div></li>
         <li><div @click="replay()"><i class="fas fa-video"></i>Replay</div></li>
@@ -67,7 +70,9 @@ export default {
 }
 .sidebar{
     height:100%;
-    background: #042331;
+    width:100%;
+    /* background: rgb(153, 172, 230); */
+    background: white;
     border-radius: 20px;
 }
 .sidebar header{
@@ -76,7 +81,8 @@ export default {
     color: white;
     text-align: center;
     line-height: 70px;
-    background: #063146;
+    background: rgb(153, 172, 230);
+    /* background: white; */
     user-select: none;
 }
 .sidebar ul{
@@ -84,7 +90,8 @@ export default {
 }
 .sidebar ul a{
     text-decoration: none;
-    color: white;
+    /* color: white; */
+    color : black
 }
 /* 나중에 a는 모두 라우터로 바꿔야됨 */
 .sidebar ul li{
@@ -92,24 +99,37 @@ export default {
     height: 100%;
     width: 100%;
     line-height: 65px;
-    color: white;
+    /* color: white; */
+    color: black;
     padding-left:40px;
     box-sizing: border-box;
-    border-top: 1px solid rgba(255,255,255,.1);
-    border-bottom: 1px solid black;
+    /* border-top: 1px solid rgb(153, 172, 230); */
+    /* border-bottom: 1px solid rgb(153, 172, 230); */
 }
 .sidebar ul li:hover {
-    padding-left: 50px
+    padding-left: 50px;
+    cursor: pointer;
 }
 .sidebar ul li i{
     margin-right:16px;
 }
 button{
-    background: #042331;
+    background: rgb(153, 172, 230);
     color: white;
-    border: #042331;
+    border: rgb(153, 172, 230);
 }
 .SidebarMiniProfile{
 
+}
+
+.frontVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #47A0FF;
+  font-size: 45px;
+}
+.backVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #FEAA00;
+  font-size: 45px;
 }
 </style>

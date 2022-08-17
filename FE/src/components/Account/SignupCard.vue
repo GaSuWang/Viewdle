@@ -3,7 +3,7 @@
   <div class="signup">
     <div class="signupbody">
       <div class="signupcard">
-        <h1>Signup</h1>
+        <div class="d-flex"><h1 class="frontVeiwdle">뷰들</h1><h1 class="backVeiwdle">뷰들</h1></div>
     <!-- 이름 -->
     <!-- 이메일 -->
     <!-- 비밀번호 -->
@@ -13,35 +13,34 @@
         <form @submit.prevent="signup(credentials)">
           <!-- 이름 -->
           <div class="nameinput">
-            <input type="text" v-model="credentials.userName" class="form-control form-control-lg"
-              placeholder="Nick Name" />
+            <input type="text" v-model="credentials.userName" placeholder="Nick Name" />
           </div>
           <!-- 이메일 인풋 -->
 
           <form @submit.prevent="checkEmail(credentials)">
             <div class="emailinput">
-              <input type="email" v-model="credentials.userEmail" class="form-control form-control-lg" placeholder="Email address" />
-              <button class="pwchecksubmit btn btn-primary btn-lg"> 중복 확인 </button>
+              <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
+              <div v-if="credentialsTocheckEmail.EmailCheck == false">
+              <button class="pwchecksubmit"> 중복 확인 </button>
+              </div>
             </div>
           </form>
 
           <div v-if="credentialsTocheckEmail.EmailCheck == true">
           <!-- 비번 인풋 -->
             <div class="pwinput">
-              <input type="password" v-model="credentials.userPassword" class="form-control form-control-lg"
-                placeholder="Password" />
+              <input type="password" v-model="credentials.userPassword" placeholder="Password" />
             </div>
 
             <!-- 비번 확인 인풋 -->
             <div class="pwcheckinput">
-              <input type="password" v-model="credentials.userPassword2" class="form-control form-control-lg"
-                placeholder="Password Check" />
+              <input type="password" v-model="credentials.userPassword2" placeholder="Password Check" />
             </div>
 
-            <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
-            <router-link to="/">뒤로가기</router-link>
+            <button class="signupsubmit">가입완료</button>
           </div>
         </form>
+        <div class="signupbackbutton"><router-link to="/">뒤로가기</router-link></div>
       </div>
       </div>
   </div>
@@ -65,8 +64,8 @@ export default {
       EmailCheck: false
     })
     const router = useRouter();
-    // const BASE_URL = 'http://' + location.hostname + ':8081'
-    const BASE_URL = 'https://' + location.hostname
+    const BASE_URL = 'http://' + location.hostname + ':8081'
+    // const BASE_URL = 'https://' + location.hostname
     function signup(credentials) {
       /* 
       POST: 사용자 입력정보를 signup URL로 보내기
@@ -139,8 +138,8 @@ export default {
 .signup{
   width: 90%;
   height: 90%;
-  background : rgb(255,255,255,0.5);
-  border-radius: 20px;
+  /* background : rgb(255,255,255,0.5);
+  border-radius: 20px; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,8 +153,8 @@ export default {
 
 }
 .signupcard{
-  width: 80%;
-  height: 100%;
+  min-width: 450px;
+  min-height: 550px;
   background: white;
   border-radius: 20px;
   display: flex;
@@ -168,14 +167,13 @@ export default {
   width: 100%;
 }
 .nameinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 
@@ -184,14 +182,13 @@ export default {
   width: 100%;
 }
 .emailinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 
@@ -200,14 +197,13 @@ export default {
   width: 100%;
 }
 .pwinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 .pwcheckinput{
@@ -215,38 +211,63 @@ export default {
   width: 100%;
 }
 .pwcheckinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 .pwchecksubmit{
     margin-top: 20px;
     width: 100%;
-    height: 50px;
+    height: 3vw;
     border: 0;
     outline: none;
-    border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    border-radius: 10px;
+    background: #FEAA00;
     color: white;
+    font-weight: bold;
     font-size: 1.2em;
     letter-spacing: 2px;
+    box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
 .signupsubmit{
-     margin-top:20px;
+    margin-top: 20px;
     width: 100%;
-    height: 50px;
+    height: 3vw;
     border: 0;
     outline: none;
-    border-radius: 40px;
-    background: linear-gradient(to left, rgb(255, 77, 46), rgb(255, 155, 47));
+    border-radius: 10px;
+    background: #FEAA00;
     color: white;
+    font-weight: bold;
     font-size: 1.2em;
     letter-spacing: 2px;
+    box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.signupbackbutton a{
+  text-decoration: none;
+  color:#FEAA00
+}
+.signupbackbutton a:hover{
+  text-decoration: none;
+  color:#ffcc74
+}
+.frontVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #47A0FF;
+}
+.backVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #FEAA00;
+}
+@font-face {
+    font-family: 'yg-jalnan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 </style>

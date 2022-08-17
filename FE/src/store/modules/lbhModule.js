@@ -17,6 +17,7 @@ const state = {
   roomSeq: undefined,
   roomTitle: undefined,
   roomType: 'study', //2가 스터디모드, 1이 플레이모드
+  roomTime: 0,
 
   //비디오 정보
   videoSeq: undefined,
@@ -232,6 +233,11 @@ const mutations = {
   SELECT_CL(state, cl){state.CLSelected = cl}, 
   SWITCH_CL_STATUS(state, status){state.CLStatus = status},
 
+  START_ROOM_TIME(state){setInterval(() => {
+    state.roomTime++
+  }, 1000);},
+  EMPTY_ROOM_TIME(state){state.roomTime = 0},
+
   //waiting-room
   SET_WR_PARTICIPANT_LIST(state, inputList) {
     console.log('SET_WR_PARTICIPANT_LIST 시작',inputList)
@@ -347,8 +353,8 @@ const mutations = {
   },
 };
 
-// const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'
-const BASE_URL = 'https://' + location.hostname + '/api/v1/'
+const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'
+// const BASE_URL = 'https://' + location.hostname + '/api/v1/'
 
 const actions = {
   //Axios 모음
@@ -447,7 +453,7 @@ const actions = {
   // },
 
   // 임현탁 userLeaveSessionAxios수정위해 따로 뺴와서 수정중
-  userLeaveSessionAxios({state,dispatch, rootGetters }){
+  userLeaveSessionAxios({state,dispatch,commit, rootGetters }){
     console.log('유저 방에서 잘 나가....나?')   
     axios({
       url: BASE_URL + 'studyroom/exit',
@@ -456,9 +462,11 @@ const actions = {
       data: {
         nextOwnerEmail: "",
         roomSeq: state.roomSeq,
+        time: state.roomTime,
       }
     })
     .then(res =>{
+      commit('EMPTY_ROOM_TIME')
       console.log('유저 방에서 잘 나감')
       console.log(res.response),
       router.push('/main')
@@ -472,7 +480,7 @@ const actions = {
   },
 
   //방장이 권한 위임하고 방 나감(스터디룸 나가기)
-  superUserLeaveSessionAxios({state, dispatch, rootGetters},nextSuperUserEmail){
+  superUserLeaveSessionAxios({state, dispatch, commit, rootGetters},nextSuperUserEmail){
     axios({
       url: BASE_URL + 'studyroom/exit',
       method: 'patch',
@@ -480,9 +488,11 @@ const actions = {
       data: {
         nextOwnerEmail: nextSuperUserEmail,
         roomSeq: state.roomSeq,
+        time: state.roomTime,
       }
     })
     .then(res=> {
+      commit('EMPTY_ROOM_TIME')
       dispatch('deleteData')
       console.log('방장 유저 정상적으로 세션 나감', res)
       router.push('/main')
@@ -493,7 +503,7 @@ const actions = {
   },
 
   //방장이 방 폭파시킴 첫 단계(스터디룸 나가기, 일반 유저 방 나가기와 동일하지만 구분 위해 다른 이름 부여)
-  studyDestroyFirstAxios({state, dispatch, rootGetters}){
+  studyDestroyFirstAxios({state, dispatch,commit, rootGetters}){
     axios({
       url: BASE_URL + 'studyroom/exit',
       method: 'patch',
@@ -501,9 +511,11 @@ const actions = {
       data: {
         nextOwnerEmail: "",
         roomSeq: state.roomSeq,
+        time: state.roomTime,
       }
     })
     .then(res=> {
+      commit('EMPTY_ROOM_TIME')
       console.log('일단 방을 나감', state.roomSeq, res.response)
       dispatch('studyDestroySecondAxios')
     })

@@ -3,9 +3,8 @@
 <div class="CLMBoss">
   <NavBar class="NavView"/>
   <div class="CLManageView">
-    <p class="pagetitle">Cover Letter Manage</p>
     <div class='clmanageTop'>
-        <button class="btn btn-secondary clmanageTopitem" data-bs-toggle="modal" data-bs-target="#clmaker">자소서생성</button>
+        <button class="clmanageTopitem" data-bs-toggle="modal" data-bs-target="#clmaker">자기소개서 추가</button>
     </div>
       <hr>
     <div class="clmanageBody">
@@ -20,17 +19,17 @@
           <div class="modal-content">
             <form @submit.prevent="createCoverLetter(credentials)">
             <div class="modal-header">
-              <h5 class="modal-title" id="staticBackdropLabel">자소서 제목</h5>
-              <input type="Text" v-model="credentials.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
+              <!-- <h5 class="modal-title" id="staticBackdropLabel">자소서 제목</h5> -->
+              <input type="Text" v-model="credentials.coverLetterTitle" class="CLTitle " placeholder="자기소개서 제목을 입력해주세요" /> 
             </div>
             <div class="modal-body">
-              <textarea type="Text" v-model="credentials.coverLetterContent" class="CLContent form-control form-control-lg" placeholder="body" /> 
+              <textarea type="Text" v-model="credentials.coverLetterContent" class="CLContent " placeholder="내용을 입력해주세요" /> 
             </div> 
             <div class="modal-footer">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">작성</button>
+              <button class="clCancle" @click.prevent data-bs-dismiss="modal"><router-link to="/cl">취소</router-link></button>
+              <button class="clSubmit" data-bs-dismiss="modal">작성</button>
             </div>
             </form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
@@ -42,14 +41,16 @@
           <div class="modal-content">
             <form @submit.prevent="updateCoverLetter(CoverLetterDetail)">
             <div class="modal-header">
-              <input type="Text" v-model="CoverLetterDetail.coverLetterTitle" class="form-control form-control-lg" placeholder="Title" /> 
+              <input type="Text" v-model="CoverLetterDetail.coverLetterTitle" class="CLTitle" placeholder="자기소개서 제목을 입력해주세요" /> 
             </div>
             <div class="modal-body">
-            <textarea type="Text" v-model="CoverLetterDetail.coverLetterContent" class="CLContent form-control form-control-lg" placeholder="body" /> 
+            <textarea type="Text" v-model="CoverLetterDetail.coverLetterContent"  class="CLContent " placeholder="내용을 입력해주세요" /> 
             </div>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">수정</button>
+            <div class="modal-footer">
+              <button class="clCancle" @click.prevent data-bs-dismiss="modal"><router-link to="/cl">취소</router-link></button>
+              <button class="clSubmit" data-bs-dismiss="modal">작성</button>
+            </div>
             </form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
           </div>
         </div>
       </div>   
@@ -131,8 +132,17 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+a{
+  text-decoration: none;
+  color : white;
+}
+a:hover{
+  text-decoration: none;
+  color : white;
+}
 .CLMBoss{
+  min-width: 1000px;
   width: 90%;
   height: 90%;
   background : rgb(255,255,255,0.5);
@@ -148,29 +158,90 @@ export default {
 .CLManageView{
   height: 100%;
   width: 80%;
+  overflow: scroll;
 }
+.CLManageView::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
 .pagetitle{
   margin-top: 20px;
 }
 .clmanageTop{
+  margin-top: 20px;
+  margin-left: 20px;
   background: white;
   border-radius: 20px;
-  width:98%;
+  width:95%;
   display: flex;
   justify-content: end;
   flex-direction: row;
   align-items: center;
   height: 80px;
 }
+
 .clmanageTopitem{
-  margin: 0 20px
+  /* margin-top: 20px; */
+  width: 9vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
+.clmanageTopitem:hover{
+  background: #ffcc74;
+}
+
+.clSubmit{
+  /* margin-top: 20px; */
+  width: 3vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.clSubmit:hover{
+  background: #89B2E8;
+}
+
+.clCancle{
+  /* margin-top: 20px; */
+  width: 3vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.clCancle:hover{
+  background: #ffcc74;
+}
+
+
 .clmanageBody{
+  margin-left: 20px;
   display: flex;
   flex-direction: row;
   flex-flow: row wrap;
   justify-content: space-around;
-  width: 98%;
+  width: 95%;
   height: 80%;
   background: white;
   border-radius: 20px;
@@ -181,7 +252,28 @@ export default {
     display: none; /* Chrome, Safari, Opera*/
 }
 .CLContent{
+  width: 100%;
   height : 300px;
   white-space:normal;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 2px solid #f6f6f6;
+  outline: none;
+  border-radius: 10px;
+  color: #000000;
+  background-color: #f6f6f6;
+}
+
+.CLTitle{
+  width: 100%;
+  height : 50px;
+  white-space:normal;
+  margin-top: 10px;
+  padding: 0px 20px;
+  border: 2px solid #f6f6f6;
+  outline: none;
+  border-radius: 10px;
+  color: #000000;
+  background-color: #f6f6f6;
 }
 </style>

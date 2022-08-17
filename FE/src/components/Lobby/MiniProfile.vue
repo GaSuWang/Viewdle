@@ -61,7 +61,8 @@ export default {
     overflow: hidden;
 }
 .MiniProfileUserName{
-    color:white;
+    /* color:white; */
+    color: black;
     margin-bottom: 15px;
 }
 </style>

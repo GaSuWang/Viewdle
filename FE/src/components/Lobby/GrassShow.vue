@@ -8,7 +8,30 @@
         <i class="fas fa-angle-right" @click="controlMonth('next')"></i>
       </section>
     </div>
-    
+    <div v-if="HistoryList.usingDates.length">
+    <table>
+      <thead>
+        <th v-for="day in days" :key="day">{{ day }}</th>
+      </thead>
+      <tbody>
+        <tr v-for="(date, idx) in dates" :key="idx">
+        <td v-for="(day, index) in date" :key="index">
+          <div v-for="usingdate in HistoryList.usingDates" :key="usingdate.seq">
+            <div v-if="usingdate!=year+':'+0+month+':'+day">
+              {{day}}
+            </div>
+            <div v-if="usingdate==year+':'+0+month+':'+day">
+              <div class="calendardate">
+                {{day}}
+              </div>
+            </div>
+          </div>
+        </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div v-if="!HistoryList.usingDates.length">
     <table>
       <thead>
         <th v-for="day in days" :key="day">{{ day }}</th>
@@ -17,16 +40,11 @@
         <tr v-for="(date, idx) in dates" :key="idx">
         <td v-for="(day, index) in date" :key="index">
           {{day}}
-          <div v-for="usingdate in HistoryList.usingDates" :key="usingdate.seq">
-            <div v-if="usingdate==year+':'+0+month+':'+day">
-              <div class="calendardate">
-              </div>
-            </div>
-          </div>
         </td>
         </tr>
       </tbody>
     </table>
+  </div>
   </div>
 </template>
 
@@ -215,9 +233,9 @@ th {
   text-align: center;
 }
 .calendardate{
-    width:15px;
-    height:15px;
-    background-color: aqua;
+    width:30px;
+    height:30px;
+    background-color: rgb(153, 172, 230);;
     border-radius: 70%;
     overflow: hidden;
 }

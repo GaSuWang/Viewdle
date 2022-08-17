@@ -17,8 +17,29 @@
     @endSuddenAttack="endSuddenAttack"
   />
   <!-- 돌발상황 영역 끝 -->
-  <div :style="cssVariable" class="siren"></div>
+  <div :style="cssVariable" class="siren" v-if="sirenIsShow"></div>
   <div class="EERView">
+    <div class="EERButtonHeader">
+      <!-- 면접에서 나가기 버튼(방장 유저) -->
+      <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-bs-backdrop="false"/>
+        <!-- <button
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          data-bs-backdrop="false"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button> -->
+      </div>
+      <!-- 면접에서 나가기 버튼(일반 유저) -->
+      <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary"/>
+      </div>
+      <div class="StudyEnd" v-if="userType == 'superUser'" @click="finishInterview">
+        <Button icon="pi pi-check" class="p-button-rounded p-button-secondary"/>
+      </div>
+    </div>
     <!-- 영상 구역 -->
     <!-- style cssVariable 삭제 -->
     <div class="EERContent">
@@ -40,26 +61,8 @@
       </div>
     </div>
 
-    <div class="EERRightArea">
-      <div class="EERButtonHeader">
-        <!-- 면접에서 나가기 버튼(방장 유저) -->
-        <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
-          <button
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-            data-bs-backdrop="false"
-          >
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-        <!-- 면접에서 나가기 버튼(일반 유저) -->
-        <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
-          <button type="button">
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
-      </div>
+    <div class="EERBottomArea">
+
       <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
       <div v-if="OXBtnState">
         <button @click="selectOBtn">O</button>
@@ -67,33 +70,33 @@
       </div>
       <div v-if="isCountDownOn">countdown: {{ countDown }}</div>
       <!-- 돌발질문 카운트 다운 및 OX버튼 끝-->
-      <div class="EERButtonFooter">
-        <div class="CLViewBtn">
-          <button @click="openEECL">
+        <div class="CLOpen">
+         <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-file-earmark-text"></i>
-          </button>
+          </Button>
         </div>
         <div class="VoiceChangeBtn">
-          <button>
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-mic-fill"></i>
-          </button>
+        </Button>
         </div>
-        <div class="StudyEnd" v-if="userType == 'superUser'" @click="finishInterview">
-          <button>
-            <i class="bi bi-check-lg"></i>
-          </button>
-        </div>
-        <div class="SuddenAttackBtn">
-          <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+
+        <div class="SuddenAttackBtn" >
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" :disabled="suddenBtnState" @click="sendSuddenQASignal" >
             <i class="bi bi-exclamation-triangle-fill"></i>
-          </button>
+          </Button>
+          <!-- <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </button> -->
         </div>
         <div class="CaptureBtn">
-          <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
+         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
             <i class="bi bi-camera"></i>
-          </button>
+          </Button>
+          <!-- <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
+            <i class="bi bi-camera"></i>
+          </button> -->
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -123,7 +126,9 @@ export default {
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
       suddenAttackFlag: -1, //돌발 상황 분기
       timeout: null, //타임아웃 저장용
+      sirenIsShow:false,
       // isEE: false,
+      recognition : null,
     };
   },
   computed: {
@@ -154,7 +159,7 @@ export default {
     // },
     cssVariable() {
       return {
-        "--bgcolor": this.bgIsWhite ? "white" : "tomato",
+        "--bgcolor": this.bgIsWhite ? "#D8DBEB" : "tomato",
       };
     },
   },
@@ -181,9 +186,12 @@ export default {
     this.$store.dispatch('lbhModule/getFilter');
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
-      alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
-      this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      if(this.userType === 'user'){
+        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
+        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
+      }
     })
+
 
     // 내가 면접자인지 아닌지 확인
     //  if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail){
@@ -200,6 +208,10 @@ export default {
 
     //일반 유저인 면접자가, 면접 도중에 나간 경우
     this.session.on("signal:EELeaveSessionFromEER", (e) => {
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);
       const data = JSON.stringify(this.myUserInfo)
       this.session.signal({
@@ -219,6 +231,10 @@ export default {
 
     //방장인 면접자가, 면접을 보는 도중에 나갈 경우
     this.session.on("signal:superEELeaveSession", (e) => {
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
       const pastSuperUserEmail = e.data.split(" ")[0];
       const currentSuperUserEmail = e.data.split(" ")[1];
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", pastSuperUserEmail);
@@ -253,6 +269,12 @@ export default {
 
     //방장이 면접을 완료할 경우
     this.session.on('signal:finishInterview', () => {
+      this.warningCount =0;
+      this.removeFilter();
+      if(this.isEE) {
+      this.recognition.stop();
+      this.recognition = null; 
+      }
       alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
       const data = JSON.stringify(this.myUserInfo)
@@ -382,7 +404,12 @@ export default {
     //----------------돌발 질문 끝-----------------------
     this.session.on("signal:EndInterviewByWarning", (event) => {
       console.log(event.data);
-      this.returnWaitingRoom();
+      this.session.signal({
+          data: '',
+          to: [],
+          type: 'finishInterview'
+        })
+        this.$store.dispatch('lbhModule/finishInterviewEERAxios')
       //대기실로 돌아가는 메소드 구현
     });
 
@@ -413,31 +440,31 @@ export default {
       let offsetY = "";
       let width = "";
       let height = ""; 
-      console.log(data);
       
       if(data == "potato"){
-        img = this.filters[1].imgUrl; // potato img
+        img = this.filters[1].imgUrl.toString(); // potato img
         offsetX = "-0.2F";
         offsetY = "-0.45F";
         width = "1.4F";
-        height = "1.9"; 
+        height = "1.9";
       }else if (data == "bread"){
-        img = this.filters[0].imgUrl // bread img
-        offsetX = "-0.35F"
+        img = this.filters[0].imgUrl.toString(); // bread img
+        offsetX = "-0.35F";
         offsetY = "-0.55F";
         width = "1.7F";
-        height = "2.0F"; 
+        height = "2.0F";
       }else if(data == "bald"){
-        img = this.filters[2].imgUrl// bald img
-        offsetX = "-0.05F"
+        img = this.filters[2].imgUrl.toString(); // bald img
+        offsetX = "-0.05F";
         offsetY = "-0.7F";
         width = "1.15F";
-        height = "0.9F"; 
+        height = "0.9F";
       }
-      if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
+      // console.log(img);
+      if(this.isER){
         for (let ER of this.ERS) {
-          let name = JSON.parse(ER.stream.connection.data).clientData;
-            if (name === this.myUserName) {
+          let mail = JSON.parse(ER.stream.connection.data).clientEmail;
+            if (mail === this.myUserEmail) {
               if(this.isFiltered){
                 clearTimeout(this.timeout); 
                 this.removeFilter();
@@ -694,12 +721,14 @@ export default {
     //배경 빨강->하양 반복 사이렌효과
     startSirenEffect() {
       console.log("웨에에에에에에에엥");
+      this.sirenIsShow = true;
       var interval = setInterval(() => {
         this.bgIsWhite = !this.bgIsWhite;
       }, 200);
       setTimeout(() => {
         clearInterval(interval);
         this.bgIsWhite = true;
+        this.sirenIsShow = false;
       }, 3000);
     },
 
@@ -798,42 +827,45 @@ export default {
         });
     },
 
-    // Speech API
+// Speech API
     startRecognition() {
       let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      let recognition = SpeechRecognition? new SpeechRecognition() : false
-      recognition.interimResults = true;
-      recognition.lang = 'ko-KR';
-      recognition.continuous = false;
+      this.recognition = SpeechRecognition? new SpeechRecognition() : false
+      this.recognition.interimResults = true;
+      this.recognition.lang = 'ko-KR';
+      this.recognition.continuous = false;
     
-      recognition.start(); // 음성 인식 시작
+      this.recognition.start(); // 음성 인식 시작
       console.log("start speech recognition");
 
-      recognition.onresult = (e) => { // 음성 인식 결과 반환
+      this.recognition.onresult = (e) => { // 음성 인식 결과 반환
         for(let i = e.resultIndex; i < e.results.length; ++i){
           if(e.results[i].isFinal){ 
             let script = e.results[i][0].transcript;
             // console.log(script);
-            if(script.includes("빵")){
-              console.log("빵");
-              this.setImgFilterOn("bread");
-            }else if(script.includes("감자")){
-              console.log("감자");
-              this.setImgFilterOn("potato");
-            }else if(script.includes("나 안 해")){
-              console.log("대머리");
-              this.setImgFilterOn("bald");
-            }
+            if(this.isEE){
+              if(script.includes("빵")){
+                console.log("빵");
+                this.setImgFilterOn("bread");
+              }else if(script.includes("감자")){
+                console.log("감자");
+                this.setImgFilterOn("potato");
+              }else if(script.includes("나 안 해")){
+                console.log("대머리");
+                this.setImgFilterOn("bald");
+              }
+            } 
           }
         }
       }
 
-      recognition.onend = function(){ // 음성 인식이 끊겼을 때 
+      
+      this.recognition.onend = () => { // 음성 인식이 끊겼을 때 
         //recognition.stop();
-        recognition.start(); 
+        if(this.recognition) this.recognition.start(); 
       }     
 
-      recognition.onerror = function(e) {
+      this.recognition.onerror = (e) => { 
         console.log(e);
       }
     }
@@ -845,41 +877,48 @@ export default {
 .EERView {
   position: absolute;
   width: 90vw;
+  min-width: 1000px;
   aspect-ratio: 2/1;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
-  box-shadow: 10px 10px 20px 6px #b5b8c0;
+  background: rgb(255,255,255,0.5);
+  box-shadow: 10px 10px 20px 6px #9ea7b2;  
   border-radius: 60px;
-  padding: 1%;
+  padding: 1.5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.EERButtonHeader{
+  width: 100%;
+  height: 10%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .EERContent {
-  width: 80%;
-  height: 100%;
-  /* opacity: 50%; */
+  width: 100%;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   transition-duration: 0.2s;
-  background-color: white;
+  /* background-color: white; */
 }
 
 .EEVidContainer {
   width: 100%;
+  height: 80%;
   display: flex;
   justify-content: center;
 }
 
 .EEVid {
   width: 65%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 2/1;
 }
 
 .ERVidContainer {
@@ -887,8 +926,8 @@ export default {
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  overflow-x: scroll;
-  /* height: 20%;  */
+  height: 20%; 
+  /* overflow-x: scroll; */
 }
 
 .ERVid {
@@ -907,20 +946,21 @@ export default {
   justify-self: center;
 }
 
-.EERRightArea {
+.EERBottomArea {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 20%;
-  height: 100%;
-  border-radius: 20px;
-  background-color: #edf0f6;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 10%;
+  /* border-radius: 20px; */
 }
 
-.EERButtonHeader {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+.EERView button{
+  background-color: #a7a9b9;
+  border: #a7a9b9
+}
+.EERView button:enabled:hover{
+  background-color: #787a89;
+  border: #787a89
 }
 
 .EERButtonFooter {
@@ -929,16 +969,15 @@ export default {
   justify-content: flex-end;
 }
 
-.EERButtonHeader > button {
+/* .EERButtonHeader > button {
   border: none;
   background-color: rgb(209, 209, 209);
   border-radius: 50%;
   width: 3%;
   height: 3%;
-  /* filter: blur(3px); */
-}
+  /* filter: blur(3px);} */
 
-.EERButtonHeader > div > button > i {
+/* .EERButtonHeader > div > button > i {
   font-size: 100%;
   color: black;
 }
@@ -959,7 +998,7 @@ export default {
 .EERButtonFooter > div > button > i {
   font-size: 150%;
   color: black;
-}
+} */
 
 .suddenAttack {
   z-index: 1;
@@ -975,11 +1014,11 @@ export default {
   opacity: 0;
 }
 .siren {
-  --bgcolor: white;
+  --bgcolor: #D8DBEB;
   position: absolute;
   top: 0%;
   left: 0%;
-  z-index: -1;
+  z-index: 0;
   width: 100vw;
   height: 100vh;
   background-color: var(--bgcolor);

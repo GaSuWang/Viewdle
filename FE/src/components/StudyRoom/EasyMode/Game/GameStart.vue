@@ -12,7 +12,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .background {
   background-color: rgba(255,255,255,0.8);
   width: 100vw;

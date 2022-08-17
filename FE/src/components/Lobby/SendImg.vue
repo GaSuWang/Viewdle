@@ -3,10 +3,10 @@
   <div class="SendImg">
       <form @submit.prevent="onUpload">
           <div class="form-group">
-              <input type="file" name="imagesArray" @change="onChange">
+              <input class="modifySubmit" type="file" name="imagesArray" @change="onChange">
           </div>
-          <div class="form-group">
-              <button class="btn btn-success">Submit</button>
+          <div >
+              <button class="modifySubmit" style="width:8vw">프로필 수정</button>
           </div>
       </form>>>
   </div>
@@ -30,8 +30,8 @@ export default {
           this.profile = event.target.files[0]
         },
         onUpload() {
-        // const BASE_URL = 'http://' + location.hostname + ':8081'
-        const BASE_URL = 'https://' + location.hostname
+        const BASE_URL = 'http://' + location.hostname + ':8081'
+        // const BASE_URL = 'https://' + location.hostname
           const formData = new FormData()
           formData.append('profile', this.profile, this.profile.name)
         axios({
@@ -53,4 +53,39 @@ export default {
 </script>
 
 <style>
+.deleteSubmit{
+  /* margin-top: 20px; */
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.deleteSubmit:hover{
+  background: #ffcc74;
+}
+
+.modifySubmit{
+  /* margin-top: 20px; */
+  width: 6vw;
+  height: 2vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.modifySubmit:hover{
+  background: #89B2E8;
+}
 </style>

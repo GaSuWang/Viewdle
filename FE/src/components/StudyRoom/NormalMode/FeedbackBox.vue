@@ -13,7 +13,7 @@
         <i class="bi bi-trash3"></i>
       </button>
       <!-- [김이랑] 비디오 시간 이동 / 임시로 버튼 삽입 -->
-      <button :class="[fb.feedbackType === 'G' ? 'good' : 'bad']" class="FBBoxBtn" @click="moveTo">
+      <button v-if="isFB" :class="[fb.feedbackType === 'G' ? 'good' : 'bad']" class="FBBoxBtn" @click="moveTo">
         <i class="fa-solid fa-circle-play"></i>
       </button>
     </div>
@@ -30,7 +30,10 @@ export default {
   computed:{
     ...mapGetters('lbhModule', [
       'myUserEmail',
-    ])
+    ]),
+    isFB(){
+      return !!(this.$router.currentRoute.value.name === 'fb-room')
+    }
   },
   created(){
     console.log('이 피드백의 생성일시', this.fb.timeline)
@@ -86,7 +89,10 @@ export default {
 
 .FBBtnContainer{
   display: flex;
-  width: 30%;
+  width: 20%;
+}
+.FBBtnContainer button{
+  width: 50%;
 }
 
 .good {

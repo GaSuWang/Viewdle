@@ -52,7 +52,7 @@ export default {
 </script>
 
 <style>
-.loginbody{
+/* .loginbody{
   width: 90%;
   height: 90%;
   background : rgb(255,255,255,0.5);
@@ -60,7 +60,7 @@ export default {
     display:flex;
   justify-content: center;
   flex-direction: column;
-}
+} */
 </style>
 
 
