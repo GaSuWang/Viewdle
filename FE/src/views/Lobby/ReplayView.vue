@@ -53,8 +53,8 @@
           <div class="replayfeedback">
               <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in replayDetail.feedbackList" :key="item.seq">
               {{item.feedbackContent}}
-              <button :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" @click="moveTo(item.timeline)">
-                <i :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" class="fa-solid fa-circle-play"></i>
+              <button :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" class="FBBoxBtn" @click="moveTo(item.timeline)">
+                <i class="fa-solid fa-circle-play"></i>
               </button>
               </div>
             </div>
@@ -390,6 +390,11 @@ export default {
   height: 20px;
   color:#89B2E8;
   background: white;
+}
+.FBBoxBtn {
+  top:50px;
+  width: 10%;
+  border-radius: 5px;
 }
  /* width="640" height="480" */
 </style> 

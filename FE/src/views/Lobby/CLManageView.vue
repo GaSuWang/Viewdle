@@ -193,6 +193,7 @@ a:hover{
   font-size: 1.2em;
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  margin-right:20px;
 }
 .clmanageTopitem:hover{
   background: #ffcc74;

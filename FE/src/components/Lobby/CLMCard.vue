@@ -13,15 +13,11 @@
         <!-- <p><small class="text-muted">자소서 코드: {{item.coverLetterSeq}}</small></p> -->
       </div>
     </div>
-      <div class="d-flex justify-content-end">
+    <div class="CLMfooter">
         <form @submit.prevent="deleteCoverLetter(item.coverLetterSeq)">
           <button class="clCancle" @click.prevent data-bs-dismiss="modal"><router-link to="/cl">삭제</router-link></button>
         </form>
-        <form @submit.prevent="detailCoverLetter(item.coverLetterSeq)">
-          <button class="clSubmit" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">보기</button>
-          <!-- <button class="btn coverletterbutton" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">보기</button> -->
-        </form>
-      </div>
+    </div>
   </div>
 </template>
 
@@ -124,7 +120,14 @@ export default {
   background-color:#FEAA00;
   color: white;
 }
-
+.coverletterbutton1{
+  position:fixed;
+  width:100%;
+  height: 80%;
+  margin : 3px;
+  font-size: 3px;
+  opacity:0;
+}
 .clCancle{
   /* margin-top: 20px; */
   width: 3vw;
@@ -167,5 +170,10 @@ a{
 a:hover{
   text-decoration: none;
   color : white;
+}
+.CLMfooter{
+  display: flex;
+  justify-content: end;
+  margin-right:20px
 }
 </style>

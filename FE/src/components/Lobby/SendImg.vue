@@ -40,13 +40,13 @@ export default {
             data: formData,
             headers: {Authorization: this.authHeader }
         })
-            // .then(() => {
-            // alert('성공적으로 회원가입!')
-            // router.push({ name: 'Account' })
-            // })
-            // .catch(err => {
-            // console.error(err)
-            // })
+            .then(() => {
+            alert('성공적으로 회원가입!')
+            router.push({ name: 'Account' })
+            })
+            .catch(err => {
+            console.error(err)
+            })
         }  
     }
 };
