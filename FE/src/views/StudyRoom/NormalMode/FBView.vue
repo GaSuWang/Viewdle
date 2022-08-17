@@ -386,6 +386,14 @@ export default {
   justify-content: space-between;
 }
 
+.savedEEVid{
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .FBRightArea {
   display: flex;
   flex-direction: column;
