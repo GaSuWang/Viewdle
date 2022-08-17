@@ -22,7 +22,13 @@
     <div class="EERButtonHeader">
       <!-- 면접에서 나가기 버튼(방장 유저) -->
       <div v-if="userType === 'superUser'" class="EERtoWRBtn superUser">
-        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal"  data-bs-backdrop="false"/>
+        <Button
+          icon="pi pi-times"
+          class="p-button-rounded p-button-secondary"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          data-bs-backdrop="false"
+        />
         <!-- <button
           type="button"
           data-bs-toggle="modal"
@@ -34,10 +40,10 @@
       </div>
       <!-- 면접에서 나가기 버튼(일반 유저) -->
       <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
-        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary"/>
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
       </div>
       <div class="StudyEnd" v-if="userType == 'superUser'" @click="finishInterview">
-        <Button icon="pi pi-check" class="p-button-rounded p-button-secondary"/>
+        <Button icon="pi pi-check" class="p-button-rounded p-button-secondary" />
       </div>
     </div>
     <!-- 영상 구역 -->
@@ -62,7 +68,6 @@
     </div>
 
     <div class="EERBottomArea">
-
       <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
       <div v-if="OXBtnState">
         <button @click="selectOBtn">O</button>
@@ -70,33 +75,47 @@
       </div>
       <div v-if="isCountDownOn">countdown: {{ countDown }}</div>
       <!-- 돌발질문 카운트 다운 및 OX버튼 끝-->
-        <div class="CLOpen">
-         <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
-            <i class="bi bi-file-earmark-text"></i>
-          </Button>
-        </div>
-        <div class="VoiceChangeBtn">
-         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary">
-            <i class="bi bi-mic-fill"></i>
+      <div class="CLOpen">
+        <Button
+          @click.prevent="openEECL()"
+          icon="pi pi-times"
+          class="p-button-rounded p-button-secondary"
+        >
+          <i class="bi bi-file-earmark-text"></i>
         </Button>
-        </div>
+      </div>
+      <div class="VoiceChangeBtn">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary">
+          <i class="bi bi-mic-fill"></i>
+        </Button>
+      </div>
 
-        <div class="SuddenAttackBtn" >
-         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" :disabled="suddenBtnState" @click="sendSuddenQASignal" >
-            <i class="bi bi-exclamation-triangle-fill"></i>
-          </Button>
-          <!-- <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
+      <div class="SuddenAttackBtn">
+        <Button
+          icon="pi pi-times"
+          class="p-button-rounded p-button-secondary"
+          :disabled="suddenBtnState"
+          @click="sendSuddenQASignal"
+        >
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </Button>
+        <!-- <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
             <i class="bi bi-exclamation-triangle-fill"></i>
           </button> -->
-        </div>
-        <div class="CaptureBtn">
-         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
-            <i class="bi bi-camera"></i>
-          </Button>
-          <!-- <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
+      </div>
+      <div class="CaptureBtn">
+        <Button
+          icon="pi pi-times"
+          class="p-button-rounded p-button-secondary"
+          :disabled="suddenBtnState"
+          @click="sendSuddenAttackSignal"
+        >
+          <i class="bi bi-camera"></i>
+        </Button>
+        <!-- <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
             <i class="bi bi-camera"></i>
           </button> -->
-        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -126,9 +145,9 @@ export default {
       bgIsWhite: true, //배경색 결정 변수 true:하얀색, false: 붉은색
       suddenAttackFlag: -1, //돌발 상황 분기
       timeout: null, //타임아웃 저장용
-      sirenIsShow:false,
+      sirenIsShow: false,
       // isEE: false,
-      recognition : null,
+      recognition: null,
     };
   },
   computed: {
@@ -148,12 +167,11 @@ export default {
       "session",
       "currentUserList",
       "WRParticipantList",
-      'studyRoomCL',
-      "filters"
+      "studyRoomCL",
+      "filters",
+      "CLSelected",
     ]),
-    ...mapGetters('rhtModule',[
-      'CoverLetterDetail',
-    ]),
+    ...mapGetters("rhtModule", ["CoverLetterDetail"]),
     // nextSuperUserList() {
     //   return this.currentUserList.filter((p) => p.name !== this.myUserName);
     // },
@@ -163,8 +181,8 @@ export default {
       };
     },
   },
-  unmounted(){
-    localStorage['cl'] = {}
+  unmounted() {
+    localStorage["cl"] = {};
     // if(this.userType === 'user'){
     //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
     // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
@@ -172,7 +190,7 @@ export default {
   created() {
     //
     this.session.on("streamDestroyed", ({ stream }) => {
-      console.log('streamCreated')
+      console.log("streamCreated");
       const index_s = this.subscribers.indexOf(stream.streamManager, 0);
       if (index_s >= 0) {
         this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
@@ -182,16 +200,15 @@ export default {
       this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
     });
-    
-    this.$store.dispatch('lbhModule/getFilter');
-    //방장이 스터디룸을 폭파할 때
-    this.session.on('signal:studyDestroy', ()=>{
-      if(this.userType === 'user'){
-        alert('방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.')
-        this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-      }
-    })
 
+    this.$store.dispatch("lbhModule/getFilter");
+    //방장이 스터디룸을 폭파할 때
+    this.session.on("signal:studyDestroy", () => {
+      if (this.userType === "user") {
+        alert("방장이 스터디를 폭파했습니다.\n대기실로 돌아갑니다.");
+        this.$store.dispatch("lbhModule/userLeaveSessionAxios");
+      }
+    });
 
     // 내가 면접자인지 아닌지 확인
     //  if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail){
@@ -200,27 +217,32 @@ export default {
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
     this.session.on("signal:EECL", (e) => {
       // console.log("EECL signal로 받은 데이터", e.data);
-      // const cl = JSON.parse(e.data);
-      const data = parseInt(e.data)
-      console.log("면접관이 받은 유저의 자소서", data);
-      this.$store.commit("lbhModule/SET_STUDYROOM_CL",data);
+      var title = e.data.split("/")[0];
+      var content = e.data.split("/")[1];
+      const cl = {
+        coverLetterTitle: title,
+        coverLetterContent: content,
+      }
+      console.log("면접장 자소서: ",cl);
+      this.$store.commit("lbhModule/SET_STUDYROOM_CL", cl);
+      console.log("면접장 자소서: ",this.studyRoomCL);
     });
 
     //일반 유저인 면접자가, 면접 도중에 나간 경우
     this.session.on("signal:EELeaveSessionFromEER", (e) => {
-      if(this.isEE) {
-      this.recognition.stop();
-      this.recognition = null; 
+      if (this.isEE) {
+        this.recognition.stop();
+        this.recognition = null;
       }
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);
-      const data = JSON.stringify(this.myUserInfo)
+      const data = JSON.stringify(this.myUserInfo);
       this.session.signal({
         data: `${data}`,
         to: [],
-        type: 'WRParticipantListUpdate'
-      })
-      alert('면접자가 방에서 나갔습니다. 대기실로 이동합니다.')
-      this.$store.dispatch('lbhModule/EELeaveSessionAxios')
+        type: "WRParticipantListUpdate",
+      });
+      alert("면접자가 방에서 나갔습니다. 대기실로 이동합니다.");
+      this.$store.dispatch("lbhModule/EELeaveSessionAxios");
       this.$router.push({ name: "waiting-room" });
     });
 
@@ -231,14 +253,14 @@ export default {
 
     //방장인 면접자가, 면접을 보는 도중에 나갈 경우
     this.session.on("signal:superEELeaveSession", (e) => {
-      if(this.isEE) {
-      this.recognition.stop();
-      this.recognition = null; 
+      if (this.isEE) {
+        this.recognition.stop();
+        this.recognition = null;
       }
       const pastSuperUserEmail = e.data.split(" ")[0];
       const currentSuperUserEmail = e.data.split(" ")[1];
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", pastSuperUserEmail);
-      this.$store.dispatch('lbhModule/EELeaveSessionAxios')
+      this.$store.dispatch("lbhModule/EELeaveSessionAxios");
       if (this.myUserEmail === currentSuperUserEmail) {
         alert("방장이 면접 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.");
         this.$store.commit("lbhModule/SWITCH_USER_TYPE", "superUser");
@@ -268,23 +290,23 @@ export default {
     });
 
     //방장이 면접을 완료할 경우
-    this.session.on('signal:finishInterview', () => {
-      this.warningCount =0;
+    this.session.on("signal:finishInterview", () => {
+      this.warningCount = 0;
       this.removeFilter();
-      if(this.isEE) {
-      this.recognition.stop();
-      this.recognition = null; 
+      if (this.isEE) {
+        this.recognition.stop();
+        this.recognition = null;
       }
-      alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
+      alert("방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.");
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
-      const data = JSON.stringify(this.myUserInfo)
+      const data = JSON.stringify(this.myUserInfo);
       this.session.signal({
         data: `${data}`,
         to: [],
-        type: 'WRParticipantListUpdate'
-      })
-      this.$router.push('/waiting-room')
-    });  
+        type: "WRParticipantListUpdate",
+      });
+      this.$router.push("/waiting-room");
+    });
     // this.nextSuperUser = "";
     window.addEventListener("beforeunload", this.EERleaveSession);
     console.log("eerview created", this.EE);
@@ -405,11 +427,11 @@ export default {
     this.session.on("signal:EndInterviewByWarning", (event) => {
       console.log(event.data);
       this.session.signal({
-          data: '',
-          to: [],
-          type: 'finishInterview'
-        })
-        this.$store.dispatch('lbhModule/finishInterviewEERAxios')
+        data: "",
+        to: [],
+        type: "finishInterview",
+      });
+      this.$store.dispatch("lbhModule/finishInterviewEERAxios");
       //대기실로 돌아가는 메소드 구현
     });
 
@@ -430,30 +452,35 @@ export default {
     // if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
     if (this.isEE) {
       this.startRecognition();
+      this.session.signal({
+        data: this.CLSelected.coverLetterTitle + "/" + this.CLSelected.coverLetterContent,
+        to: [],
+        type: "EECL",
+      });
     }
 
     // img filter
-    this.session.on("signal:imgFilterOn",  (event) => {
+    this.session.on("signal:imgFilterOn", (event) => {
       let data = event.data;
       let img = "";
       let offsetX = "";
       let offsetY = "";
       let width = "";
-      let height = ""; 
-      
-      if(data == "potato"){
+      let height = "";
+
+      if (data == "potato") {
         img = this.filters[1].imgUrl.toString(); // potato img
         offsetX = "-0.2F";
         offsetY = "-0.45F";
         width = "1.4F";
         height = "1.9";
-      }else if (data == "bread"){
+      } else if (data == "bread") {
         img = this.filters[0].imgUrl.toString(); // bread img
         offsetX = "-0.35F";
         offsetY = "-0.55F";
         width = "1.7F";
         height = "2.0F";
-      }else if(data == "bald"){
+      } else if (data == "bald") {
         img = this.filters[2].imgUrl.toString(); // bald img
         offsetX = "-0.05F";
         offsetY = "-0.7F";
@@ -461,52 +488,45 @@ export default {
         height = "0.9F";
       }
       // console.log(img);
-      if(this.isER){
+      if (this.isER) {
         for (let ER of this.ERS) {
           let mail = JSON.parse(ER.stream.connection.data).clientEmail;
-            if (mail === this.myUserEmail) {
-              if(this.isFiltered){
-                clearTimeout(this.timeout); 
-                this.removeFilter();
-                setTimeout(() => {
-                  ER.stream.applyFilter("FaceOverlayFilter")
-                  .then(filter => {
-                    filter.execMethod(
-                      "setOverlayedImage",
-                    {
-                      "uri": img,
-                      "offsetXPercent": offsetX,
-                      "offsetYPercent": offsetY,
-                      "widthPercent": width,
-                      "heightPercent": height
-                    });
-                    this.isFiltered = true; 
-                    console.log("img filter success");
-                    this.timeout = setTimeout(this.removeFilter, 20000);
+          if (mail === this.myUserEmail) {
+            if (this.isFiltered) {
+              clearTimeout(this.timeout);
+              this.removeFilter();
+              setTimeout(() => {
+                ER.stream.applyFilter("FaceOverlayFilter").then((filter) => {
+                  filter.execMethod("setOverlayedImage", {
+                    uri: img,
+                    offsetXPercent: offsetX,
+                    offsetYPercent: offsetY,
+                    widthPercent: width,
+                    heightPercent: height,
                   });
-                }, 1000);
-              }else{
-                ER.stream.applyFilter("FaceOverlayFilter")
-                  .then(filter => {
-                    filter.execMethod(
-                      "setOverlayedImage",
-                    {
-                      "uri": img,
-                      "offsetXPercent": offsetX,
-                      "offsetYPercent": offsetY,
-                      "widthPercent": width,
-                      "heightPercent": height
-                    });
-                    this.isFiltered = true; 
-                    console.log("img filter success");
-                    this.timeout = setTimeout(this.removeFilter, 20000);
+                  this.isFiltered = true;
+                  console.log("img filter success");
+                  this.timeout = setTimeout(this.removeFilter, 20000);
                 });
-              }
+              }, 1000);
+            } else {
+              ER.stream.applyFilter("FaceOverlayFilter").then((filter) => {
+                filter.execMethod("setOverlayedImage", {
+                  uri: img,
+                  offsetXPercent: offsetX,
+                  offsetYPercent: offsetY,
+                  widthPercent: width,
+                  heightPercent: height,
+                });
+                this.isFiltered = true;
+                console.log("img filter success");
+                this.timeout = setTimeout(this.removeFilter, 20000);
+              });
             }
+          }
         }
       }
-    })
-
+    });
   },
   setup() {
     const router = useRouter();
@@ -538,7 +558,7 @@ export default {
           // } else {
           //   console.log("뭔소리 하는거야? 세션?");
           // }
-        } else  {
+        } else {
           this.session.signal({
             data: `${this.myUserEmail}`,
             to: [],
@@ -558,23 +578,23 @@ export default {
         this.$store.dispatch("lbhModule/userLeaveSessionAxios");
       }
     },
-    finishInterview(){
-      if(confirm('면접을 종료하시겟습니까?')){
+    finishInterview() {
+      if (confirm("면접을 종료하시겟습니까?")) {
         this.session.signal({
-          data: '',
+          data: "",
           to: [],
-          type: 'finishInterview'
-        })
-        this.$store.dispatch('lbhModule/finishInterviewEERAxios')
+          type: "finishInterview",
+        });
+        this.$store.dispatch("lbhModule/finishInterviewEERAxios");
       }
     },
     openEECL() {
-      this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
-      localStorage['cl'] = JSON.stringify({
-        coverLetterTitle: this.CoverLetterDetail.coverLetterTitle,
-        coverLetterContent: this.CoverLetterDetail.coverLetterContent,
-      })
-      let route = this.$router.resolve({ path: "/eecl"});
+      //this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
+      localStorage["cl"] = JSON.stringify({
+        coverLetterTitle: this.studyRoomCL.coverLetterTitle,
+        coverLetterContent: this.studyRoomCL.coverLetterContent,
+      });
+      let route = this.$router.resolve({ path: "/eecl" });
       window.open(route.href);
     },
     changeVoice() {},
@@ -582,10 +602,7 @@ export default {
     addWarn() {
       //경고 누적용
       this.warningCount++;
-      if (
-        this.isEE&&
-        this.warningCount >= 5
-      ) {
+      if (this.isEE && this.warningCount >= 5) {
         console.log("warningCount limit, return waiting room");
         //면접 종료
         this.session.signal({
@@ -827,48 +844,49 @@ export default {
         });
     },
 
-// Speech API
+    // Speech API
     startRecognition() {
-      let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      this.recognition = SpeechRecognition? new SpeechRecognition() : false
+      let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      this.recognition = SpeechRecognition ? new SpeechRecognition() : false;
       this.recognition.interimResults = true;
-      this.recognition.lang = 'ko-KR';
+      this.recognition.lang = "ko-KR";
       this.recognition.continuous = false;
-    
+
       this.recognition.start(); // 음성 인식 시작
       console.log("start speech recognition");
 
-      this.recognition.onresult = (e) => { // 음성 인식 결과 반환
-        for(let i = e.resultIndex; i < e.results.length; ++i){
-          if(e.results[i].isFinal){ 
+      this.recognition.onresult = (e) => {
+        // 음성 인식 결과 반환
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+          if (e.results[i].isFinal) {
             let script = e.results[i][0].transcript;
             // console.log(script);
-            if(this.isEE){
-              if(script.includes("빵")){
+            if (this.isEE) {
+              if (script.includes("빵")) {
                 console.log("빵");
                 this.setImgFilterOn("bread");
-              }else if(script.includes("감자")){
+              } else if (script.includes("감자")) {
                 console.log("감자");
                 this.setImgFilterOn("potato");
-              }else if(script.includes("나 안 해")){
+              } else if (script.includes("나 안 해")) {
                 console.log("대머리");
                 this.setImgFilterOn("bald");
               }
-            } 
+            }
           }
         }
-      }
+      };
 
-      
-      this.recognition.onend = () => { // 음성 인식이 끊겼을 때 
+      this.recognition.onend = () => {
+        // 음성 인식이 끊겼을 때
         //recognition.stop();
-        if(this.recognition) this.recognition.start(); 
-      }     
+        if (this.recognition) this.recognition.start();
+      };
 
-      this.recognition.onerror = (e) => { 
+      this.recognition.onerror = (e) => {
         console.log(e);
-      }
-    }
+      };
+    },
   },
 };
 </script>
@@ -882,8 +900,8 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgb(255,255,255,0.5);
-  box-shadow: 10px 10px 20px 6px #9ea7b2;  
+  background: rgb(255, 255, 255, 0.5);
+  box-shadow: 10px 10px 20px 6px #9ea7b2;
   border-radius: 60px;
   padding: 1.5%;
   display: flex;
@@ -891,7 +909,7 @@ export default {
   justify-content: space-between;
 }
 
-.EERButtonHeader{
+.EERButtonHeader {
   width: 100%;
   height: 10%;
   display: flex;
@@ -926,7 +944,7 @@ export default {
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  height: 20%; 
+  height: 20%;
   /* overflow-x: scroll; */
 }
 
@@ -954,13 +972,13 @@ export default {
   /* border-radius: 20px; */
 }
 
-.EERView button{
+.EERView button {
   background-color: #a7a9b9;
-  border: #a7a9b9
+  border: #a7a9b9;
 }
-.EERView button:enabled:hover{
+.EERView button:enabled:hover {
   background-color: #787a89;
-  border: #787a89
+  border: #787a89;
 }
 
 .EERButtonFooter {
@@ -1014,7 +1032,7 @@ export default {
   opacity: 0;
 }
 .siren {
-  --bgcolor: #D8DBEB;
+  --bgcolor: #d8dbeb;
   position: absolute;
   top: 0%;
   left: 0%;

@@ -67,8 +67,8 @@
           <div class="cl dropdown">
             <!-- <p class="cl-dropdown-title">자소서 선택</p> -->
             <button id="CLLeft" class="btn">
-              <span v-if="CLSelected">자기소개서 선택</span>
-              <span v-else>CLSelected</span>
+              
+              <span>{{CLSelected.coverLetterTitle}}</span>
             </button>
             <button
               id="CLRight"
@@ -77,8 +77,8 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             ></button>
-            <ul class="dropdown-menu" v-if="CoverLetterList">
-              <li v-for="cl in CoverLetterList" :key="cl.coverLetterSeq">
+            <ul class="dropdown-menu" v-if="CLList">
+              <li v-for="cl in CLList" :key="cl.coverLetterSeq">
                 <p
                   :class="[
                     CLSelected.coverLetterTitle === cl.coverLetterTitle ? 'deviceSelected' : '',
@@ -134,9 +134,10 @@ export default {
   },
   unmounted() {},
   created() {
-    console.log(this.CLList);
+   
+   
     console.log("userinfo", this.$store.getters["rhtModule/UserList"]);
-    this.$store.dispatch("rhtModule/getCoverLetter");
+    //this.$store.dispatch("rhtModule/getCoverLetter");
     this.$store.commit("lbhModule/START_ROOM_TIME");
     window.addEventListener("beforeunload", this.forceLeaveSession);
   },
@@ -165,7 +166,27 @@ export default {
   },
   mounted() {
     //this.changeUserVideo();
-    console.log("afafa", this.MicList, this.CameraList);
+         if (this.CoverLetterList.length == 0) {
+      this.$store.commit("lbhModule/SET_COVERLETTER_LIST", [
+        {
+          coverLetterSeq: -1,
+          coverLetterTitle: "뷰들뷰들 자기소개서1",
+          coverLetterContent: "안녕하세요 뷰들뷰들입니다.",
+          coverLetterRegTime: "2222:22:22:22:22:17",
+        },
+        {
+          coverLetterSeq: -2,
+          coverLetterTitle: "뷰들뷰들 자기소개서2",
+          coverLetterContent: "자기소개서를 등록해주세요.",
+          coverLetterRegTime: "2222:22:22:22:22:17",
+        },
+      ]);
+    }
+    else{
+      this.$store.commit("lbhModule/SET_COVERLETTER_LIST",this.CoverLetterList)
+    }
+    this.selectCL(this.CLList[0]);
+    console.log(this.CLSelected);
   },
   methods: {
     studyDestroy() {
