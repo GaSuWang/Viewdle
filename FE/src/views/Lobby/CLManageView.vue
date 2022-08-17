@@ -25,7 +25,7 @@
             <div class="modal-body">
               <textarea type="Text" v-model="credentials.coverLetterContent" class="CLContent " placeholder="내용을 입력해주세요" /> 
             </div> 
-            <div class="modal-footer">
+            <div class="modal-footer ">
               <button class="clCancle" @click.prevent data-bs-dismiss="modal"><router-link to="/cl">취소</router-link></button>
               <button class="clSubmit" data-bs-dismiss="modal">작성</button>
             </div>
@@ -182,8 +182,8 @@ a:hover{
 
 .clmanageTopitem{
   /* margin-top: 20px; */
-  width: 9vw;
-  height: 2vw;
+  width: 13vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -201,8 +201,8 @@ a:hover{
 
 .clSubmit{
   /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+  width: 6vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -212,6 +212,9 @@ a:hover{
   font-size: 1.2em;
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  padding:0;
+  margin:0;
+
 }
 .clSubmit:hover{
   background: #89B2E8;
@@ -219,8 +222,8 @@ a:hover{
 
 .clCancle{
   /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+  width: 6vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -230,6 +233,9 @@ a:hover{
   font-size: 1.2em;
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  padding:0;
+  margin: 0;
+
 }
 .clCancle:hover{
   background: #ffcc74;

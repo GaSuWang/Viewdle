@@ -30,9 +30,7 @@ const state = {
   MicList: [], // 오디오 디바이스 리스트
   MicSelected: {}, // 선택된 오디오 디바이스
   MicStatus: false, //마이크 온오프
-  CLList: [{'coverLetterSeq': '1', 'coverLetterTitle': 'first cl', 'coverLetterContent': 'first cl content'}, 
-  {'coverLetterSeq': '2', 'coverLetterTitle': 'second cl', 'coverLetterContent': 'second cl content'},
-  {'coverLetterSeq': '3', 'coverLetterTitle': 'third cl', 'coverLetterContent': 'third cl content'}], // 유저의 자소서 리스트
+  CLList: [], // 유저의 자소서 리스트
   CLSelected: {}, //선택된 자소서 
   CLStatus: false, //자소서 온오프
 
