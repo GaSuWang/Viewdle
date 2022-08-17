@@ -3,7 +3,7 @@
   <div class="Googlesignup">
     <div class="Googlesignupbody">
       <div class="Googlesignupcard">
-        <h1>GoogleSignup</h1>
+        <div class="d-flex"><h1 class="frontVeiwdle">뷰들</h1><h1 class="backVeiwdle">뷰들</h1></div>
         <form @submit.prevent="googlesignup(credentials)">
           <!-- 비번 인풋 -->
           <div class="pwinput">
@@ -17,7 +17,7 @@
           </div>
 
           <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
-          <router-link to="/">뒤로가기</router-link>
+          <router-link to="/"  class="googlebackbutton">뒤로가기</router-link>
         </form>
       </div>
       </div>
@@ -119,14 +119,13 @@ export default {
   width: 100%;
 }
 .nameinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 
@@ -135,14 +134,13 @@ export default {
   width: 100%;
 }
 .emailinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 
@@ -151,14 +149,13 @@ export default {
   width: 100%;
 }
 .pwinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 .pwcheckinput{
@@ -166,14 +163,13 @@ export default {
   width: 100%;
 }
 .pwcheckinput input{
-  margin-top: 50px;
-  width: 80%;
   width: 100%;
   height: 50px;
-  border-radius: 30px;
+  background-color: white;
+  border-radius: 10px;
   margin-top: 10px;
   padding: 0px 20px;
-  border: 1px solid lightgray;
+  border: 1px solid #47A0FF;
   outline: none;
 }
 .pwchecksubmit{
@@ -189,15 +185,39 @@ export default {
     letter-spacing: 2px;
 }
 .signupsubmit{
-     margin-top:20px;
+    margin-top: 20px;
     width: 100%;
-    height: 50px;
+    height: 3vw;
     border: 0;
     outline: none;
-    border-radius: 40px;
-    background-color: rgb(230,198,132);
+    border-radius: 10px;
+    background: #FEAA00;
     color: white;
+    font-weight: bold;
     font-size: 1.2em;
     letter-spacing: 2px;
+    box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.frontVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #47A0FF;
+}
+.backVeiwdle{
+  font-family: 'yg-jalnan';
+  color: #FEAA00;
+}
+.googlebackbutton a{
+  text-decoration: none;
+  color:#FEAA00
+}
+.googlebackbutton a:hover{
+  text-decoration: none;
+  color:#ffcc74
+}
+@font-face {
+    font-family: 'yg-jalnan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 </style>
