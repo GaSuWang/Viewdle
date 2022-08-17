@@ -13,16 +13,18 @@ export default {
 </script>
 
 <style scoped>
-.background {
-  background-color: rgba(255,255,255,0.8);
+.gameStartbox {
+  background-color: rgba(255,255,255,1);
   width: 100vw;
-  height: 100vh;
+  height: 60vh;
 }
+
 .gameStart{
   font-size: 150px;
   color:  #fcab1f;
   text-shadow: -1px 0 #555, 0 1px #555, 5px 0 #555, 0 -1px #555;
   font-family: 'SDSamliphopangche_Basic';
+  margin-top: 30vh;
 }
 .gameDiscription{
   font-size: 50px;
