@@ -9,11 +9,13 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.ssafy.api.request.SocialLoginInfoReq;
 import com.ssafy.api.request.SocialSignupInfoReq;
 import com.ssafy.api.response.UserLoginPostRes;
+import com.ssafy.api.service.CommonService;
 import com.ssafy.common.exception.AlreadyExistEmailException;
 import com.ssafy.common.exception.NotMatchPasswordException;
 import com.ssafy.common.model.response.BaseResponseBody;
 
 import com.ssafy.common.util.JwtTokenUtil;
+import com.ssafy.db.entity.Common;
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,8 @@ public class SocialController {
 	private String googleClientId;
 	@Autowired
 	UserService userService;
-
+	@Autowired
+	CommonService commonService;
 	@PostMapping("/google/signup")
 	@ApiOperation(value = "구글 회원가입", notes = "구글 엑세스 토큰으로 사용자 정보 받아 저장하기")
 	@ApiResponses({
@@ -78,6 +81,7 @@ public class SocialController {
 				try {
 					User user = userService.createUser(email, name, password1, password2);
 					userService.changeProfile(user, pictureUrl);
+					Common common = commonService.getCommonBySeq(4);
 				} catch (AlreadyExistEmailException e) {
 					return ResponseEntity.status(e.getStatus()).body(UserLoginPostRes.of(e.getStatus(), e.getMessage(), null));
 				} catch (NotMatchPasswordException e) {

@@ -10,10 +10,13 @@
     <!-- 비밀번호 확인 -->
     <!-- 가입완료 버튼  and 취소버튼-->
     <!-- 가입 실패시 알람 -->
+  
         <form @submit.prevent="signup(credentials)">
+
+        <div v-if="credentialsTocheckEmail.EmailCheck == false">
           <!-- 이름 -->
-          <div class="nameinput">
-            <input type="text" v-model="credentials.userName" placeholder="닉네임" />
+          <div class="emailinput mt-3">
+            <input type="text" v-model="credentials.userName" placeholder="닉네임"/>
           </div>
           <!-- 이메일 인풋 -->
 
@@ -25,6 +28,7 @@
               </div>
             </div>
           </form>
+          </div>
 
           <div v-if="credentialsTocheckEmail.EmailCheck == true">
           <!-- 비번 인풋 -->
