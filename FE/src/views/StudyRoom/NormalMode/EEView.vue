@@ -76,6 +76,7 @@ export default {
       'currentUserList',
       'recordingObject',
       'roomTitle',
+      "CLSelected"
     ])
   },
   data(){
@@ -196,7 +197,11 @@ export default {
         });
       });
     })
-      
+    this.session.signal({
+        data: this.CLSelected.coverLetterTitle + "/" + this.CLSelected.coverLetterContent,
+        to: [],
+        type: "EECL",
+      });
   },
   mounted(){
     this.interval = setInterval(this.interval++, 1000);
