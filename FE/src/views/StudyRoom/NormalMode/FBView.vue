@@ -200,7 +200,7 @@ export default {
       this.$store.commit('lbhModule/MINUS_FB_USER_COUNT')
       this.$store.commit('lbhModule/ADD_AXIOS_FBLIST', e.data)
       //만약 피드백실에서 모두 나가면, 피드백까지 면접 종료
-      if(this.FBUserCount === 1){
+      if(this.FBUserCount <= 1){
         console.log('fbcompleteAxios실행')
         this.$store.dispatch('lbhModule/FBCompleteAxios')
       }
