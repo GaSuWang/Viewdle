@@ -105,7 +105,7 @@ export default {
   /* align-items: center; */
   align-content: center;
   justify-content: center;
-  box-shadow: 1px 1px 1px 1px gray;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 2.5px 6px #fff;
   transition: all 0.1s linear;
   display: flex;
   flex-flow: column;

@@ -374,6 +374,8 @@ input[type=password]:placeholder {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+      box-shadow: 0px 1px 2px #aaa, inset 0px 2.5px 6px #fff;
+
 
 }
 .pagetitle{
@@ -428,7 +430,7 @@ input[type=password]:placeholder {
 }
 .mainsearchbutton{
   width: 5vw;
-  height: 3vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
