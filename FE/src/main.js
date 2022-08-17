@@ -14,8 +14,8 @@ import 'primevue/resources/themes/saga-blue/theme.css'       //theme
 import 'primevue/resources/primevue.min.css'                 //core css
 import 'primeicons/primeicons.css'                           //icons
 
-import VueLoading from 'vue-loading-overlay';
-import 'vue-loading-overlay/dist/vue-loading.css';
+// import VueLoading from 'vue-loading-overlay';
+// import 'vue-loading-overlay/dist/vue-loading.css';
 
 
 const app = createApp(App)
@@ -25,7 +25,7 @@ app.use(SetupCalendar, {})
 app.component(VueCountdown.name, VueCountdown);
 app.use(PrimeVue);
 app.component('Button',Button)
-app.use(VueLoading);
+// app.use(VueLoading);
 // app.component('loading', VueLoading)
 
 // Use the components
