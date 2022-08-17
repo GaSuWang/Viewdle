@@ -196,13 +196,15 @@ export default {
 
     //다른 면접관이 피드백 완료하면, 해당 면접관의 피드백을 받아 axiosFBList에 더하기
     this.session.on('signal:addAllFBList', (e)=>{
-      console.log('addAllFbList',e)
-      this.$store.commit('lbhModule/MINUS_FB_USER_COUNT')
-      this.$store.commit('lbhModule/ADD_AXIOS_FBLIST', e.data)
-      //만약 피드백실에서 모두 나가면, 피드백까지 면접 종료
-      if(this.FBUserCount === 0){
-        console.log('fbcompleteAxios실행')
-        this.$store.dispatch('lbhModule/FBCompleteAxios')
+      console.log('addAllFbList',e, e.from.connectionId, this.publisher.stream.connection.connectionId)
+      if(e.from.connectionId !== this.publisher.stream.connection.connectionId){
+        this.$store.commit('lbhModule/MINUS_FB_USER_COUNT')
+        this.$store.commit('lbhModule/ADD_AXIOS_FBLIST', e.data)
+        //만약 피드백실에서 모두 나가면, 피드백까지 면접 종료
+        if(this.FBUserCount === 0){
+          console.log('fbcompleteAxios실행')
+          this.$store.dispatch('lbhModule/FBCompleteAxios')
+        }
       }
     })
 
