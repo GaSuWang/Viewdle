@@ -26,12 +26,13 @@ export default {
 			const { clientName } = this.getConnectionData();
 			return clientName;
 		},
+		clientEmail() {
+			const { clientEmail } = this.getConnectionData();
+			return clientEmail;
+		},
 		showVid() {
-			const inWR = this.WRParticipantList.filter(p => p.myUserEmail === this.myUserEmail)
-    // if(state.currentUserList.length) {
-    //   return state.currentUserList.filter(p => p.myUserEmail !== state.myUserEmail)
-    // } else return []
-			if(this.$router.currentRoute.value.name === 'waiting-room' && (inWR === [])){
+			const inWR = this.WRParticipantList.filter(p => p.myUserEmail === this.clientEmail)
+			if(this.$router.currentRoute.value.name === 'waiting-room' && (inWR.length === 0)){
 				return false
 			} else return true
 		},
