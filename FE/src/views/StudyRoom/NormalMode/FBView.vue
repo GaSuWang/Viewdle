@@ -11,9 +11,9 @@
       <video ref="video" width="640" height="280" controls :src="videoSrc">
           <!-- <source  type="video/mp4"> -->
       </video>
-      <button @click="timeCheck">
+      <!-- <button @click="timeCheck">
             <p>비디오 시간</p>
-      </button>
+      </button> -->
     </div>
     <!-- 우단 -->
     <div class="FBRightArea">
@@ -384,6 +384,19 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.savedEEVid{
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#app > div > div.FBView > div.savedEEVid > video{
+  width: 90%;
+  height: 90%;
 }
 
 .FBRightArea {
