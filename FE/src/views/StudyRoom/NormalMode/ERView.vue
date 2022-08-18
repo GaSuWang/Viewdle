@@ -315,7 +315,7 @@ export default {
 
 .EEVid{
   width: 90%;
-  height: 75%;
+  height: 100%;
 }
 
 .ERVidContainer{
