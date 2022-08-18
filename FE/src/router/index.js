@@ -114,11 +114,12 @@ export const router = createRouter({
   routes,
 });
 
-당장은 개발에 방해될 것 같아서 주석처리함
+// 당장은 개발에 방해될 것 같아서 주석처리함
 router.beforeEach((to, from, next) => {
   //로그인 하지 않았을 경우에는 무조건 로그인 페이지로
   const isLoggedIn = this.$store.getters['rhtModule/isLoggedIn']
-  if(isLoggedIn === false){
+  if((to.name !== 'Account' || to.name !== 'GoogleSignup' || to.name !== 'Signup' || to.name !== 'pw') && isLoggedIn === false){
+    alert('로그인을 하고 입장해주세요!')
     return {name: 'Account'}
   }
   // 피드백실은 스터디 모드 면접관실을 통해서만 진입 가능
