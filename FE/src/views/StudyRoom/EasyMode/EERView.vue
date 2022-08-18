@@ -889,6 +889,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 }
 
 .EERButtonHeader{
@@ -914,22 +915,28 @@ export default {
 
 .EEVidContainer {
   width: 100%;
-  height: 80%;
+  height: 70%;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .EEVid {
-  width: 65%;
+  /* width: 60%; */
+  height: 100%;
   aspect-ratio: 2/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 }
 
 .ERVidContainer {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  /* justify-content: center; */
   width: 100%;
-  height: 20%; 
+  height: 30%; 
   /* overflow-x: scroll; */
 }
 
@@ -937,6 +944,17 @@ export default {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+div.EEVidContainer > div > div:nth-child(1){
+  margin: 0;
+  height: 98%;
+}
+
+div.EEVidContainer > div > div.userVideo{
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 .EERBtnContainer {
@@ -952,6 +970,7 @@ export default {
 .EERBottomArea {
   display: flex;
   justify-content: space-evenly;
+  align-items:center;
   width: 100%;
   height: 10%;
   /* border-radius: 20px; */
@@ -971,37 +990,6 @@ export default {
   flex-direction: row;
   justify-content: flex-end;
 }
-
-/* .EERButtonHeader > button {
-  border: none;
-  background-color: rgb(209, 209, 209);
-  border-radius: 50%;
-  width: 3%;
-  height: 3%;
-  /* filter: blur(3px);} */
-
-/* .EERButtonHeader > div > button > i {
-  font-size: 100%;
-  color: black;
-}
-
-.EERButtonHeader > div > button,
-.EERButtonFooter > div > button {
-  border: none;
-  background-color: rgb(209, 209, 209);
-  border-radius: 50%;
-}
-
-.EERButtonHeader > div > button,
-.EERButtonFooter > div > button {
-  padding: 15px;
-}
-
-.EERButtonHeader > div > button > i,
-.EERButtonFooter > div > button > i {
-  font-size: 150%;
-  color: black;
-} */
 
 .suddenAttack {
   z-index: 1;
