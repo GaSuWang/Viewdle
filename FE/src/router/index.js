@@ -115,31 +115,31 @@ export const router = createRouter({
 });
 
 // 당장은 개발에 방해될 것 같아서 주석처리함
-router.beforeEach((to, from, next) => {
-  //로그인 하지 않았을 경우에는 무조건 로그인 페이지로
-  const isLoggedIn = this.$store.getters['rhtModule/isLoggedIn']
-  if((to.name !== 'Account' || to.name !== 'GoogleSignup' || to.name !== 'Signup' || to.name !== 'pw') && isLoggedIn === false){
-    alert('로그인을 하고 입장해주세요!')
-    return {name: 'Account'}
-  }
-  // 피드백실은 스터디 모드 면접관실을 통해서만 진입 가능
-  else if(to.name === 'fb-room' && from.name !== 'er-room'){
-    alert('해당 경로로 이동하실 수 없습니다.')
-    return {name: 'main'}
-  }
-  // 스터디모드/플레이모드의 면접자/면접관실은 대기실을 통해서만 이동 가능
-  else if((to.name === 'er-room' || to.name === 'ee-room' || to.name === 'er-room-ez' || to.name === 'ee-room-ez') && (from.name !== 'waiting-room')){
-    alert('해당 경로로 이동하실 수 없습니다.')
-    return {name: 'main'}
-  }
+// router.beforeEach((to, from, next) => {
+//   //로그인 하지 않았을 경우에는 무조건 로그인 페이지로
+//   const isLoggedIn = this.$store.getters['rhtModule/isLoggedIn']
+//   if((to.name !== 'Account' || to.name !== 'GoogleSignup' || to.name !== 'Signup' || to.name !== 'pw') && isLoggedIn === false){
+//     alert('로그인을 하고 입장해주세요!')
+//     return {name: 'Account'}
+//   }
+//   // 피드백실은 스터디 모드 면접관실을 통해서만 진입 가능
+//   else if(to.name === 'fb-room' && from.name !== 'er-room'){
+//     alert('해당 경로로 이동하실 수 없습니다.')
+//     return {name: 'main'}
+//   }
+//   // 스터디모드/플레이모드의 면접자/면접관실은 대기실을 통해서만 이동 가능
+//   else if((to.name === 'er-room' || to.name === 'ee-room' || to.name === 'er-room-ez' || to.name === 'ee-room-ez') && (from.name !== 'waiting-room')){
+//     alert('해당 경로로 이동하실 수 없습니다.')
+//     return {name: 'main'}
+//   }
 
-  // 대기실 waiting-room으로 가는 경우
-  // 1. 설정실 setting-room에서 진입
-  // 2. 면접자실/면접관실, 피드백실에서 면접 진행 도중 면접자가 방을 나갈 때
-  // 3. 면접자의 면접이 끝날 때
-  // 2번과 3번같은 경우는, 이동시 router에 name뿐 아니라 params도 넘겨줘서 이동하도록
-  else if(to.name==='waiting-room' && (from.name !== 'setting-room' || from.name !== 'er-room' || from.name !== 'ee-room' || from.name !== 'er-room-ez' || from.name !== 'ee-room-ez')){
-    alert('해당 경로로 이동하실 수 없습니다.')
-    return {name: 'main'}  
-  } 
-})
+//   // 대기실 waiting-room으로 가는 경우
+//   // 1. 설정실 setting-room에서 진입
+//   // 2. 면접자실/면접관실, 피드백실에서 면접 진행 도중 면접자가 방을 나갈 때
+//   // 3. 면접자의 면접이 끝날 때
+//   // 2번과 3번같은 경우는, 이동시 router에 name뿐 아니라 params도 넘겨줘서 이동하도록
+//   else if(to.name==='waiting-room' && (from.name !== 'setting-room' || from.name !== 'er-room' || from.name !== 'ee-room' || from.name !== 'er-room-ez' || from.name !== 'ee-room-ez')){
+//     alert('해당 경로로 이동하실 수 없습니다.')
+//     return {name: 'main'}  
+//   } 
+// })
