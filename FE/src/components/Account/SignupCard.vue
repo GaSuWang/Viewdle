@@ -10,37 +10,43 @@
     <!-- 비밀번호 확인 -->
     <!-- 가입완료 버튼  and 취소버튼-->
     <!-- 가입 실패시 알람 -->
+  
         <form @submit.prevent="signup(credentials)">
+
+        <div v-if="credentialsTocheckEmail.EmailCheck == false">
           <!-- 이름 -->
-          <div class="nameinput">
-            <input type="text" v-model="credentials.userName" placeholder="Nick Name" />
+          <div class="emailinput mt-3">
+            <input type="text" v-model="credentials.userName" placeholder="닉네임"/>
           </div>
           <!-- 이메일 인풋 -->
 
           <form @submit.prevent="checkEmail(credentials)">
             <div class="emailinput">
-              <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
+              <input type="email" v-model="credentials.userEmail" placeholder="이메일 주소" />
               <div v-if="credentialsTocheckEmail.EmailCheck == false">
               <button class="pwchecksubmit"> 중복 확인 </button>
               </div>
             </div>
           </form>
+          </div>
 
           <div v-if="credentialsTocheckEmail.EmailCheck == true">
           <!-- 비번 인풋 -->
             <div class="pwinput">
-              <input type="password" v-model="credentials.userPassword" placeholder="Password" />
+              <input type="password" v-model="credentials.userPassword" placeholder="비밀번호" />
             </div>
 
             <!-- 비번 확인 인풋 -->
             <div class="pwcheckinput">
-              <input type="password" v-model="credentials.userPassword2" placeholder="Password Check" />
+              <input type="password" v-model="credentials.userPassword2" placeholder="비밀번호 확인" />
             </div>
 
             <button class="signupsubmit">가입완료</button>
           </div>
         </form>
-        <div class="signupbackbutton"><router-link to="/">뒤로가기</router-link></div>
+        <div class="m-3">
+          <div class="signupbackbutton" style="color:black"><router-link to="/"><p style="font-size:14px; font-weight:bold; color:black">뒤로가기</p></router-link></div>
+        </div>
       </div>
       </div>
   </div>
@@ -64,21 +70,9 @@ export default {
       EmailCheck: false
     })
     const router = useRouter();
-    // const BASE_URL = 'http://' + location.hostname + ':8081'
     const BASE_URL = 'https://' + location.hostname
     function signup(credentials) {
-      /* 
-      POST: 사용자 입력정보를 signup URL로 보내기
-        성공하면
-          응답 토큰 저장
-          현재 사용자 정보 받기
-          메인 페이지(ArticleListView)로 이동
-        실패하면
-          에러 메시지 표시
-      */
-      console.log("회원가입아 안녕?")
       axios({
-        // url: BASE_URL + '/api/v1/users', //회원가입 api로
         url: BASE_URL + '/api/v1/users',
         method: 'post',
         data: credentials
@@ -93,9 +87,7 @@ export default {
     }
 
     function checkEmail(credentials) {
-    console.log("중복확인아 안녕?")
       axios({
-        // url: BASE_URL + '/api/v1/users/check/duplicate',  // 이메일확인 api
         url: BASE_URL + '/api/v1/users/check/duplicate',
         method: 'post',
         data: {"email":credentials.userEmail}
@@ -108,7 +100,6 @@ export default {
           }
         })
         .catch(err => {
-          console.log(credentials)
           console.error(err.response)
           alert('이미 가입된 이메일입니다.')
         })
@@ -118,28 +109,21 @@ export default {
       signup, checkEmail, credentials, credentialsTocheckEmail
     }
   }
-  // data() {
-  //   return {
-  //     credentials: {
-  //       username: '',
-  //       useremail: '',
-  //       password1: '',
-  //       password2: '',
-  //     }
-  //   }
-  // },
-  // methods: {
-  //   ...mapActions(['signup'])
-  // },
 }
 </script>
 
-<style>
+<style scoped>
+a{
+  text-decoration: none;
+  color : black;
+}
+a:hover{
+  text-decoration: none;
+  color : black;
+}
 .signup{
   width: 90%;
   height: 90%;
-  /* background : rgb(255,255,255,0.5);
-  border-radius: 20px; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,7 +162,7 @@ export default {
 }
 
 .emailinput{
-  margin-top: 20px;
+  margin-top: 0;
   width: 100%;
 }
 .emailinput input{
@@ -193,7 +177,7 @@ export default {
 }
 
 .pwinput{
-  margin-top: 50px;
+  margin-top: 20px;
   width: 100%;
 }
 .pwinput input{
@@ -207,7 +191,6 @@ export default {
   outline: none;
 }
 .pwcheckinput{
-  margin-top: 20px;
   width: 100%;
 }
 .pwcheckinput input{

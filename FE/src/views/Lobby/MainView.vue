@@ -5,43 +5,39 @@
   <div class="MainView">
       <div class="MainTop">
         <div class="MainTop1">
-          <!-- 서치바 -->
           <form @submit.prevent="searchStudyroom(credentialsTosearch)">
           <div class="Searchbar">
-              <div class="input-group">
-                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="검색" aria-label="Search" aria-describedby="search-addon" />
-                <button class="btn mainsearchbutton">search</button>
+              <div class="input-group d-flex flex-row align-items-center">
+                <input type="text" class="form-control rounded"  v-model="credentialsTosearch.keyword" placeholder="검색어를 입력해주세요" aria-label="Search" aria-describedby="search-addon" />
+                <button class="btn mainsearchbutton">검색</button>
               </div>
           </div>
           </form>
           </div>
-      <!-- 필터링 -->
         <div class="MainTop2">
           <div class="MainTop2item">
           <div class="dropdown">
-            <button class="btn MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               필터
             </button>
             
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" style="padding-left:15px">
               <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="Y">공개방</li>
               <li><input type="checkbox" @click="filterStudyRoom(credentialsToFilter)" v-model="credentialsToFilter.privateYN" true-value="N">비공개방</li>
             </ul>
           </div>
           </div>
-          <!-- 정렬 -->
           <div class="MainTop2item">
           <div class="dropdown">
-            <button class="btn MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               정렬
             </button>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" style="padding-left:15px">
               <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="ASC">최신순</li> 
               <li><input type="checkbox" @click="sortStudyRoom(credentialsToSort)" v-model="credentialsToSort.order" true-value="DESC">오래된순</li>
             </ul>
           </div>
           </div>
-          <!-- 방생성 -->
           <div class="MainTop2item">
           <button class="btn MainTop2itembutton"  data-bs-toggle="modal" data-bs-target="#roommaker">
             방생성
@@ -58,7 +54,6 @@
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <!-- <h5 class="modal-title" id="staticBackdropLabel">방생성</h5> -->
               </div>
               <form @submit.prevent="createStudyroom(credentials)">
               <div class="modal-body d-flex flex-column justify-content-center align-items-center">
@@ -69,8 +64,7 @@
                       <input type="radio" id="select" name="mode" @click="selectMode(1)"><label for="select">플레이 모드</label>
                       <input type="radio" id="select2" name="mode" @click="selectMode(2)"><label for="select2">스터디 모드</label>
                   </div>
-                  <!-- <p>Play Mode : 1  /  Study Mode : 2</p>
-                  <input type="number" class="form-control form-control-lg" min='1' max='2' v-model.number="credentials.type"> -->
+  
                 </div>
                 </div>
                                 <div>
@@ -80,8 +74,7 @@
                       <input type="radio" id="selectlimit4" name="limit" @click="selectLimit(4)"><label for="selectlimit4">4명</label>
                       <input type="radio" id="selectlimit5" name="limit" @click="selectLimit(5)"><label for="selectlimit5">5명</label>
                   </div>
-                  <!-- <p>최소 : 2   /   최대 : 5</p>
-                <input type="number" class="form-control form-control-lg" min='2' max='5' v-model.number="credentials.limit"> -->
+
                 </div>
                 <div class="d-flex align-items-center">
                   <span>비밀방</span>
@@ -107,23 +100,19 @@
           <div class="modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">방입장</h5>
           </div>
-          <div class="modal-body">
-            <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control form-control-lg" placeholder="Password" />
+          <div class="modal-body enterPwInput">
+              <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control" placeholder="비밀번호" />
           </div> 
           <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">입장</button>
+              <button class="clCancle" data-bs-dismiss="modal"><router-link to="/main">취소</router-link></button>
+              <button class="clSubmit" data-bs-dismiss="modal">입장</button>
           </div>
           </form>
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
         </div>
       </div>
     </div> 
     </div>
-      <!-- 검색 -->
-      <!-- 최신순,오래된순 정렬 -->
-      <!-- 풀방여부, 공개방여부 필터 -->
-      <!-- 방생성 버튼 -->
-      <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
 </template>
 
 <script>
@@ -318,7 +307,7 @@ input[type=password]:placeholder {
     display: inline-block;
     cursor: pointer;
     height: 24px;
-    width: 90px;
+    width: 105px;
     border-radius: 10%;
     box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
     line-height: 24px;
@@ -374,6 +363,8 @@ input[type=password]:placeholder {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+      box-shadow: 0px 1px 2px #aaa, inset 0px 2.5px 6px #fff;
+
 
 }
 .pagetitle{
@@ -392,8 +383,20 @@ input[type=password]:placeholder {
   margin: 0 20px;
 }
 .MainTop2itembutton{
-  background-color: #FEAA00;
+  width: 6vw;
+  height: 2.5vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
   color: white;
+  font-weight: bold;
+  font-size: 1em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.MainTop2itembutton:hover{
+  background: #ffcc74;
 }
 .MainBody{
   margin-left: 20px;
@@ -415,14 +418,26 @@ input[type=password]:placeholder {
   margin-left:30px;
 }
 .mainsearchbutton{
-  background-color:#47A0FF;
-  color:white;
+  width: 5vw;
+  height: 3vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #47A0FF;
+  color: white;
+  font-weight: bold;
+  font-size: 1em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.mainsearchbutton:hover{
+  background: #89B2E8;
 }
 
 .clCancle{
   /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+  width: 6vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -439,8 +454,8 @@ input[type=password]:placeholder {
 
 .clSubmit{
   /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+  width: 6vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -453,6 +468,11 @@ input[type=password]:placeholder {
 }
 .clSubmit:hover{
   background: #89B2E8;
+}
+
+.enterPwInput{
+  display:flex;
+  justify-content: center;
 }
 
 </style>

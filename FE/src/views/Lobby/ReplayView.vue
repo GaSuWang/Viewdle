@@ -1,14 +1,14 @@
-// 임현탁
+// 임현탁dow
 <template>
 <div class="ReplayViewBoss">
   <NavBar class="NavView"/>
   <div class="ReplayView">
     <div class='ReplayTop'>
       <div class="dropdown ReplayTopitem">
-        <button class="btn replaytopitembutton dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="replaytopitembutton dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           정렬
         </button>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" style="padding-left:15px">
           <li><input type="checkbox" @click="sortReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="ASC">오래된순</li>
           <li><input type="checkbox" @click="sortReplay(credentialsToFilterReplay)" v-model="credentialsToFilterReplay.order" true-value="DESC">최신순</li>
         </ul>
@@ -18,23 +18,18 @@
     <div class="ReplayBody">
       <ReplayCard/>
     </div>
-    <!-- 오래된순, 최신순 정렬 -->
-    <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
 
-    <!-- 영상 다시보기 -->
     <div class="modal fade" id="enterReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
           <div class="modal-content">
             <div class="modalshow">
 
-          <!-- 동영상 삽입 및 AI 평가 입력 -->
+          
           <div style="position:relative;height:200px">
             <div style="position:absolute;">
               <video id="video" ref="video" crossOrigin='anonymous' width="640" height="480" controls="" name="media" >
-                <!-- <source src="https://localhost:4443/openvidu/recordings/SessionA/SessionA.mp4" type="video/mp4"> -->
                 <source :src="replayDetail.videoUrl" type="video/mp4">
 
-                  <!-- <source src = "file://C:/Users/multicampus/Desktop/test.mp4"> -->
               </video>
             </div>
             <div id="selectAreaBox" ref="selectAreaBox" style="position:absolute;opacity:0" class="selectAreaBox" v-on:mousedown = "mousedown" v-on:mouseup = "mouseup" v-on:mousemove = "mousemove" ></div>        
@@ -47,18 +42,21 @@
             <div class="focus"></div>
           </div>
           <div>
-            <!--  style="position:absolute"-->
-            <!-- <canvas id="canvas" ref="canvas" ></canvas> -->
+            <!--  -->
+            <canvas id="canvas" ref="canvas" style="position:absolute; display: none;" ></canvas>
           </div>
           <div class="replayfeedback">
-              <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in feedbackList" :key="item.seq">
-              {{item.feedbackContent}}
-              <button :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" @click="moveTo(item.timeline)">
-                <i :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']" class="fa-solid fa-circle-play"></i>
-              </button>
+              <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in replayDetail.feedbackList" :key="item.seq">
+                <p class="mx-3">{{item.feedbackContent}}</p> 
+                  <button :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']"  @click="moveTo(item.timeline)">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-2x fa-circle-play mx-3 mt-1 p-0"></i>
+                    </div>
+                  </button>
               </div>
             </div>
-        <button class="btn replaymodalclose" data-bs-dismiss="modal">Close</button> 
+        <div class="replaydis d-flex justify-content-center align-items-center"><p class="mb-0 pb-0">드래그로 자세를 확인해 보세요!</p></div>
+        <button class="replaymodalclose" data-bs-dismiss="modal" @click.prevent="endPredict">닫기</button> 
           </div>
           </div>
         </div>
@@ -74,7 +72,6 @@ import ReplayCard from '@/components/Lobby/ReplayCard.vue'
 import { useStore, mapGetters } from 'vuex'
 import { reactive, computed } from "vue";
 
-// AI 코드
 import * as tmPose from '@teachablemachine/pose';
 
 export default {
@@ -124,7 +121,6 @@ export default {
     }
   },
 
-  // AI 자세평가 코드
   data () {
     return {
       context : null,
@@ -152,7 +148,9 @@ export default {
       isClick : null,
 
       positionColor : '#89B2E8',
-      nowPosition : " "
+      nowPosition : " ",
+
+      timeout: null
     }
   },
 
@@ -179,6 +177,10 @@ export default {
   },
 
   methods : { 
+    endPredict: function(){
+      console.log("끝")
+      clearTimeout(this.timeout)
+    },
       mousedown: function (event) {
       this.x = event.offsetX, 
       this.y = event.offsetY
@@ -195,7 +197,6 @@ export default {
       this.a = event.offsetX, 
       this.b = event.offsetY
       
-      // 드래그 역방향 고려
       if(this.a < this.x){
         this.temp = this.a;
         this.a = this.x;
@@ -204,41 +205,44 @@ export default {
       this.isClick == "N"
     },
    async predict() {
-      this.context.drawImage(this.video, this.x*2, this.y*2, this.a*2, this.b*2, 0, 0, 1280, 960);
+      this.context.drawImage(this.video, this.x*2, this.y*2, this.a*2-this.x*2, this.b*2-this.y*2, 0, 0, 1280, 960);
       const {pose, posenetOutput}= await this.model.estimatePose(this.canvas);
 
-      this.maxProbability = 0;
+      var temp = 0;
+      var tempname = " ";
       pose;
-      // console.log(posenetOutput)
 
       this.prediction = await this.model.predict(posenetOutput);
 
       for (let i = 0; i < this.maxPredictions; i++) {
-        if (this.prediction[i].probability>this.maxProbability) {
-          this.maxClassName = this.prediction[i].className;
-          this.maxProbability = this.prediction[i].probability;
+        if (this.prediction[i].probability>temp) {
+          tempname = this.prediction[i].className;
+          temp = this.prediction[i].probability;
         }        
       }
+      console.log(tempname)
+      console.log(temp)
+      this.maxClassName = tempname
 
       if(this.maxClassName === "middle"){
-        this.positionColor = '#89B2E8'
+        this.positionColor = '#47A0FF'
         this.nowPosition = "Good!"
       } else {
-        this.positionColor = 'ffcc74'
+        this.positionColor = '#FEAA00'
         this.nowPosition = "Bad!"
 
-        // if(this.maxClassName === "close"){
-        //   this.nowPosition = "너무 가까워요!"
-        // } else if (this.maxClassName === "far"){
-        //   this.nowPosition = "너무 멀어요!"
-        // } else if (this.maxClassName === "left"){
-        //   this.nowPosition = "오른쪽으로 기울었어요!"
-        // } else if (this.maxClassName === "right"){
-        //   this.nowPosition = "왼쪽으로 기울었어요!"
-        // }
+        if(this.maxClassName === "close"){
+          this.nowPosition = "Close!"
+        } else if (this.maxClassName === "far"){
+          this.nowPosition = "Far!"
+        } else if (this.maxClassName === "left"){
+          this.nowPosition = "Left!"
+        } else if (this.maxClassName === "right"){
+          this.nowPosition = "Right!"
+        }
       }
                 
-      setTimeout(() => {
+      this.timeout = setTimeout(() => {
         this.predict();
       }, 100);         
     },
@@ -263,7 +267,7 @@ export default {
     justify-self: center;
     align-items: center;
     width: 100px;
-    height: 30px;
+    height: 20px;
     padding: 3%;
     border-radius: 10px;
     margin-top: 5px;
@@ -272,7 +276,9 @@ export default {
     margin-left: 5px;
     overflow-wrap: break-word;
     background-color: white;
-    box-shadow: 1px 1px 1px 1px gray;
+    box-shadow:  0px 1.5px 4px #aaa, inset 0px 1.5px 2px #fff;
+    font-family: 'yg-jalnan';
+    color: white;
 }
 .ReplayViewBoss{
   min-width: 1000px;
@@ -328,6 +334,7 @@ export default {
   border-radius: 20px;
   padding: 20px;
   overflow-y: scroll;
+  
 }
 .ReplayBody::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera*/
@@ -351,13 +358,14 @@ export default {
   align-items: center;
   overflow-y: scroll;
   background-color:#e4e6eb;
-  border-radius: 20px;
+  border-radius: 10px;
+
 }
 .replayfeedback::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera*/
 }
 .replayFeedbackBox{
-  border-radius: 20px;
+  border-radius: 10px;
   width: 430px;
   height: 90px;
   margin-bottom: 15px;
@@ -366,15 +374,37 @@ export default {
   line-height: 90px;
   display: flex;
   justify-content: space-between;
+    box-shadow: 0px 1px 2px #aaa, inset 0px 1px 1.5px #fff;
+
+}
+.replaydis{
+  position: absolute;
+  left: 470px;
+  width: 500px;
+  height: 45px;
+  top: 525px;
+  border-radius: 10px;
+  background: white;
+  color: black;
+  font-weight: bold;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
 .replaymodalclose{
   position: absolute;
   left: 1000px;
   width: 100px;
   height: 45px;
-  top: 540px;
-  background-color:#ffcc74;
+  top: 525px;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
+.replaymodalclose:hover{
+    background: #ffcc74;
+}
+
 .replaygood{
   border: #89B2E8;
   background-color: white;
@@ -384,18 +414,42 @@ export default {
   background-color: white;
 }
 .replaytopitembutton{
-  background-color: rgb(230,198,132);
-  color: white
+width: 6vw;
+  height: 2.5vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+}
+.replaytopitembutton:hover{
+  background: #ffcc74;
 }
 .replaybadbutton{
-  height: 20px;
+  margin : 0;
+  padding: 0; 
+  /* height: 20px; */
   color:#ffcc74;
   background: white;
+  border-radius: 30px;
+
 }
 .replaygoodbutton{
-  height: 20px;
+  margin : 0;
+  padding: 0; 
+  /* height: 20px; */
   color:#89B2E8;
   background: white;
+  border-radius: 30px;
+}
+.FBBoxBtn {
+  top:50px;
+  width: 10%;
+  border-radius: 5px;
 }
  /* width="640" height="480" */
 </style> 

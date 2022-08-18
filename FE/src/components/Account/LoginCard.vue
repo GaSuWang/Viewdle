@@ -7,12 +7,12 @@
       <!-- 이메일 인풋 -->
       <form @submit.prevent="login(credentials)">
         <div class="loginid">
-          <input type="email" class="loginidinput" v-model="credentials.email" placeholder="Email address" />
+          <input type="email" class="loginidinput" v-model="credentials.email" placeholder="이메일" />
         </div>
         
         <!-- Password input -->
         <div class="loginpw">
-          <input type="password" class="loginpwinput" v-model="credentials.password" placeholder="Password" />
+          <input type="password" class="loginpwinput" v-model="credentials.password" placeholder="비밀번호" />
         </div>
         <button class="loginsubmit btn-lg d-flex justify-content-center align-items-center">로그인</button>
       </form>
@@ -59,26 +59,17 @@ export default {
     const router = useRouter()
 
      
-    // function login(){
-    //   store.dispatch('rhtModule/login', credentials)
-    //   router.push('/main')
-    // }
-    // const BASE_URL = 'http://' + location.hostname + ':8081'
     const BASE_URL = 'https://' + location.hostname
     function login(credentials) {
 
-      console.log("로그인아 안녕?")
       axios({
-        // url: BASE_URL + '/api/v1/users/login', 
+ 
         url: BASE_URL + '/api/v1/users/login',  
         method: 'post',
         data: credentials
       })
         .then(res => {
-          console.log("해윙")
-          console.log(res)
           const token = res.data.accessToken
-          console.log(token)
           store.dispatch('rhtModule/saveToken', token)
           store.dispatch('rhtModule/fetchCurrentUser')
           store.dispatch('rhtModule/fetchHistories')
@@ -128,7 +119,7 @@ a:hover{
 
 p{
   margin: auto;
-  /* padding:  */
+
 }
 
 .loginview{

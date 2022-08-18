@@ -3,13 +3,12 @@
   <div class="GrassShow"> 
     <div>
       <section class="calendertop">
-        <i class="fas fa-angle-left"  @click="controlMonth('prev')" ></i>
+        <i class="fas fa-angle-left calendermove"  @click="controlMonth('prev')" ></i>
         <div class="calendertoptext">{{year}}.{{month}}</div>
-        <i class="fas fa-angle-right" @click="controlMonth('next')"></i>
+        <i class="fas fa-angle-right calendermove" @click="controlMonth('next')"></i>
       </section>
     </div>
-    <div v-if="HistoryList.usingDates.length">
-    <table>
+        <table v-if="HistoryList.usingDates.length">
       <thead>
         <th v-for="day in days" :key="day">{{ day }}</th>
       </thead>
@@ -17,21 +16,15 @@
         <tr v-for="(date, idx) in dates" :key="idx">
         <td v-for="(day, index) in date" :key="index">
           <div v-for="usingdate in HistoryList.usingDates" :key="usingdate.seq">
-            <div v-if="usingdate!=year+':'+0+month+':'+day">
-              {{day}}
-            </div>
-            <div v-if="usingdate==year+':'+0+month+':'+day">
-              <div class="calendardate">
-                {{day}}
-              </div>
-            </div>
+          <div :class="[usingdate===year+':'+0+month+':'+day ? 'calendardate' : 'calendardates']">
+            {{day}}
+          </div>
           </div>
         </td>
         </tr>
       </tbody>
-    </table>
-  </div>
-  <div v-if="!HistoryList.usingDates.length">
+    </table> 
+    <div v-if="!HistoryList.usingDates.length">
     <table>
       <thead>
         <th v-for="day in days" :key="day">{{ day }}</th>
@@ -43,8 +36,9 @@
         </td>
         </tr>
       </tbody>
-    </table>
+    </table> 
   </div>
+
   </div>
 </template>
 
@@ -63,6 +57,7 @@ export default {
   },
   data: function() {
     return {
+      data:null,
       days: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"],
       dates: [],
       currentYear: 0,
@@ -201,7 +196,7 @@ export default {
   height:95%; 
   margin: 0 20px;
   border-radius: 20px;
-  box-shadow: 1px 1px 1px 1px gray;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 2.5px 6px #fff;
   display: flex;
   flex-flow: column;
   justify-content: center;
@@ -218,28 +213,37 @@ table {
   border-collapse: collapse;
   width: 80%;
   height: 70%;
-  /* border-spacing: 20px 30px; */
+
 }
 th {
   border-bottom: 1px solid;
-  /* background-color: ; */
-  /* vertical-align: top; */
+
 }
  td {
   border-bottom: 1px solid;
-  /* padding: 20px;
-  font-size: 20px; */
+
   vertical-align: top;
   text-align: center;
 }
 .calendardate{
-    width:30px;
-    height:30px;
-    background-color: rgb(153, 172, 230);;
-    border-radius: 70%;
-    overflow: hidden;
+  position:absolute;  
+  width:30px;
+  height:30px;
+  background-color: #47A0FF;
+  border-radius: 70%;
+  overflow: hidden;
+}
+.calendardates{
+  position:absolute;  
+  width:30px;
+  height:30px;
+  border-radius: 70%;
+  overflow: hidden;
 }
 .calendertoptext{
   font-size: 20px;
+}
+.calendermove{
+  margin-top:10%;
 }
 </style>

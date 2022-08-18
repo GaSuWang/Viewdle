@@ -1,27 +1,21 @@
 // 임현탁
 <template>
-  <div class="CLMCard" v-for="item in CoverLetterList" :key="item.seq">
-      <form @submit.prevent="detailCoverLetter(item.coverLetterSeq)">
+  <div class="CLMCard " v-for="item in CoverLetterList" :key="item.seq">
+          <form @submit.prevent="detailCoverLetter(item.coverLetterSeq)">
         <button class="btn coverletterbutton1" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">상세보기</button>
       </form>
-    <div class="CLMCardTop">
-    </div>
     <div class="CLMCardBottom">
       <div class="CLMcard-body">
-        <h5>{{item.coverLetterTitle}}</h5>
-        <p><small class="text-muted">작성 일시 : {{item.coverLetterRegTime}}</small></p>
-        <!-- <p><small class="text-muted">자소서 코드: {{item.coverLetterSeq}}</small></p> -->
+        <h5 style="margin:2vw" >{{item.coverLetterTitle}}</h5>
+        <p><small style="margin-left : 2vw" class="text-muted">작성 일시 : {{item.coverLetterRegTime}}</small></p>
       </div>
     </div>
-      <div class="d-flex justify-content-end">
-        <form @submit.prevent="deleteCoverLetter(item.coverLetterSeq)">
-          <button class="clCancle" @click.prevent data-bs-dismiss="modal"><router-link to="/cl">삭제</router-link></button>
-        </form>
-        <form @submit.prevent="detailCoverLetter(item.coverLetterSeq)">
-          <button class="clSubmit" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">보기</button>
-          <!-- <button class="btn coverletterbutton" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#detailofCL">보기</button> -->
-        </form>
-      </div>
+    <div class="CLMfooter">
+
+      <form @submit.prevent="deleteCoverLetter(item.coverLetterSeq)">
+      <button class="btn clCancle">삭제</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -66,7 +60,7 @@ export default {
   height:45%; 
   margin:10px;
   border-radius: 20px;
-  /* align-items: center; */
+
   align-content: center;
   justify-content: center;
   box-shadow: 1px 1px 1px 1px gray;
@@ -124,11 +118,20 @@ export default {
   background-color:#FEAA00;
   color: white;
 }
+.coverletterbutton1{
+  position:fixed;
+  width:100%;
+  height: 80%;
+  margin : 3px;
+  font-size: 3px;
+  opacity:0;
 
+}
 .clCancle{
-  /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+
+  width: 5vw;
+  margin-bottom: 1vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -144,7 +147,6 @@ export default {
 }
 
 .clSubmit{
-  /* margin-top: 20px; */
   width: 3vw;
   height: 2vw;
   border: 0;
@@ -167,5 +169,10 @@ a{
 a:hover{
   text-decoration: none;
   color : white;
+}
+.CLMfooter{
+  display: flex;
+  justify-content: end;
+  margin-right:20px
 }
 </style>

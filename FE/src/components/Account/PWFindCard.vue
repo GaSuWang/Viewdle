@@ -4,18 +4,15 @@
   <div class="pwFindbody">
     <div class="pwFindcard">
       <div class="d-flex"><h1 class="frontVeiwdle">뷰들</h1><h1 class="backVeiwdle">뷰들</h1></div>
-        <!-- 이메일 입력란 -->
-        <!-- 버튼클릭시 이메일로 임의의 비밀번호 발송 or 원래비밀번호 발송 -->
-        <!-- 취소버튼 -->
-        <!-- 확인되지 않은 이메일 일 시 알람 -->
-        <!-- 이메일 인풋 -->
       <form @submit.prevent="getEmailCode(credentials)">
         <div class="pwFindinput">
           <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
         </div>
         <button class="pwFindsubmit">인증코드받기</button>
       </form>
-      <router-link to="/" class="pwfindbackbutton">뒤로가기</router-link>
+      <div class="m-3">
+        <router-link to="/" style="color:black" class="pwfindbackbutton"><p style="font-size:14px; font-weight:bold ">뒤로가기</p></router-link>
+      </div>
     </div>
     </div>
 </div>
@@ -38,12 +35,11 @@ export default {
     })
 
 
-    // const BASE_URL = 'http://' + location.hostname + ':8081'
+
     const BASE_URL = 'https://' + location.hostname
     function getEmailCode(credentials) {
-        console.log("코드보내기야 안녕?")
         axios({
-          // url: BASE_URL + '/api/v1/users/password',  // 비밀번호찾기 api
+
           url: BASE_URL + '/api/v1/uses/password',
           method: 'post',
           data: {"email":credentials.userEmail}
@@ -67,12 +63,19 @@ export default {
 } 
 </script>
 
-<style>
+<style scoped>
+a{
+  text-decoration: none;
+  color : black;
+}
+a:hover{
+  text-decoration: none;
+  color : black;
+}
 .pwFind{
   width: 90%;
   height: 90%;
-  /* background : rgb(255,255,255,0.5); */
-  /* border-radius: 20px; */
+
   display: flex;
   align-items: center;
   justify-content: center;

@@ -13,13 +13,13 @@
       </video>
       <!-- <button @click="timeCheck">
             <p>비디오 시간</p>
-      </button>-->
+      </button> -->
     </div>
     <!-- 우단 -->
     <div class="FBRightArea">
       <div class="FBButtonHeader">
         <!-- 타이머 -->
-      <button type="button" class="btn btn-primary" :disabled="counting">
+      <button type="button" class="btn" :disabled="counting">
         <vue-countdown v-if="counting" :time="300000" @end="onCountdownEnd" v-slot="{minutes, seconds}">{{minutes}}분 {{seconds}}초</vue-countdown>
         <!-- <span v-else>Fetch Verification Code</span> -->
       </button>
@@ -268,13 +268,13 @@ export default {
       }
     },
 
-    openEECL() {
-      this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
-      localStorage['cl'] = JSON.stringify({
-        coverLetterTitle: this.CoverLetterDetail.coverLetterTitle,
-        coverLetterContent: this.CoverLetterDetail.coverLetterContent,
-      })
-      let route = this.$router.resolve({ path: "/eecl"});
+openEECL() {
+      //this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
+      localStorage["cl"] = JSON.stringify({
+        coverLetterTitle: this.studyRoomCL.coverLetterTitle,
+        coverLetterContent: this.studyRoomCL.coverLetterContent,
+      });
+      let route = this.$router.resolve({ path: "/eecl" });
       window.open(route.href);
     },
     FBComplete() {
@@ -398,6 +398,19 @@ export default {
   height: 90%;
 }
 
+.savedEEVid{
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#app > div > div.FBView > div.savedEEVid > video{
+  width: 90%;
+  height: 90%;
+}
+
 .FBRightArea {
   display: flex;
   flex-direction: column;
@@ -426,6 +439,12 @@ export default {
 .FBView button:enabled:hover{
   background-color: #787a89;
   border: #787a89
+}
+
+#app > div > div.FBView > div.FBRightArea > div.FBButtonHeader > button{
+  background-color: #a7a9b9;
+  border: #a7a9b9;
+  color: white;
 }
 
 /* 버튼 시작*/

@@ -13,19 +13,17 @@
     </div> 
 
 
-      <!-- 자소서 생성 모달 -->
       <div class="modal fade" id="clmaker" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <form @submit.prevent="createCoverLetter(credentials)">
             <div class="modal-header">
-              <!-- <h5 class="modal-title" id="staticBackdropLabel">자소서 제목</h5> -->
               <input type="Text" v-model="credentials.coverLetterTitle" class="CLTitle " placeholder="자기소개서 제목을 입력해주세요" /> 
             </div>
             <div class="modal-body">
               <textarea type="Text" v-model="credentials.coverLetterContent" class="CLContent " placeholder="내용을 입력해주세요" /> 
             </div> 
-            <div class="modal-footer">
+            <div class="modal-footer ">
               <button class="clCancle" @click.prevent data-bs-dismiss="modal"><router-link to="/cl">취소</router-link></button>
               <button class="clSubmit" data-bs-dismiss="modal">작성</button>
             </div>
@@ -35,7 +33,6 @@
       </div>
 
 
-<!-- 상세 and 수정 -->
       <div class="modal fade" id="detailofCL" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
@@ -55,21 +52,6 @@
         </div>
       </div>   
     
-    <!-- 내 자기소개서 관리 페이지 -->
-    <!-- 최신순/오래된순 정렬 -->
-    <!-- 전체삭제 버튼-->
-    <!-- <button type="button" class="btn">전체 삭제</button> -->
-
-    <!-- 자소서가 하나도 없을 때 보여줄 문구, 이미지 -->
-
-    <!-- 카드 형식의 자기소개서 -->
-    <!-- 카드 안에 썸네일(?)이 좌측에, 제목과 생성일이 우측에 위치 -->
-    <!-- 카드는 3열, 반응형 설계는 아직... -->
-    <!-- <div class="CLM Container" v-for="cl in cls" :key="cl.seq">
-      <CLMCard :card="cl"></CLMCard>
-    </div> -->
-    <!-- 임시로 만든 자소서 카드 대용 버튼 -->
-    <!-- <button type="button" class="btn btn-primary" @click="open=true">{{open}}</button> -->
   </div>
 </template>
 
@@ -182,8 +164,8 @@ a:hover{
 
 .clmanageTopitem{
   /* margin-top: 20px; */
-  width: 9vw;
-  height: 2vw;
+  width: 13vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -193,6 +175,7 @@ a:hover{
   font-size: 1.2em;
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  margin-right:20px;
 }
 .clmanageTopitem:hover{
   background: #ffcc74;
@@ -200,8 +183,8 @@ a:hover{
 
 .clSubmit{
   /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+  width: 6vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -211,6 +194,9 @@ a:hover{
   font-size: 1.2em;
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  padding:0;
+  margin:0;
+
 }
 .clSubmit:hover{
   background: #89B2E8;
@@ -218,8 +204,8 @@ a:hover{
 
 .clCancle{
   /* margin-top: 20px; */
-  width: 3vw;
-  height: 2vw;
+  width: 6vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -229,6 +215,9 @@ a:hover{
   font-size: 1.2em;
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  padding:0;
+  margin: 0;
+
 }
 .clCancle:hover{
   background: #ffcc74;

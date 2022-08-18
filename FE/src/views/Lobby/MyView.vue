@@ -1,27 +1,25 @@
 // 임현탁
 <template>
-    <!-- 프로필사진 클릭시 수정가능 -->
-    <!-- 회원정보수정 버튼 누르면 비밀번호 확인 -->
-    <!-- 이용추이 그래프, 잔디형식으로 보여주기 -->
-    <!-- 이름 -->
-    <!-- 이메일 -->
-    <!-- 수정할 비밀번호 -->
-    <!-- 수정할 비밀번호 확인 -->
-    <!-- 수정완료 버튼 -->
-    <!-- 취소버튼 -->
-    <!-- 수정완료버튼 누르면 확인 컨펌 -->
   <div class="MyViewBoss">
     <NavBar class="NavView"/>
     <div class="MyView">
       <div class="MyBody">
         <div class="card-top">
           <div class="card-topitem1">
-            <img :src="userLists.userProfileImage">
-            <SendImg/>
+            <div class="card-topitem1-img">
+              <img :src="userLists.userProfileImage">
+            </div>
+            <div class="card-topitem1-2">
+              <div class="card-topitem1-ptag">
+                <p class="card-text" style="font-size : 20px;">이름 : {{userLists.userName}}</p>
+                <p class="card-text" style="font-size : 20px">이메일 :{{userLists.userEmail}}</p>
+              </div>
+              <div class="card-topitem1-sendimg">
+                <SendImg/>
+              </div>
+            </div>
           </div>
           <div class="card-topitem2">
-            <p class="card-text" style="font-size : 20px;">이름 : {{userLists.userName}}</p>
-            <p class="card-text" style="font-size : 15px">이메일 :{{userLists.userEmail}}</p>
           </div>
         </div>
         <div class="Mycard-body">
@@ -29,11 +27,11 @@
           <GrassShow/>
         </div>
         <div class="card-body2">
-          <BadgeList/>
+          <BadgeList style="width:95%"></BadgeList>
         </div>
         <div class="card-footer">
-          <button class="deleteSubmit" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원 탈퇴</button>
           <button class="modifySubmit" data-bs-toggle="modal" data-bs-target="#editconfirm">정보 수정</button>
+          <button class="deleteSubmit" data-bs-toggle="modal" data-bs-target="#deleteconfirm">회원 탈퇴</button>
         </div>
       </div>
     </div>
@@ -56,15 +54,17 @@
                       <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="비밀번호 확인" />
                     </div>
                   </div>
-                  <button class="deleteSubmit" style="width:10vw">비밀번호 확인하기</button>
+                  <div v-if="pwcode != false">
+                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인</button>
+                  </div>
                 </form>
                 <div class="modal-footer">
                   <form @submit.prevent="deleteID()">
                     <div v-if="pwcode == false">
-                      <button class="deleteSubmit" style="width:8vw" data-bs-dismiss="modal">회원탈퇴하기</button>
+                      <button class="deleteSubmit" style="width:10vw" data-bs-dismiss="modal">회원탈퇴하기</button>
                     </div>
                   </form>
-                     <button type="button" class="modifySubmit" data-bs-dismiss="modal">취소</button>
+                     <button type="button" @click.prevent="empty()" class="modifySubmit" data-bs-dismiss="modal">취소</button>
                 </div>
               </div>
             </div>
@@ -87,14 +87,16 @@
                     <div class="form-outline mb-4">
                       <input type="password" v-model="credentials.password" class="form-control form-control-lg" placeholder="비밀번호 확인" />
                     </div>
+                 <div v-if="pwcodeforedit != false">
+                  <button class="deleteSubmit1" style="width:10vw">비밀번호 확인</button>
                   </div>
-                  <button class="deleteSubmit" style="width:10vw">비밀번호 확인하기</button>
+                  </div>
                 </form>
                 <div class="modal-footer">
                     <div v-if="pwcodeforedit == false">
                       <button class="deleteSubmit" style="width:8vw" data-bs-toggle="modal" data-bs-target="#editmodal">비밀번호 수정</button>
                     </div>
-                     <button type="button" class="modifySubmit" data-bs-dismiss="modal">취소</button>
+                     <button type="button" @click.prevent="empty()" class="modifySubmit" data-bs-dismiss="modal">취소</button>
                 </div>
               </div>
             </div>
@@ -116,12 +118,14 @@
                 <form @submit.prevent="changePW(changepassword)" id="myDIV">
                   <div class="modal-body">
                     <div class="form-outline mb-4">
-                      <input type="password" v-model="changepassword.password" class="form-control form-control-lg" placeholder="새 비밀번호" />
-                      <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="새 비밀번호 확인" />
+                      <input type="password" v-model="changepassword.password" class="form-control form-control-lg" placeholder="New Password" />
+                      <input type="password" v-model="changepassword.password2" class="form-control form-control-lg" placeholder="Check New Password" />
                     </div>
                   </div>
+                  <div class="modal-footer">
                   <button class="deleteSubmit" style="width:8vw" data-bs-dismiss="modal">비밀번호 수정</button>
-                  <button class="modifySubmit" @click.prevent data-bs-dismiss="modal"><router-link to="/mypage">취소</router-link></button>
+                  <button class="modifySubmit" @click.prevent="empty()" data-bs-dismiss="modal"><router-link to="/mypage">취소</router-link></button>
+                  </div>
                 </form>
               </div>
             </div>
@@ -181,10 +185,13 @@ export default {
     function changePW(){
       store.dispatch('rhtModule/changePW', changepassword)
     }
-
-
+    function empty(){
+      credentials.password=''
+    store.commit('rhtModule/SET_PW_CODE', true)
+    store.commit('rhtModule/SET_PW_CODE_FOR_EDIT', true)
+    }
     return {
-      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword
+      userLists, confirmPW, credentials, pwcode, deleteID, confirmPWforEdit, pwcodeforedit, changePW, changepassword,empty
     };
   },
 };
@@ -218,20 +225,20 @@ export default {
   margin-top:20px;
 }
 .Mycard-body{
-  width:95%;
+  width:98%;
   height: 48%;
   display: flex;
   flex-flow: row;
   justify-content: center;
-  align-items: space-around;
-  margin: 0 20px;
+  align-items: space-between;
 }
 .card-body2{
-  width: 98%;
+  width: 97%;
   height: 18%;
   display: flex;
   margin: none;
   justify-content: center;
+  margin-left:0.5%;
 }
 .card{
   width: 98%;
@@ -241,6 +248,8 @@ export default {
   display: flex;
   justify-content: end;
   height: 6%;
+  margin-right:30px;
+  margin-top:15px;
 }
 .card-footer button{
   margin: 0 20px;
@@ -263,13 +272,13 @@ export default {
   margin-left: 5%;
 }
 .card-topitem1{
-  width: 50%;
+  width: 70%;
   height: 100%;
   display:flex;
   flex-flow:row;
 }
 .card-topitem2{
-  width: 50%;
+  width: 30%;
   height: 100%;
 }
 .profileimg{
@@ -280,11 +289,10 @@ export default {
   background-color: rgb(230,198,132);
   color: white;
 }
-
 .deleteSubmit{
   /* margin-top: 20px; */
-  width: 6vw;
-  height: 2vw;
+  width: 8vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -295,14 +303,30 @@ export default {
   letter-spacing: 2px;
   box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
 }
+.deleteSubmit1{
+  /* margin-top: 20px; */
+  width: 8vw;
+  height: 2.5vw;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  background: #FEAA00;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  letter-spacing: 2px;
+  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
+  margin-left:66%;
+  margin-bottom:20px;
+}
 .deleteSubmit:hover{
   background: #ffcc74;
 }
 
 .modifySubmit{
   /* margin-top: 20px; */
-  width: 6vw;
-  height: 2vw;
+  width: 8vw;
+  height: 2.5vw;
   border: 0;
   outline: none;
   border-radius: 10px;
@@ -323,6 +347,26 @@ a{
 a:hover{
   text-decoration: none;
   color : white;
+}
+.card-topitem1-img img{
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin-right: 30px
+}
+.card-topitem1-2{
+  width:100%;
+  display:flex;
+  flex-flow: column;
+}
+.card-topitem1-ptag{
+  display:flex;
+  flex-flow: column;
+}
+.card-topitem1-sendimg{
+  margin-top:16px;
+  display:flex;
+  flex-flow: row;
 }
 </style>
 

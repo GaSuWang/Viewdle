@@ -8,16 +8,18 @@
           <!-- 비번 인풋 -->
           <div class="pwinput">
             <input type="password" v-model="credentials.password" class="form-control form-control-lg"
-              placeholder="Password" />
+              placeholder="비밀번호" />
           </div>
           <!-- 비번 확인 인풋 -->
           <div class="pwcheckinput">
             <input type="password" v-model="credentials.password2" class="form-control form-control-lg"
-              placeholder="Password Check" />
+              placeholder="비밀번호 확인" />
           </div>
 
-          <button class="signupsubmit btn btn-primary btn-lg">가입완료</button>
-          <router-link to="/"  class="googlebackbutton">뒤로가기</router-link>
+          <button class="signupsubmit">가입완료</button>
+          <div class="d-flex justify-content-center m-3">
+            <div class="signupbackbutton" style="color:black"><router-link to="/"><p style="font-size:14px; font-weight:bold; color:black">뒤로가기</p></router-link></div>
+          </div>
         </form>
       </div>
       </div>
@@ -40,21 +42,9 @@ export default {
       "password": '',
       "password2": ''
     })
-    // const BASE_URL = 'http://' + location.hostname + ':8081'
 const BASE_URL = 'https://' + location.hostname
     function googlesignup(credentials) {
-      /* 
-      POST: 사용자 입력정보를 signup URL로 보내기
-        성공하면
-          응답 토큰 저장
-          현재 사용자 정보 받기
-          메인 페이지(ArticleListView)로 이동
-        실패하면
-          에러 메시지 표시
-      */
-      console.log("회원가입아 안녕?")
       axios({
-        // url: BASE_URL + '/api/v1/social/google/signup', //회원가입 api로
         url: BASE_URL + '/api/v1/social/google/signup',
         method: 'post',
         data: credentials
@@ -73,7 +63,6 @@ const BASE_URL = 'https://' + location.hostname
         })
         .catch(err => {
           console.error(err)
-          console.log(credentials)
           router.push('/main')
         })
     }
@@ -87,6 +76,14 @@ const BASE_URL = 'https://' + location.hostname
 </script>
 
 <style>
+a{
+  text-decoration: none;
+  color : black;
+}
+a:hover{
+  text-decoration: none;
+  color : black;
+}
 .Googlesignup{
   width: 90%;
   height: 90%;
@@ -145,7 +142,7 @@ const BASE_URL = 'https://' + location.hostname
 }
 
 .pwinput{
-  margin-top: 50px;
+  margin-top: 20px;
   width: 100%;
 }
 .pwinput input{

@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <!-- <loading v-model:active="visible" :can-cancel="true"></loading> -->
     <router-view />
   </div>
 </template>
@@ -7,7 +8,22 @@
 <script>
 export default {
   name: "App",
-  components: {},
+  // components: {
+  //     Loading: VueLoading
+  // },
+  // data(){
+  //   return{
+  //     visible: false
+  //   }
+  // },
+  // created(){
+  //   window.addEventListener("load", function() {
+  //     let loader = this.$loading.show({
+  //         loader: 'dots'
+  //     });
+  //     setTimeout(() => loader.hide(), 3 * 1000)
+  //   });
+  // }
 };
 </script>
 

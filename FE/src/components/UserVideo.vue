@@ -1,7 +1,7 @@
 <template>
 <div class="userVideo" v-if="streamManager && showVid">
+	<!-- <div class="userInfo">{{ clientName }}</div> -->
 	<ov-video :stream-manager="streamManager"/>
-	<div class="userInfo">{{ clientName }}</div>
 </div>
 </template>
 
@@ -32,6 +32,9 @@ export default {
 		},
 		showVid() {
 			const inWR = this.WRParticipantList.filter(p => p.myUserEmail === this.clientEmail)
+    // if(state.currentUserList.length) {
+    //   return state.currentUserList.filter(p => p.myUserEmail !== state.myUserEmail)
+    // } else return []
 			if(this.$router.currentRoute.value.name === 'waiting-room' && (inWR.length === 0)){
 				return false
 			} else return true
@@ -49,8 +52,6 @@ export default {
 			videoStatus: true,
 		}
 	},
-
-
 	methods: {
 		getConnectionData () {
 			const { connection } = this.streamManager?.stream;
@@ -79,10 +80,10 @@ export default {
 
 .userInfo{
     position: absolute;
-	margin-left: 3%;
-    justify-content: center;
+    /* justify-content: center; */
     background: #ffffff;
     width: 10%;
+	margin-left: 6%;
     color: rgb(0, 0, 0);
     border-radius: 10px;
     padding: 1px;
