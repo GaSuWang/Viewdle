@@ -268,13 +268,13 @@ export default {
       }
     },
 
-    openEECL() {
-      this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
-      localStorage['cl'] = JSON.stringify({
-        coverLetterTitle: this.CoverLetterDetail.coverLetterTitle,
-        coverLetterContent: this.CoverLetterDetail.coverLetterContent,
-      })
-      let route = this.$router.resolve({ path: "/eecl"});
+openEECL() {
+      //this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
+      localStorage["cl"] = JSON.stringify({
+        coverLetterTitle: this.studyRoomCL.coverLetterTitle,
+        coverLetterContent: this.studyRoomCL.coverLetterContent,
+      });
+      let route = this.$router.resolve({ path: "/eecl" });
       window.open(route.href);
     },
     FBComplete() {
