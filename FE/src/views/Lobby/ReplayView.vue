@@ -46,7 +46,7 @@
             <canvas id="canvas" ref="canvas" style="position:absolute; display: none;" ></canvas>
           </div>
           <div class="replayfeedback">
-              <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in replayDetail.feedbackList" :key="item.seq">
+              <div :class="[item.feedbackType === 'G' ? 'replaygood' : 'replaybad']" class="replayFeedbackBox" v-for="item in feedbackList" :key="item.seq">
                 <p class="mx-3">{{item.feedbackContent}}</p> 
                   <button :class="[item.feedbackType === 'G' ? 'replaygoodbutton' : 'replaybadbutton']"  @click="moveTo(item.timeline)">
                     <div class="d-flex align-items-center">
