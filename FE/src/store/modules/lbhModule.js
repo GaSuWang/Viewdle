@@ -351,8 +351,8 @@ const mutations = {
   },
 };
 
-const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'
-// const BASE_URL = 'https://' + location.hostname + '/api/v1/'
+// const BASE_URL = 'http://' + location.hostname + ':8081' + '/api/v1/'
+const BASE_URL = 'https://' + location.hostname + '/api/v1/'
 
 const actions = {
   //Axios 모음

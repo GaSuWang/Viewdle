@@ -38,43 +38,7 @@
       </tbody>
     </table> 
   </div>
-    <!-- <div v-if="HistoryList.usingDates.length">
-    <table>
-      <thead>
-        <th v-for="day in days" :key="day">{{ day }}</th>
-      </thead>
-      <tbody>
-        <tr v-for="(date, idx) in dates" :key="idx">
-        <td v-for="(day, index) in date" :key="index">
-          <div v-for="usingdate in HistoryList.usingDates" :key="usingdate.seq">
-            <div v-if="usingdate!=year+':'+0+month+':'+day">
-              {{day}}
-            </div>
-            <div v-if="usingdate==year+':'+0+month+':'+day">
-              <div class="calendardate">
-                {{day}}
-              </div>
-            </div>
-          </div>
-        </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div v-if="!HistoryList.usingDates.length">
-    <table>
-      <thead>
-        <th v-for="day in days" :key="day">{{ day }}</th>
-      </thead>
-      <tbody>
-        <tr v-for="(date, idx) in dates" :key="idx">
-        <td v-for="(day, index) in date" :key="index">
-          {{day}}
-        </td>
-        </tr>
-      </tbody>
-    </table> 
-  </div> -->
+
   </div>
 </template>
 
@@ -249,17 +213,15 @@ table {
   border-collapse: collapse;
   width: 80%;
   height: 70%;
-  /* border-spacing: 20px 30px; */
+
 }
 th {
   border-bottom: 1px solid;
-  /* background-color: ; */
-  /* vertical-align: top; */
+
 }
  td {
   border-bottom: 1px solid;
-  /* padding: 20px;
-  font-size: 20px; */
+
   vertical-align: top;
   text-align: center;
 }

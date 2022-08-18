@@ -5,7 +5,6 @@
   <div class="MainView">
       <div class="MainTop">
         <div class="MainTop1">
-          <!-- 서치바 -->
           <form @submit.prevent="searchStudyroom(credentialsTosearch)">
           <div class="Searchbar">
               <div class="input-group d-flex flex-row align-items-center">
@@ -15,7 +14,6 @@
           </div>
           </form>
           </div>
-      <!-- 필터링 -->
         <div class="MainTop2">
           <div class="MainTop2item">
           <div class="dropdown">
@@ -29,7 +27,6 @@
             </ul>
           </div>
           </div>
-          <!-- 정렬 -->
           <div class="MainTop2item">
           <div class="dropdown">
             <button class="MainTop2itembutton dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -41,7 +38,6 @@
             </ul>
           </div>
           </div>
-          <!-- 방생성 -->
           <div class="MainTop2item">
           <button class="btn MainTop2itembutton"  data-bs-toggle="modal" data-bs-target="#roommaker">
             방생성
@@ -58,7 +54,6 @@
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <!-- <h5 class="modal-title" id="staticBackdropLabel">방생성</h5> -->
               </div>
               <form @submit.prevent="createStudyroom(credentials)">
               <div class="modal-body d-flex flex-column justify-content-center align-items-center">
@@ -69,8 +64,7 @@
                       <input type="radio" id="select" name="mode" @click="selectMode(1)"><label for="select">플레이 모드</label>
                       <input type="radio" id="select2" name="mode" @click="selectMode(2)"><label for="select2">스터디 모드</label>
                   </div>
-                  <!-- <p>Play Mode : 1  /  Study Mode : 2</p>
-                  <input type="number" class="form-control form-control-lg" min='1' max='2' v-model.number="credentials.type"> -->
+  
                 </div>
                 </div>
                                 <div>
@@ -80,8 +74,7 @@
                       <input type="radio" id="selectlimit4" name="limit" @click="selectLimit(4)"><label for="selectlimit4">4명</label>
                       <input type="radio" id="selectlimit5" name="limit" @click="selectLimit(5)"><label for="selectlimit5">5명</label>
                   </div>
-                  <!-- <p>최소 : 2   /   최대 : 5</p>
-                <input type="number" class="form-control form-control-lg" min='2' max='5' v-model.number="credentials.limit"> -->
+
                 </div>
                 <div class="d-flex align-items-center">
                   <span>비밀방</span>
@@ -111,21 +104,15 @@
               <input type="Text" v-model="credentialsToenter.roomPassword" class="form-control" placeholder="비밀번호" />
           </div> 
           <div class="modal-footer">
-            <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">입장</button> -->
               <button class="clCancle" data-bs-dismiss="modal"><router-link to="/main">취소</router-link></button>
               <button class="clSubmit" data-bs-dismiss="modal">입장</button>
           </div>
           </form>
-          <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+
         </div>
       </div>
     </div> 
     </div>
-      <!-- 검색 -->
-      <!-- 최신순,오래된순 정렬 -->
-      <!-- 풀방여부, 공개방여부 필터 -->
-      <!-- 방생성 버튼 -->
-      <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
 </template>
 
 <script>

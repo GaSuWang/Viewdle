@@ -2,10 +2,8 @@
 <template>
 <div class="sidebarall">
     <div class="sidebar">
-    <!-- <header>V:Dle</header> -->
     <div style="display: flex; align-items: center; flex-direction: column;">
       <div class="d-flex" style="margin-top:40px"><div class="frontVeiwdle">뷰들</div><div class="backVeiwdle">뷰들</div></div>
-      <!-- <div class="profileBox" style="height:10px; 89B2E8"></div> -->
     </div>
     <div class="sidebarbody">
 
@@ -74,7 +72,6 @@ export default {
 .sidebar{
     height:100%;
     width:100%;
-    /* background: rgb(153, 172, 230); */
     background: white;
     border-radius: 20px;
     box-shadow: 4px 4px 6px #aaa, inset 0px 2.5px 6px #fff;
@@ -86,7 +83,6 @@ export default {
     text-align: center;
     line-height: 70px;
     background: rgb(153, 172, 230);
-    /* background: white; */
     user-select: none;
 }
 .sidebar ul{
@@ -94,21 +90,18 @@ export default {
 }
 .sidebar ul a{
     text-decoration: none;
-    /* color: white; */
     color : black
 }
-/* 나중에 a는 모두 라우터로 바꿔야됨 */
+
 .sidebar ul li{
     display:block;
     height: 100%;
     width: 100%;
     line-height: 65px;
-    /* color: white; */
     color: black;
     padding-left:60px;
     box-sizing: border-box;
-    /* border-top: 1px solid rgb(153, 172, 230); */
-    /* border-bottom: 1px solid rgb(153, 172, 230); */
+
 }
 .sidebar ul li:hover {
     padding-left: 50px;
@@ -123,7 +116,7 @@ button{
     border: rgb(153, 172, 230);
 }
 .SidebarMiniProfile{
-  /* margin-top: 10px; */
+
   margin-bottom: 10px;
 
 }
@@ -153,7 +146,7 @@ button{
   height: 100%;
   border: 0;
   outline: none;
-  /* border-radius: 10px; */
+
   background: #FEAA00;
   color: white;
   font-weight: bold;

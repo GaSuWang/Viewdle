@@ -4,11 +4,6 @@
   <div class="pwFindbody">
     <div class="pwFindcard">
       <div class="d-flex"><h1 class="frontVeiwdle">뷰들</h1><h1 class="backVeiwdle">뷰들</h1></div>
-        <!-- 이메일 입력란 -->
-        <!-- 버튼클릭시 이메일로 임의의 비밀번호 발송 or 원래비밀번호 발송 -->
-        <!-- 취소버튼 -->
-        <!-- 확인되지 않은 이메일 일 시 알람 -->
-        <!-- 이메일 인풋 -->
       <form @submit.prevent="getEmailCode(credentials)">
         <div class="pwFindinput">
           <input type="email" v-model="credentials.userEmail" placeholder="Email address" />
@@ -40,11 +35,11 @@ export default {
     })
 
 
-    const BASE_URL = 'http://' + location.hostname + ':8081'
-    // const BASE_URL = 'https://' + location.hostname
+
+    const BASE_URL = 'https://' + location.hostname
     function getEmailCode(credentials) {
         axios({
-          // url: BASE_URL + '/api/v1/users/password',  // 비밀번호찾기 api
+
           url: BASE_URL + '/api/v1/uses/password',
           method: 'post',
           data: {"email":credentials.userEmail}
@@ -80,8 +75,7 @@ a:hover{
 .pwFind{
   width: 90%;
   height: 90%;
-  /* background : rgb(255,255,255,0.5); */
-  /* border-radius: 20px; */
+
   display: flex;
   align-items: center;
   justify-content: center;

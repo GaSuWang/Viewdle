@@ -3,7 +3,6 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 
 const state= {
-    // 회원가입
     token: localStorage.getItem('token') || '',
     UserList:{},
     HistoryList:{
@@ -20,19 +19,13 @@ const state= {
     pwcode: '',
     pwcodeforedit: '',
     pwcheck: false,
-    // 풀방여부, 참여시간
     ParticipantList:{},
-    // 썸네일 따오기
     ThumnailList:{},
-    // 뱃지 관리
     BadgeList:[],
-    // 자소서관리
     CoverLetterList:[],
     
       CoverLetterDetail:{},
-    // 방 만들기, 
     StudyroomList:[],
-    // 녹화된 영상과 피드백 보기위함
     ReplayList:[
       {"videoSeq":11, "videoTitle":"220802 삼성 면접 스터디", "videoUrl":"https://localhost:4443/openvidu/recordings/SessionA/SessionA.mp4", "videoRegTime":"2022:08:02:09:56:17"},
       {"videoSeq":12, "videoTitle":"220802 LG 면접 스터디", "videoUrl":"abc.bbb.com", "videoRegTime":"2022:08:06:09:00:17"},
@@ -119,49 +112,16 @@ const mutations= {
       state.BadgeList = BadgeList
     },
   }
-// const router = useRouter()
-const BASE_URL = 'http://' + location.hostname + ':8081'
-// const BASE_URL = 'https://' + location.hostname
+const BASE_URL = 'https://' + location.hostname
 const actions= {
-  // 토큰저장
     saveToken({ commit }, token){
       commit('SET_TOKEN', token)
     },
-  //  토큰 삭제 
     removeToken({ commit }) {
       commit('SET_TOKEN', '')
       localStorage.setItem('token', '') 
     },
     
-  // 로그인 
-    // login({ dispatch, getters }, credentials) {
-
-    //   console.log("로그인아 안녕?")
-    //   axios({
-    //     // url: BASE_URL + ':8081' + '/api/v1/users/login',  
-    //     url: 'http://' + location.hostname + '/api/v1/users/login',  
-    //     method: 'post',
-    //     data: credentials
-    //   })
-    //     .then(res => {
-    //       console.log("해윙")
-    //       console.log(res)
-    //       const token = res.data.accessToken
-    //       dispatch('saveToken', token)
-    //       console.log(getters.authHeader)
-    //       dispatch('fetchCurrentUser')
-    //       console.log(getters.UserList)
-    //       dispatch('fetchHistories')
-    //       dispatch('getBadge')
-    //       router.push('/main')
-    //     })
-    //     .catch(err => {
-    //       console.error(err)
-    //       alert("이메일 및 비밀번호를 확인하세요")
-    //     })
-    // },
-
-    // 로그아웃
     logout({ dispatch }) {
       dispatch('removeToken')
       router.push('/main')
@@ -169,20 +129,16 @@ const actions= {
       router.push({ name: 'Account' })
     },
 
-    // 사용자 정보 가져오기
     fetchCurrentUser({ commit, getters, dispatch }) {
       if (getters.isLoggedIn) {
         axios({
-          // url: BASE_URL + '/api/v1/users/detail', //정보 가져오는 api
           url: BASE_URL + '/api/v1/users/detail',
           method: 'get',
           headers: {Authorization: getters.authHeader },
         })
           .then(res => {
             commit('SET_USER_LIST', res.data)
-            //이병헌 시작
             commit("lbhModule/GET_USER_INFO", res.data, {root:true})
-            //이병헌 끝
             })
           .catch(err => {
             if (err.response.status === 401) {
@@ -195,7 +151,6 @@ const actions= {
     fetchHistories({ commit, getters, dispatch }) {
       if (getters.isLoggedIn) {
         axios({
-          // url: BASE_URL + '/api/v1/users/histories', //정보 가져오는 api
           url: BASE_URL + '/api/v1/users/histories',
           method: 'get',
           headers: {Authorization: getters.authHeader },
@@ -210,10 +165,8 @@ const actions= {
       }
     },
 
-    // 회원삭제를 위한 비번 확인
     confirmPW({commit, getters}, confirmPW) {
       axios({
-        // url:BASE_URL + '/api/v1/users/check/password', // 비밀번호 컨펌 api
         url: BASE_URL + '/api/v1/users/check/password', 
         method:'post',
         data: {"password":confirmPW.password},
@@ -231,10 +184,8 @@ const actions= {
       })
     },
 
-    // 회원삭제를 위한 비번 확인
     confirmEmail(Email) {
       axios({
-        // url:BASE_URL + `/api/v1/users/check/${Email}`, // 비밀번호 컨펌 api 
         url: BASE_URL + `/api/v1/users/check/${Email}`,
         method:'get',
       })
@@ -248,10 +199,8 @@ const actions= {
       })
     },
 
-    //비번수정을 위한 비번확인 
     confirmPWforEdit({commit, getters}, confirmPW) {
       axios({
-        // url:BASE_URL + '/api/v1/users/check/password', // 비밀번호 컨펌 api 
         url: BASE_URL + '/api/v1/users/check/password',
         method:'post',
         data: {"password":confirmPW.password},
@@ -269,10 +218,8 @@ const actions= {
       })
     },
 
-    // 회원탈퇴
     deleteID({getters, commit}) {
       axios({
-        // url:BASE_URL + '/api/v1/users', // 회원탈퇴 api 
         url: BASE_URL + '/api/v1/users',
         method:'put',
         headers: {Authorization: getters.authHeader },
@@ -291,10 +238,8 @@ const actions= {
       })
     },
 
-    // 비밀번호 수정
     changePW({commit, getters}, changepassword) {
       axios({
-        // url:BASE_URL + '/api/v1/users/password', // 비번수정 api 
         url: BASE_URL + '/api/v1/users/password',
         method:'put',
         data: {
@@ -316,11 +261,8 @@ const actions= {
         alert('실패.')
       })
     },
-
-    // 자소서 만들기
     createCoverLetter({dispatch, getters}, credentials) {
       axios({
-        // url:BASE_URL + '/api/v1/coverletters', // 비번수정 api 
         url: BASE_URL + '/api/v1/coverletters',
         method:'post',
         headers: {Authorization: getters.authHeader },
@@ -336,10 +278,8 @@ const actions= {
       })
     },
 
-    //자소서 정보 가져오기
     getCoverLetter({commit, getters}) {
       axios({
-        // url:BASE_URL + '/api/v1/coverletters', // 비번수정 api 
         url: BASE_URL + '/api/v1/coverletters',
         method:'get',
         headers: {Authorization: getters.authHeader },
@@ -354,10 +294,8 @@ const actions= {
       })
     },
 
-    //자소서 상세보기
     detailCoverLetter({commit, getters}, credentialsTodelete) {
       axios({
-        // url:BASE_URL + `/api/v1/coverletters/${credentialsTodelete.coverLetterSeq}`, // 비번수정 api 
         url: BASE_URL + `/api/v1/coverletters/${credentialsTodelete}`,
         method:'get',
         headers: {Authorization: getters.authHeader },
@@ -370,29 +308,9 @@ const actions= {
         alert('실패.')
       })
     },
-        // //자소서 상세보기
-        // detailCoverLetter({commit, getters}, credentialsTodelete) {
-        //   console.log("자소서상세보기야 안녕?")
-        //   axios({
-        //     url:BASE_URL + ':8081' + '/api/v1/coverletters', // 비번수정 api 
-        //     method:'get',
-        //     headers: {Authorization: getters.authHeader },
-        //     data: credentialsTodelete
-        //   })
-        //   .then(res => {
-        //     commit('SET_COVERLETTER_DETAIL', res.data)
-        //     alert('자소서 상세 정보를 가져왔습니다.')
-        //   })
-        //   .catch(err => {
-        //     console.error(err.response)
-        //     alert('실패.')
-        //   })
-        // },
-
-    //자소서 삭제하기
+      
     deleteCoverLetter({dispatch, getters}, credentialsTodelete) {
       axios({
-        // url:BASE_URL + '/api/v1/coverletters', // 비번수정 api 
         url: BASE_URL + '/api/v1/coverletters',
         method:'delete',
         data: { "coverLetterSeq" :credentialsTodelete},
@@ -407,10 +325,9 @@ const actions= {
         alert('실패.')
       })
     },
-    //자소서 수정하기
+
     updateCoverLetter({dispatch, getters}, CoverLetterDetail) {
       axios({
-        // url:BASE_URL + '/api/v1/coverletters', // 비번수정 api 
         url: BASE_URL + '/api/v1/coverletters',
         method:'put',
         data: {
@@ -429,10 +346,9 @@ const actions= {
         alert('실패')
       })
     },
-    //스터디룸 정보 얻어오기
+
     getStudyRoom({commit}) {
       axios({
-        // url:BASE_URL + '/api/v1/studyroom', // 비번수정 api 
         url: BASE_URL + '/api/v1/studyroom',
         method:'get',
       })
@@ -446,10 +362,8 @@ const actions= {
       })
     },
 
-    /// 이병헌 시작(바로 아래 줄에는 commit넣어줌)
     createStudyroom({commit, dispatch, getters},credentials) {
       axios({
-        // url:BASE_URL + '/api/v1/studyroom', // 비번수정 api 
         url: BASE_URL + '/api/v1/studyroom',
         method:'post',
         data: credentials,
@@ -460,11 +374,6 @@ const actions= {
         alert('스터디룸이 생성되었습니다.')
         router.push({
           name: 'setting-room', 
-          // query: {
-          //   roomSeq : res.data.roomSeq,
-          //   studyRoomMode : credentials.type,
-          //   moderator : true
-          // }
         })
         const data = {
           roomSeq: res.data.roomSeq,
@@ -473,7 +382,6 @@ const actions= {
           isSuperUser: true,
         } 
         commit("lbhModule/GET_ROOM_INFO", data, {root:true})
-        /// 이병헌 끝 
       })
       .catch(err => {
         console.error(err.response)
@@ -481,15 +389,11 @@ const actions= {
       })
     },
 
-    // 일반방스터디룸 입장
-    /// 이병헌 시작(바로 아래 줄에는 commit, state넣어줌)
     enterNormalStudyroom({commit, state, getters}, credentials) {
       axios({
-        // url:BASE_URL + '/api/v1/studyroom/enter', // 비번수정 api 
         url: BASE_URL + '/api/v1/studyroom/enter',
         method:'post',
         data: {
-          //roomPassword로 빈 string 보내줘야 함
           "roomPassword": "",
           "roomSeq" : credentials
         },
@@ -497,14 +401,8 @@ const actions= {
       })
       .then((res) => {
         alert('스터디룸에 입장되었습니다.')
-        /// 이병헌 시작
         router.push({
           name: 'setting-room', 
-        //   query: {
-        //     roomSeq : credentials.roomSeq,
-        //     moderator : false
-        //   }
-        // })
         })
         function findRoom(e){
           return e.roomSeq ===  credentials
@@ -518,18 +416,14 @@ const actions= {
           isSuperUser: false,
         }
         commit("lbhModule/GET_ROOM_INFO", data, {root:true})
-        /// 이병헌 끝 
       })
       .catch(err => {
         console.error(err.response)
         alert('실패.')
       })
     },
-    // 비번방스터디룸 입장
-    //이병헌 시작
     enterStudyroom({state, commit, getters}, credentials) {
       axios({
-        // url:BASE_URL + '/api/v1/studyroom/enter', // 비번수정 api 
         url: BASE_URL + '/api/v1/studyroom/enter',
         method:'post',
         data: {
@@ -542,10 +436,7 @@ const actions= {
         alert('스터디룸에 입장되었습니다.')
         router.push({
           name: 'setting-room', 
-          // query: {
-          //   roomSeq : credentials.roomSeq,
-          //   moderator : false
-          // }
+
         })
         function findRoom(e){
           return e.roomSeq ===  getters.SecretCode
@@ -559,7 +450,6 @@ const actions= {
           isSuperUser: false,
         }
         commit("lbhModule/GET_ROOM_INFO", data, {root:true})
-        //이병헌 끝
       })
       .catch(err => {
         console.error(err.response)
@@ -570,28 +460,9 @@ const actions= {
     enterSecretStudyroom({commit}, credentials) {
       commit('SET_SECRETCODE', credentials)
     },
-    // 영상 가져오기
-    // getReplay({commit, getters}, credentialsTogetReplay) {
-    //   console.log("리플레이가져오기야야 안녕?")
-    //   axios({
-    //     url:BASE_URL + ':8081' + '/api/v1/video', // 비번수정 api 
-    //     method:'get',
-    //     headers: {Authorization: getters.authHeader },
-    //     params: {order:credentialsTogetReplay.order}
-    //   })
-    //   .then(res => {
-    //     commit('SET_REPLAY_LIST', res.data)
-    //     alert('리플레이정보를 가져왔습니다.')
-    //   }
-    //   )
-    //   .catch(err => {
-    //     console.error(err.response)
-    //     alert('실패.')
-    //   })
-    // },
+
     getReplay({commit,getters}){
       axios({
-        // BASE_URL + '/api/v1/video',
         url : BASE_URL + '/api/v1/video',
         method: 'get',
         headers: {Authorization: getters.authHeader },
@@ -606,7 +477,6 @@ const actions= {
     },
     sortReplay({commit,getters}, credentials){
       axios({
-        // BASE_URL + '/api/v1/video',
         url : BASE_URL + '/api/v1/video',
         method: 'get',
         headers: {Authorization: getters.authHeader },
@@ -622,10 +492,9 @@ const actions= {
         alert('실패.')
       })
     },
-    // 영상 지우기
+
     deleteReplay({getters, dispatch}, credentialsTodelete) {
       axios({
-        // url:BASE_URL + `/api/v1/video/${credentialsTodelete}`, // 비번수정 api 
         url: BASE_URL + `/api/v1/video/${credentialsTodelete}`,
         method:'delete',
         headers: {Authorization: getters.authHeader },
@@ -641,11 +510,9 @@ const actions= {
         alert('실패.')
       })
     },
-    // 영상 가져오기
+
     detailReplay({commit, getters}, credentialsTodetail) {
-    // detailReplay({commit}, credentialsTodetail) {
-      axios({
-        // url:BASE_URL + `/api/v1/video/${credentialsTodetail.replaySeq}`, // 비번수정 api 
+      axios({ 
         url: BASE_URL + `/api/v1/video/${credentialsTodetail}`,
         method:'get',
         headers: {Authorization: getters.authHeader },
@@ -660,10 +527,9 @@ const actions= {
       })
     },
 
-    // 뱃지 가져오기
+
     getBadge({commit, getters}) {
       axios({
-        // url:BASE_URL + '/api/v1/users/badges', // 비번수정 api
         url: BASE_URL + `/api/v1/users/badges`, 
         method:'get',
         headers: {Authorization: getters.authHeader },
@@ -677,7 +543,6 @@ const actions= {
         alert('실패.')
       })
     },
-    // 스터디룸 서치
     searchStudyroom({commit}, credentialsTosearch) {
       axios({
         // url:BASE_URL + '/api/v1/studyroom/search', // 비번수정 api
@@ -694,10 +559,9 @@ const actions= {
         alert('실패.')
       })
     },
-    //스터디룸 필터
+
     filterStudyRoom({commit}, credentialsToFilter) {
       axios({
-        // url:BASE_URL + '/api/v1/studyroom', // 비번수정 api 
         url: BASE_URL + `/api/v1/studyroom`, 
         method:'get',
         params:{ 
@@ -713,10 +577,10 @@ const actions= {
         alert('실패.')
       })
     },
-    //스터디룸 정렬
+
     sortStudyRoom({commit}, credentialsToFilter) {
       axios({
-        // url:BASE_URL + '/api/v1/studyroom', // 비번수정 api
+
         url: BASE_URL + `/api/v1/studyroom`,  
         method:'get',
         params:{ 
@@ -732,11 +596,10 @@ const actions= {
         alert('실패.')
       })
     },
-    //뱃지 설정
+
     setBadge
     ({dispatch, getters}, credentialsToset) {
       axios({
-        // url:BASE_URL + '/api/v1/users/badge', // 비번수정 api 
         url: BASE_URL + `/api/v1/users/badge`, 
         method:'put',
         data: {"badge":credentialsToset},
@@ -754,7 +617,6 @@ const actions= {
     },
     profileImg ({ getters}, formdata) {
       axios({
-        // url:BASE_URL + '/api/v1/users/profile', // 비번수정 api 
         url: BASE_URL + `/api/v1/users/profile`, 
         method:'put',
         data: formdata,
@@ -764,7 +626,6 @@ const actions= {
         },
       })
       .then(() => {
-        // dispatch('fetchCurrentUser')
       }
       )
       .catch(err => {

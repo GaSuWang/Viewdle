@@ -70,20 +70,9 @@ export default {
       EmailCheck: false
     })
     const router = useRouter();
-    const BASE_URL = 'http://' + location.hostname + ':8081'
-    // const BASE_URL = 'https://' + location.hostname
+    const BASE_URL = 'https://' + location.hostname
     function signup(credentials) {
-      /* 
-      POST: 사용자 입력정보를 signup URL로 보내기
-        성공하면
-          응답 토큰 저장
-          현재 사용자 정보 받기
-          메인 페이지(ArticleListView)로 이동
-        실패하면
-          에러 메시지 표시
-      */
       axios({
-        // url: BASE_URL + '/api/v1/users', //회원가입 api로
         url: BASE_URL + '/api/v1/users',
         method: 'post',
         data: credentials
@@ -99,7 +88,6 @@ export default {
 
     function checkEmail(credentials) {
       axios({
-        // url: BASE_URL + '/api/v1/users/check/duplicate',  // 이메일확인 api
         url: BASE_URL + '/api/v1/users/check/duplicate',
         method: 'post',
         data: {"email":credentials.userEmail}
@@ -121,19 +109,6 @@ export default {
       signup, checkEmail, credentials, credentialsTocheckEmail
     }
   }
-  // data() {
-  //   return {
-  //     credentials: {
-  //       username: '',
-  //       useremail: '',
-  //       password1: '',
-  //       password2: '',
-  //     }
-  //   }
-  // },
-  // methods: {
-  //   ...mapActions(['signup'])
-  // },
 }
 </script>
 
@@ -149,8 +124,6 @@ a:hover{
 .signup{
   width: 90%;
   height: 90%;
-  /* background : rgb(255,255,255,0.5);
-  border-radius: 20px; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -218,7 +191,6 @@ a:hover{
   outline: none;
 }
 .pwcheckinput{
-  /* margin-top: 20px; */
   width: 100%;
 }
 .pwcheckinput input{

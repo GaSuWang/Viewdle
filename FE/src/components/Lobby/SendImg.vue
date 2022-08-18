@@ -29,12 +29,11 @@ export default {
           this.changing = true
         },
         onUpload() {
-        const BASE_URL = 'http://' + location.hostname + ':8081'
-        // const BASE_URL = 'https://' + location.hostname
+        const BASE_URL = 'https://' + location.hostname
           const formData = new FormData()
           formData.append('profile', this.profile, this.profile.name)
         axios({
-            url: BASE_URL + '/api/v1/users/profile', //회원가입 api로
+            url: BASE_URL + '/api/v1/users/profile', 
             method: 'post',
             data: formData,
             headers: {Authorization: this.$store.getters['rhtModule/authHeader'] }
@@ -55,7 +54,6 @@ export default {
 
 <style>
 .deleteSubmit{
-  /* margin-top: 20px; */
   width: 6vw;
   height: 2vw;
   border: 0;
@@ -73,7 +71,6 @@ export default {
 }
 
 .modifySubmit{
-  /* margin-top: 20px; */
   width: 6vw;
   height: 2vw;
   border: 0;
@@ -96,7 +93,6 @@ export default {
   background: #ffcc74;
 }
 .filebox label{
-  /* margin-top: 20px; */
   width: 8vw;
   height: 2.5vw;
   border: 0;
@@ -113,7 +109,7 @@ export default {
 .filebox label:hover{
   background: #89B2E8;
 }
-.filebox input[type="file"] {  /* 파일 필드 숨기기 */
+.filebox input[type="file"] {  
   position: absolute;
   width: 1px;
   height: 1px;

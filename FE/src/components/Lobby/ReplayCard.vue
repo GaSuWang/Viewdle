@@ -1,8 +1,7 @@
 // 임현탁
 <template>
   <div class="ReplayCard" v-for="item in ReplayList" :key="item.seq">
-    <!-- <div class="ReplayCardTop">
-    </div> -->
+
     <div class="ReplayCardBottom">
     <form @submit.prevent="detailReplay(item.videoSeq)">
       <button class="Replaycard-buttonitem1" data-bs-toggle="modal" data-bs-target="#enterReplay">열람</button>
@@ -10,7 +9,7 @@
       <div class="Replaycard-body m-3">
         <h5>{{item.videoTitle}}</h5>
         <p><small class="text-muted">{{item.videoRegTime}}</small></p>
-        <!-- <p><small>{{item.videoSeq}}</small></p> -->
+
       </div>
     </div>
     <div class="Replaycard-button">
@@ -18,13 +17,7 @@
       <button class="btn Replaycard-buttonitem2">삭제</button>
       </form>
     </div>
-    <!-- 왼쪽 -->
-    <!-- 썸네일 -->
-    
-    <!-- 오른쪽 -->
-    <!-- 방제 -->
-  
-    <!-- 생성 시각 -->  
+
   </div>
 </template>
 
@@ -125,6 +118,7 @@ export default {
   margin : 3px;
   font-size: 3px;
   opacity:0;
+  background-color: #FEAA00;
   color: black;
 }
 </style>

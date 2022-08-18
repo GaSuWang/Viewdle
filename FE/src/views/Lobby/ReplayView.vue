@@ -18,23 +18,18 @@
     <div class="ReplayBody">
       <ReplayCard/>
     </div>
-    <!-- 오래된순, 최신순 정렬 -->
-    <!-- 카드들 반응형에 따라 3*3 or 3*2 or 2*2 -->
 
-    <!-- 영상 다시보기 -->
     <div class="modal fade" id="enterReplay" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
           <div class="modal-content">
             <div class="modalshow">
 
-          <!-- 동영상 삽입 및 AI 평가 입력 -->
+          
           <div style="position:relative;height:200px">
             <div style="position:absolute;">
               <video id="video" ref="video" crossOrigin='anonymous' width="640" height="480" controls="" name="media" >
-                <!-- <source src="https://localhost:4443/openvidu/recordings/SessionA/SessionA.mp4" type="video/mp4"> -->
                 <source :src="replayDetail.videoUrl" type="video/mp4">
 
-                  <!-- <source src = "file://C:/Users/multicampus/Desktop/test.mp4"> -->
               </video>
             </div>
             <div id="selectAreaBox" ref="selectAreaBox" style="position:absolute;opacity:0" class="selectAreaBox" v-on:mousedown = "mousedown" v-on:mouseup = "mouseup" v-on:mousemove = "mousemove" ></div>        
@@ -77,7 +72,6 @@ import ReplayCard from '@/components/Lobby/ReplayCard.vue'
 import { useStore, mapGetters } from 'vuex'
 import { reactive, computed } from "vue";
 
-// AI 코드
 import * as tmPose from '@teachablemachine/pose';
 
 export default {
@@ -121,7 +115,6 @@ export default {
     }
   },
 
-  // AI 자세평가 코드
   data () {
     return {
       context : null,
@@ -198,7 +191,6 @@ export default {
       this.a = event.offsetX, 
       this.b = event.offsetY
       
-      // 드래그 역방향 고려
       if(this.a < this.x){
         this.temp = this.a;
         this.a = this.x;
@@ -213,7 +205,6 @@ export default {
       var temp = 0;
       var tempname = " ";
       pose;
-      // console.log(posenetOutput)
 
       this.prediction = await this.model.predict(posenetOutput);
 
