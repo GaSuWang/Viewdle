@@ -86,6 +86,12 @@ export default {
     checkVideoTime(){
       return this.$store.getters['lbhModule/videoTime']
     },
+    feedbackList(){
+      function unique(data, key){
+        return [ ...new Map(data.map(x => [key(x), x])).values()]
+      }
+      return unique(this.replayDetail.feedbackList, e => e.timeline)
+    }
   },
   watch:{
     checkVideoTime(time){

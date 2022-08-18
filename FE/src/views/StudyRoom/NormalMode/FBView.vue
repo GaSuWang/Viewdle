@@ -200,7 +200,7 @@ export default {
       this.$store.commit('lbhModule/MINUS_FB_USER_COUNT')
       this.$store.commit('lbhModule/ADD_AXIOS_FBLIST', e.data)
       //만약 피드백실에서 모두 나가면, 피드백까지 면접 종료
-      if(this.FBUserCount === 1){
+      if(this.FBUserCount <= 0){
         console.log('fbcompleteAxios실행')
         this.$store.dispatch('lbhModule/FBCompleteAxios')
       }
@@ -385,6 +385,18 @@ openEECL() {
   flex-direction: row;
   justify-content: space-between;
 }
+.savedEEVid{
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#app > div > div.FBView > div.savedEEVid > video{
+  width: 90%;
+  height: 90%;
+}
 
 .savedEEVid{
   width: 70%;
@@ -496,3 +508,4 @@ openEECL() {
   justify-content: space-between;
 }
 </style>
+

@@ -1012,37 +1012,6 @@ div.EEVidContainer > div > div.userVideo{
   justify-content: flex-end;
 }
 
-/* .EERButtonHeader > button {
-  border: none;
-  background-color: rgb(209, 209, 209);
-  border-radius: 50%;
-  width: 3%;
-  height: 3%;
-  /* filter: blur(3px);} */
-
-/* .EERButtonHeader > div > button > i {
-  font-size: 100%;
-  color: black;
-}
-
-.EERButtonHeader > div > button,
-.EERButtonFooter > div > button {
-  border: none;
-  background-color: rgb(209, 209, 209);
-  border-radius: 50%;
-}
-
-.EERButtonHeader > div > button,
-.EERButtonFooter > div > button {
-  padding: 15px;
-}
-
-.EERButtonHeader > div > button > i,
-.EERButtonFooter > div > button > i {
-  font-size: 150%;
-  color: black;
-} */
-
 .suddenAttack {
   z-index: 1;
 }
