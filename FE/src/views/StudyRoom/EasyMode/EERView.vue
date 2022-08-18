@@ -2,7 +2,7 @@
 <template>
   <AuthorityPassModal />
   <!-- 돌발상황 영역 -->
-  <div v-if="suddenAttackFlag == 0">
+  <div v-if="suddenAttackFlag == 2">
     <div class="guard"></div>
     <AttackSpaceBar class="sufddenAttack" @endSuddenAttack="endSuddenAttack" />
   </div>
@@ -12,7 +12,7 @@
     @endSuddenAttack="endSuddenAttack"
   />
   <OneToNine
-    v-else-if="suddenAttackFlag == 2"
+    v-else-if="suddenAttackFlag == 0"
     class="suddenAttack"
     @endSuddenAttack="endSuddenAttack"
   />
@@ -149,6 +149,7 @@ export default {
       sirenIsShow: false,
       // isEE: false,
       recognition: null,
+      gameCount:0,
     };
   },
   computed: {
@@ -761,7 +762,8 @@ export default {
     },
     startSuddenAttack() {
       //분기 나눔
-      this.suddenAttackFlag = Math.floor(Math.random() * 3);
+      gameCount++;
+      this.suddenAttackFlag += gameCount;
     },
     endSuddenAttack(success) {
       if (!success) {
