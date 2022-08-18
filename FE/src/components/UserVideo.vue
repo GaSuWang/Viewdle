@@ -74,10 +74,12 @@ export default {
 .userVideo{
 	display: flex;
 	flex-direction: column;
+	height: 100%;
 }
 
 .userInfo{
     position: absolute;
+	margin-left: 3%;
     justify-content: center;
     background: #ffffff;
     width: 10%;
