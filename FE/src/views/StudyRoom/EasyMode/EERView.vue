@@ -899,8 +899,11 @@ export default {
 }
 
 .EERContent {
-  width: 100%;
+  position: absolute;
+  width: 80%;
+  height: 78%;
   border-radius: 10px;
+  margin-top: 1%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
