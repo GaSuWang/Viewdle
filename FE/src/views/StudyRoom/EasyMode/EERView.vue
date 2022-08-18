@@ -762,7 +762,7 @@ export default {
     },
     startSuddenAttack() {
       //분기 나눔
-      gameCount++;
+      this.gameCount++;
       this.suddenAttackFlag += this.gameCount;
     },
     endSuddenAttack(success) {
