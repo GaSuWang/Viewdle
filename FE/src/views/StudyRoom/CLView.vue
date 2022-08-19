@@ -3,7 +3,6 @@
 <template>
   <div class="CLView">
     <!-- 상단 -->
-    <!-- 면접자 이름? 이메일? -->
     <h1>{{coverLetterTitle}}</h1>
 
     <!-- 면접자 자소서 내용 -->
@@ -35,8 +34,6 @@ export default {
   },
   data(){
     return{
-      // OV: undefined,
-      // session: undefined,
       coverLetterTitle: '',
       coverLetterContent: '',
     }
@@ -49,11 +46,7 @@ export default {
       this.coverLetterTitle = cl.coverLetterTitle
       this.coverLetterContent = cl.coverLetterContent
 } catch (error) {
-      // ignore
     }
-  },
-  mounted(){
-    // console.log(this.session)
   },
   setup(){
     function CloseTab () {
