@@ -29,14 +29,6 @@
           data-bs-target="#exampleModal"
           data-bs-backdrop="false"
         />
-        <!-- <button
-          type="button"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-          data-bs-backdrop="false"
-        >
-          <i class="bi bi-x-lg"></i>
-        </button> -->
       </div>
       <!-- 면접에서 나가기 버튼(일반 유저) -->
       <div v-if="userType === 'user'" class="EERtoWRBtn user" @click="userLeaveSessionFromEER">
@@ -47,7 +39,6 @@
       </div>
     </div>
     <!-- 영상 구역 -->
-    <!-- style cssVariable 삭제 -->
     <div class="EERContent">
       <!-- 면접자 영상 구역  -->
       <div class="EEVidContainer">
@@ -66,7 +57,6 @@
         </div>
       </div>
     </div>
-    <!-- <div v-if="this.isER"> -->
       <div v-if="this.isER" class="EERBottomArea">
         <!-- 돌발질문 카운트 다운 및 OX버튼 시작 -->
         <div v-if="OXBtnState">
@@ -84,11 +74,6 @@
             <i class="bi bi-file-earmark-text"></i>
           </Button>
         </div>
-        <!-- <div class="VoiceChangeBtn">
-          <Button icon="pi pi-times" class="p-button-rounded p-button-secondary">
-            <i class="bi bi-mic-fill"></i>
-          </Button>
-        </div> -->
 
         <div class="SuddenAttackBtn">
           <Button
@@ -99,9 +84,7 @@
           >
             <i class="bi bi-exclamation-triangle-fill"></i>
           </Button>
-          <!-- <button :disabled="suddenBtnState" @click="sendSuddenQASignal">
-              <i class="bi bi-exclamation-triangle-fill"></i>
-            </button> -->
+
         </div>
         <div class="CaptureBtn">
           <Button
@@ -112,12 +95,8 @@
           >
             <i class="bi bi-controller"></i>
           </Button>
-          <!-- <button :disabled="suddenBtnState" @click="sendSuddenAttackSignal">
-              <i class="bi bi-camera"></i>
-            </button> -->
         </div>
       </div>
-    <!-- </div> -->
   </div>
 </template>
 
@@ -174,9 +153,6 @@ export default {
       "CLSelected",
     ]),
     ...mapGetters("rhtModule", ["CoverLetterDetail"]),
-    // nextSuperUserList() {
-    //   return this.currentUserList.filter((p) => p.name !== this.myUserName);
-    // },
     cssVariable() {
       return {
         "--bgcolor": this.bgIsWhite ? "#D8DBEB" : "tomato",
@@ -185,9 +161,6 @@ export default {
   },
   unmounted() {
     localStorage["cl"] = {};
-    // if(this.userType === 'user'){
-    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   created() {
     //
@@ -216,18 +189,18 @@ export default {
     //  if (JSON.parse(this.EE.stream.connection.data).clientEmail === this.myUserEmail){
     //   this.isEE = true;
     //  }
+
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
     this.session.on("signal:EECL", (e) => {
-      // console.log("EECL signal로 받은 데이터", e.data);
       var title = e.data.split("/")[0];
       var content = e.data.split("/")[1];
       const cl = {
         coverLetterTitle: title,
         coverLetterContent: content,
       }
-      console.log("면접장 자소서: ",cl);
+      // console.log("면접장 자소서: ",cl);
       this.$store.commit("lbhModule/SET_STUDYROOM_CL", cl);
-      console.log("면접장 자소서: ",this.studyRoomCL);
+      // console.log("면접장 자소서: ",this.studyRoomCL);
     });
 
     //일반 유저인 면접자가, 면접 도중에 나간 경우
@@ -279,15 +252,15 @@ export default {
     this.session.on("signal:superERLeaveSession", (e) => {
       const pastSuperUserEmail = e.data.split(" ")[0];
       const currentSuperUserEmail = e.data.split(" ")[1];
-      console.log("방장이 면접 도중에 나감", pastSuperUserEmail, currentSuperUserEmail);
+      // console.log("방장이 면접 도중에 나감", pastSuperUserEmail, currentSuperUserEmail);
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", pastSuperUserEmail);
       if (this.myUserEmail === currentSuperUserEmail) {
         alert("방장이 면접 도중에 나갔습니다.\n다음 방장으로 지목되셨습니다.");
         this.$store.commit("lbhModule/SWITCH_USER_TYPE", "superUser");
       } else {
-        console.log(
-          `내 이메일은 ${this.myUserEmail}, 전 방장 이메일은 ${pastSuperUserEmail}, 현 방장 이메일은 ${currentSuperUserEmail}`
-        );
+        // console.log(
+        //   `내 이메일은 ${this.myUserEmail}, 전 방장 이메일은 ${pastSuperUserEmail}, 현 방장 이메일은 ${currentSuperUserEmail}`
+        // );
       }
     });
 
@@ -299,7 +272,7 @@ export default {
         this.recognition.stop();
         this.recognition = null;
       }
-      // alert('방장이 면접을 종료했습니다.\n이제 대기실로 이동합니다.')
+
       //면접자가 대기실로 갈 거이니, 대기실 유저 목록을 업데이트하라는 시그널 보냄
       const data = JSON.stringify(this.myUserInfo);
       this.session.signal({
@@ -309,73 +282,19 @@ export default {
       });
       this.$router.push("/waiting-room");
     });
-    // this.nextSuperUser = "";
+
     window.addEventListener("beforeunload", this.EERleaveSession);
-    console.log("eerview created", this.EE);
-    console.log("eerview created", this.ERS);
-    console.log(this.session);
+    // console.log("eerview created", this.EE);
+    // console.log("eerview created", this.ERS);
+    // console.log(this.session);
     this.session.on("signal:warning", () => {
-      // 이병헌: 이제는 connection.data에 { clientName: this.myUserName, clientEmail: this.myUserEmail } 이런식으로 정보가 넘어가서,
-      // clientData가 아닌, clientEmail로 확인해야 될 거 같아. 그래서 아래도 일단 다 수정해뒀어.
       this.addWarn(); //경고 누적
     });
 
-    //change filter 신호 받기
-    // this.session.on("signal:setFilter", (event) => {
-    //   var data = event.data;
-    //   var filter = "";
-    //   //data를 이용해서 분기,
-    //   if (data === "1") {
-    //     filter = "dicetv";
-    //   } else if (data === "2") {
-    //     filter = "optv";
-    //   }
-    //   // if (JSON.parse(this.EE.stream.connection.data).clientData !== this.myUserName) {
-    //   if (JSON.parse(this.EE.stream.connection.data).clientEmail !== this.myUserEmail) {
-    //     for (var ER of this.ERS) {
-    //       // var name = JSON.parse(ER.stream.connection.data).clientData;
-    //       var email = JSON.parse(ER.stream.connection.data).clientEmail;
-    //       if (email === this.myUserEmail) {
-    //         //이미 설정된 필터가 있으면
-    //         if (this.isFiltered) {
-    //           this.removeFilter();
-    //           setTimeout(() => {
-    //             ER.stream
-    //               .applyFilter("GStreamerFilter", { command: filter })
-    //               .then(() => {
-    //                 this.isFiltered = true;
-    //                 console.log("success set filter");
-    //                 setTimeout(this.removeFilter, 10000);
-    //                 //일정 시간 이후 필터 해제하기
-    //               })
-    //               .catch((error) => {
-    //                 console.log(error);
-    //               });
-    //           }, 1000);
-    //         } else { //설정된 필터가 없으면
-    //           ER.stream
-    //             .applyFilter("GStreamerFilter", { command: filter })
-    //             .then(() => {
-    //               this.isFiltered = true;
-    //               console.log("success set filter");
-    //               setTimeout(this.removeFilter, 10000);
-    //               //일정 시간 이후 필터 해제하기
-    //             })
-    //             .catch((error) => {
-    //               console.log(error);
-    //             });
-    //         }
-    //       }
-    //     }
-    //   }
-    // });
     //----------------돌발 상황 시작 ----------------------
     this.session.on("signal:suddenAttack", () => {
-      // var name = JSON.parse(this.EE.stream.connection.data).clientData;
-      //var email = JSON.parse(this.EE.stream.connection.data).clientEmail;
-      // if(name === this.myUserName){
       if (this.isEE) {
-        console.log("receive suddenAttack signal");
+        // console.log("receive suddenAttack signal");
         //면접자 돌발상황 발생시키기
         this.startSuddenAttack();
       } else {
@@ -383,9 +302,6 @@ export default {
       }
     });
     this.session.on("siganl:endSuddenAttack", () => {
-      // var name = JSON.parse(this.EE.stream.connection.data).clientData;
-      //var email = JSON.parse(this.EE.stream.connection.data).clientEmail;
-      // if(name !== this.myUserName){
       if (!this.isEE) {
         this.suddenBtnState = false;
       }
@@ -393,10 +309,7 @@ export default {
     //----------------돌발 상황 끝 -----------------------
     //----------------돌발 질문 시작-----------------------
     this.session.on("signal:suddenQA", () => {
-      console.log("receive suddenQA signal");
-      // var name = JSON.parse(this.EE.stream.connection.data).clientData;
-      //var email = JSON.parse(this.EE.stream.connection.data).clientEmail;
-      // if (name === this.myUserName) {
+      // console.log("receive suddenQA signal");
       if (this.isEE) {
         //면접자 화면에 카운트다운 3,2,1 ->  ui 사이렌 효과주기
         this.startSirenEffect();
@@ -411,16 +324,13 @@ export default {
     this.session.on("signal:ShowOXBtn", () => {
       //OX버튼 보여주기
       if (this.isQASender) {
-        console.log("버튼 보여줘~");
+        // console.log("버튼 보여줘~");
         this.showOXBtn();
         this.isQASender = false;
       }
     });
     this.session.on("signal:activeSuddenBtn", () => {
-      console.log("돌발질문 버튼 활성화시키기");
-      // var name = JSON.parse(this.EE.stream.connection.data).clientData;
-      //var email = JSON.parse(this.EE.stream.connection.data).clientEmail;
-      // if (name !== this.myUserName) {
+      // console.log("돌발질문 버튼 활성화시키기");
       if (!this.isEE) {
         this.suddenBtnState = false;
       }
@@ -437,21 +347,7 @@ export default {
       //대기실로 돌아가는 메소드 구현
     });
 
-    // this.session.on("signal:EECL", (e) => {
-    //   // 면접자의 자소서를 받아옴
-    //   const cl = JSON.parse(e.data);
-    //   this.$store.commit("SET_STUDYROOM_CL", cl);
-    // });
-    // this.session.on("signal:superUserOut", (e) => {
-    //   if (this.myUserName === e.data) {
-    //     this.$store.commit("lbhModule/SWITCH_USER_TYPE");
-    //   } else {
-    //     ("방장바뀜");
-    //   }
-    // });
-
     // 면접자일때만 음성인식 시작
-    // if (JSON.parse(this.EE.stream.connection.data).clientData === this.myUserName) {
     if (this.isEE) {
       this.startRecognition();
       this.session.signal({
@@ -489,7 +385,6 @@ export default {
         width = "1.15F";
         height = "0.9F";
       }
-      // console.log(img);
       if (this.isER) {
         for (let ER of this.ERS) {
           let mail = JSON.parse(ER.stream.connection.data).clientEmail;
@@ -553,30 +448,13 @@ export default {
             to: [],
             type: "EELeaveSessionFromEER",
           });
-          // if (this.session) {
-          //   console.log("플레이모드에서, 일반 면접자가 방을 나감", this.session);
-          //   this.session.disconnect();
-          //   console.log("this.session.disconnect가 실행됐나?", this.session);
-          // } else {
-          //   console.log("뭔소리 하는거야? 세션?");
-          // }
         } else {
           this.session.signal({
             data: `${this.myUserEmail}`,
             to: [],
             type: "ERLeaveSessionFromEER",
           });
-          // if (this.session) {
-          //   console.log("플레이모드에서, 일반 면접자가 방을 나감", this.session);
-          //   this.session.disconnect();
-          //   console.log("this.session.disconnect가 실행됐나?", this.session);
-          // } else {
-          //   console.log("뭔소리 하는거야? 세션?");
-          // }
         }
-
-        // window.removeEventListener("beforeunload", this.EERleaveSession);
-
         this.$store.dispatch("lbhModule/userLeaveSessionAxios");
       }
     },
@@ -591,7 +469,6 @@ export default {
       }
     },
     openEECL() {
-      //this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
       localStorage["cl"] = JSON.stringify({
         coverLetterTitle: this.studyRoomCL.coverLetterTitle,
         coverLetterContent: this.studyRoomCL.coverLetterContent,
@@ -615,26 +492,10 @@ export default {
       }
     },
     //--------------------경고 누적시 캠 효과 넣기 ----------------------
-    // setFilter() {
-    //   this.session
-    //     .signal({
-    //       data: this.warningCount + "",
-    //       to: [],
-    //       type: "setFilter",
-    //     })
-    //     .then(() => {
-    //       console.log("set filter");
-    //     })
-    //     .catch(() => {
-    //       console.log("fail get setFilter signal");
-    //     });
-    // },
     removeFilter() {
       if (this.isFiltered) {
         for (var ER of this.ERS) {
-          // var name = JSON.parse(ER.stream.connection.data).clientData;
           var email = JSON.parse(ER.stream.connection.data).clientEmail;
-          // if (name === this.myUserName) {
           if (email === this.myUserEmail) {
             ER.stream.removeFilter();
             this.isFiltered = false;
@@ -739,7 +600,7 @@ export default {
     },
     //배경 빨강->하양 반복 사이렌효과
     startSirenEffect() {
-      console.log("웨에에에에에에에엥");
+      // console.log("웨에에에에에에에엥");
       this.sirenIsShow = true;
       var interval = setInterval(() => {
         this.bgIsWhite = !this.bgIsWhite;
@@ -774,62 +635,6 @@ export default {
     },
 
     //---------------------돌발 질문,상황 관련 함수 끝-----------------------------
-    //면접관실에서 나갈 때
-    // EERleaveSession() {
-    //   if (this.userType === "superUser") {
-    //     this.$store.commit("lbhModule/SET_APM_DESTINATION", "ERView");
-    //     this.$store.commit("lbhModule/SET_APM_OPEN", true);
-    //   } else {
-    //     if (this.session) this.session.disconnect();
-
-    //     this.$store.commit("lbhModule/SET_SESSION", undefined);
-    //     this.$store.commit("lbhModule/SET_OV", undefined);
-    //     this.$store.commit("lbhModule/SET_PUBLISHER", undefined);
-    //     this.$store.commit("lbhModule/SET_SUBSCRIBERS", []);
-    //     this.$store.commit("lbhModule/SET_SUPERUSER", {});
-
-    //     window.removeEventListener("beforeunload", this.EERleaveSession);
-    //   }
-    // },
-    // EERtoLBConfirm() {
-    //   if (this.userType === "user") {
-    //     if (
-    //       confirm(
-    //         "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 로비로 이동합니다."
-    //       )
-    //     ) {
-    //       this.$router.push({ name: "main" });
-    //     }
-    //   } else if (this.userType === "superUser") {
-    //     if (
-    //       confirm(
-    //         "정말 면접 도중에 나가시겠습니까?\n지금까지의 피드백이 면접자에게 제공되지 않고 방장 권한 위임 후 로비로 이동합니다."
-    //       )
-    //     ) {
-    //       console.log("권한 위임 모달 실행");
-    //     }
-    //   }
-    // },
-    // StudyDestroy() {
-    //   if (
-    //     confirm(
-    //       "정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다."
-    //     )
-    //   ) {
-    //     this.session
-    //       .signal({
-    //         data: "true",
-    //         to: [],
-    //         type: "endInterview",
-    //       })
-    //       .then(() => {
-    //         console.log("erview send signal test");
-    //       })
-    //       .catch((error) => {
-    //         console.error(error);
-    //       });
-    //   }
-    // },
 
     // send img filter : potato or bread or bald
     setImgFilterOn(filter) {
@@ -863,7 +668,6 @@ export default {
         for (let i = e.resultIndex; i < e.results.length; ++i) {
           if (e.results[i].isFinal) {
             let script = e.results[i][0].transcript;
-            // console.log(script);
             if (this.isEE) {
               if (script.includes("빵")) {
                 console.log("빵");
@@ -882,7 +686,6 @@ export default {
 
       this.recognition.onend = () => {
         // 음성 인식이 끊겼을 때
-        //recognition.stop();
         if (this.recognition) this.recognition.start();
       };
 
@@ -955,10 +758,8 @@ export default {
 .ERVidContainer {
   display: flex;
   flex-direction: row;
-  /* justify-content: center; */
   width: 100%;
   height: 30%; 
-  /* overflow-x: scroll; */
 }
 
 .ERVid {
@@ -994,7 +795,6 @@ div.EEVidContainer > div > div.userVideo{
   align-items:center;
   width: 100%;
   height: 10%;
-  /* border-radius: 20px; */
 }
 
 .EERView button {
