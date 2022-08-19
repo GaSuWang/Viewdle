@@ -7,13 +7,8 @@
     <!-- 좌단 -->
     <!-- 면접자 영상 -->
     <div class="savedEEVid">
-      <!-- [김이랑] 비디오 관련 -->
       <video ref="video" width="640" height="280" controls :src="videoSrc">
-          <!-- <source  type="video/mp4"> -->
       </video>
-      <!-- <button @click="timeCheck">
-            <p>비디오 시간</p>
-      </button> -->
     </div>
     <!-- 우단 -->
     <div class="FBRightArea">
@@ -21,30 +16,19 @@
         <!-- 타이머 -->
       <button type="button" class="btn" :disabled="counting">
         <vue-countdown v-if="counting" :time="300000" @end="onCountdownEnd" v-slot="{minutes, seconds}">{{minutes}}분 {{seconds}}초</vue-countdown>
-        <!-- <span v-else>Fetch Verification Code</span> -->
       </button>
-        <!-- 면접자 자소서 페이지 열기 버튼 -->
         <div class="CLOpen">
           <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-file-earmark-text"></i>
           </Button>
-          <!-- <button @click="openEECL">
-            <i class="bi bi-file-earmark-text"></i>
-          </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div class="FBtoLBbtn user" v-show="userType === 'user'">
          <Button @click="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
-          <!-- <button @click="ERLeaveSessionFromFB">
-            <i class="bi bi-x-lg"></i>
-          </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="FBtoLBbtn superUser">
           <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
-          <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
-              <i class="bi bi-x-lg"></i>
-          </button> -->
         </div>
       </div>
 
@@ -54,22 +38,14 @@
       <div @click="FBComplete" class="FBButtonFooter">
         <!-- 면접 종료 버튼(대기실로 이동) -->
         <Button icon="pi pi-check" class="p-button-rounded p-button-secondary" />
-        <!-- <div class="FBCompleteBtn">
-          <button @click="FBComplete">
-            <i class="bi bi-check-lg"></i>
-          </button>
-        </div> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// import { VideoPlayer } from '@videojs-player/vue'
 import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
-// 임현탁 나가기기능하면서 주석처리함
-// import { useRouter } from "vue-router";
 import { mapGetters} from 'vuex';
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -84,8 +60,6 @@ export default {
   data(){
     return {
       counting: false,
-      // [김이랑] 비디오 관련 - 테스트 위해 data에 저장
-      // VideoSrc: ''
     }
   },
   computed:{
@@ -108,7 +82,7 @@ export default {
       "MicSelected",
       "MicStatus",
       "MicStatus",
-      // [김이랑] 비디오 관련
+      //비디오 관련
       "videoSrc",
       "videoTime",
 
@@ -125,18 +99,18 @@ export default {
   },
   watch:{
     checkVideoTime(time){
-      console.log("실행됨")
+      // console.log("실행됨")
       this.video = this.$refs.video
-      console.log(this.video.currentTime)
+      // console.log(this.video.currentTime)
       this.video.currentTime = time
-      console.log(this.video.currentTime)
+      // console.log(this.video.currentTime)
     }
   },
-  // [김이랑] 비디오 관련
+  //비디오 관련
   created(){
     //
     this.session.on("streamDestroyed", ({ stream }) => {
-      console.log('streamCreated')
+      // console.log('streamCreated')
       const index_s = this.subscribers.indexOf(stream.streamManager, 0);
       if (index_s >= 0) {
         this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
@@ -155,14 +129,12 @@ export default {
       }
     })
 
-
       //현재 피드백실에 있는 인원 설정
       this.$store.commit('lbhModule/SET_FB_USER_COUNT')
 
       this.session.on('signal:sendVideoSeq', (e)=>{
         this.$store.commit('lbhModule/SET_VIDEOSEQ', e.data)
       })
-    // window.addEventListener("close", this.ERLeaveSessionFromFB);
 
       //방장인 면접자가, 면접을 끝내고 대기실에 있는 도중에 나갈 경우
       this.session.on('signal:superLeaveSessionWR', (e)=>{
@@ -174,6 +146,7 @@ export default {
           this.$store.commit('lbhModule/SWITCH_USER_TYPE', 'superUser')
         }
       })
+
     //방장인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:superERLeaveSession', (e)=>{
       const pastSuperUserEmail = e.data.split(' ')[0]
@@ -189,6 +162,7 @@ export default {
     this.session.on('signal:userLeaveSessionfromWR', (e)=>{
       this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
     })
+
     //일반 유저인 면접관이, 면접을 보는 도중에 나갈 경우
     this.session.on('signal:ERLeaveSessionFromFB', (e)=>{
       this.$store.commit('DELETE_CURRENT_USER_LIST', e.data)
@@ -196,21 +170,19 @@ export default {
 
     //다른 면접관이 피드백 완료하면, 해당 면접관의 피드백을 받아 axiosFBList에 더하기
     this.session.on('signal:addAllFBList', (e)=>{
-      console.log('addAllFbList',e)
+      // console.log('addAllFbList',e)
       this.$store.commit('lbhModule/MINUS_FB_USER_COUNT')
       this.$store.commit('lbhModule/ADD_AXIOS_FBLIST', e.data)
       //만약 피드백실에서 모두 나가면, 피드백까지 면접 종료
       if(this.FBUserCount <= 0){
-        console.log('fbcompleteAxios실행')
+        // console.log('fbcompleteAxios실행')
         this.$store.dispatch('lbhModule/FBCompleteAxios')
       }
     })
 
     this.session.on("signal:EECL", (e) => {
-      // console.log("EECL signal로 받은 데이터", e.data);
-      // const cl = JSON.parse(e.data);
       const data = parseInt(e.data)
-      console.log("면접관이 받은 유저의 자소서", data);
+      // console.log("면접관이 받은 유저의 자소서", data);
       this.$store.commit("lbhModule/SET_STUDYROOM_CL",data);
     });
 
@@ -223,9 +195,6 @@ export default {
     this.$store.commit('lbhModule/EMPTY_FB')
     this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
     localStorage['cl'] = {}
-    // if(this.userType === 'user'){
-    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   methods: {
     //vue-countdown
@@ -250,7 +219,7 @@ export default {
         })
         this.$store.commit('lbhModule/EMPTY_EE')
         this.$store.commit('lbhModule/EMPTY_ERS')
-        console.log('피드백실에서 이제 나감')
+        // console.log('피드백실에서 이제 나감')
         this.$router.push({name:'waiting-room'})
       }
     },
@@ -269,7 +238,6 @@ export default {
     },
 
 openEECL() {
-      //this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
       localStorage["cl"] = JSON.stringify({
         coverLetterTitle: this.studyRoomCL.coverLetterTitle,
         coverLetterContent: this.studyRoomCL.coverLetterContent,
@@ -295,7 +263,7 @@ openEECL() {
         })
         this.$store.commit('lbhModule/EMPTY_EE')
         this.$store.commit('lbhModule/EMPTY_ERS')
-        console.log('피드백실에서 이제 나감')
+        // console.log('피드백실에서 이제 나감')
         this.$router.push({name:'waiting-room'})
       }
     },
@@ -446,61 +414,6 @@ openEECL() {
   border: #a7a9b9;
   color: white;
 }
-
-/* 버튼 시작*/
-/* .CLOpen > button,
-.FBtoLBbtn > button,
-.FBCompleteBtn > button {
-  border: none;
-  display: block;
-  background: linear-gradient(#f7f7f7, #e7e7e7);
-  color: #a7a7a7;
-  margin: 18px;
-  width: 36px;
-  height: 36px;
-  position: relative;
-  text-align: center;
-  line-height: 36px;
-  border-radius: 50%;
-  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
-}
-.CLOpen > button:before,
-.FBtoLBbtn > button:before,
-.FBCompleteBtn > button:before {
-  content: "";
-  display: block;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #fff;
-  width: 100%;
-  height: 1px;
-  position: absolute;
-  top: 50%;
-  z-index: -1;
-}
-.CLOpen > button:after,
-.FBtoLBbtn > button:after,
-.FBCompleteBtn > button:after {
-  content: "";
-  display: block;
-  background: #fff;
-  border-top: 2px solid #ddd;
-  position: absolute;
-  top: -9px;
-  left: -9px;
-  bottom: -9px;
-  right: -9px;
-  z-index: -1;
-  border-radius: 50%;
-  box-shadow: inset 0px 4px 24px #ddd;
-}
-.CLOpen > button:hover,
-.FBtoLBbtn > button:hover,
-.FBCompleteBtn > button:hover {
-  text-decoration: none;
-  color: #555;
-  background: #f5f5f5;
-} */
-/* 버튼 끝*/
 
 .FBButtonFooter {
   display: flex;
