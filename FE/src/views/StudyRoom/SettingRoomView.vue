@@ -15,57 +15,23 @@
         <!-- 드롭다운 메뉴 -->
         <div class="SRDropdownARea">
           <!-- 마이크 선택 드롭다운-->
-          <!-- <p class="MicTitle">마이크 선택</p> -->
           <div class="mic dropdown">
             <button id="micLeft" class="btn" type="button" @click="micStatusSwitch">
               <span v-if="micOn">마이크 ON</span>
               <span v-else>마이크 OFF</span>
             </button>
-            <!-- <button
-              id="micRight"
-              type="button"
-              class="btn dropdown-toggle dropdown-toggle-split"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            ></button>
-            <ul class="dropdown-menu">
-              <li v-for="mic in MicList" :key="mic.deviceId">
-                <p :class="[MicSelected === mic ? 'deviceSelected' : '']" @click="selectMic(mic)">
-                  {{ mic.label }}
-                </p>
-              </li>
-            </ul> -->
           </div>
 
           <!-- 카메라 선택 드롭다운 -->
           <div class="camera dropdown">
-            <!-- <p class="CameraTitle">카메라 선택</p> -->
             <button id="cameraLeft" class="btn" @click="cameraStatusSwitch">
               <span v-if="cameraOn">카메라 ON</span>
               <span v-else>카메라 OFF</span>
             </button>
-            <!-- <button
-              id="cameraRight"
-              class="btn dropdown-toggle dropdown-toggle-split"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            ></button>
-            <ul class="dropdown-menu">
-              <li v-for="camera in CameraList" :key="camera.deviceId">
-                <p
-                  :class="[CameraSelected === camera ? 'deviceSelected' : '']"
-                  @click="selectCamera(camera)"
-                >
-                  {{ camera.label }}
-                </p>
-              </li>
-            </ul> -->
           </div>
 
           <!-- 자소서 선택 드롭다운 -->
           <div class="cl dropdown">
-            <!-- <p class="cl-dropdown-title">자소서 선택</p> -->
             <button id="CLLeft" class="btn">
               
               <span>{{CLSelected.coverLetterTitle}}</span>
@@ -92,29 +58,17 @@
           </div>
         </div>
         <!-- 하단 -->
-        <!-- 임현탁 방에서 나가기 건들이는중 -->
         <div class="SRNavBtnArea">
           <!-- 로비 되돌아가기 버튼 -->
-          <!-- <div class="toLBBtnDiv" @click="SRtoLB"> -->
           <div class="toLBBtnDiv" v-if="userType === 'user'" @click="userLeaveSessionAxios()">
             <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
-            <!-- <button class="toLBBtn">
-            <i class="bi bi-backspace"></i>
-          </button> -->
           </div>
           <div v-if="userType === 'superUser'" class="toLBBtnDiv" @click="studyDestroy">
             <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
-            <!-- <button type="button" class="toLBBtn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
-              <i class="bi bi-x-lg"></i>
-          </button> -->
           </div>
-          <!-- 임현탁 여기까지 건들임 -->
           <!-- 대기실 입장 버튼 -->
           <div class="toWRBtnDiv" @click="SRtoWR">
             <Button icon="pi pi-check" class="p-button-rounded p-button-secondary" />
-            <!-- <button class="toWRBtn">
-            <i class="bi bi-check-lg"></i>
-          </button> -->
           </div>
         </div>
       </div>
@@ -134,10 +88,6 @@ export default {
   },
   unmounted() {},
   created() {
-   
-   
-    console.log("userinfo", this.$store.getters["rhtModule/UserList"]);
-    //this.$store.dispatch("rhtModule/getCoverLetter");
     this.$store.commit("lbhModule/START_ROOM_TIME");
     window.addEventListener("beforeunload", this.forceLeaveSession);
   },
@@ -165,7 +115,6 @@ export default {
     ...mapGetters("rhtModule", ["CoverLetterList"]),
   },
   mounted() {
-    //this.changeUserVideo();
          if (this.CoverLetterList.length == 0) {
       this.$store.commit("lbhModule/SET_COVERLETTER_LIST", [
         {
@@ -186,7 +135,7 @@ export default {
       this.$store.commit("lbhModule/SET_COVERLETTER_LIST",this.CoverLetterList)
     }
     this.selectCL(this.CLList[0]);
-    console.log(this.CLSelected);
+    // console.log(this.CLSelected);
   },
   methods: {
     studyDestroy() {
@@ -223,22 +172,11 @@ export default {
     selectMic(mic) {
       this.$store.commit("lbhModule/SELECT_MIC", mic);
     },
-    // 임현탁  방나가기를 위한 작업
-    // SRtoLB() {
-    //   if (confirm("로비로 되돌아가시겠습니까?")) {
-    //     this.$router.push("main");
-    //   }
-    // },
     userLeaveSessionAxios() {
       this.$store.dispatch("lbhModule/userLeaveSessionAxios");
     },
 
-    // 임현탁 작업 끝
-
     SRtoWR() {
-      // if(Object.keys(this.CameraSelected).length === 0 ||
-      // Object.keys(this.MicSelected).length === 0 ||
-      // Object.keys(this.CLSelected).length === 0){
       if (
         this.CameraSelected.length === 0 ||
         this.MicSelected.length === 0 ||
@@ -260,7 +198,7 @@ export default {
       } else {
         navigator.mediaDevices.getUserMedia(constraints).then((mediaStream) => {
           this.$refs.userVideo.style.display = "block";
-          console.log("video", this.$refs.userVideo);
+          // console.log("video", this.$refs.userVideo);
           this.$refs.userVideo.srcObject = mediaStream;
           this.$refs.userVideo.muted = false;
         });
@@ -275,10 +213,10 @@ export default {
     function findDevices() {
       OV.getDevices().then((devices) => {
         var videoDevices = devices.filter((device) => device.kind === "videoinput");
-        console.log("videoDevices는 이거", videoDevices);
+        // console.log("videoDevices는 이거", videoDevices);
         store.dispatch("lbhModule/getCameraList", videoDevices);
         var audioDevices = devices.filter((device) => device.kind === "audioinput");
-        console.log("audioDevices는 이거", audioDevices);
+        // console.log("audioDevices는 이거", audioDevices);
         store.dispatch("lbhModule/getMicList", audioDevices);
       });
     }
@@ -291,7 +229,6 @@ export default {
 .SettingRoomView {
   position: absolute;
   width: 90vw;
-  /* 화면 구성을 위해서 min-width나 min-height를 주는 게 맞는 거 같은데*/
   min-width: 1000px;
   aspect-ratio: 2/1;
   top: 50%;
@@ -308,7 +245,6 @@ export default {
 
 .SRLeftArea {
   display: flex;
-  /* flex-direction: column; */
   width: 70%;
   height: 100%;
   align-items: center;
@@ -385,12 +321,4 @@ export default {
   height: 90%;
   background-color: black;
 }
-/* .SettingRoomView button{
-  background-color: #787a89;
-  border: #787a89
-}  */
-/* .SettingRoomView button:enabled:hover{
-  background-color: #787a89;
-  border: #787a89
-}  */
 </style>
