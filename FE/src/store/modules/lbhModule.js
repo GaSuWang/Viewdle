@@ -37,11 +37,10 @@ const state = {
   //WaitingRoom
   WRParticipantList: [], // 방장 권한 위임 시 목록 나타내 주기 위해서, 면접자 선택 위해서
   userType: 'user', //일반 유저는 user, 방장 유저는 superUser
-  // mySessionId: "Session" + roomSeq, //undefined
   publisher: undefined,
   subscribers: [],
   sessionToken: undefined,
-  // StartInterview: false, // 대기실에서 면접자를 정하고 면접을 시작할 때 true로 바뀜, 방장이 면접 종료 버튼을 누르면 false로 다시 바뀌어야 됨
+
   OV: undefined,
   session: undefined,
 
@@ -87,23 +86,15 @@ const getters = {
 
   //방장권한
   userType(state){return state.userType},
-  // WRParticipantList(state) {return JSON.parse(JSON.stringify(state.WRParticipantList))},
   WRParticipantList(state) {
     console.log('state.WRParticipantList', state.WRParticipantList, typeof(state.WRParticipantList))
     function unique(data, key){
       return [ ...new Map(data.map(x => [key(x), x])).values()]
     }
     return unique(state.WRParticipantList, e => e.myUserEmail)
-    // function unique(data, key){
-    //   return [ ...new Map(data.map(x => [key(x), x])).values()]
-    // }
-    // if(state.WRParticipantList.isArray){
-    //   return unique(state.WRParticipantList, e => e.myUserEmail)
-    // } else return state.WRParticipantList
   },
   StartInterview(state) {return state.StartInterview},
   currentUserList(state) {return state.currentUserList},
-  // nextSuperUserList(state){return state.currentUserList.filter(p => p.name !== state.myUserName)},
   nextSuperUserList(state){
     if(state.currentUserList.length) {
       return state.currentUserList.filter(p => p.myUserEmail !== state.myUserEmail)
@@ -111,6 +102,7 @@ const getters = {
   },
   nextSuperUserInfo(state) {return state.nextSuperUserInfo},
   studyDestroy(state){return state.studyDestroy},
+
   //SettingRoom
   MicList(state) {return state.MicList},
   MicSelected(state){return state.MicSelected},
@@ -155,11 +147,11 @@ const getters = {
   //녹화 관련
   recordingObject(state) {return state.recordingObject},
 
-  //[김이랑] 비디오 관련
+  //비디오 관련
   videoTime(state) {return state.videoTime},
   startVideoTime(state) {return state.startVideoTime},
 
-  // 박채림 / 필터 관련
+  //필터 관련
   filters(state) {return state.filters}
 
 };
@@ -175,8 +167,6 @@ const mutations = {
   },
   EMPTY_NEXT_SUPERUSER_INFO(state){state.nextSuperUserInfo = {}},
   SET_NEXT_SUPERUSER_INFO(state, data){state.nextSuperUserInfo = data},
-  // GET_MY_USER_EMAIL(state, data){state.myUserEmail = data},
-  // GET_MY_USER_NAME(state, data){state.myUserName = data},
 
   //방 정보
   GET_VIDEO_SRC(state, data) { 
@@ -193,14 +183,6 @@ const mutations = {
     console.log("방정보",state.roomSeq, state.roomTitle ,state.roomType,state.userType )
   },
   
-  // START_INTERVIEW_TIME(state){
-  //   setInterval(() => {
-  //     state.interviewTime++
-  //   }, 1000);
-  // },
-  // STOP_INTERVIEW_TIME(state){
-  //   clearInterval()
-  // },
   SWITCH_USER_TYPE(state, userType){state.userType = userType},
 
   //openvidu
@@ -215,8 +197,6 @@ const mutations = {
   SET_SUBSCRIBERS(state, subscriber) {state.subscribers = subscriber},
   ADD_SUBSCRIBERS(state, subscriber) {state.subscribers.push(subscriber)},
   DELETE_SUBSCRIBERS(state, index) {state.subscribers.splice(index, 1)},
-
-  // SET_MYSESSIONID(state, mySessionId) {state.mySessionId = mySessionId},
 
   //SettingRoom
   GET_CAMERA_LIST(state, cameraList) {state.CameraList = cameraList},
@@ -277,20 +257,12 @@ const mutations = {
     console.log("DELETE_CURRENT_USER_LIST 시작", state.currentUserList);
     const idx = state.currentUserList.findIndex(function(item) {return item.myUserEmail === email})
     if (idx>-1) state.currentUserList.splice(idx, 1)  
-    console.log("DELETE_CURRENT_USER_LIST 끝", state.currentUserList); 
-    // const delArray = [...state.currentUserList]
-    // delArray.forEach(e=>{
-    //   if(e.name === subscriberName){
-    //     const i = state.currentUserList.indexOf(e)
-    //     state.currentUserList.splice(i,1)
-    //   }
-    // })    
+    console.log("DELETE_CURRENT_USER_LIST 끝", state.currentUserList);    
   },
   EMPTY_CURRENT_USER_LIST(state) {
     state.currentUserList = [];
     console.log('currentUserList 비웠다', state.currentUserList)
   },
-  // GET_ROOMSEQ(state, data){state.roomSeq = data},
   SET_STARTINTERVIEW(state, tf) {state.StartInterview = tf},
 
   //EEView, ERView
@@ -336,7 +308,7 @@ const mutations = {
   //녹화 관련
   SET_RECORDING_OBJECT(state, recordingObject){state.recordingObject = recordingObject},
 
-  //[김이랑] 비디오 관련
+  //비디오 관련
   SET_VIDEO_TIME(state, videoTime){state.videoTime = videoTime},
   SET_START_VIDEO_TIME(state, startVideoTime){state.startVideoTime = startVideoTime},
   SET_VIDEOSEQ(state, data){
@@ -345,7 +317,7 @@ const mutations = {
   },
 
 
-  // 박채림 / 필터 관련
+  //필터 관련
   SET_VIDEO_FILTER_LIST(state, filters){
     state.filters = filters;
   },
@@ -363,7 +335,6 @@ const actions = {
     commit('SET_SESSION_TOKEN', undefined)
     commit('SET_PUBLISHER', undefined)
     commit('SET_SUBSCRIBERS', [])
-    //commit('SET_MYSESSIONID', undefined)
     commit('SELECT_CAMERA', {})
     commit('SELECT_MIC', {})
     commit('SELECT_CL', {})
@@ -378,79 +349,7 @@ const actions = {
     commit('SWITCH_USER_TYPE', 'user')
     commit('EMPTY_AXIOS_FBLIST')
   },
-  //유저가 방 나감(스터디룸 나가기)
-  // userLeaveSessionAxios({state,dispatch, rootGetters }){
-  //   console.log('유저 방에서 잘 나가....나?')   
-  //   axios({
-  //     url: BASE_URL + 'studyroom/exit',
-  //     method: 'patch',
-  //     headers: {Authorization: rootGetters['rhtModule/authHeader']},
-  //     data: {
-  //       nextOwnerEmail: "",
-  //       roomSeq: state.roomSeq,
-  //     }
-  //   })
-  //   .then(res =>{
-  //     console.log('유저 방에서 잘 나감')
-  //     console.log(res.response),
-  //     dispatch('deleteData')
-  //   }
-  //   )
-  //   .catch(err=>console.error(err.response.data))
-  // },
 
-  // //방장이 권한 위임하고 방 나감(스터디룸 나가기)
-  // superUserLeaveSessionAxios({state, dispatch, rootGetters},nextSuperUserEmail){
-  //   axios({
-  //     url: BASE_URL + 'studyroom/exit',
-  //     method: 'patch',
-  //     headers: {Authorization: rootGetters['rhtModule/authHeader']},
-  //     data: {
-  //       nextOwnerEmail: nextSuperUserEmail,
-  //       roomSeq: state.roomSeq,
-  //     }
-  //   })
-  //   .then(res=> {
-  //     dispatch('deleteData')
-  //     console.log('방장 유저 정상적으로 세션 나감', res.response)
-  //   })
-  //   .catch(err=>console.error(err.response))
-  // },
-
-  // //방장이 방 폭파시킴 첫 단계(스터디룸 나가기, 일반 유저 방 나가기와 동일하지만 구분 위해 다른 이름 부여)
-  // studyDestroyFirstAxios({state,rootGetters}){
-  //   axios({
-  //     url: BASE_URL + 'studyroom/exit',
-  //     method: 'patch',
-  //     headers: {Authorization: rootGetters['rhtModule/authHeader']},
-  //     data: {
-  //       nextOwnerEmail: "",
-  //       roomSeq: state.roomSeq,
-  //     }
-  //   })
-  //   .then(res=> {
-  //     console.log('일단 방을 나감', state.roomSeq, res.response)
-  //   })
-  //   .catch(err=>console.error(err.response))
-  // },
-
-  // //방장이 방 폭파시킴 두번째 단계(스터디 룸 삭제)
-  // studyDestorySecondAxios({state, dispatch, rootGetters}){
-  //   axios({
-  //     // url: BASE_URL + `studyroom/exit/${state.roomSeq}`, 이게 내가 기억하는 거
-  //     url: BASE_URL + `studyroom/${state.roomSeq}`,
-  //     method: 'patch',
-  //     headers: {Authorization: rootGetters['rhtModule/authHeader']},
-  //     data: {roomSeq: state.roomSeq},
-  //   })
-  //   .then(res => {
-  //     dispatch('deleteData')
-  //     console.log('방이 성공적으로 폭파됨', res.response) 
-  //   })
-  //   .catch(err=>console.error(err.response))
-  // },
-
-  // 임현탁 userLeaveSessionAxios수정위해 따로 뺴와서 수정중
   userLeaveSessionAxios({state,dispatch,commit, rootGetters }){
     console.log('유저 방에서 잘 나가....나?')   
     axios({
@@ -522,7 +421,6 @@ const actions = {
   //방장이 방 폭파시킴 두번째 단계(스터디 룸 삭제)
   studyDestroySecondAxios({state, dispatch, rootGetters}){
     axios({
-      // url: BASE_URL + `studyroom/exit/${state.roomSeq}`, 이게 내가 기억하는 거
       url: BASE_URL + `studyroom/${state.roomSeq}`,
       method: 'patch',
       headers: {Authorization: rootGetters['rhtModule/authHeader']},
@@ -553,7 +451,6 @@ const actions = {
     .catch(err=>console.error('면접 시작 axios 에러남',err.response))
   },
 
-  // 임현탁 videourl credentials에 받아옴
   //면접 끝, 면접자는 대기실로, 면접관은 피드백실로 이동(내 영상 저장)
   finishInterviewAxios({state, rootGetters, commit}, credentials){
     console.log('면접이 끝남. 비디오 url을 가지고 있는 면접자가 axios 요청을 보냄',credentials)
@@ -565,7 +462,6 @@ const actions = {
         userEmail: state.myUserEmail,
         videoTitle: state.roomTitle,
         videoUrl: credentials.url, //videoUrl 추가해야됨
-        // videoUrl: credentials.url, //videoUrl 추가해야됨
       }
     })
     .then(res=>{
@@ -582,8 +478,6 @@ const actions = {
       console.error(err.response)
     })
   },
-
-
 
   //면접관이 피드백 끝냄(스터디 룸 면접 종료)
   FBCompleteAxios({state,rootGetters}){
@@ -641,8 +535,6 @@ const actions = {
       console.error(err.response)
     })
   },
-
-
 
   // 다시보기 비디오 가져오기(영상 및 피드백 다시보기)
   getReplayAxios({state, rootGetters, commit}){
