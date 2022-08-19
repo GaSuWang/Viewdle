@@ -53,7 +53,6 @@
 
 
 import FeedbackBox from "@/components/StudyRoom/NormalMode/FeedbackBox.vue";
-// import { ref, computed } from "vue";
 import { mapGetters } from "vuex";
 export default {
   name: "FeedbackArea",
@@ -270,8 +269,6 @@ export default {
   background: #f5f5f5;
 }
 
-/* 버튼 양식 */
-
 .FBList > li {
   list-style: none;
   padding-left: 0;
@@ -282,7 +279,6 @@ export default {
   flex-direction: row;
   justify-content: space-evenly;
   align-self: center;
-  /* width: 80%; */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 4px 4px 3px #d8dae3; 
@@ -291,9 +287,7 @@ export default {
 .inputOn{
   display: flex;
   flex-direction: row;
-  /* justify-content: space-evenly; */
   align-self: center;
-  /* width: 80%; */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 4px 4px 3px #d8dae3; 
