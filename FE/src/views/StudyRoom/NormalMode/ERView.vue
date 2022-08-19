@@ -32,29 +32,14 @@
          <Button @click.prevent="openEECL()" icon="pi pi-times" class="p-button-rounded p-button-secondary">
             <i class="bi bi-file-earmark-text"></i>
           </Button>
-          <!-- <button @click.prevent="openEECL()">
-            <i class="bi bi-file-earmark-text"></i>
-          </button> -->
         </div>
-        <!-- 질문 팁 모달 열기 버튼 -->
-        <!-- <div class="QTip">
-          <button @click="openQTip">
-            <i class="bi bi-lightbulb-fill"></i>
-          </button>
-        </div> -->
         <!-- 면접에서 나가기 버튼(일반 유저) -->
         <div v-show="userType === 'user'" class="ERtoLBbtn user">
          <Button @click="ERLeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
-          <!-- <button @click.prevent="ERLeaveSession">
-            <i class="bi bi-x-lg"></i>
-          </button> -->
         </div>
         <!-- 면접에서 나가기 버튼(방장 유저) -->
         <div v-show="userType === 'superUser'" class="ERtoLBbtn superUser">
           <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
-          <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
-              <i class="bi bi-x-lg"></i>
-          </button> -->
         </div>
       </div>
 
@@ -76,7 +61,6 @@
 <script>
 import AuthorityPassModal from '@/components/StudyRoom/AuthorityPassModal.vue'
 import UserVideo from "@/components/UserVideo.vue";
-// import { OpenVidu } from "openvidu-browser";
 import swal from "sweetalert2";
 import { mapGetters } from "vuex";
 import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
@@ -84,11 +68,6 @@ import FeedbackArea from "@/components/StudyRoom/NormalMode/FeedbackArea.vue";
 export default {
   name: "ERView",
   components: { FeedbackArea, UserVideo, AuthorityPassModal},
-  data(){
-    return{
-      // nextSuperUser: '',
-    }
-  },
   computed:{
     ...mapGetters("lbhModule",[
       "EE",
@@ -112,14 +91,11 @@ export default {
   },
   unmounted(){
     localStorage['cl'] = {}
-    // if(this.userType === 'user'){
-    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   created(){
     //
     this.session.on("streamDestroyed", ({ stream }) => {
-      console.log('streamCreated')
+      // console.log('streamCreated')
       const index_s = this.subscribers.indexOf(stream.streamManager, 0);
       if (index_s >= 0) {
         this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
@@ -129,13 +105,7 @@ export default {
       this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", subscriberEmail);
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", subscriberEmail);
     });
-    // this.OV = new OpenVidu();
-    // this.session = this.OV.initSession();
-    // this.session.connect(this.sessionToken)
-    // .then(console.log('session connect success'))
-    // .catch(err=>console.err(err.response))
 
-// this.nextSuperUser = ''
     //방장이 스터디룸을 폭파할 때
     this.session.on('signal:studyDestroy', ()=>{
       if(this.userType === 'user'){
@@ -144,7 +114,6 @@ export default {
       }
     })
 
-
     // 영상 저장에 필요한 비디오 타임 받음
     this.session.on('signal:startVideoTime', (e)=>{
       this.$store.commit('lbhModule/SET_START_VIDEO_TIME', e.data)
@@ -152,7 +121,6 @@ export default {
 
     //면접자로 지정된 유저가 자소서를 보낸 것을 받음
         this.session.on("signal:EECL", (e) => {
-      // console.log("EECL signal로 받은 데이터", e.data);
       var title = e.data.split("/")[0];
       var content = e.data.split("/")[1];
       const cl = {
@@ -160,12 +128,12 @@ export default {
         coverLetterContent: content,
       }
       this.$store.commit("lbhModule/SET_STUDYROOM_CL", cl);
-      console.log("면접장 자소서: ",this.studyRoomCL);
+      // console.log("면접장 자소서: ",this.studyRoomCL);
     });
 
     //방장이 면접을 완료할 경우
     this.session.on('signal:finishInterview', () => {
-      console.log('finishinterview signal received, erview')
+      // console.log('finishinterview signal received, erview')
       this.toFB()
     });
 
@@ -248,7 +216,6 @@ export default {
 
     },
     openEECL() {
-      //this.$store.dispatch('rhtModule/detailCoverLetter', this.studyRoomCL)
       localStorage['cl'] = JSON.stringify({
         coverLetterTitle: this.studyRoomCL.coverLetterTitle,
         coverLetterContent: this.studyRoomCL.coverLetterContent,
@@ -266,10 +233,8 @@ export default {
       });
     },
     async finishInterview(){
-      console.log('면접 완료 버튼 눌렸는데?')
+      // console.log('면접 완료 버튼 눌렸는데?')
       if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
-        // const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
-        // this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
         this.session.signal({
           data: '',
           to: [],
@@ -369,72 +334,6 @@ export default {
   background-color: #787a89;
   border: #787a89
 }
-
-/* 면접자 페이지 버튼들 시작*/
-/* https://css-tricks.com/examples/RoundButtons/ */
-/* 굿/뱃 버튼은 FeedbackArea에 있음 */
-/* .CLOpen > button,
-.QTip > button,
-.finishInterviewBtn > button,
-.ERtoLBbtn > button {
-  border: none;
-  display: block;
-  background: linear-gradient(#f7f7f7, #e7e7e7);
-  color: #a7a7a7;
-  margin: 18px;
-  width: 36px;
-  height: 36px;
-  position: relative;
-  text-align: center;
-  line-height: 36px;
-  border-radius: 50%;
-  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
-}
-
-.CLOpen > button:before ,
-.QTip > button:before ,
-.finishInterviewBtn > button:before ,
-.ERtoLBbtn > button:before {
-  content: "";
-  display: block;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #fff;
-  width: 100%;
-  height: 1px;
-  position: absolute;
-  top: 50%;
-  z-index: -1;
-}
-
-.CLOpen > button:after ,
-.QTip > button:after ,
-.finishInterviewBtn > button:after,
-.ERtoLBbtn > button:after {
-  content: "";
-  display: block;
-  background: #fff;
-  border-top: 2px solid #ddd;
-  position: absolute;
-  top: -9px;
-  left: -9px;
-  bottom: -9px;
-  right: -9px;
-  z-index: -1;
-  border-radius: 50%;
-  box-shadow: inset 0px 4px 24px #ddd;
-}
-
-
-.CLOpen > button:hover,
-.QTip > button:hover,
-.finishInterviewBtn > button:hover,
-.ERtoLBbtn > button:hover {
-  text-decoration: none;
-  color: #555;
-  background: #f5f5f5;
-} */
-/* 면접자 페이지 버튼들 끝*/
-
 
 .swal-overlay {
   background-color: black;
