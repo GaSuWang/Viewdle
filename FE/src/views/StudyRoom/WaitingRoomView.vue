@@ -4,24 +4,15 @@
   <div class="WaitingRoomView">
 
     <div class="WRRightArea">
-      <!-- 현탁 -->
       <!-- 대기실에서 나가기 버튼(일반 유저) -->
       <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionAxios">
-      <!-- <div class="user-out" v-if="userType === 'user'" @click="userLeaveSessionfromWR"> -->
           <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" />
 
-          <!-- <button class="toLBBtn">
-            <i class="bi bi-x-lg"></i>
-          </button> -->
       </div>
       <!-- 대기실에서 나가기 버튼(방장 유저) -->
       <div v-if="userType === 'superUser'" class="superUser">
         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
-        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
-            <i class="bi bi-x-lg"></i>
-        </button> -->
       </div>
-      <!-- 현탁 끝 -->
       
       <div class="startInterviewContainer">
         <!-- 방장 유저 기능 -->
@@ -44,26 +35,15 @@
         </div>
 
         <div class="start-interview" v-if="userType === 'superUser'">
-          <!-- <button @click="startInterview">
-            <i class="bi bi-check-lg"></i>
-          </button> -->
           <Button @click="startInterview" icon="pi pi-check" class="p-button-rounded p-button-secondary" />
 
-          <!-- <button @click="startEZInterview">EZ<i class="bi bi-check-lg"></i></button> -->
         </div>
 
       </div>
 
-
-
-      <!-- 삭제할 버튼들 -->
-      <!-- <div class="tempBtn">
-        <button v-if="!session" @click="joinSession">입장하기</button>
-        <button @click="switchUserType">{{ userType }}</button>
-      </div> -->
     </div>
 
-        <!-- 참가자 영상 나오는 부분 -->
+    <!-- 참가자 영상 나오는 부분 -->
     <div class="WRLeftArea">
       <div class="WRVideo container">
         <div class="row row-cols-3">
@@ -84,11 +64,6 @@
             <i v-if="MicStatus" class="bi bi-mic"></i>
             <i v-else class="bi bi-mic-mute"></i>
           </Button>
-
-          <!-- <button class="deviceBtn" @click="switchMicStatus" v-if="session">
-            <i v-if="MicStatus" class="bi bi-mic"></i>
-            <i v-else class="bi bi-mic-mute"></i>
-          </button> -->
         </div>
 
         <div class="camera-status">
@@ -96,21 +71,13 @@
             <i v-if="CameraStatus===true" class="bi bi-camera-video"></i>
             <i v-else-if="CameraStatus===false" class="bi bi-camera-video-off"></i>
           </Button>
-          <!-- <button  class="deviceBtn" @click="switchCameraStatus" v-if="session">
-            <i v-if="CameraStatus===true" class="bi bi-camera-video"></i>
-            <i v-else-if="CameraStatus===false" class="bi bi-camera-video-off"></i>
-          </button> -->
         </div>
       </div>
   </div>
 </template>
 
 <script>
-// docker run -p 4443:4443 --rm -e OPENVIDU_SECRET=MY_SECRET -e OPENVIDU_RECORDING=true -e OPENVIDU_RECORDING_PUBLIC_ACCESS=true -e OPENVIDU_RECORDING_PATH=/opt/openvidu/recordings -v /var/run/docker.sock:/var/run/docker.sock -v /opt/openvidu/recordings:/opt/openvidu/recordings openvidu/openvidu-server-kms:2.22.0
-
-
 import AuthorityPassModal from "@/components/StudyRoom/AuthorityPassModal.vue"
-// import { useRouter } from "vue-router";
 import { mapGetters } from "vuex";
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
@@ -132,7 +99,6 @@ export default {
     this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
     this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
     console.log('방관련 정보', this.roomType, this.roomTitle)
-    // window.addEventListener("beforeunload", this.forceLeaveSession,);
     
     //대기실에서 joinSession
     if(!this.currentUserList.filter((e)=>e.myUserEmail===this.myUserEmail).length){
@@ -170,11 +136,6 @@ export default {
       this.$store.commit('lbhModule/SET_START_VIDEO_TIME', e.data)
     })
   },
-  unmounsted(){
-    // if(this.userType === 'user'){
-    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
-  },
   data() {
     return {
       EECnd: "", //면접자 후보, 일단 대기실에서 면접자로 선택된 사람 이름/이메일
@@ -206,8 +167,6 @@ export default {
       //유저 정보
       "userType",
       "myUserInfo",
-      // "superUserOut",
-      // "superUser",
 
       //기타
       "currentUserList",
@@ -217,18 +176,11 @@ export default {
       //녹화 관련
       "recordingObject",
 
-      //[김이랑] 피드백 영상 관련
+      //피드백 영상 관련
       "startVideoTime",
     ]),
-		// showVid() {
-		// 	if(this.$router.currentRoute.value.name === 'waiting-room'){
-		// 		if(this.videoStatus===true){return true
-		// 		} else {return false}
-		// 	} else {return true}
-		// },
   },
   methods: {
-    // 현탁
        userLeaveSessionAxios(){
       this.$store.dispatch('lbhModule/userLeaveSessionAxios')
       const myUserEmail = this.myUserEmail
@@ -239,8 +191,6 @@ export default {
       })
       if(this.session) this.session.disconnect()   
     },
-    // 현탁 끝
-
 
     //일반,방장 유저 공통 기능
     //새로고침 막기
@@ -281,7 +231,6 @@ export default {
     //일반 유저 기능
     userLeaveSessionfromWR(){
       if(confirm('정말 이 방에서 나가시겠습니까?')){
-        // this.$store.dispatch('lbhModule/userLeaveSessionAxios')
         //다른 참가자들 currentUserList, WRParticipantList에서 나의 이름과 이메일 지우기
         const myUserEmail = this.myUserEmail
         this.session.signal({
@@ -294,19 +243,6 @@ export default {
       }
     },
 
-    //대기실에서 나갈 때
-    // WRleaveSession() {
-    //   if (this.session) this.session.disconnect();
-
-    //   this.$store.commit('lbhModule/SET_SESSION', undefined)
-    //   this.$store.commit('lbhModule/SET_OV', undefined)
-    //   this.$store.commit('lbhModule/SET_PUBLISHER', undefined)
-    //   this.$store.commit('lbhModule/SET_SUBSCRIBERS', [])
-    //   this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
-
-    //   window.removeEventListener("beforeunload", this.WRleaveSession);
-    // },
-
     //방장 유저 기능
     selectEE(user){
       this.EECnd = user
@@ -317,7 +253,6 @@ export default {
     startInterview(){
       if(this.roomType === 'study'){
         //스터디 모드 시작
-        // startStudyInterview(){
           console.log('스터디 모드 시작', this.roomType)
           const myUserName = this.EECnd.myUserName
           const myUserEmail = this.EECnd.myUserEmail
@@ -331,11 +266,9 @@ export default {
               }
           } else {alert('면접자를 선택한 후에 면접을 시작해주세요.')}
 
-      // }
       } else {
         //플레이모드 시작
           console.log('플레이 모드 시작', this.roomType)
-        // startPlayInterview(){
           const myUserName = this.EECnd.myUserName
           const myUserEmail = this.EECnd.myUserEmail
           if(this.EECnd){
@@ -350,7 +283,6 @@ export default {
           } else {
             alert("면접자를 선택한 후에 면접을 시작해주세요.");
           }
-        // }
 
       }
     },
@@ -359,11 +291,9 @@ export default {
     joinSession() {
       const newOv = new OpenVidu();
       this.$store.commit('lbhModule/SET_OV', newOv)
-      // this.OV = new OpenVidu()
 
       const ovInitSession = this.OV.initSession();
       this.$store.commit('lbhModule/SET_SESSION', ovInitSession)
-      // this.session = this.OV.initSession()
 
       this.session.on("streamCreated", ({ stream }) => {
         console.log('streamCreated')
@@ -406,7 +336,6 @@ export default {
               myUserEmail: this.myUserEmail
             }
             this.$store.commit("lbhModule/ADD_WR_PARTICIPANT_LIST", publisherInfo);
-            // this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", publisherInfo);
 
             let publisher = this.OV.initPublisher(undefined, {
               audioSource: this.MicSelected, 
@@ -461,18 +390,8 @@ export default {
           this.$store.commit('lbhModule/SET_ISEE', true)
           this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
 
-          // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
-          // const coverLetterTitle = this.CLSelected.coverLetterTitle
-          // const coverLetterContent = this.CLSelected.coverLetterContent
           console.log('자소서', this.CLSelected)
-          // this.session.signal({ 
-          // data: `${this.CLSelected}`, 
-          // to: [], 
-          // type: 'EECL' 
-          // })
           console.log('자소서 보냄')
-          // .then(() => {console.log('자소서 보냄')})
-          // .catch(error => {console.error(error)});
 
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
             this.$store.commit('lbhModule/SET_ERS', s)
@@ -498,8 +417,6 @@ export default {
           })
           this.$router.push({name: 'er-room'})
           }
-
-        // window.addEventListener("close", this.WRleaveSession);
     })
 
       // EZ면접 시작
@@ -513,18 +430,6 @@ export default {
           console.log("startEZInterview as EE");
           this.$store.commit('lbhModule/SET_ISEE', true)
           this.$store.commit("lbhModule/SET_EE", this.publisher); //나(publisher)를 EE에 넣음
-
-          // 다른 사람들에게 보여줄 나의 자소서를 보내야됨
-          // const coverLetterTitle = this.CLSelected.coverLetterTitle
-          // const coverLetterContent = this.CLSelected.coverLetterContent
-          // const cl = JSON.stringify(this.CLSelected)
-          // console.log('자소서', this.CLSelected)
-          // this.session.signal({ 
-          // data: `${this.CLSelected.coverLetterSeq}`, 
-          // to: [], 
-          // type: 'EECL' 
-          // })
-          // console.log('자소서 보냄')
 
           //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
           this.subscribers.forEach((s) => {
@@ -552,7 +457,6 @@ export default {
           })
           this.$router.push({name: 'er-room-ez'})
           }
-        // window.addEventListener("close", this.WRleaveSession);
     })
     },
 
@@ -701,8 +605,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items:center;
-  /* overflow-y: scroll; */
-
 }
 
 .WRVideo {
@@ -713,9 +615,6 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* overflow-y: scroll; */
-  /* overflow-y: hidden; Hide vertical scrollbar */
-
 }
 
 .row {
@@ -728,8 +627,6 @@ export default {
   align-self: center;
   width: 30%;
   height: 20%;
-  /* margin-left: 5%;
-  margin-right: 5%; */
 }
 
 .WRRightArea {
@@ -741,12 +638,7 @@ export default {
   width: 100%;
   height: 7%;
   border-radius: 20px;
-  /* background-color: #cacde0; */
 }
-
-/* .dropdown-toggle{
-  width: 80%;
-} */
 
 .deviceBtn{
   display: flex;
@@ -773,10 +665,4 @@ export default {
   background-color: #787a89;
   border: #787a89
 }
-/* .deviceBtn{
-  border: none;
-  border-radius: 50%;
-  width: 20%;
-  background-color: rgb(181, 180, 180);
-} */
 </style>
