@@ -22,7 +22,6 @@ export default {
 video{
 	width: 100%;
 	height: 100%;
-	/* border-radius: 20px; */
 	border: 1px rgb(231, 231, 231) solid;
 }
 </style>
