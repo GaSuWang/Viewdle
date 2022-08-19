@@ -24,22 +24,13 @@
       <!-- 면접에서 나가기 버튼(일반 유저) -->
       <div v-show="userType === 'user'" class="EEtoLBbtn user">
         <Button @click="EELeaveSession" icon="pi pi-times" class="p-button-rounded p-button-secondary" />
-        <!-- <button @click="EELeaveSession">
-          <i class="bi bi-x-lg"></i>
-        </button> -->
       </div>
       <!-- 면접에서 나가기 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EEtoLBbtn superUser">
         <Button icon="pi pi-times" class="p-button-rounded p-button-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false"/>
-        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-backdrop="false">
-            <i class="bi bi-x-lg"></i>
-        </button> -->
       </div>
       <!-- 면접 완료 버튼(방장 유저) -->
       <div v-show="userType === 'superUser'" class="EndStudyBtn superUser">
-        <!-- <button @click="finishInterview">
-          <i class="bi bi-check-lg"></i>
-        </button> -->
         <Button @click="finishInterview" icon="pi pi-check" class="p-button-rounded p-button-secondary" />
 
       </div>
@@ -54,7 +45,6 @@ import { mapGetters } from "vuex";
 import axios from "axios";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 const OPENVIDU_SERVER_URL = "https://" + location.hostname;
-// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ':4443';
 
 export default {
   name: "EEView",
@@ -85,9 +75,8 @@ export default {
     }
   },
   created(){
-    //
     this.session.on("streamDestroyed", ({ stream }) => {
-      console.log('streamCreated')
+      // console.log('streamCreated')
       const index_s = this.subscribers.indexOf(stream.streamManager, 0);
       if (index_s >= 0) {
         this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
@@ -145,11 +134,11 @@ export default {
   
     // 녹화 중지 stop레코딩 시그널을 받은 경우
     this.session.on("signal:stopRecording", (e) => {
-      console.log('이게')
+      // console.log('이게')
       console.log(e.data)
-      console.log('맞음?')
-      console.log("스탑 레코딩에 입장했습니다")
-      console.log(this.recordingObject)
+      // console.log('맞음?')
+      // console.log("스탑 레코딩에 입장했습니다")
+      // console.log(this.recordingObject)
 
       return new Promise(() => {
         axios({
@@ -159,9 +148,8 @@ export default {
             Authorization: `Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU`,
           },
         }).then((res) => {
-          console.log(`stop recording id ${res.data.id}`);
-          console.log(res.data)
-          // 임현탁 여기 부터
+          // console.log(`stop recording id ${res.data.id}`);
+          // console.log(res.data)
           // //레코딩 끝난 후 시그널링으로 URL 보내기
           this.session.signal({
             data: res.data.url,
@@ -169,31 +157,10 @@ export default {
             type: 'ReviewURL'          
           })
           this.$store.commit('lbhModule/GET_VIDEO_SRC', res.data.url)
-          // 임현탁 여기까지 주석처리함
-
 
           //레코딩 끝나고 저장하기
           this.$store.commit('rhtModule/SET_RECORDING_RES', res.data)
           this.$store.dispatch('lbhModule/finishInterviewAxios', res.data)
-          // 잠시 참고용
-          //   finishInterviewAxios({state, getters, commit}){
-          //   axios({
-          //     url: BASE_URL + 'video',
-          //     method: 'post',
-          //     headers: {Authorization: getters.authHeader},
-          //     data: {
-          //       userEmail: state.myUserEmail,
-          //       videoTitle: state.roomTitle,
-          //       videoUrl: state.videoUrl, //videoUrl 추가해야됨
-          //     }
-          //   })
-          //   .then(res=>{
-          //     console.log('성공적으로 면접 완료')
-          //     commit('SET_VIDEOSEQ', res.data) //vdieoSeq 추가해야됨
-          //   }) 
-          //   .catch(err=>console.error(err.response))
-          // },
-          
         });
       });
     })
@@ -208,9 +175,6 @@ export default {
   },
   unmounted(){
     clearInterval(this.interval)
-    // if(this.userType === 'user'){
-    //   this.$store.dispatch('lbhModule/userLeaveSessionAxios')
-    // } else { this.$store.dispatch('lbhModule/studyDestroyFirstAxios')}
   },
   methods:{
     EELeaveSession(){
@@ -227,7 +191,7 @@ export default {
       }
     },
     async finishInterview(){
-      console.log('면접 완료 버튼 눌렸는데?')
+      // console.log('면접 완료 버튼 눌렸는데?')
       if(confirm('정말 면접을 종료하시겠습니까? 면접자는 대기실로 이동하고, 나머지 면접자들은 피드백 완료를 위해 피드백실로 이동합니다.')){
         // 종료하면 녹화 종료 보내기
         this.session.signal({
@@ -235,8 +199,6 @@ export default {
           to: [],
           type: 'stopRecording'
         })
-        // const videoUrl = this.$store.getters['rhtModule/RecordingRes'].url
-        // this.$store.dispatch('lbhModule/finishInterviewAxios', videoUrl)
         this.session.signal({
           data: '',
           to: [],
@@ -316,55 +278,4 @@ export default {
   background-color: #787a89;
   border: #787a89
 }
-
-/* 버튼양식 */
-/* .EndStudyBtn > button,
-.EEtoLBbtn > button {
-  border: none;
-  display: block;
-  background: linear-gradient(#f7f7f7, #e7e7e7);
-  color: #a7a7a7;
-  margin: 18px;
-  width: 36px;
-  height: 36px;
-  position: relative;
-  text-align: center;
-  line-height: 36px;
-  border-radius: 50%;
-  box-shadow: 0px 1.5px 4px #aaa, inset 0px 1px 1.5px #fff;
-}
-.EndStudyBtn > button:before,
-.EEtoLBbtn > button:before {
-  content: "";
-  display: block;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #fff;
-  width: 100%;
-  height: 1px;
-  position: absolute;
-  top: 50%;
-  z-index: -1;
-}
-.EndStudyBtn > button:after,
-.EEtoLBbtn > button:after {
-  content: "";
-  display: block;
-  background: rgb(255, 255, 255);
-  border-top: 2px solid #ddd;
-  position: absolute;
-  top: -9px;
-  left: -9px;
-  bottom: -9px;
-  right: -9px;
-  z-index: -1;
-  border-radius: 50%;
-  box-shadow: inset 0px 4px 24px #ddd;
-}
-.EndStudyBtn > button:after,
-.EEtoLBbtn > button:after {
-  text-decoration: none;
-  color: #555;
-  background: #f5f5f5;
-} */
-/* 버튼양식 */
 </style>
