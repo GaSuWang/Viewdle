@@ -98,27 +98,27 @@ export default {
     this.$store.commit('lbhModule/EMPTY_AXIOS_FBLIST')
     this.$store.commit('lbhModule/EMPTY_FB_USER_COUNT')
     this.$store.commit('lbhModule/EMPTY_VIDEO_SRC')
-    console.log('방관련 정보', this.roomType, this.roomTitle)
+    // console.log('방관련 정보', this.roomType, this.roomTitle)
     
     //대기실에서 joinSession
     if(!this.currentUserList.filter((e)=>e.myUserEmail===this.myUserEmail).length){
-      console.log('현재 스터디 참여 유저 목록',this.currentUserList)
+      // console.log('현재 스터디 참여 유저 목록',this.currentUserList)
       this.$store.commit("lbhModule/ADD_CURRENT_USER_LIST", this.myUserInfo);
-      console.log('만약에 내가 지금 스터디에 참여하고 있지 않다면, joinSession해라 제발...')
+      // console.log('만약에 내가 지금 스터디에 참여하고 있지 않다면, joinSession해라 제발...')
       this.joinSession()
     }
     //대기실로 유저가 돌아올 때
     this.session.on('signal:WRParticipantListUpdate', (e)=>{
       const data = JSON.parse(e.data)
       if(!this.WRParticipantList.includes(data)){
-        console.log('유저가 대기실로 들어와서 대기실 유저 목록에 넣어줌', data)
+        // console.log('유저가 대기실로 들어와서 대기실 유저 목록에 넣어줌', data)
         this.$store.commit('lbhModule/ADD_WR_PARTICIPANT_LIST', data)
       }
     })
 
     //대기실에서 다른 유저가 나갔을 때
     this.session.on('signal:userLeaveSessionfromWR', (e)=>{
-      console.log(e.data,'라는 이메일을 가진 사람이 대기실에서 나감')
+      // console.log(e.data,'라는 이메일을 가진 사람이 대기실에서 나감')
       this.$store.commit("lbhModule/DELETE_WR_PARTICIPANT_LIST", e.data);
       this.$store.commit("lbhModule/DELETE_CURRENT_USER_LIST", e.data);  
     })
@@ -130,7 +130,7 @@ export default {
       }
     })
 
-    console.log('대기실들어옴',this.currentUserList,this.myUserInfo,this.roomSeq)
+    // console.log('대기실들어옴',this.currentUserList,this.myUserInfo,this.roomSeq)
 
     this.session.on('signal:startVideoTime', (e)=>{
       this.$store.commit('lbhModule/SET_START_VIDEO_TIME', e.data)
@@ -202,10 +202,10 @@ export default {
     },
     async forceLeaveSession() {
       if(this.userType === 'user'){
-        console.log('유저 바로 out')
+        // console.log('유저 바로 out')
         this.$store.dispatch('lbhModule/userLeaveSessionAxios')
       } else {
-        console.log('방장 바로 out')
+        // console.log('방장 바로 out')
         await this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
         this.$store.dispatch('lbhModule/studyDestorySecondAxios')
       }
@@ -246,14 +246,14 @@ export default {
     //방장 유저 기능
     selectEE(user){
       this.EECnd = user
-      console.log(this.EECnd,'이 사람이 면접자')
+      // console.log(this.EECnd,'이 사람이 면접자')
     },
 
     //면접 시작
     startInterview(){
       if(this.roomType === 'study'){
         //스터디 모드 시작
-          console.log('스터디 모드 시작', this.roomType)
+          // console.log('스터디 모드 시작', this.roomType)
           const myUserName = this.EECnd.myUserName
           const myUserEmail = this.EECnd.myUserEmail
           if(this.EECnd){
@@ -268,7 +268,7 @@ export default {
 
       } else {
         //플레이모드 시작
-          console.log('플레이 모드 시작', this.roomType)
+          // console.log('플레이 모드 시작', this.roomType)
           const myUserName = this.EECnd.myUserName
           const myUserEmail = this.EECnd.myUserEmail
           if(this.EECnd){
@@ -296,9 +296,9 @@ export default {
       this.$store.commit('lbhModule/SET_SESSION', ovInitSession)
 
       this.session.on("streamCreated", ({ stream }) => {
-        console.log('streamCreated')
+        // console.log('streamCreated')
         const subscriber = this.session.subscribe(stream) ;
-        console.log('subscriber',subscriber)
+        // console.log('subscriber',subscriber)
         this.$store.commit("lbhModule/ADD_SUBSCRIBERS", subscriber);
 
         const subscriberInfo = {
@@ -310,7 +310,7 @@ export default {
       });
 
       this.session.on("streamDestroyed", ({ stream }) => {
-        console.log('streamCreated')
+        // console.log('streamCreated')
         const index_s = this.subscribers.indexOf(stream.streamManager, 0);
         if (index_s >= 0) {
           this.$store.commit("lbhModule/DELETE_SUBSCRIBERS", index_s);
@@ -326,11 +326,11 @@ export default {
       });
 
       this.getToken(this.mySessionId).then((token) => {
-        console.log("getToken 다음이 시작됨?");
+        // console.log("getToken 다음이 시작됨?");
         this.session
           .connect(token, { clientName: this.myUserName, clientEmail: this.myUserEmail })
           .then(() => {
-            console.log('session Connection Info token?', token)
+            // console.log('session Connection Info token?', token)
             const publisherInfo = {
               myUserName: this.myUserName,
               myUserEmail: this.myUserEmail
@@ -347,7 +347,7 @@ export default {
               insertMode: "APPEND", 
               mirror: false, 
             });
-            console.log('joinSession해서 만들어진 publisher', publisher)
+            // console.log('joinSession해서 만들어진 publisher', publisher)
             this.$store.commit("lbhModule/SET_PUBLISHER", publisher);
 
             this.publisher.subscribeToRemote(true);
@@ -369,7 +369,7 @@ export default {
       this.session.on('signal:superLeaveSessionWR', (e) => {
         const pastSuperUserEmail = e.data.split(' ')[0]
         const currentSuperUserEmail = e.data.split(' ')[1]
-        console.log('전, 현 방장 정보',pastSuperUserEmail, currentSuperUserEmail)
+        // console.log('전, 현 방장 정보',pastSuperUserEmail, currentSuperUserEmail)
         this.$store.commit('lbhModule/DELETE_CURRENT_USER_LIST', pastSuperUserEmail)
         if(this.myUserEmail === currentSuperUserEmail){
           alert('방장이 대기실에서 나갔습니다.\n다음 방장으로 지목되셨습니다.')
@@ -380,18 +380,18 @@ export default {
       // 면접 시작
       this.session.on('signal:startInterview', (e) => { 
         //대기실 유저 목록 지우기
-        console.log('면접 시작! 내 이름과 이메일은', this.myUserName, this.myUserEmail)
+        // console.log('면접 시작! 내 이름과 이메일은', this.myUserName, this.myUserEmail)
         this.$store.commit("lbhModule/EMPTY_WR_PARTICIPANT_LIST");
         this.$store.commit('lbhModule/SET_ISEE', false)
         this.$store.commit('lbhModule/SET_ISER', false)
         //만약에 내가 면접자라면
         if(e.data === this.myUserEmail){ 
-          console.log('startinterview as ee')
+          // console.log('startinterview as ee')
           this.$store.commit('lbhModule/SET_ISEE', true)
           this.$store.commit('lbhModule/SET_EE', this.publisher) //나(publisher)를 EE에 넣음
 
-          console.log('자소서', this.CLSelected)
-          console.log('자소서 보냄')
+          // console.log('자소서', this.CLSelected)
+          // console.log('자소서 보냄')
 
           this.subscribers.forEach(s=>{ //그 외의 참여자들(subscribers)를 순회하면서 ERS에 넣음
             this.$store.commit('lbhModule/SET_ERS', s)
@@ -404,7 +404,7 @@ export default {
 
         //만약 내가 면접관이라면
         else {
-          console.log('startinterview as er')
+          // console.log('startinterview as er')
           this.$store.commit('lbhModule/SET_ISER', true)
           this.$store.commit("lbhModule/SET_ERS", this.publisher); //나(publisher)를 ERS에 넣음
 
@@ -427,7 +427,7 @@ export default {
         this.$store.commit('lbhModule/SET_ISER', false)
         //만약에 내가 면접자라면
         if (e.data === this.myUserEmail) {
-          console.log("startEZInterview as EE");
+          // console.log("startEZInterview as EE");
           this.$store.commit('lbhModule/SET_ISEE', true)
           this.$store.commit("lbhModule/SET_EE", this.publisher); //나(publisher)를 EE에 넣음
 
@@ -440,7 +440,7 @@ export default {
         } 
         else {
           //만약 내가 면접관이라면
-          console.log("startEZInterview as ER");
+          // console.log("startEZInterview as ER");
           this.$store.commit('lbhModule/SET_ISER', true)
           this.$store.commit("lbhModule/SET_ERS", this.publisher); //나(publisher)를 ERS에 넣음
 
@@ -468,7 +468,7 @@ export default {
       );
     },
     createSession(sessionId) {
-      console.log("createSession이 시작되긴 했음");
+      // console.log("createSession이 시작되긴 했음");
       return new Promise((resolve, reject) => {
         axios
           .post(
@@ -548,7 +548,7 @@ export default {
 
     // 녹화 funcion
     startRecording() {
-      console.log(this.session);
+      // console.log(this.session);
 
       return new Promise(() => {
         axios({
