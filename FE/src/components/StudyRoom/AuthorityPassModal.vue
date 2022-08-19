@@ -28,13 +28,8 @@
         </div>
 
         <div class="modal-footer">
-          <!-- 현탁 페이지이동하면 페이지 어두워지는거 고침 -->
-          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeAPM">돌아가기</button> -->
-          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">돌아가기</button> -->
           <button v-if="nextSuperUserList.length != 0" type="button" class="btn" data-bs-dismiss="modal" @click="superUserLeaveSessionAxios">로비로 나가기</button>
           <button v-if="nextSuperUserList.length == 0 || isWR" type="button" class="btn" data-bs-dismiss="modal" @click="studyDestroy">스터디 폭파</button>
-          <!-- <button v-if="isWR" type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="studyDestroy">스터디 폭파</button> -->
-          <!-- 현탁 끝  -->
         </div>
       </div>
     </div>
@@ -43,16 +38,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-// import { OpenVidu } from "openvidu-browser";
 export default {
 name: 'AuthorityPassModal',
-created(){
-    // this.OV = new OpenVidu();
-    // this.session = this.OV.initSession();
-    // this.session.connect(this.sessionToken)
-    // .then(console.log('session connect success'))
-    // .catch(err=>console.err(err.response))
-},
 data(){
   return{
     // OV: undefined,
@@ -89,31 +76,23 @@ methods:{
   },
   //방장이 면접을 폭파시킴
   studyDestroy(){
-    // this.$store.commit('lbhModule/SET_STUDY_DESTOY', true)
     this.session.signal({
       data: '',
       to: [],
       type: 'studyDestroy'
     })
-    // 현탁
-    // this.$router.push('/main')
     this.$store.dispatch('lbhModule/studyDestroyFirstAxios')
-    // 현탁 끝
   },
   //방장이 면접을 나감
   superUserLeaveSessionAxios(){
     this.$store.commit('lbhModule/SET_NEXT_SUPERUSER_INFO', this.nextSuperUser)
     this.$router.push('/main')
-    // const currentSuperUserName = this.myUserName
     const currentSuperUserEmail = this.myUserEmail
-    // const nextSuperUserName = this.nextSuperUser.myUserName
     const nextSuperUserEmail = this.nextSuperUser.myUserEmail
     //방장이 현재 면접자
     if(this.$router.currentRoute.value.name === 'ee-room' || this.$router.currentRoute.value.name === 'ee-room-ez'){
       this.$store.dispatch('lbhModule/EELeaveSessionAxios')
       this.session.signal({
-        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
         data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to:[],
         type:'superEELeaveSession'
@@ -123,8 +102,6 @@ methods:{
     //방장이 현재 면접관
     else if(this.$router.currentRoute.value.name === 'er-room' || this.$router.currentRoute.value.name === 'er-room-ez') {
       this.session.signal({
-        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
         data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to: [],
         type: 'superERLeaveSession'
@@ -133,8 +110,6 @@ methods:{
     } 
     else if(this.$router.currentRoute.value.name === 'fb-room') {
       this.session.signal({
-        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
         data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to: [],
         type: 'superERLeaveSessionFromFB'
@@ -143,20 +118,14 @@ methods:{
     } 
     else if(this.$router.currentRoute.value.name === 'waiting-room'){
       this.session.signal({
-        // data:`${this.currentSuperUserInfo} ${this.nextSuperUserInfo}`,
-        // data:`{"myUserName":${currentSuperUserName},"myUserEmail":${currentSuperUserEmail}} {"myUserName":${nextSuperUserName},"myUserEmail":${nextSuperUserEmail}}`,
         data:`${currentSuperUserEmail} ${nextSuperUserEmail}`,
         to: [],
         type: 'superLeaveSessionWR'
       })
       if (this.session) this.session.disconnect();
     }
-
     alert('면접에서 성공적으로 나가셨습니다.')
-// 현탁
-    // this.$router.push('/main')
     this.$store.dispatch('lbhModule/superUserLeaveSessionAxios', nextSuperUserEmail)
-// 현탁끝
   },
   closeAPM(){
     this.$store.commit('lbhModule/EMPTY_NEXT_SUPERUSER_INFO')
