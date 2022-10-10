@@ -271,13 +271,15 @@ git에 익숙치 않은 팀원들을 위해 Git 참고자료 전용 notion페이
 
 ### **1. 와이어프레임**
 
-![WebRTC](./exec/5.README/2&5/5-1.png?raw=true)
+![WebRTC](./exec/5.README/2&5/5-1.PNG?raw=true)
 
-![WebRTC](./exec/5.README/2&5/5-2.png?raw=true)
+![WebRTC](./exec/5.README/2&5/5-2.PNG?raw=true)
 
 ### **2. 목업**
 
-![WebRTC](./exec/5.README/2&5/5-3.png?raw=true)![WebRTC](./exec/5.README/2&5/5-4.png?raw=true)
+![WebRTC](./exec/5.README/2&5/5-3.PNG?raw=true)
+
+![WebRTC](./exec/5.README/2&5/5-4.PNG?raw=true)
 
 [피그마](https://www.figma.com/file/DriTnARX1bgGvN2hvFw9vw/SSAFY-공통프로젝트(뷰들뷰들)?node-id=0%3A1)를 통해 추가적인 페이지, 페이지 내/외 동작, 기타 화면 기획 중 회의 내역 등을 확인하실 수 있습니다.
 
