@@ -40,19 +40,19 @@
 
 1. 로그인 페이지
 
-   ![a](.\exec\5.README\1-3\a.png?raw=true)
+   ![a](./exec/5.README/1-3/a.png)
 
 2. 메인페이지
 
-   ![b](.\exec\5.README\1-3\b.gif?raw=true)
+   ![b](./exec/5.README/1-3/b.gif?raw=true)
 
 3. 회원정보 열람 및 수정페이지
 
-   ![c](.\exec\5.README\1-3\c.gif?raw=true)
+   ![c](./exec/5.README/1-3/c.gif?raw=true)
 
 4. 다시보기 페이지
 
-   ![d](.\exec\5.README\1-3\d.gif?raw=true)
+   ![d](./exec/5.README/1-3/d.gif?raw=true)
 
 
 
