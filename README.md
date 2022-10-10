@@ -40,25 +40,25 @@
 
 1. 로그인 페이지
 
-   ![a](.\exec\5.README\1-3\a.png)
+   ![a](.\exec\5.README\1-3\a.png?raw=true)
 
 2. 메인페이지
 
-   ![b](.\exec\5.README\1-3\b.gif)
+   ![b](.\exec\5.README\1-3\b.gif?raw=true)
 
 3. 회원정보 열람 및 수정페이지
 
-   ![c](.\exec\5.README\1-3\c.gif)
+   ![c](.\exec\5.README\1-3\c.gif?raw=true)
 
 4. 다시보기 페이지
 
-   ![d](.\exec\5.README\1-3\d.gif)
+   ![d](.\exec\5.README\1-3\d.gif?raw=true)
 
 
 
 ## 4. UCC 영상
 
-<video src=".\exec\5.README\UCC.mp4"></video>
+<video src=".\exec\5.README\UCC.mp4?raw=true"></video>
 
 
 
@@ -68,7 +68,7 @@
 
 ### **[WebRTC](https://webrtc.org/)**
 
-![WebRTC](.\exec\5.README\2&5\WebRTC.png)
+![WebRTC](.\exec\5.README\2&5\WebRTC.png?raw=true)
 
 Media Source: https://medium.com/dvt-engineering/introduction-to-webrtc-cad0c6900b8e
 
@@ -104,7 +104,7 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
 
    1. **면접자 지정** 기능
 
-      - 뷰들뷰들에서는 방장이 면접자를 지정할 수 있는 기능을 제공합니다. 면접실에 입장하기 전 **대기실에서 방장이 면접자를 지정**하고 면접 시작 버튼을 누르면 면접이 시작됩니다.![1-a](.\exec\5.README\3\1-a.gif)
+      - 뷰들뷰들에서는 방장이 면접자를 지정할 수 있는 기능을 제공합니다. 면접실에 입장하기 전 **대기실에서 방장이 면접자를 지정**하고 면접 시작 버튼을 누르면 면접이 시작됩니다.![1-a](.\exec\5.README\3\1-a.gif?raw=true)
 
         
 
@@ -114,15 +114,15 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
 
       - 면접자 역할로 참여한 사용자는 면접실에서 자신의 화면을 제외한 면접관들의 화면만을 확인할 수 있습니다.
 
-        ![1-a](.\exec\5.README\3\1-b-1.gif)
+        ![1-a](.\exec\5.README\3\1-b-1.gif?raw=true)
 
       - 면접관 역할로 참여한 사용자들은 **실시간으로 면접자의 영상을 보며 피드백**을 남길 수 있습니다. 이때, 면접관들에게는 면접자의 화면은 크게, 면접관들의 화면은 작게 제공됩니다.
 
-        ![1-a](.\exec\5.README\3\1-b-2.gif)방장이 면접을 시작할 시 화면 녹화가 진행되며, 면접을 종료할 시에 **화면 녹화를 종료하고 서버에 저장**합니다.
+        ![1-a](.\exec\5.README\3\1-b-2.gif?raw=true)방장이 면접을 시작할 시 화면 녹화가 진행되며, 면접을 종료할 시에 **화면 녹화를 종료하고 서버에 저장**합니다.
 
       - 이후, 면접이 끝난 후, 면접관은 **피드백실로 이동**하며, 방금 진행한 면접 영상을 보며 피드백을 수정할 수 있는 시간(5분)이 제공됩니다. 이때, 작성된 피드백의 재생 버튼을 클릭하면 **면접 영상은 피드백이 작성된 시점으로 이동**합니다.
 
-        ![1-a](.\exec\5.README\3\1-b-3.gif)
+        ![1-a](.\exec\5.README\3\1-b-3.gif?raw=true)
 
       - 모든 면접관의 피드백 수정이 완료되면 녹화 영상과 피드백들은 **면접자에게 저장**됩니다. 다시보기 기능에서도 피드백이 작성된 시점으로 동영상을 이동해 확인할 수 있습니다.
 
@@ -134,7 +134,7 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
 
       - 사용자는 면접 이후 저장된 본인의 면접 영상에서 **자세 평가를 할 영역을 드래그**하여 사용할 수 있습니다.
 
-        ![1-a](.\exec\5.README\3\1-c.gif)
+        ![1-a](.\exec\5.README\3\1-c.gif?raw=true)
 
       - 해당 기능을 통해, 사용자는 자신이 면접을 진행한 후, 화면에 너무 가깝거나, 멀리 있는지, 혹은 한쪽으로 기울어져 있는지를 확인할 수 있습니다.
 
@@ -144,7 +144,7 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
 
       - 방장에 의해 면접자로 지정되면 면접관들은 면접 진행 시에 **면접자의 자기소개서를 새 창에서 확인**할 수 있습니다.
 
-        ![1-a](.\exec\5.README\3\1-d.gif)
+        ![1-a](.\exec\5.README\3\1-d.gif?raw=true)
 
       - **면접자는** 면접이 끝난 후 **새로 지정**할 수 있습니다.
 
@@ -158,15 +158,15 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
 
       - 면접자가 **빵** 이라는 키워드를 외칠 시에는 면접관의 얼굴에 **빵** 이미지를 Overlay 합니다.
 
-        ![1-a](.\exec\5.README\3\2-a-1.gif)
+        ![1-a](.\exec\5.README\3\2-a-1.gif?raw=true)
 
       - 면접자가 **감자**라는 키워드를 외칠 시에는 면접관의 얼굴에 **감자** 이미지를 Overlay 합니다.
 
-        ![1-a](.\exec\5.README\3\2-a-2.gif)
+        ![1-a](.\exec\5.README\3\2-a-2.gif?raw=true)
 
       - 면접자가 **나 안해**라는 키워드를 외칠 시에는 면접관의 얼굴에 **대머리** 이미지를 Overlay 합니다.
 
-        ![1-a](.\exec\5.README\3\2-a-3.gif)
+        ![1-a](.\exec\5.README\3\2-a-3.gif?raw=true)
 
    2. **돌발 질문 기능**
 
@@ -176,11 +176,11 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
 
       - 면접관 중 한 명이 돌발 질문 기능을 클릭할 시, 해당 면접관 및 다른 면접관들의 돌발 질문 및 돌발 상황 버튼이 **비활성화** 됩니다.
 
-        ![1-a](.\exec\5.README\3\2-b-1.gif)
+        ![1-a](.\exec\5.README\3\2-b-1.gif?raw=true)
 
       - 면접자에게는 3초간 **배경화면 전환을 제공**하여, 돌발 질문 기능이 실행되었음을 알려줍니다.
 
-        ![1-a](.\exec\5.README\3\2-b-2.gif)
+        ![1-a](.\exec\5.README\3\2-b-2.gif?raw=true)
 
       - 3초 후 돌발 질문 버튼을 누른 면접관에게 적합한 답변이었는지를 응답하도록 합니다.
 
@@ -200,19 +200,19 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
 
           - 제한 시간 내에 1부터 9까지의 숫자를 클릭하도록 하는 게임입니다.
 
-            ![1-a](.\exec\5.README\3\2-c-1.gif)
+            ![1-a](.\exec\5.README\3\2-c-1.gif?raw=true)
 
         - 방향키 게임
 
           - 제한 시간 내에 화면에 표시되는 방향키를 순차적으로 누르는 게임입니다.
 
-            ![1-a](.\exec\5.README\3\2-c-2.gif)
+            ![1-a](.\exec\5.README\3\2-c-2.gif?raw=true)
 
         - 연타 게임
 
           - 제한 시간 내에 스페이스바를 연타해 화면에 차오르는 물을 제거하는 게임입니다.
 
-            ![1-a](.\exec\5.README\3\2-c-3.gif)
+            ![1-a](.\exec\5.README\3\2-c-3.gif?raw=true)
 
       - 면접자가 게임을 성공하거나, 제한시간이 지나게 되면 면접관들의 돌발 질문 및 돌발 상황 버튼이 활성화됩니다.
 
@@ -221,7 +221,7 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
       - 면접자가 돌발 질문에 올바른 대답을 하지 못하거나, 돌발 상황에 적절한 대처를 하지 못했을 시 면접자 화면 왼쪽에 표시되는 게이지가 채워지게 됩니다.
       - **게이지가 다 채워질 시**(5회) 면접자와 면접관들은 **대기실**로 돌아오게 됩니다.
 
-      ![1-a](.\exec\5.README\3\2-d.gif)
+      ![1-a](.\exec\5.README\3\2-d.gif?raw=true)
 
 # **Ⅳ. 프로젝트 진행**
 
@@ -231,7 +231,7 @@ Web Speech API는 크롬 브라우저에서만 사용한 API로 높은 인식률
 
 작업도중 유익한 정보를 찾았을 때 다같이 공유하도록 참고 자료 페이지도 따로 만들어 공유하였습니다.
 
-![2-a](.\exec\5.README\4\2-a.gif)
+![2-a](.\exec\5.README\4\2-a.gif?raw=true)
 
 b. JIRA
 
@@ -247,43 +247,43 @@ b. JIRA
 
    1. 1주차
 
-   ![2-a](.\exec\5.README\4\2-b-4-a.png)
+   ![2-a](.\exec\5.README\4\2-b-4-a.png?raw=true)
 
    b. 2주차
 
-   ![2-a](.\exec\5.README\4\2-b-4-b.png)
+   ![2-a](.\exec\5.README\4\2-b-4-b.png?raw=true)
 
    c. 3주차
 
-   ![2-a](.\exec\5.README\4\2-b-4-c.png)
+   ![2-a](.\exec\5.README\4\2-b-4-c.png?raw=true)
 
 c. GIT
 
 git에 익숙치 않은 팀원들을 위해 Git 참고자료 전용 notion페이지를 따로 구성하여 모두 꼬임없이 git을 사용할 수 있도록 노력하였습니다.
 
-![2-a](.\exec\5.README\4\2-c-1.png)
+![2-a](.\exec\5.README\4\2-c-1.png?raw=true)
 
 또한 우리 팀만의 깃 규칙을 정하여 커밋 메세지와 브랜치관리를 더욱 간결하고 가독성 있게 관리였습니다.
 
-![2-a](.\exec\5.README\4\2-c-2.gif)
+![2-a](.\exec\5.README\4\2-c-2.gif?raw=true)
 
 ## **Ⅴ. UI / UX 및 시스템 아키텍쳐**
 
 ### **1. 와이어프레임**
 
-![WebRTC](.\exec\5.README\2&5\5-1.png)
+![WebRTC](.\exec\5.README\2&5\5-1.png?raw=true)
 
-![WebRTC](.\exec\5.README\2&5\5-2.png)
+![WebRTC](.\exec\5.README\2&5\5-2.png?raw=true)
 
 ### **2. 목업**
 
-![WebRTC](.\exec\5.README\2&5\5-3.png)![WebRTC](.\exec\5.README\2&5\5-4.png)
+![WebRTC](.\exec\5.README\2&5\5-3.png?raw=true)![WebRTC](.\exec\5.README\2&5\5-4.png?raw=true)
 
 [피그마](https://www.figma.com/file/DriTnARX1bgGvN2hvFw9vw/SSAFY-공통프로젝트(뷰들뷰들)?node-id=0%3A1)를 통해 추가적인 페이지, 페이지 내/외 동작, 기타 화면 기획 중 회의 내역 등을 확인하실 수 있습니다.
 
 ### 3. 시스템 아키택쳐
 
-![WebRTC](.\exec\5.README\2&5\5-5.png)
+![WebRTC](.\exec\5.README\2&5\5-5.png?raw=true)
 
 # **Ⅳ. 소감**
 
